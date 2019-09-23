@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<Scene name="Media Fundamentals Project 1">
+  <Audio API="FMOD">
+    <Sound file="hourglass.wav" volume="100.0" pitch="1.0" pan="1.0" streamed="true"/>
+  </Audio>
+  <Models>
+    <Model file="sphere_XYZ.ply" friendlyName="sphere"/>
+    <Model file="cube_XYZ.ply" friendlyName="cube"/>
+  </Models>
+</Scene>
