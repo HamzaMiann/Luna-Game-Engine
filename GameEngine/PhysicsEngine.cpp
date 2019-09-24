@@ -8,9 +8,9 @@ using namespace std;
 
 void PhysicsUpdate(std::vector<cGameObject> & vecGameObjects, float deltaTime)
 {
-	glm::vec3 gravity = glm::vec3(0.f, -1.0f, 0.f);
-	float friction = .8f;
-	float drag = .9f;
+	glm::vec3 gravity = glm::vec3(0.f, -9.8f, 0.f);
+	float friction = .7f;
+	float drag = .8f;
 
 	for (size_t i = 0; i < vecGameObjects.size(); ++i)
 	{
@@ -40,7 +40,6 @@ void PhysicsUpdate(std::vector<cGameObject> & vecGameObjects, float deltaTime)
 			{
 				audengine->PlaySound("ball");
 			}*/
-
 		}
 		pObj->positionXYZ += (pObj->velocity * deltaTime);
 

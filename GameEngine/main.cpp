@@ -29,10 +29,10 @@
 #define fragShaderFile "fragmentShader01.glsl"
 
 
-glm::vec3 cameraEye = glm::vec3(0.0, 1.0f, -7.0);
-glm::vec3 cameraTarget = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 LightLocation = glm::vec3(0.0f,0.0f,0.0f);
+//glm::vec3 cameraEye = glm::vec3(0.0, 1.0f, -7.0);
+//glm::vec3 cameraTarget = glm::vec3(0.0f, 1.0f, 0.0f);
+//glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
+//glm::vec3 LightLocation = glm::vec3(0.0f,0.0f,0.0f);
 
 std::vector<cGameObject> vecGameObjects;
 Scene* scene;
@@ -48,7 +48,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
-		vecGameObjects[1].velocity += upVector * 2.f;
+		vecGameObjects[1].velocity += scene->upVector * 2.f;
 		scene->pAudioEngine->PlaySound("bounce");
 	}
 
@@ -61,53 +61,53 @@ static void error_callback(int error, const char* description)
 
 static void HandleInput(GLFWwindow* window)
 {
-	glm::vec3 forwardVector = Mathf::get_direction_vector(cameraEye, cameraTarget);
-	glm::vec3 backwardsVector = Mathf::get_reverse_direction_vector(cameraEye, cameraTarget);
+	glm::vec3 forwardVector = Mathf::get_direction_vector(scene->cameraEye, scene->cameraTarget);
+	glm::vec3 backwardsVector = Mathf::get_reverse_direction_vector(scene->cameraEye, scene->cameraTarget);
 	glm::vec3 rightVector = Mathf::get_rotated_vector(-90.f, glm::vec3(0.f), forwardVector);
 	glm::vec3 leftVector = Mathf::get_rotated_vector(90.f, glm::vec3(0.f), forwardVector);
 
 	// Move the camera (A & D for left and right, along the x axis)
 	if (glfwGetKey(window, GLFW_KEY_A))
 	{
-		Mathf::rotate_vector(-5.f, cameraTarget, cameraEye);
+		Mathf::rotate_vector(-5.f, scene->cameraTarget, scene->cameraEye);
 		//cameraEye.x -= 0.1f;		// Move the camera -0.01f units
 	}
 	if (glfwGetKey(window, GLFW_KEY_D))
 	{
-		Mathf::rotate_vector(5.f, cameraTarget, cameraEye);
+		Mathf::rotate_vector(5.f, scene->cameraTarget, scene->cameraEye);
 		//cameraEye.x += 0.1f;		// Move the camera +0.01f units
 	}
 
 	// Move the camera (Q & E for up and down, along the y axis)
 	if (glfwGetKey(window, GLFW_KEY_Q))
 	{
-		cameraEye.y -= 0.1f;		// Move the camera -0.01f units
+		scene->cameraEye.y -= 0.1f;		// Move the camera -0.01f units
 	}
 	if (glfwGetKey(window, GLFW_KEY_E))
 	{
-		cameraEye.y += 0.1f;		// Move the camera +0.01f units
+		scene->cameraEye.y += 0.1f;		// Move the camera +0.01f units
 	}
 
 	// Move the camera (W & S for towards and away, along the z axis)
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		cameraEye += forwardVector * 0.1f;
+		scene->cameraEye += forwardVector * 0.1f;
 		//cameraEye.z += 0.5f;		// Move the camera -0.01f units
 	}
 	if (glfwGetKey(window, GLFW_KEY_S))
 	{
-		cameraEye += backwardsVector * 0.1f;
+		scene->cameraEye += backwardsVector * 0.1f;
 		//cameraEye.z -= 0.5f;		// Move the camera +0.01f units
 	}
 
 
 	if (glfwGetKey(window, GLFW_KEY_J))
 	{
-		LightLocation.x -= 0.1f;
+		scene->LightLocation.x -= 0.1f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_K))
 	{
-		LightLocation.x += 0.1f;
+		scene->LightLocation.x += 0.1f;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_UP))
@@ -237,9 +237,9 @@ int main(void)
 		// View matrix
 		v = glm::mat4(1.0f);
 
-		v = glm::lookAt(cameraEye,
-						cameraTarget,
-						upVector);
+		v = glm::lookAt(scene->cameraEye,
+						scene->cameraTarget,
+						scene->upVector);
 
 
 		glViewport(0, 0, width, height);
@@ -249,7 +249,7 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		// Update the objects' physics
-		PhysicsUpdate(vecGameObjects, 0.1f);
+		PhysicsUpdate(vecGameObjects, delta_time);
 
 		// **************************************************
 		// **************************************************
@@ -349,8 +349,10 @@ int main(void)
 
 
 			GLint lighPosition_UL = glGetUniformLocation( shaderProgID, "lightPosition");
-			glUniform3f(lighPosition_UL, LightLocation.x, 
-						LightLocation.y, LightLocation.z );
+			glUniform3f(lighPosition_UL,
+						scene->LightLocation.x,
+						scene->LightLocation.y,
+						scene->LightLocation.z );
 
 
 
