@@ -157,22 +157,28 @@
   <ItemGroup>
     <ClCompile Include="AudioEngine.cpp" />
     <ClCompile Include="cAudioBuilder.cpp" />
+    <ClCompile Include="cModelBuilder.cpp" />
     <ClCompile Include="cModelLoader.cpp" />
+    <ClCompile Include="cSceneFactory.cpp" />
     <ClCompile Include="cShader.cpp" />
+    <ClCompile Include="cShaderBuilder.cpp" />
     <ClCompile Include="cShaderHelper.cpp" />
     <ClCompile Include="cShaderManager.cpp" />
     <ClCompile Include="cVAOManager.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioEngine.hpp" />
     <ClInclude Include="cAudioBuilder.h" />
     <ClInclude Include="cGameObject.h" />
     <ClInclude Include="cMesh.h" />
+    <ClInclude Include="cModelBuilder.h" />
     <ClInclude Include="cModelLoader.h" />
     <ClInclude Include="cSceneFactory.h" />
+    <ClInclude Include="cShaderBuilder.h" />
     <ClInclude Include="cShaderHelper.h" />
     <ClInclude Include="cShaderManager.h" />
     <ClInclude Include="cVAOManager.h" />
@@ -181,7 +187,6 @@
     <ClInclude Include="Mathf.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\fragmentShader01.glsl" />

@@ -4,7 +4,7 @@
 #include <math.h>
 using namespace std;
 
-AudioEngine* audengine = &AudioEngine::Instance();
+//AudioEngine* audengine = &AudioEngine::Instance();
 
 void PhysicsUpdate(std::vector<cGameObject> & vecGameObjects, float deltaTime)
 {
@@ -36,10 +36,10 @@ void PhysicsUpdate(std::vector<cGameObject> & vecGameObjects, float deltaTime)
 			pObj->velocity.y = pObj->velocity.y * -1.f * friction;
 			pObj->velocity.x = pObj->velocity.x * drag;
 			pObj->velocity.z = pObj->velocity.z * drag;
-			if (shouldPlaySound)
+			/*if (shouldPlaySound)
 			{
 				audengine->PlaySound("ball");
-			}
+			}*/
 
 		}
 		pObj->positionXYZ += (pObj->velocity * deltaTime);

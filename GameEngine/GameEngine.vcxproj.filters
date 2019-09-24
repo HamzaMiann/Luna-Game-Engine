@@ -72,6 +72,18 @@
     <ClCompile Include="cAudioBuilder.cpp">
       <Filter>SceneFactory\SceneBuilders</Filter>
     </ClCompile>
+    <ClCompile Include="cSceneFactory.cpp">
+      <Filter>SceneFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="cModelBuilder.cpp">
+      <Filter>SceneFactory\SceneBuilders</Filter>
+    </ClCompile>
+    <ClCompile Include="cShaderBuilder.cpp">
+      <Filter>SceneFactory\SceneBuilders</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>SceneFactory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -104,9 +116,6 @@
     <ClInclude Include="GLCommon.h">
       <Filter>GL</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.hpp">
-      <Filter>SceneFactory</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>SceneFactory</Filter>
     </ClInclude>
@@ -117,6 +126,12 @@
       <Filter>SceneFactory</Filter>
     </ClInclude>
     <ClInclude Include="cAudioBuilder.h">
+      <Filter>SceneFactory\SceneBuilders</Filter>
+    </ClInclude>
+    <ClInclude Include="cModelBuilder.h">
+      <Filter>SceneFactory\SceneBuilders</Filter>
+    </ClInclude>
+    <ClInclude Include="cShaderBuilder.h">
       <Filter>SceneFactory\SceneBuilders</Filter>
     </ClInclude>
   </ItemGroup>

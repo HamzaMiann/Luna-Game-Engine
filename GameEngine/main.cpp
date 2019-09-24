@@ -20,6 +20,7 @@
 #include "Mathf.h"
 #include "PhysicsEngine.h"
 #include "AudioEngine.hpp"
+#include "Scene.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -34,11 +35,9 @@ glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 LightLocation = glm::vec3(0.0f,0.0f,0.0f);
 
 std::vector<cGameObject> vecGameObjects;
+Scene* scene;
 
 GLFWwindow* window;
-AudioEngine* aud = &AudioEngine::Instance();
-
-AUDIO_ID music_id, rain_id, bounce_id, ball_id;
 
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -50,7 +49,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
 		vecGameObjects[1].velocity += upVector * 2.f;
-		aud->PlaySound(bounce_id);
+		scene->pAudioEngine->PlaySound("bounce");
 	}
 
 }
@@ -135,7 +134,7 @@ static void HandleInput(GLFWwindow* window)
 int main(void)
 {
 
-	GLuint shaderProgID;
+	//GLuint shaderProgID;
 	//GLuint vertex_buffer, vertex_shader, fragment_shader, program;
 	//GLint mvp_location; /*, vpos_location, vcol_location;*/
 
@@ -160,58 +159,12 @@ int main(void)
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	glfwSwapInterval(1);
 
-	try
-	{
-		shaderProgID = cShaderHelper::BuildShaderProgram(vertShaderFile, fragShaderFile);
-	}
-	catch (std::exception& err)
-	{
-		std::cout << "Error: " << err.what() << std::endl;
-		return -1;
-	}
+	// Load scene from file
+	scene = Scene::LoadFromXML("scene1.scene.xml");
 
-	cModelLoader* pTheModelLoader = new cModelLoader();	// Heap
-
-	//cMesh bunnyMesh;		// This is stack based
-//	if ( ! pTheModelLoader->LoadPlyModel("assets/models/Sky_Pirate_Combined_xyz.ply", bunnyMesh) )
-	/*if ( ! pTheModelLoader->LoadPlyModel("assets/models/bun_zipper_res4_XYZ.ply", bunnyMesh) )
-	{
-		std::cout << "Didn't find the file" << std::endl;
-	}*/
-
-	cMesh sphereMesh;
-	pTheModelLoader->LoadPlyModel("assets/models/sphere_XYZ.ply", sphereMesh);
-
-	cMesh cubeMesh;
-	pTheModelLoader->LoadPlyModel("assets/models/cube_XYZ.ply", cubeMesh);
-
-	
-
-	// Create a VAO Manager...
-	// #include "cVAOManager.h"  (at the top of your file)
-	cVAOManager* pTheVAOManager = new cVAOManager();
-
-	// Note, the "filename" here is really the "model name" 
-	//  that we can look up later (i.e. it doesn't have to be the file name)
-	
-
-	sModelDrawInfo drawInfoCube;
-	pTheVAOManager->LoadModelIntoVAO("cube",
-									 cubeMesh,
-									 drawInfoCube,
-									 shaderProgID);
-
-	sModelDrawInfo drawInfoSphere;
-	pTheVAOManager->LoadModelIntoVAO("sphere",
-									 sphereMesh,
-									 drawInfoSphere,
-									 shaderProgID);
 
 	// At this point, the model is loaded into the GPU
-
-
 	// Load up my "scene" 
-
 
 	cGameObject sphere;
 	sphere.meshName = "sphere";
@@ -251,15 +204,9 @@ int main(void)
 	float shipAccelz = 100.f;
 
 	// Initialize audio engine
-	aud->Init();
-
-	music_id = aud->Create_Sound("hourglass.wav", "music");
-	rain_id = aud->Create_Sound("rain.mp3", "rain");
-	bounce_id = aud->Create_Sound("bounce.wav", "bounce");
-	ball_id = aud->Create_Sound("ball_hit.wav", "ball");
-
-	aud->PlaySound(music_id);
-	aud->PlaySound(rain_id);
+	
+	scene->pAudioEngine->PlaySound("music");
+	scene->pAudioEngine->PlaySound("rain");
 
 	float current_time = 0.f;
 	float previous_time = 0.f;
@@ -361,6 +308,7 @@ int main(void)
 
 			// Choose which shader to use
 			//glUseProgram(program);
+			GLint shaderProgID = scene->shaderProgID;
 			glUseProgram(shaderProgID);
 
 
@@ -419,7 +367,7 @@ int main(void)
 
 			sModelDrawInfo drawInfo;
 			//if (pTheVAOManager->FindDrawInfoByModelName("bunny", drawInfo))
-			if (pTheVAOManager->FindDrawInfoByModelName(vecGameObjects[index].meshName, drawInfo))
+			if (scene->pVAOManager->FindDrawInfoByModelName(vecGameObjects[index].meshName, drawInfo))
 			{
 				glBindVertexArray(drawInfo.VAO_ID);
 				glDrawElements(GL_TRIANGLES,
@@ -445,12 +393,7 @@ int main(void)
 
 
 	// Delete everything
-	delete pTheModelLoader;
-//	delete pTheVAOManager;
-
-	// Watch out!!
-	// sVertex* pVertices = new sVertex[numberOfVertsOnGPU];
-//	delete [] pVertices;		// If it's an array, also use [] bracket
+	delete scene;
 
 	exit(EXIT_SUCCESS);
 }
