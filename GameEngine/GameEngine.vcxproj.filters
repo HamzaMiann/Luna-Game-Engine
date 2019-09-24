@@ -31,11 +31,14 @@
     <Filter Include="GL">
       <UniqueIdentifier>{095059cd-19d3-4b36-9d09-7a5f6496f28b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SceneManager">
+    <Filter Include="SceneFactory">
       <UniqueIdentifier>{08f8af5a-02bc-47a5-bef7-b4859ed1e31d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SceneManager\Scenes">
+    <Filter Include="SceneFactory\Scenes">
       <UniqueIdentifier>{fb2c66ba-bf07-4373-a7a0-594479cbe915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneFactory\SceneBuilders">
+      <UniqueIdentifier>{ce655aa6-b4c7-410f-8833-4c5a63fba248}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,9 +57,6 @@
     <ClCompile Include="cModelLoader.cpp">
       <Filter>ModelLoading</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsCode.cpp">
-      <Filter>Math_Physics</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -65,6 +65,12 @@
     </ClCompile>
     <ClCompile Include="AudioEngine.cpp">
       <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsEngine.cpp">
+      <Filter>Math_Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="cAudioBuilder.cpp">
+      <Filter>SceneFactory\SceneBuilders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -99,7 +105,19 @@
       <Filter>GL</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.hpp">
-      <Filter>SceneManager</Filter>
+      <Filter>SceneFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>SceneFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="cSceneFactory.h">
+      <Filter>SceneFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="iSceneBuilder.h">
+      <Filter>SceneFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="cAudioBuilder.h">
+      <Filter>SceneFactory\SceneBuilders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -109,5 +127,10 @@
     <None Include="assets\shaders\vertexShader01.glsl">
       <Filter>Shaders\GLSL</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="assets\scenes\scene1.scene.xml">
+      <Filter>SceneFactory\Scenes</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

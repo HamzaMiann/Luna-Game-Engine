@@ -17,15 +17,8 @@ private:
 	std::vector<Sound*> Sounds;
 	std::vector<std::string> SoundNames;
 
-	AudioEngine() {}
 
 public:
-
-	static AudioEngine& Instance()
-	{
-		static AudioEngine engine;
-		return engine;
-	}
 
 	class Sound
 	{
@@ -42,6 +35,7 @@ public:
 
 
 	void Init();
+	AudioEngine() {}
 	~AudioEngine();
 
 	AUDIO_ID Create_Sound(std::string filename, std::string friendlyName);

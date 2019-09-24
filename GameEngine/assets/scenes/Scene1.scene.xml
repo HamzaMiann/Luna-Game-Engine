@@ -1,7 +1,12 @@
 <?xml version="1.0"?>
 <Scene name="Media Fundamentals Project 1">
   <Audio API="FMOD">
-    <Sound file="hourglass.wav" volume="100.0" pitch="1.0" pan="1.0" streamed="true"/>
+    <Sound file="hourglass.wav"
+           volume="100.0"
+           pitch="1.0"
+           pan="1.0"
+           streamed="true"
+           friendlyName="music"/>
   </Audio>
   <Models>
     <Model file="sphere_XYZ.ply" friendlyName="sphere"/>
