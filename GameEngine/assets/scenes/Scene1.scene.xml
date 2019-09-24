@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Scene name="Media Fundamentals Project 1">
   <Audio API="FMOD">
-    <Sound file="hourglass.wav"
+    <Sound file="game_piano.wav"
            volume="100.0"
            pitch="1.0"
            pan="1.0"
