@@ -40,6 +40,9 @@
     <Filter Include="SceneFactory\SceneBuilders">
       <UniqueIdentifier>{ce655aa6-b4c7-410f-8833-4c5a63fba248}</UniqueIdentifier>
     </Filter>
+    <Filter Include="InputHandler">
+      <UniqueIdentifier>{5f9ed9df-aca8-41f0-976c-5a1bff395e14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">
@@ -134,12 +137,24 @@
     <ClInclude Include="cShaderBuilder.h">
       <Filter>SceneFactory\SceneBuilders</Filter>
     </ClInclude>
+    <ClInclude Include="iInputHandler.h">
+      <Filter>InputHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="cPhysicsInputHandler.h">
+      <Filter>InputHandler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\fragmentShader01.glsl">
       <Filter>Shaders\GLSL</Filter>
     </None>
     <None Include="assets\shaders\vertexShader01.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\fragmentShader02.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\vertexShader02.glsl">
       <Filter>Shaders\GLSL</Filter>
     </None>
   </ItemGroup>

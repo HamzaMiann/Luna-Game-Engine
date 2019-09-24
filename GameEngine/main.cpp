@@ -12,27 +12,12 @@
 
 #include <iostream>
 
-#include "cModelLoader.h"		
-#include "cVAOManager.h"
-#include "cGameObject.h"
-
-#include "cShaderHelper.h"
 #include "Mathf.h"
 #include "PhysicsEngine.h"
-#include "AudioEngine.hpp"
 #include "Scene.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
-
-#define vertShaderFile "vertexShader01.glsl"
-#define fragShaderFile "fragmentShader01.glsl"
-
-
-//glm::vec3 cameraEye = glm::vec3(0.0, 1.0f, -7.0);
-//glm::vec3 cameraTarget = glm::vec3(0.0f, 1.0f, 0.0f);
-//glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
-//glm::vec3 LightLocation = glm::vec3(0.0f,0.0f,0.0f);
 
 std::vector<cGameObject> vecGameObjects;
 Scene* scene;
