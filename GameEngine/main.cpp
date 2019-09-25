@@ -19,9 +19,7 @@
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 
-std::vector<cGameObject> vecGameObjects;
 Scene* scene;
-
 GLFWwindow* window;
 
 
@@ -33,7 +31,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
-		vecGameObjects[1].velocity += scene->upVector * 2.f;
+		scene->vecGameObjects[1]->velocity += scene->upVector * 2.f;
 		scene->pAudioEngine->PlaySound("bounce");
 	}
 
@@ -97,31 +95,27 @@ static void HandleInput(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_UP))
 	{
-		vecGameObjects[1].velocity += Mathf::get_direction_vector(vecGameObjects[1].positionXYZ,
-																  vecGameObjects[1].positionXYZ + forwardVector) * 0.01f;
+		scene->vecGameObjects[1]->velocity += Mathf::get_direction_vector(scene->vecGameObjects[1]->positionXYZ,
+																		  scene->vecGameObjects[1]->positionXYZ + forwardVector) * 0.01f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN))
 	{
-		vecGameObjects[1].velocity -= Mathf::get_direction_vector(vecGameObjects[1].positionXYZ,
-																  vecGameObjects[1].positionXYZ + forwardVector) * 0.01f;
+		scene->vecGameObjects[1]->velocity -= Mathf::get_direction_vector(scene->vecGameObjects[1]->positionXYZ,
+																		  scene->vecGameObjects[1]->positionXYZ + forwardVector) * 0.01f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT))
 	{
-		vecGameObjects[1].velocity += rightVector * 0.01f;
+		scene->vecGameObjects[1]->velocity += rightVector * 0.01f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT))
 	{
-		vecGameObjects[1].velocity += leftVector * 0.01f;
+		scene->vecGameObjects[1]->velocity += leftVector * 0.01f;
 	}
 	
 }
 
 int main(void)
 {
-
-	//GLuint shaderProgID;
-	//GLuint vertex_buffer, vertex_shader, fragment_shader, program;
-	//GLint mvp_location; /*, vpos_location, vcol_location;*/
 
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
@@ -153,9 +147,10 @@ int main(void)
 
 	cGameObject sphere;
 	sphere.meshName = "sphere";
+	sphere.Collider = SPHERE;
 	sphere.positionXYZ = glm::vec3(0.0f, 5.0f, 0.0f);
 	sphere.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	sphere.scale = 0.5f;
+	sphere.scale = .5f;
 	sphere.objectColourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Set the sphere's initial velocity, etc.
@@ -165,9 +160,10 @@ int main(void)
 
 	cGameObject cube;
 	cube.meshName = "cube";
+	cube.Collider = MESH;
 	cube.positionXYZ = glm::vec3(0.0f, -0.5f, 0.0f);
 	cube.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	cube.scale = 0.5f;
+	cube.scale = .5f;
 	cube.objectColourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	// Set the cube's initial velocity, etc.
@@ -176,8 +172,8 @@ int main(void)
 
 
 
-	vecGameObjects.push_back(cube);
-	vecGameObjects.push_back(sphere);
+	scene->vecGameObjects.push_back(&cube);
+	scene->vecGameObjects.push_back(&sphere);
 
 	//mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
@@ -234,14 +230,14 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		// Update the objects' physics
-		PhysicsUpdate(vecGameObjects, delta_time);
+		PhysicsUpdate(scene, delta_time);
 
 		// **************************************************
 		// **************************************************
 		// Loop to draw everything in the scene
-		for (int index = 0; index != vecGameObjects.size(); index++)
+		for (int index = 0; index != scene->vecGameObjects.size(); index++)
 		{
-
+			cGameObject* objPtr = scene->vecGameObjects[index];
 			//         mat4x4_identity(m);
 			m = glm::mat4(1.0f);
 
@@ -250,9 +246,9 @@ int main(void)
 			// ******* TRANSLATION TRANSFORM *********
 			glm::mat4 matTrans 
 				= glm::translate(glm::mat4(1.0f),
-								 glm::vec3(vecGameObjects[index].positionXYZ.x,
-										   vecGameObjects[index].positionXYZ.y,
-										   vecGameObjects[index].positionXYZ.z));
+								 glm::vec3(objPtr->positionXYZ.x,
+										   objPtr->positionXYZ.y,
+										   objPtr->positionXYZ.z));
 			m = m * matTrans;
 			// ******* TRANSLATION TRANSFORM *********
 
@@ -261,18 +257,18 @@ int main(void)
 			// ******* ROTATION TRANSFORM *********
 			//mat4x4_rotate_Z(m, m, (float) glfwGetTime());
 			glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
-				vecGameObjects[index].rotationXYZ.z,					// Angle 
-				glm::vec3(0.0f, 0.0f, 1.0f));
+											objPtr->rotationXYZ.z,					// Angle
+											glm::vec3(0.0f, 0.0f, 1.0f));
 			m = m * rotateZ;
 
 			glm::mat4 rotateY = glm::rotate(glm::mat4(1.0f),
-				vecGameObjects[index].rotationXYZ.y,	//(float)glfwGetTime(),					// Angle 
-				glm::vec3(0.0f, 1.0f, 0.0f));
+											objPtr->rotationXYZ.y,	//(float)glfwGetTime(),					// Angle
+											glm::vec3(0.0f, 1.0f, 0.0f));
 			m = m * rotateY;
 
 			glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
-				vecGameObjects[index].rotationXYZ.x,	// (float)glfwGetTime(),					// Angle 
-				glm::vec3(1.0f, 0.0f, 0.0f));
+											objPtr->rotationXYZ.x,	// (float)glfwGetTime(),					// Angle
+											glm::vec3(1.0f, 0.0f, 0.0f));
 			m = m * rotateX;
 			// ******* ROTATION TRANSFORM *********
 
@@ -280,9 +276,9 @@ int main(void)
 
 			// ******* SCALE TRANSFORM *********
 			glm::mat4 scale = glm::scale(glm::mat4(1.0f),
-										 glm::vec3(vecGameObjects[index].scale, 
-												   vecGameObjects[index].scale,
-												   vecGameObjects[index].scale));
+										 glm::vec3(objPtr->scale,
+												   objPtr->scale,
+												   objPtr->scale));
 			m = m * scale;
 			// ******* SCALE TRANSFORM *********
 
@@ -296,13 +292,6 @@ int main(void)
 			GLint shaderProgID = scene->shaderProgID;
 			glUseProgram(shaderProgID);
 
-
-			//glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-			//glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
-
-			//uniform mat4 matModel;		// Model or World 
-			//uniform mat4 matView; 		// View or camera
-			//uniform mat4 matProj;
 			GLint matModel_UL = glGetUniformLocation(shaderProgID, "matModel");
 			GLint matView_UL = glGetUniformLocation(shaderProgID, "matView");
 			GLint matProj_UL = glGetUniformLocation(shaderProgID, "matProj");
@@ -317,20 +306,17 @@ int main(void)
 			GLint newColour_location = glGetUniformLocation(shaderProgID, "newColour");
 
 			glUniform3f(newColour_location, 
-						vecGameObjects[index].objectColourRGBA.r, 
-						vecGameObjects[index].objectColourRGBA.g,
-						vecGameObjects[index].objectColourRGBA.b);
+						objPtr->objectColourRGBA.r,
+						objPtr->objectColourRGBA.g,
+						objPtr->objectColourRGBA.b);
 
-			//uniform float newColourRed;
-			//uniform float newColourGreen;
-			//uniform float newColourBlue;
 			GLint newColourRed_UL = glGetUniformLocation(shaderProgID, "newColourRed");
 			GLint newColourGreen_UL = glGetUniformLocation(shaderProgID, "newColourGreen");
 			GLint newColourBlue_UL = glGetUniformLocation(shaderProgID, "newColourBlue");
 
-			glUniform1f(newColourRed_UL, vecGameObjects[index].objectColourRGBA.r);
-			glUniform1f(newColourGreen_UL, vecGameObjects[index].objectColourRGBA.g);
-			glUniform1f(newColourBlue_UL, vecGameObjects[index].objectColourRGBA.b);
+			glUniform1f(newColourRed_UL, objPtr->objectColourRGBA.r);
+			glUniform1f(newColourGreen_UL, objPtr->objectColourRGBA.g);
+			glUniform1f(newColourBlue_UL, objPtr->objectColourRGBA.b);
 
 
 			GLint lighPosition_UL = glGetUniformLocation( shaderProgID, "lightPosition");
@@ -348,13 +334,8 @@ int main(void)
 			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-
-	//		glDrawArrays(GL_TRIANGLES, 0, 2844);
-	//		glDrawArrays(GL_TRIANGLES, 0, numberOfVertsOnGPU);
-
 			sModelDrawInfo drawInfo;
-			//if (pTheVAOManager->FindDrawInfoByModelName("bunny", drawInfo))
-			if (scene->pVAOManager->FindDrawInfoByModelName(vecGameObjects[index].meshName, drawInfo))
+			if (scene->pVAOManager->FindDrawInfoByModelName(objPtr->meshName, drawInfo))
 			{
 				glBindVertexArray(drawInfo.VAO_ID);
 				glDrawElements(GL_TRIANGLES,

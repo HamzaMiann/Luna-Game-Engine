@@ -1,7 +1,5 @@
 #pragma once
 
-#include "cGameObject.h"
-#include <vector>
+class Scene;
 
-
-void PhysicsUpdate(std::vector<cGameObject>& vecGameObjects, float deltaTime);
+void PhysicsUpdate(Scene* scene, float deltaTime);

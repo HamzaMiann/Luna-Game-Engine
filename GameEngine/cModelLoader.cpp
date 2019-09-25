@@ -76,6 +76,7 @@ bool cModelLoader::LoadPlyModel(
 		sPlyVertexXYZ tempVertex;
 
 		theFile >> tempVertex.x >> tempVertex.y >> tempVertex.z;
+		theFile >> tempVertex.nx >> tempVertex.ny >> tempVertex.nz;
 
 		// Add this temp vertex to the vector of vertices
 		// (cMesh &theMesh)

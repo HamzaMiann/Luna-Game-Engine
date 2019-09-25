@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Scene name="Media Fundamentals Project 1">
   <Audio API="FMOD">
-    <Sound file="music_piano.mp3"
+    <Sound file="music_game.mp3"
            volume="100.0"
            pitch="1.0"
            pan="1.0"
@@ -19,6 +19,12 @@
            pan="1.0"
            streamed="true"
            friendlyName="bounce"/>
+    <Sound file="effect_ball_hit.wav"
+           volume="100.0"
+           pitch="1.0"
+           pan="1.0"
+           streamed="true"
+           friendlyName="ball"/>
   </Audio>
   
   <Shader>
@@ -27,9 +33,9 @@
   </Shader>
   
   <Models>
-    <Model file="sphere_XYZ.ply"
+    <Model file="sphere_XYZ_N.ply"
            friendlyName="sphere"/>
-    <Model file="cube_XYZ.ply"
+    <Model file="cube_XYZ_N.ply"
            friendlyName="cube"/>
   </Models>
   

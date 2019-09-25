@@ -8,6 +8,7 @@
 struct sPlyVertexXYZ
 {
 	float x, y, z;
+	float nx, ny, nz;
 };
 
 struct sPlyTriangle
