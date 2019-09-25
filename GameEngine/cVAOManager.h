@@ -60,6 +60,8 @@ public:
 	bool FindDrawInfoByModelName(std::string filename,
 								 sModelDrawInfo &drawInfo);
 
+	cMesh* FindMeshByModelName(std::string filename);
+
 	std::string getLastError(bool bAndClear = true);
 
 private:
@@ -68,6 +70,10 @@ private:
 		      sModelDrawInfo /* info needed to draw*/ >
 		m_map_ModelName_to_VAOID;
 
+	std::map<	std::string /*model name*/,
+				cMesh* /*reference to the drawn mesh for use in physics calculations*/
+			>
+		m_map_ModelName_to_cMesh;
 };
 
 #endif	// _cVAOManager_HG_

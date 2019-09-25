@@ -47,7 +47,7 @@ bool cVAOManager::LoadModelIntoVAO(
 	//  to the sModelDrawInfo& drawInfo...
 
 	drawInfo.numberOfVertices = theMesh.vecVertices.size();
-	// Allocate an array big enought
+	// Allocate an array big enough
 	drawInfo.pVertices = new sVertex[drawInfo.numberOfVertices];
 
 	// Copy the data from the vecVertices...
@@ -184,6 +184,7 @@ bool cVAOManager::LoadModelIntoVAO(
 
 	// Store the draw information into the map
 	this->m_map_ModelName_to_VAOID[ drawInfo.meshName ] = drawInfo;
+	this->m_map_ModelName_to_cMesh[ drawInfo.meshName ] = &theMesh;
 
 
 	return true;
@@ -212,3 +213,21 @@ bool cVAOManager::FindDrawInfoByModelName(
 	return true;
 }
 
+
+cMesh* cVAOManager::FindMeshByModelName(std::string filename)
+{
+	std::map< std::string /*model name*/,
+		cMesh* /* cMesh pointer */ >::iterator
+		itMesh = this->m_map_ModelName_to_cMesh.find(filename);
+
+	// Find it? 
+	if (itMesh == this->m_map_ModelName_to_cMesh.end())
+	{
+		// Nope
+		return nullptr;
+	}
+
+	// Else we found the thing to draw
+	// ...so 'return' that information
+	return (itMesh->second);
+}

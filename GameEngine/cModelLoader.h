@@ -2,7 +2,7 @@
 #define _cModelLoader_HG_2019_09_09_
 
 #include <string>	
-
+#include <vector>
 #include "cMesh.h"
 
 class cModelLoader
