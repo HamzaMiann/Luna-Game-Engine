@@ -21,6 +21,58 @@ struct Sphere
 int TestSphereTriangle(Sphere s, Point a, Point b, Point c, Point& p);
 
 
+void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3& closetPoint)
+{
+	for (unsigned int triIndex = 0;
+		 triIndex != terrainMesh.vecTriangles.size();
+		 triIndex++)
+	{
+		sPlyTriangle& curTriangle = terrainMesh.vecTriangles[triIndex];
+
+		// Get the vertices of the triangle
+		sPlyVertexXYZ_N triVert1 = terrainMesh.vecVertices[curTriangle.vert_index_1];
+		sPlyVertexXYZ_N triVert2 = terrainMesh.vecVertices[curTriangle.vert_index_2];
+		sPlyVertexXYZ_N triVert3 = terrainMesh.vecVertices[curTriangle.vert_index_3];
+
+		Point triVertPoint1;
+		triVertPoint1.x = triVert1.x;
+		triVertPoint1.y = triVert1.y;
+		triVertPoint1.z = triVert1.z;
+
+		Point triVertPoint2;
+		triVertPoint2.x = triVert2.x;
+		triVertPoint2.y = triVert2.y;
+		triVertPoint2.z = triVert2.z;
+
+		Point triVertPoint3;
+		triVertPoint3.x = triVert3.x;
+		triVertPoint3.y = triVert3.y;
+		triVertPoint3.z = triVert3.z;
+
+		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
+			pShpere->positionXYZ,
+			triVertPoint1, triVertPoint2, triVertPoint3);
+
+		// Is this the closest so far?
+		float distanceNow = glm::distance(curClosetPoint, pShpere->positionXYZ);
+
+		// is this closer than the closest distance
+		if (distanceNow <= closestDistanceSoFar)
+		{
+			closestDistanceSoFar = distanceNow;
+			closetPoint = curClosetPoint;
+		}
+
+		//glm::mat4 matModel = glm::mat4(1.0f);
+		//pDebugSphere->positionXYZ = closetPoint;
+		//DrawObject(matModel, pDebugSphere, 
+		//			   shaderProgID, pTheVAOManager);
+
+
+	}//for (unsigned int triIndex = 0;
+}
+
+
 void PhysicsUpdate(Scene* scene, float deltaTime)
 {
 	glm::vec3 gravity = glm::vec3(0.f, -9.8f, 0.f);
@@ -39,8 +91,28 @@ void PhysicsUpdate(Scene* scene, float deltaTime)
 		pObj->velocity += (pObj->acceleration * deltaTime);
 		pObj->velocity += (gravity * deltaTime);
 
-		float closestDistanceSoFar = FLT_MAX;
-		glm::vec3 closetPoint = glm::vec3(0.0f, 0.0f, 0.0f);
+		
+		for (int k = 0; k < scene->vecGameObjects.size(); ++k)
+		{
+			if (k != i && scene->vecGameObjects[k]->Collider != NONE)
+			{
+				cGameObject* colliderObject = scene->vecGameObjects[k];
+				switch (colliderObject->Collider)
+				{
+				case MESH:
+					float closestDistanceSoFar = FLT_MAX;
+					glm::vec3 closetPoint = glm::vec3(0.0f, 0.0f, 0.0f);
+					break;
+				case SPHERE:
+					break;
+				case CUBE:
+					break;
+				case NONE:
+				default:
+					break;
+				}
+			}
+		}
 
 		if ((pObj->positionXYZ.y + (pObj->velocity * deltaTime)).y <= 0.5f)
 		{
