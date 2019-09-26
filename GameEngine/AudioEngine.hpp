@@ -26,21 +26,37 @@ public:
 		friend class AudioEngine;
 		FMOD::Sound* _sound;
 		FMOD::Channel* _channel;
-		bool _isPlaying;
+		float _volume = 1.f;
+		float _pitch = 1.f;
+		float _pan = 0.f;
+		bool _paused = true;
 
 		Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init);
 	public:
 		~Sound();
+
+		float get_volume();
+		bool set_volume(float volume);
+
+		float get_pitch();
+		bool set_pitch(float pitch);
+
+		float get_pan();
+		bool set_pan(float pan);
+
+		bool reset_position();
 	};
 
 
 	void Init();
-	AudioEngine() {}
+	AudioEngine() { system = 0; status = FMOD_OK; }
 	~AudioEngine();
 
 	AUDIO_ID Create_Sound(std::string filename, std::string friendlyName);
 	void PlaySound(Sound* sound);
-	void PlaySound(int sound_id);
+	void PlaySound(AUDIO_ID sound_id);
 	void PlaySound(std::string friendlyName);
+	Sound* GetSound(AUDIO_ID sound_id);
+	Sound* GetSound(std::string friendlyName);
 	
 };

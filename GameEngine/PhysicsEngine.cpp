@@ -21,56 +21,56 @@ struct Sphere
 int TestSphereTriangle(Sphere s, Point a, Point b, Point c, Point& p);
 
 
-void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3& closetPoint)
-{
-	for (unsigned int triIndex = 0;
-		 triIndex != terrainMesh.vecTriangles.size();
-		 triIndex++)
-	{
-		sPlyTriangle& curTriangle = terrainMesh.vecTriangles[triIndex];
-
-		// Get the vertices of the triangle
-		sPlyVertexXYZ_N triVert1 = terrainMesh.vecVertices[curTriangle.vert_index_1];
-		sPlyVertexXYZ_N triVert2 = terrainMesh.vecVertices[curTriangle.vert_index_2];
-		sPlyVertexXYZ_N triVert3 = terrainMesh.vecVertices[curTriangle.vert_index_3];
-
-		Point triVertPoint1;
-		triVertPoint1.x = triVert1.x;
-		triVertPoint1.y = triVert1.y;
-		triVertPoint1.z = triVert1.z;
-
-		Point triVertPoint2;
-		triVertPoint2.x = triVert2.x;
-		triVertPoint2.y = triVert2.y;
-		triVertPoint2.z = triVert2.z;
-
-		Point triVertPoint3;
-		triVertPoint3.x = triVert3.x;
-		triVertPoint3.y = triVert3.y;
-		triVertPoint3.z = triVert3.z;
-
-		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
-			pShpere->positionXYZ,
-			triVertPoint1, triVertPoint2, triVertPoint3);
-
-		// Is this the closest so far?
-		float distanceNow = glm::distance(curClosetPoint, pShpere->positionXYZ);
-
-		// is this closer than the closest distance
-		if (distanceNow <= closestDistanceSoFar)
-		{
-			closestDistanceSoFar = distanceNow;
-			closetPoint = curClosetPoint;
-		}
-
-		//glm::mat4 matModel = glm::mat4(1.0f);
-		//pDebugSphere->positionXYZ = closetPoint;
-		//DrawObject(matModel, pDebugSphere, 
-		//			   shaderProgID, pTheVAOManager);
-
-
-	}//for (unsigned int triIndex = 0;
-}
+//void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3& closetPoint)
+//{
+//	for (unsigned int triIndex = 0;
+//		 triIndex != terrainMesh.vecTriangles.size();
+//		 triIndex++)
+//	{
+//		sPlyTriangle& curTriangle = terrainMesh.vecTriangles[triIndex];
+//
+//		// Get the vertices of the triangle
+//		sPlyVertexXYZ_N triVert1 = terrainMesh.vecVertices[curTriangle.vert_index_1];
+//		sPlyVertexXYZ_N triVert2 = terrainMesh.vecVertices[curTriangle.vert_index_2];
+//		sPlyVertexXYZ_N triVert3 = terrainMesh.vecVertices[curTriangle.vert_index_3];
+//
+//		Point triVertPoint1;
+//		triVertPoint1.x = triVert1.x;
+//		triVertPoint1.y = triVert1.y;
+//		triVertPoint1.z = triVert1.z;
+//
+//		Point triVertPoint2;
+//		triVertPoint2.x = triVert2.x;
+//		triVertPoint2.y = triVert2.y;
+//		triVertPoint2.z = triVert2.z;
+//
+//		Point triVertPoint3;
+//		triVertPoint3.x = triVert3.x;
+//		triVertPoint3.y = triVert3.y;
+//		triVertPoint3.z = triVert3.z;
+//
+//		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
+//			pShpere->positionXYZ,
+//			triVertPoint1, triVertPoint2, triVertPoint3);
+//
+//		// Is this the closest so far?
+//		float distanceNow = glm::distance(curClosetPoint, pShpere->positionXYZ);
+//
+//		// is this closer than the closest distance
+//		if (distanceNow <= closestDistanceSoFar)
+//		{
+//			closestDistanceSoFar = distanceNow;
+//			closetPoint = curClosetPoint;
+//		}
+//
+//		//glm::mat4 matModel = glm::mat4(1.0f);
+//		//pDebugSphere->positionXYZ = closetPoint;
+//		//DrawObject(matModel, pDebugSphere, 
+//		//			   shaderProgID, pTheVAOManager);
+//
+//
+//	}//for (unsigned int triIndex = 0;
+//}
 
 
 void PhysicsUpdate(Scene* scene, float deltaTime)
@@ -100,10 +100,23 @@ void PhysicsUpdate(Scene* scene, float deltaTime)
 				switch (colliderObject->Collider)
 				{
 				case MESH:
-					float closestDistanceSoFar = FLT_MAX;
-					glm::vec3 closetPoint = glm::vec3(0.0f, 0.0f, 0.0f);
+					//float closestDistanceSoFar = FLT_MAX;
+					//glm::vec3 closetPoint = glm::vec3(0.0f, 0.0f, 0.0f);
 					break;
 				case SPHERE:
+					if (pObj->Collider == SPHERE)
+					{
+						float distance = glm::distance(pObj->positionXYZ, colliderObject->positionXYZ);
+						distance -= (pObj->scale + colliderObject->scale);
+						if (distance <= 0.1f)
+						{
+							//pObj->acceleration = (pObj->acceleration) * -1.f;
+							//colliderObject->acceleration = (colliderObject->acceleration) * -1.f;
+
+							pObj->velocity = (pObj->velocity) * -1.f;
+							colliderObject->velocity = (colliderObject->velocity) * -1.f;
+						}
+					}
 					break;
 				case CUBE:
 					break;
@@ -129,7 +142,7 @@ void PhysicsUpdate(Scene* scene, float deltaTime)
 			pObj->velocity.y = pObj->velocity.y * -1.f * friction;
 			pObj->velocity.x = pObj->velocity.x * drag;
 			pObj->velocity.z = pObj->velocity.z * drag;
-			if (shouldPlaySound && scene->pAudioEngine)
+			if (shouldPlaySound)
 			{
 				scene->pAudioEngine->PlaySound("ball");
 			}

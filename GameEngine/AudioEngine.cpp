@@ -56,6 +56,9 @@ AUDIO_ID AudioEngine::Create_Sound(std::string filename, std::string friendlyNam
 	status = system->createSound(fullPath.c_str(), FMOD_CREATESTREAM, 0, &sound);
 	exit_on_failure(status);
 	AudioEngine::Sound* newSound = new AudioEngine::Sound(channel, sound);
+	status = system->playSound(newSound->_sound, FMOD_DEFAULT, true, &(newSound->_channel));
+	newSound->_paused = true;
+	exit_on_failure(status);
 	Sounds.push_back(newSound);
 	SoundNames.push_back(friendlyName);
 	return this->Sounds.size() - 1;
@@ -65,7 +68,10 @@ AudioEngine::Sound::Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init
 {
 	this->_channel = _channel_init;
 	this->_sound = _sound_init;
-	this->_isPlaying = false;
+	this->_paused = true;
+	set_pitch(this->_pitch);
+	set_volume(this->_volume);
+	set_pan(this->_pan);
 }
 
 AudioEngine::Sound::~Sound()
@@ -79,17 +85,35 @@ AudioEngine::Sound::~Sound()
 
 void AudioEngine::PlaySound(Sound* sound)
 {
-	sound->_isPlaying = true;
-	FMOD_RESULT status = system->playSound(sound->_sound, FMOD_DEFAULT, false, &(sound->_channel));
-	exit_on_failure(status);
+	if (sound->_channel)
+	{
+		sound->reset_position();
+		status = sound->_channel->getPaused(&sound->_paused);
+		exit_on_failure(status);
+		if (sound->_paused)
+		{
+			status = sound->_channel->setPaused(!sound->_paused);
+			exit_on_failure(status);
+			sound->_paused = false;
+		}
+	}
 }
 
 void AudioEngine::PlaySound(int sound_id)
 {
 	AudioEngine::Sound* sound = Sounds[sound_id];
-	sound->_isPlaying = true;
-	FMOD_RESULT status = system->playSound(sound->_sound, FMOD_DEFAULT, false, &(sound->_channel));
-	exit_on_failure(status);
+	if (sound->_channel)
+	{
+		sound->reset_position();
+		status = sound->_channel->getPaused(&sound->_paused);
+		exit_on_failure(status);
+		if (sound->_paused)
+		{
+			status = sound->_channel->setPaused(!sound->_paused);
+			exit_on_failure(status);
+			sound->_paused = false;
+		}
+	}
 }
 
 void AudioEngine::PlaySound(std::string friendlyName)
@@ -99,9 +123,95 @@ void AudioEngine::PlaySound(std::string friendlyName)
 		if (SoundNames[i] == friendlyName)
 		{
 			AudioEngine::Sound* sound = Sounds[i];
-			sound->_isPlaying = true;
-			FMOD_RESULT status = system->playSound(sound->_sound, FMOD_DEFAULT, false, &(sound->_channel));
-			exit_on_failure(status);
+			if (sound->_channel)
+			{
+				sound->reset_position();
+				status = sound->_channel->getPaused(&sound->_paused);
+				exit_on_failure(status);
+				if (sound->_paused)
+				{
+					status = sound->_channel->setPaused(!sound->_paused);
+					exit_on_failure(status);
+					sound->_paused = false;
+				}
+			}
 		}
 	}
+}
+
+AudioEngine::Sound* AudioEngine::GetSound(AUDIO_ID sound_id)
+{
+	if (sound_id < 0 && sound_id >= this->Sounds.size()) return nullptr;
+	return this->Sounds[sound_id];
+}
+
+AudioEngine::Sound* AudioEngine::GetSound(std::string friendlyName)
+{
+	for (int i = 0; i < SoundNames.size(); ++i)
+	{
+		if (SoundNames[i] == friendlyName)
+			return Sounds[i];
+	}
+	return nullptr;
+}
+
+
+float AudioEngine::Sound::get_volume()
+{
+	return _volume;
+}
+bool AudioEngine::Sound::set_volume(float volume)
+{
+	if (volume < 1.0f && volume > 0.f && this->_channel)
+	{
+		FMOD_RESULT status = _channel->setVolume(volume);
+		exit_on_failure(status);
+		_volume = volume;
+		return true;
+	}
+	return false;
+}
+
+
+float AudioEngine::Sound::get_pitch()
+{
+	return _pitch;
+}
+bool AudioEngine::Sound::set_pitch(float pitch)
+{
+	if (pitch <= 2.0f && pitch > 0.01f && this->_channel)
+	{
+		FMOD_RESULT status = _channel->setPitch(pitch);
+		exit_on_failure(status);
+		_pitch = pitch;
+		return true;
+	}
+	return false;
+}
+
+float AudioEngine::Sound::get_pan()
+{
+	return _pan;
+}
+bool AudioEngine::Sound::set_pan(float pan)
+{
+	if (pan <= 1.0f && pan >= -1.f && this->_channel)
+	{
+		FMOD_RESULT status = _channel->setPan(pan);
+		exit_on_failure(status);
+		_pan = pan;
+		return true;
+	}
+	return false;
+}
+
+bool AudioEngine::Sound::reset_position()
+{
+	if (this->_channel)
+	{
+		FMOD_RESULT status = _channel->setPosition(0, FMOD_TIMEUNIT_MS);
+		exit_on_failure(status);
+		return true;
+	}
+	return false;
 }

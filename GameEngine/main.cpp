@@ -148,7 +148,7 @@ int main(void)
 	cGameObject sphere;
 	sphere.meshName = "sphere";
 	sphere.Collider = SPHERE;
-	sphere.positionXYZ = glm::vec3(0.0f, 5.0f, 0.0f);
+	sphere.positionXYZ = glm::vec3(0.0f, 3.0f, 0.0f);
 	sphere.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
 	sphere.scale = .5f;
 	sphere.objectColourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -157,6 +157,14 @@ int main(void)
 	sphere.velocity = glm::vec3(-0.1f, 0.f, 0.f);
 	sphere.acceleration = glm::vec3(0.f);
 	sphere.inverseMass = 1.f;
+
+	cGameObject sphere2;
+	sphere2.meshName = "sphere";
+	sphere2.Collider = SPHERE;
+	sphere2.positionXYZ = glm::vec3(0.0f, 1.0f, 0.0f);
+	sphere2.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
+	sphere2.scale = .5f;
+	sphere2.objectColourRGBA = glm::vec4(.9f, .9f, .9f, 1.0f);
 
 	cGameObject cube;
 	cube.meshName = "cube";
@@ -174,6 +182,7 @@ int main(void)
 
 	scene->vecGameObjects.push_back(&cube);
 	scene->vecGameObjects.push_back(&sphere);
+	scene->vecGameObjects.push_back(&sphere2);
 
 	//mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
@@ -186,8 +195,11 @@ int main(void)
 
 	// Initialize audio engine
 	
+
 	scene->pAudioEngine->PlaySound("music");
 	scene->pAudioEngine->PlaySound("rain");
+
+	scene->pAudioEngine->GetSound("rain")->set_pan(-1.f);
 
 	float current_time = 0.f;
 	float previous_time = 0.f;
