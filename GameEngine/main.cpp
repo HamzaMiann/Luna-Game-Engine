@@ -113,6 +113,8 @@ static void HandleInput(GLFWwindow* window)
 	{
 		scene->vecGameObjects[1]->velocity += leftVector * 0.01f;
 	}
+
+	glfwSetWindowTitle(window, u8"This is always a UTF-8 string");
 	
 }
 
