@@ -6,7 +6,7 @@
            pitch="1.0"
            pan="1.0"
            streamed="true"
-           friendlyName="music"/>
+           friendlyName="music2"/>
     <Sound file="effect_rain.mp3"
            volume="100.0"
            pitch="1.0"
@@ -35,8 +35,10 @@
   <Models>
     <Model file="sphere_XYZ_N.ply"
            friendlyName="sphere"/>
-    <Model file="cube_XYZ_N.ply"
+    <Model file="plane_XYZ_N.ply"
            friendlyName="cube"/>
+    <!--<Model file="Terrain_XYZ_N.ply"
+           friendlyName="terrain"/>-->
   </Models>
   
 </Scene>

@@ -22,6 +22,8 @@
 Scene* scene;
 GLFWwindow* window;
 
+void DrawObject(cGameObject* objPtr, float ratio);
+
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -148,9 +150,9 @@ int main(void)
 	cGameObject sphere;
 	sphere.meshName = "sphere";
 	sphere.Collider = SPHERE;
-	sphere.positionXYZ = glm::vec3(0.0f, 3.0f, 0.0f);
+	sphere.positionXYZ = glm::vec3(0.0f, 6.0f, 0.0f);
 	sphere.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	sphere.scale = .5f;
+	sphere.scale = 0.5f;
 	sphere.objectColourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Set the sphere's initial velocity, etc.
@@ -158,33 +160,28 @@ int main(void)
 	sphere.acceleration = glm::vec3(0.f);
 	sphere.inverseMass = 1.f;
 
-	cGameObject sphere2;
-	sphere2.meshName = "sphere";
-	sphere2.Collider = SPHERE;
-	sphere2.positionXYZ = glm::vec3(0.0f, 1.0f, 0.0f);
-	sphere2.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	sphere2.scale = .5f;
-	sphere2.objectColourRGBA = glm::vec4(.9f, .9f, .9f, 1.0f);
+	cGameObject debugSphere;
+	debugSphere.meshName = "sphere";
+	debugSphere.Collider = SPHERE;
+	debugSphere.positionXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
+	debugSphere.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
+	debugSphere.scale = .2f;
+	debugSphere.objectColourRGBA = glm::vec4(0.f, 1.f, 0.f, 1.0f);
 
 	cGameObject cube;
 	cube.meshName = "cube";
 	cube.Collider = MESH;
 	cube.positionXYZ = glm::vec3(0.0f, -0.5f, 0.0f);
 	cube.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	cube.scale = .5f;
+	cube.scale = 10.f;
 	cube.objectColourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	// Set the cube's initial velocity, etc.
 	cube.inverseMass = 0.f;	// does not move
 
 
-
-
 	scene->vecGameObjects.push_back(&cube);
 	scene->vecGameObjects.push_back(&sphere);
-	scene->vecGameObjects.push_back(&sphere2);
-
-	//mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
@@ -195,14 +192,15 @@ int main(void)
 
 	// Initialize audio engine
 	
-
 	scene->pAudioEngine->PlaySound("music");
 	scene->pAudioEngine->PlaySound("rain");
 
-	scene->pAudioEngine->GetSound("rain")->set_pan(-1.f);
 
-	float current_time = 0.f;
-	float previous_time = 0.f;
+	PhysicsEngine phys;
+
+
+	float current_time = (float)glfwGetTime();
+	float previous_time = (float)glfwGetTime();
 	float delta_time = 0.f;
 
 	while (!glfwWindowShouldClose(window))
@@ -242,7 +240,8 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		// Update the objects' physics
-		PhysicsUpdate(scene, delta_time);
+		phys.CheckCollisions(scene);
+		phys.IntegrationStep(scene, /*delta_time*/delta_time);
 
 		// **************************************************
 		// **************************************************
@@ -250,114 +249,19 @@ int main(void)
 		for (int index = 0; index != scene->vecGameObjects.size(); index++)
 		{
 			cGameObject* objPtr = scene->vecGameObjects[index];
-			//         mat4x4_identity(m);
-			m = glm::mat4(1.0f);
-
-
-
-			// ******* TRANSLATION TRANSFORM *********
-			glm::mat4 matTrans 
-				= glm::translate(glm::mat4(1.0f),
-								 glm::vec3(objPtr->positionXYZ.x,
-										   objPtr->positionXYZ.y,
-										   objPtr->positionXYZ.z));
-			m = m * matTrans;
-			// ******* TRANSLATION TRANSFORM *********
-
-
-
-			// ******* ROTATION TRANSFORM *********
-			//mat4x4_rotate_Z(m, m, (float) glfwGetTime());
-			glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
-											objPtr->rotationXYZ.z,					// Angle
-											glm::vec3(0.0f, 0.0f, 1.0f));
-			m = m * rotateZ;
-
-			glm::mat4 rotateY = glm::rotate(glm::mat4(1.0f),
-											objPtr->rotationXYZ.y,	//(float)glfwGetTime(),					// Angle
-											glm::vec3(0.0f, 1.0f, 0.0f));
-			m = m * rotateY;
-
-			glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
-											objPtr->rotationXYZ.x,	// (float)glfwGetTime(),					// Angle
-											glm::vec3(1.0f, 0.0f, 0.0f));
-			m = m * rotateX;
-			// ******* ROTATION TRANSFORM *********
-
-
-
-			// ******* SCALE TRANSFORM *********
-			glm::mat4 scale = glm::scale(glm::mat4(1.0f),
-										 glm::vec3(objPtr->scale,
-												   objPtr->scale,
-												   objPtr->scale));
-			m = m * scale;
-			// ******* SCALE TRANSFORM *********
-
-
-
-			//mat4x4_mul(mvp, p, m);
-			mvp = p * v * m;
-
-			// Choose which shader to use
-			//glUseProgram(program);
-			GLint shaderProgID = scene->shaderProgID;
-			glUseProgram(shaderProgID);
-
-			GLint matModel_UL = glGetUniformLocation(shaderProgID, "matModel");
-			GLint matView_UL = glGetUniformLocation(shaderProgID, "matView");
-			GLint matProj_UL = glGetUniformLocation(shaderProgID, "matProj");
-	
-			glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m) );
-			glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v) );
-			glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p) );
-
-
-
-			// Find the location of the uniform variable newColour
-			GLint newColour_location = glGetUniformLocation(shaderProgID, "newColour");
-
-			glUniform3f(newColour_location, 
-						objPtr->objectColourRGBA.r,
-						objPtr->objectColourRGBA.g,
-						objPtr->objectColourRGBA.b);
-
-			GLint newColourRed_UL = glGetUniformLocation(shaderProgID, "newColourRed");
-			GLint newColourGreen_UL = glGetUniformLocation(shaderProgID, "newColourGreen");
-			GLint newColourBlue_UL = glGetUniformLocation(shaderProgID, "newColourBlue");
-
-			glUniform1f(newColourRed_UL, objPtr->objectColourRGBA.r);
-			glUniform1f(newColourGreen_UL, objPtr->objectColourRGBA.g);
-			glUniform1f(newColourBlue_UL, objPtr->objectColourRGBA.b);
-
-
-			GLint lighPosition_UL = glGetUniformLocation( shaderProgID, "lightPosition");
-			glUniform3f(lighPosition_UL,
-						scene->LightLocation.x,
-						scene->LightLocation.y,
-						scene->LightLocation.z );
-
-
-
-			// This will change the fill mode to something 
-			//  GL_FILL is solid 
-			//  GL_LINE is "wireframe"
-			//glPointSize(15.0f);
-			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-			sModelDrawInfo drawInfo;
-			if (scene->pVAOManager->FindDrawInfoByModelName(objPtr->meshName, drawInfo))
-			{
-				glBindVertexArray(drawInfo.VAO_ID);
-				glDrawElements(GL_TRIANGLES,
-							   drawInfo.numberOfIndices,
-							   GL_UNSIGNED_INT,
-							   0);			
-				glBindVertexArray(0);
-			}
+			
+			DrawObject(objPtr, ratio);
 
 		}//for (int index...
+
+		float closestDistanceSoFar = FLT_MAX;
+		glm::vec3 closestPoint = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		//FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, scene->vecGameObjects[0], scene->vecGameObjects[1]);
+
+		//debugSphere.positionXYZ = closestPoint;
+		//DrawObject(&debugSphere, ratio);
 
 		 // **************************************************
 		// **************************************************
@@ -376,4 +280,133 @@ int main(void)
 	delete scene;
 
 	exit(EXIT_SUCCESS);
+}
+
+
+
+
+void DrawObject(cGameObject* objPtr, float ratio)
+{
+	glm::mat4 m, p, v, mvp;
+
+	// Projection matrix
+	p = glm::perspective(0.6f,		// FOV
+						 ratio,			// Aspect ratio
+						 0.1f,			// Near clipping plane
+						 1000.0f);		// Far clipping plane
+
+	// View matrix
+	v = glm::mat4(1.0f);
+
+	v = glm::lookAt(scene->cameraEye,
+					scene->cameraTarget,
+					scene->upVector);
+
+	//cGameObject* objPtr = scene->vecGameObjects[index];
+	//         mat4x4_identity(m);
+	m = glm::mat4(1.0f);
+
+
+
+	// ******* TRANSLATION TRANSFORM *********
+	glm::mat4 matTrans
+		= glm::translate(glm::mat4(1.0f),
+						 glm::vec3(objPtr->positionXYZ.x,
+								   objPtr->positionXYZ.y,
+								   objPtr->positionXYZ.z));
+	m = m * matTrans;
+	// ******* TRANSLATION TRANSFORM *********
+
+
+
+	// ******* ROTATION TRANSFORM *********
+	//mat4x4_rotate_Z(m, m, (float) glfwGetTime());
+	glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
+									objPtr->rotationXYZ.z,					// Angle
+									glm::vec3(0.0f, 0.0f, 1.0f));
+	m = m * rotateZ;
+
+	glm::mat4 rotateY = glm::rotate(glm::mat4(1.0f),
+									objPtr->rotationXYZ.y,	//(float)glfwGetTime(),					// Angle
+									glm::vec3(0.0f, 1.0f, 0.0f));
+	m = m * rotateY;
+
+	glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
+									objPtr->rotationXYZ.x,	// (float)glfwGetTime(),					// Angle
+									glm::vec3(1.0f, 0.0f, 0.0f));
+	m = m * rotateX;
+	// ******* ROTATION TRANSFORM *********
+
+
+
+	// ******* SCALE TRANSFORM *********
+	glm::mat4 scale = glm::scale(glm::mat4(1.0f),
+								 glm::vec3(objPtr->scale,
+										   objPtr->scale,
+										   objPtr->scale));
+	m = m * scale;
+	// ******* SCALE TRANSFORM *********
+
+
+
+	//mat4x4_mul(mvp, p, m);
+	mvp = p * v * m;
+
+	// Choose which shader to use
+	//glUseProgram(program);
+	GLint shaderProgID = scene->shaderProgID;
+	glUseProgram(shaderProgID);
+
+	GLint matModel_UL = glGetUniformLocation(shaderProgID, "matModel");
+	GLint matView_UL = glGetUniformLocation(shaderProgID, "matView");
+	GLint matProj_UL = glGetUniformLocation(shaderProgID, "matProj");
+
+	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m));
+	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
+	glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p));
+
+
+
+	// Find the location of the uniform variable newColour
+	GLint newColour_location = glGetUniformLocation(shaderProgID, "newColour");
+
+	glUniform3f(newColour_location,
+				objPtr->objectColourRGBA.r,
+				objPtr->objectColourRGBA.g,
+				objPtr->objectColourRGBA.b);
+
+	GLint newColourRed_UL = glGetUniformLocation(shaderProgID, "newColourRed");
+	GLint newColourGreen_UL = glGetUniformLocation(shaderProgID, "newColourGreen");
+	GLint newColourBlue_UL = glGetUniformLocation(shaderProgID, "newColourBlue");
+
+	glUniform1f(newColourRed_UL, objPtr->objectColourRGBA.r);
+	glUniform1f(newColourGreen_UL, objPtr->objectColourRGBA.g);
+	glUniform1f(newColourBlue_UL, objPtr->objectColourRGBA.b);
+
+
+	GLint lighPosition_UL = glGetUniformLocation(shaderProgID, "lightPosition");
+	glUniform3f(lighPosition_UL,
+				scene->LightLocation.x,
+				scene->LightLocation.y,
+				scene->LightLocation.z);
+
+
+
+	// This will change the fill mode to something 
+	//  GL_FILL is solid 
+	//  GL_LINE is "wireframe"
+	//glPointSize(15.0f);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	sModelDrawInfo drawInfo;
+	if (scene->pVAOManager->FindDrawInfoByModelName(objPtr->meshName, drawInfo))
+	{
+		glBindVertexArray(drawInfo.VAO_ID);
+		glDrawElements(GL_TRIANGLES,
+					   drawInfo.numberOfIndices,
+					   GL_UNSIGNED_INT,
+					   0);
+		glBindVertexArray(0);
+	}
 }

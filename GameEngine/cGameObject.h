@@ -33,6 +33,7 @@ public:
 	float inverseMass = 1.f;	// 0.0f = infinite mass (Doesn't move)
 
 	ColliderType Collider = ColliderType::NONE;
+	bool isCollided = false;
 
 	virtual void UpdateLogic(Scene* scene) {}
 };

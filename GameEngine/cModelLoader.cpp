@@ -5,13 +5,13 @@
 
 cModelLoader::cModelLoader()			// constructor
 {
-	std::cout << "A cModelLoader() is created!" << std::endl;
+	//std::cout << "A cModelLoader() is created!" << std::endl;
 	return;
 }
 
 cModelLoader::~cModelLoader()			// destructor
 {
-	std::cout << "A cModelLoader() is destroyed. How sad." << std::endl;
+	//std::cout << "A cModelLoader() is destroyed. How sad." << std::endl;
 	return;
 }
 

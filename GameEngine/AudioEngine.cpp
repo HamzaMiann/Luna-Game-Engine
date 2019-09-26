@@ -53,7 +53,7 @@ AUDIO_ID AudioEngine::Create_Sound(std::string filename, std::string friendlyNam
 	// create a sound using our system object
 	FMOD::Sound* sound = 0;
 	FMOD::Channel* channel = 0;
-	status = system->createSound(fullPath.c_str(), FMOD_CREATESTREAM, 0, &sound);
+	status = system->createSound(fullPath.c_str(), FMOD_DEFAULT /*FMOD_CREATESTREAM*/, 0, &sound);
 	exit_on_failure(status);
 	AudioEngine::Sound* newSound = new AudioEngine::Sound(channel, sound);
 	status = system->playSound(newSound->_sound, FMOD_DEFAULT, true, &(newSound->_channel));
@@ -162,7 +162,7 @@ float AudioEngine::Sound::get_volume()
 }
 bool AudioEngine::Sound::set_volume(float volume)
 {
-	if (volume < 1.0f && volume > 0.f && this->_channel)
+	if (volume <= 1.0f && volume > 0.f && this->_channel)
 	{
 		FMOD_RESULT status = _channel->setVolume(volume);
 		exit_on_failure(status);

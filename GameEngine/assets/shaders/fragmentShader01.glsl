@@ -23,18 +23,18 @@ void main()
    
    float atten = 1.0f / ( linearAtten * dist );
    
-   if (atten > .9f)
-	atten = 1.f;
-   else if (atten > .7f)
-	atten = .7f;
-   else if (atten > .5f)
-	atten = .5f;
-   else if (atten > .3f)
-	atten = .3f;
-   else if (atten > .1f)
-	atten = .1f;
-   else if (atten > .0f)
-	atten = 0.f;
+//   if (atten > .9f)
+//	atten = 1.f;
+//   else if (atten > .7f)
+//	atten = .7f;
+//   else if (atten > .5f)
+//	atten = .5f;
+//   else if (atten > .3f)
+//	atten = .3f;
+//   else if (atten > .1f)
+//	atten = .1f;
+//   else if (atten > .0f)
+//	atten = 0.f;
 	
 	gl_FragColor = vec4(newColourRed,
 						newColourGreen, 
