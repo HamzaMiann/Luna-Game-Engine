@@ -7,9 +7,11 @@ uniform mat4 matProj;		// Projection transform
 
 in vec3 vColour;
 in vec3 vPosition;
+in vec4 vNormal;
 
 out vec3 color;
 out vec4 vertWorld;			// Location of the vertex in the world
+out vec4 vVertNormal;
 
 void main()
 {
@@ -23,4 +25,5 @@ void main()
 	vertWorld = matModel * vec4(vertPosition, 1.0);		
 	
     color = vColour;
+	vVertNormal = vNormal;
 }

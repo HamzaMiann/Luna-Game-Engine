@@ -91,7 +91,7 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 		pObj->velocity *= 1.f - (drag * deltaTime);
 
 		float speed = pObj->velocity.y;
-		printf("%f\n", speed);
+		//printf("%f\n", speed);
 
 		if (pObj->isCollided)
 		{

@@ -31,6 +31,7 @@ public:
 		float _pan = 0.f;
 		float _frequency = 0.f;
 		bool _paused = true;
+		bool _streamed = false;
 
 		Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init);
 	public:
@@ -49,7 +50,17 @@ public:
 		bool set_frequency(float frequency);
 
 		unsigned int get_position();
+		unsigned int get_size();
 		bool reset_position();
+
+		void toggle_pause();
+		bool is_paused();
+
+		bool is_streamed();
+
+		std::string get_name();
+		std::string get_format();
+		std::string get_type();
 	};
 
 
@@ -61,7 +72,7 @@ public:
 	std::size_t Num_Sounds() { return this->SoundNames.size(); }
 	std::string Get_Name(int i) { return this->SoundNames[i]; }
 
-	AUDIO_ID Create_Sound(std::string filename, std::string friendlyName);
+	AUDIO_ID Create_Sound(std::string filename, std::string friendlyName, bool streamed = false);
 	void PlaySound(Sound* sound);
 	void PlaySound(AUDIO_ID sound_id);
 	void PlaySound(std::string friendlyName);

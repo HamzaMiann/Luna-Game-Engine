@@ -26,6 +26,8 @@ GLFWwindow* window;
 
 AUDIO_ID current_sound_id = 0;
 
+glm::vec3 originalBallPosition = glm::vec3(0.0f, 6.0f, 0.0f);
+
 void DrawObject(cGameObject* objPtr, float ratio);
 
 
@@ -33,13 +35,18 @@ static std::string get_sound_details(AudioEngine::Sound* sound, std::string frie
 {
 	std::ostringstream ss;
 
-	ss << '[' << friendlyName << "] ";
+	ss << '[' << sound->get_name() << "] ";
 	unsigned int seconds = sound->get_position() / 1000;
 	unsigned int minutes = seconds / 60;
 	unsigned int sec = seconds - (minutes * 60);
-	ss << "Position(" << minutes << ":" << sec << ") ";
-	ss << "Volume(" << sound->get_volume() << ") ";
-	ss << "Pitch(" << sound->get_pitch() << ") ";
+	unsigned int size = sound->get_size() / 1000;
+	unsigned int size_minutes = size / 60;
+	unsigned int size_sec = size - (size_minutes * 60);
+	ss << "format(" << sound->get_format() << ") ";
+	ss << "type(" << sound->get_type() << ") ";
+	ss << "[" << minutes << ":" << sec << " / " << size_minutes << ":" << size_sec << "] ";
+	ss << "Vol(" << sound->get_volume() << ") ";
+	ss << "Fq(" << sound->get_frequency() << ") ";
 	ss << "Pan(" << sound->get_pan() << ") ";
 
 	return ss.str();
@@ -57,6 +64,13 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		scene->pAudioEngine->PlaySound("bounce");
 	}
 
+	if (key == GLFW_KEY_R && action == GLFW_PRESS)
+	{
+		scene->vecGameObjects[1]->positionXYZ = originalBallPosition;
+		scene->vecGameObjects[1]->velocity = glm::vec3(0.f);
+		scene->pAudioEngine->PlaySound("respawn");
+	}
+
 	if (scene->pAudioEngine && scene->pAudioEngine->Num_Sounds() > 0)
 	{
 		int max = scene->pAudioEngine->Num_Sounds();
@@ -65,8 +79,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			current_sound_id++;
 			if (current_sound_id >= max) current_sound_id = 0;
-			
-			//glfwSetWindowTitle(window, u8"This is always a UTF-8 string");
 		}
 		
 	}
@@ -84,6 +96,36 @@ static void HandleInput(GLFWwindow* window)
 	glm::vec3 backwardsVector = Mathf::get_reverse_direction_vector(scene->cameraEye, scene->cameraTarget);
 	glm::vec3 rightVector = Mathf::get_rotated_vector(-90.f, glm::vec3(0.f), forwardVector);
 	glm::vec3 leftVector = Mathf::get_rotated_vector(90.f, glm::vec3(0.f), forwardVector);
+
+	if (scene->pAudioEngine && scene->pAudioEngine->Num_Sounds() > 0)
+	{
+		AudioEngine::Sound* current_sound = scene->pAudioEngine->GetSound(current_sound_id);
+		if (glfwGetKey(window, GLFW_KEY_1))
+		{
+			current_sound->set_volume(current_sound->get_volume() - 0.01f);
+		}
+		if (glfwGetKey(window, GLFW_KEY_2))
+		{
+			current_sound->set_volume(current_sound->get_volume() + 0.01f);
+		}
+		if (glfwGetKey(window, GLFW_KEY_3))
+		{
+			current_sound->set_pitch(current_sound->get_pitch() - 0.01f);
+		}
+		if (glfwGetKey(window, GLFW_KEY_4))
+		{
+			current_sound->set_pitch(current_sound->get_pitch() + 0.01f);
+		}
+		if (glfwGetKey(window, GLFW_KEY_5))
+		{
+			current_sound->set_pan(current_sound->get_pan() - 0.01f);
+		}
+		if (glfwGetKey(window, GLFW_KEY_6))
+		{
+			current_sound->set_pan(current_sound->get_pan() + 0.01f);
+		}
+
+	}
 
 	// Move the camera (A & D for left and right, along the x axis)
 	if (glfwGetKey(window, GLFW_KEY_A))
@@ -185,7 +227,7 @@ int main(void)
 	cGameObject sphere;
 	sphere.meshName = "sphere";
 	sphere.Collider = SPHERE;
-	sphere.positionXYZ = glm::vec3(0.0f, 6.0f, 0.0f);
+	sphere.positionXYZ = originalBallPosition;
 	sphere.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
 	sphere.scale = 0.5f;
 	sphere.objectColourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

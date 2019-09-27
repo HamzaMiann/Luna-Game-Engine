@@ -2,9 +2,10 @@
 
 in vec3 color;
 in vec4 vertWorld;
+in vec4 vVertNormal;
 
 // Get rid of this
-uniform vec3 newColour;
+uniform vec4 newColour;
 // Make the shader use these:
 uniform float newColourRed;
 uniform float newColourGreen;
@@ -45,4 +46,5 @@ void main()
 						1.0 );
 	
 	gl_FragColor *= atten;
+
 }
