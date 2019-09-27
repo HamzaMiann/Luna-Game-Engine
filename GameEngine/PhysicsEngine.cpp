@@ -90,14 +90,25 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 		pObj->velocity += (Gravity * deltaTime);
 		pObj->velocity *= 1.f - (drag * deltaTime);
 
+		float speed = pObj->velocity.y;
+		printf("%f\n", speed);
+
 		if (pObj->isCollided)
 		{
-			float speed = glm::distance(pObj->velocity, glm::vec3(0.f));
-			if (speed <= 0.5f) pObj->velocity *= friction;
-			if (speed <= 0.4f) pObj->velocity *= friction;
-			if (speed <= 0.2f)
+			// glm::distance(pObj->velocity, glm::vec3(0.f));
+			if (speed <= 0.5f)
 			{
-				pObj->velocity = glm::vec3(0.f);
+				pObj->velocity.y *= friction;
+			}
+			if (speed <= 0.4f)
+			{
+				pObj->velocity.y *= friction;
+			}
+			if (speed <= 0.25f)
+			{
+				pObj->velocity.y = 0.f;//glm::vec3(0.f);
+				//pObj->velocity.x *= friction;
+				//pObj->velocity.z *= friction;
 			}
 		}
 
@@ -117,7 +128,7 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 		}*/
 		pObj->positionXYZ += (pObj->velocity * deltaTime);
 
-		
+		pObj->isCollided = false;
 
 		// Test to see if it's hit the cube
 
@@ -170,14 +181,14 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 					
 					if (abs(closestDistanceSoFar) <= 0.1f)
 					{
-						printf("%f\n", glm::dot(pObj->velocity, normal));
+						//printf("%f\n", glm::dot(pObj->velocity, normal));
 						if (glm::dot(pObj->velocity, normal) > 0)
 							break;
 						//if (closestDistanceSoFar < 0) pObj->positionXYZ = closestPoint;
 						if (!pObj->isCollided)
 						{
 							pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
-							pObj->isCollided = true;
+							pObj->isCollided |= true;
 							AudioEngine::Sound* sound = scene->pAudioEngine->GetSound("ball");
 							if (sound)
 							{
@@ -190,7 +201,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 					}
 					else
 					{
-						pObj->isCollided = false;
+						pObj->isCollided |= false;
 					}
 
 					break;

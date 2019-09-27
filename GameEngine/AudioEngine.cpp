@@ -205,6 +205,38 @@ bool AudioEngine::Sound::set_pan(float pan)
 	return false;
 }
 
+float AudioEngine::Sound::get_frequency()
+{
+	if (this->_channel)
+	{
+		FMOD_RESULT status = _channel->getFrequency(&_frequency);
+		exit_on_failure(status);
+	}
+	return _frequency;
+}
+bool AudioEngine::Sound::set_frequency(float frequency)
+{
+	if (frequency <= 1.0f && frequency >= -1.f && this->_channel)
+	{
+		FMOD_RESULT status = _channel->setPan(frequency);
+		exit_on_failure(status);
+		_frequency = frequency;
+		return true;
+	}
+	return false;
+}
+
+unsigned int AudioEngine::Sound::get_position()
+{
+	unsigned int position = 0.f;
+	if (this->_channel)
+	{
+		FMOD_RESULT status = _channel->getPosition(&position, FMOD_TIMEUNIT_MS);
+		exit_on_failure(status);
+	}
+	return position;
+}
+
 bool AudioEngine::Sound::reset_position()
 {
 	if (this->_channel)

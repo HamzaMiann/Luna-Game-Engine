@@ -29,6 +29,7 @@ public:
 		float _volume = 1.f;
 		float _pitch = 1.f;
 		float _pan = 0.f;
+		float _frequency = 0.f;
 		bool _paused = true;
 
 		Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init);
@@ -44,13 +45,21 @@ public:
 		float get_pan();
 		bool set_pan(float pan);
 
+		float get_frequency();
+		bool set_frequency(float frequency);
+
+		unsigned int get_position();
 		bool reset_position();
 	};
 
 
-	void Init();
 	AudioEngine() { system = 0; status = FMOD_OK; }
 	~AudioEngine();
+
+	void Init();
+
+	std::size_t Num_Sounds() { return this->SoundNames.size(); }
+	std::string Get_Name(int i) { return this->SoundNames[i]; }
 
 	AUDIO_ID Create_Sound(std::string filename, std::string friendlyName);
 	void PlaySound(Sound* sound);

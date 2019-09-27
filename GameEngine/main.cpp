@@ -11,6 +11,8 @@
 #include <stdio.h>		// c libs
 
 #include <iostream>
+#include <sstream>
+#include <string>
 
 #include "Mathf.h"
 #include "PhysicsEngine.h"
@@ -22,8 +24,26 @@
 Scene* scene;
 GLFWwindow* window;
 
+AUDIO_ID current_sound_id = 0;
+
 void DrawObject(cGameObject* objPtr, float ratio);
 
+
+static std::string get_sound_details(AudioEngine::Sound* sound, std::string friendlyName)
+{
+	std::ostringstream ss;
+
+	ss << '[' << friendlyName << "] ";
+	unsigned int seconds = sound->get_position() / 1000;
+	unsigned int minutes = seconds / 60;
+	unsigned int sec = seconds - (minutes * 60);
+	ss << "Position(" << minutes << ":" << sec << ") ";
+	ss << "Volume(" << sound->get_volume() << ") ";
+	ss << "Pitch(" << sound->get_pitch() << ") ";
+	ss << "Pan(" << sound->get_pan() << ") ";
+
+	return ss.str();
+}
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -35,6 +55,20 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	{
 		scene->vecGameObjects[1]->velocity += scene->upVector * 2.f;
 		scene->pAudioEngine->PlaySound("bounce");
+	}
+
+	if (scene->pAudioEngine && scene->pAudioEngine->Num_Sounds() > 0)
+	{
+		int max = scene->pAudioEngine->Num_Sounds();
+		
+		if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+		{
+			current_sound_id++;
+			if (current_sound_id >= max) current_sound_id = 0;
+			
+			//glfwSetWindowTitle(window, u8"This is always a UTF-8 string");
+		}
+		
 	}
 
 }
@@ -114,7 +148,6 @@ static void HandleInput(GLFWwindow* window)
 		scene->vecGameObjects[1]->velocity += leftVector * 0.01f;
 	}
 
-	glfwSetWindowTitle(window, u8"This is always a UTF-8 string");
 	
 }
 
@@ -181,9 +214,46 @@ int main(void)
 	// Set the cube's initial velocity, etc.
 	cube.inverseMass = 0.f;	// does not move
 
+	cGameObject wall;
+	wall.meshName = "plane_wall";
+	wall.Collider = MESH;
+	wall.positionXYZ = glm::vec3(0.0f, 0.f, 2.0f);
+	wall.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
+	wall.scale = 10.f;
+	wall.objectColourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+	// Set the cube's initial velocity, etc.
+	wall.inverseMass = 0.f;	// does not move
+
+	cGameObject wall2;
+	wall2.meshName = "plane_wall2";
+	wall2.Collider = MESH;
+	wall2.positionXYZ = glm::vec3(2.0f, 0.f, 0.0f);
+	wall2.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
+	wall2.scale = 10.f;
+	wall2.objectColourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+	// Set the cube's initial velocity, etc.
+	wall2.inverseMass = 0.f;	// does not move
+
+
+	cGameObject angle_wall;
+	angle_wall.meshName = "plane_angle";
+	angle_wall.Collider = MESH;
+	angle_wall.positionXYZ = glm::vec3(-2.0f, 0.f, 0.0f);
+	angle_wall.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
+	angle_wall.scale = 10.f;
+	angle_wall.objectColourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+	// Set the cube's initial velocity, etc.
+	angle_wall.inverseMass = 0.f;	// does not move
+
 
 	scene->vecGameObjects.push_back(&cube);
 	scene->vecGameObjects.push_back(&sphere);
+	scene->vecGameObjects.push_back(&wall);
+	scene->vecGameObjects.push_back(&wall2);
+	scene->vecGameObjects.push_back(&angle_wall);
 
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
@@ -244,6 +314,9 @@ int main(void)
 		// Update the objects' physics
 		phys.CheckCollisions(scene);
 		phys.IntegrationStep(scene, /*delta_time*/delta_time);
+
+		std::string friendlyName = scene->pAudioEngine->Get_Name(current_sound_id);
+		glfwSetWindowTitle(window, get_sound_details(scene->pAudioEngine->GetSound(current_sound_id), friendlyName).c_str());
 
 		// **************************************************
 		// **************************************************
