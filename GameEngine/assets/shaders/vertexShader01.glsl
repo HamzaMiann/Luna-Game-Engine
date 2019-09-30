@@ -1,29 +1,33 @@
 #version 420
 
 //uniform mat4 MVP;
-uniform mat4 matModel;		// Model or World 
-uniform mat4 matView; 		// View or camera
-uniform mat4 matProj;		// Projection transform
+uniform mat4 matModel;					// Model or World 
+uniform mat4 matModelInverTrans;		// Model or World 
+uniform mat4 matView; 					// View or camera
+uniform mat4 matProj;					// Projection transform
 
-in vec3 vColour;
-in vec3 vPosition;
-in vec4 vNormal;
+in vec4 vColour;				// Was vec3
+in vec4 vPosition;				// Was vec3
+in vec4 vNormal;				// Vertex Normal
+in vec4 vUVx2;					// 2 x Texture coord
 
-out vec3 color;
-out vec4 vertWorld;			// Location of the vertex in the world
-out vec4 vVertNormal;
+out vec4 fColour;	
+out vec4 fVertWorldLocation;
+out vec4 fNormal;
+out vec4 fUVx2;
 
 void main()
 {
-    vec3 vertPosition = vPosition;
+    vec3 vertPosition = vPosition.xyz;
 	
     mat4 matMVP = matProj * matView * matModel;
 	
 	gl_Position = matMVP * vec4(vertPosition, 1.0);
 	
 	// Vertex location in "world space"
-	vertWorld = matModel * vec4(vertPosition, 1.0);		
+	fVertWorldLocation = matModel * vec4(vertPosition, 1.0);		
 	
-    color = vColour;
-	vVertNormal = vNormal;
+    fColour = vColour;
+	fNormal = vNormal;
+	fUVx2 = vec4(1.0);
 }

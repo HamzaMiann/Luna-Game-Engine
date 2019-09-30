@@ -148,13 +148,13 @@ bool cVAOManager::LoadModelIntoVAO(
 
 	// Set the vertex attributes for this shader
 	glEnableVertexAttribArray(vpos_location);
-	glVertexAttribPointer( vpos_location, 3,
+	glVertexAttribPointer( vpos_location, 4,
 						   GL_FLOAT, GL_FALSE,
 						   sizeof(sVertex), 
 						   ( void* )offsetof(sVertex,x));
 
 	glEnableVertexAttribArray(vcol_location);
-	glVertexAttribPointer( vcol_location, 3,
+	glVertexAttribPointer( vcol_location, 4,
 						   GL_FLOAT, GL_FALSE,
 						   sizeof(sVertex), 
 						   ( void* )offsetof(sVertex, r));

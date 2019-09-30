@@ -1,8 +1,9 @@
 #version 420
 
-in vec3 color;
-in vec4 vertWorld;
-in vec4 vVertNormal;
+in vec4 fColour;	
+in vec4 fVertWorldLocation;
+in vec4 fNormal;
+in vec4 fUVx2;
 
 // Get rid of this
 uniform vec4 newColour;
@@ -19,7 +20,7 @@ void main()
     //gl_FragColor = vec4(color, 1.0);
    //gl_FragColor = vec4(newColour, 1.0);
    
-   float dist = distance( lightPosition, vertWorld.xyz );
+   float dist = distance( lightPosition, fVertWorldLocation.xyz );
    float linearAtten = 1.0f; 
    
    float atten = 1.0f / ( linearAtten * dist );

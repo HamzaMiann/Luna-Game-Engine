@@ -220,84 +220,6 @@ int main(void)
 	// Load scene from file
 	scene = Scene::LoadFromXML("scene1.scene.xml");
 
-
-	// At this point, the model is loaded into the GPU
-	// Load up my "scene" 
-
-	cGameObject sphere;
-	sphere.meshName = "sphere";
-	sphere.Collider = SPHERE;
-	sphere.positionXYZ = originalBallPosition;
-	sphere.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	sphere.scale = 0.5f;
-	sphere.objectColourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	// Set the sphere's initial velocity, etc.
-	sphere.velocity = glm::vec3(-0.1f, 0.f, 0.f);
-	sphere.acceleration = glm::vec3(0.f);
-	sphere.inverseMass = 1.f;
-
-	cGameObject debugSphere;
-	debugSphere.meshName = "sphere";
-	debugSphere.Collider = SPHERE;
-	debugSphere.positionXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	debugSphere.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	debugSphere.scale = .2f;
-	debugSphere.objectColourRGBA = glm::vec4(0.f, 1.f, 0.f, 1.0f);
-
-	cGameObject cube;
-	cube.meshName = "cube";
-	cube.Collider = MESH;
-	cube.positionXYZ = glm::vec3(0.0f, -0.5f, 0.0f);
-	cube.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	cube.scale = 10.f;
-	cube.objectColourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	// Set the cube's initial velocity, etc.
-	cube.inverseMass = 0.f;	// does not move
-
-	cGameObject wall;
-	wall.meshName = "plane_wall";
-	wall.Collider = MESH;
-	wall.positionXYZ = glm::vec3(0.0f, 0.f, 2.0f);
-	wall.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	wall.scale = 10.f;
-	wall.objectColourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	// Set the cube's initial velocity, etc.
-	wall.inverseMass = 0.f;	// does not move
-
-	cGameObject wall2;
-	wall2.meshName = "plane_wall2";
-	wall2.Collider = MESH;
-	wall2.positionXYZ = glm::vec3(2.0f, 0.f, 0.0f);
-	wall2.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	wall2.scale = 10.f;
-	wall2.objectColourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	// Set the cube's initial velocity, etc.
-	wall2.inverseMass = 0.f;	// does not move
-
-
-	cGameObject angle_wall;
-	angle_wall.meshName = "plane_angle";
-	angle_wall.Collider = MESH;
-	angle_wall.positionXYZ = glm::vec3(-2.0f, 0.f, 0.0f);
-	angle_wall.rotationXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	angle_wall.scale = 10.f;
-	angle_wall.objectColourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	// Set the cube's initial velocity, etc.
-	angle_wall.inverseMass = 0.f;	// does not move
-
-
-	scene->vecGameObjects.push_back(&cube);
-	scene->vecGameObjects.push_back(&sphere);
-	scene->vecGameObjects.push_back(&wall);
-	scene->vecGameObjects.push_back(&wall2);
-	scene->vecGameObjects.push_back(&angle_wall);
-
-
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
 
@@ -306,8 +228,8 @@ int main(void)
 
 	// Initialize audio engine
 	
-	scene->pAudioEngine->PlaySound("music");
-	scene->pAudioEngine->PlaySound("rain");
+	//scene->pAudioEngine->PlaySound("music");
+	//scene->pAudioEngine->PlaySound("rain");
 
 
 	PhysicsEngine phys;
@@ -371,9 +293,9 @@ int main(void)
 
 		}//for (int index...
 
-		float closestDistanceSoFar = FLT_MAX;
+		/*float closestDistanceSoFar = FLT_MAX;
 		glm::vec3 closestPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);*/
 
 		//FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, scene->vecGameObjects[0], scene->vecGameObjects[1]);
 

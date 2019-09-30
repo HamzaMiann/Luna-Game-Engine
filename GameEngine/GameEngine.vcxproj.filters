@@ -43,6 +43,9 @@
     <Filter Include="InputHandler">
       <UniqueIdentifier>{5f9ed9df-aca8-41f0-976c-5a1bff395e14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lighting">
+      <UniqueIdentifier>{2676027c-668c-4c0c-9c0a-7e4ef57e40da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">
@@ -86,6 +89,12 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>SceneFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="cLayoutBuilder.cpp">
+      <Filter>SceneFactory\SceneBuilders</Filter>
+    </ClCompile>
+    <ClCompile Include="cLightManager.cpp">
+      <Filter>Lighting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +151,15 @@
     </ClInclude>
     <ClInclude Include="cPhysicsInputHandler.h">
       <Filter>InputHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="cLayoutBuilder.h">
+      <Filter>SceneFactory\SceneBuilders</Filter>
+    </ClInclude>
+    <ClInclude Include="sLight.h">
+      <Filter>Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="cLightManager.h">
+      <Filter>Lighting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
