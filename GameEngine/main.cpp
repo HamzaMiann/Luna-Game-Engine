@@ -223,15 +223,6 @@ int main(void)
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
 
-	float shipVelocityZ = 0.1f;
-	float shipAccelz = 100.f;
-
-	// Initialize audio engine
-	
-	//scene->pAudioEngine->PlaySound("music");
-	//scene->pAudioEngine->PlaySound("rain");
-
-
 	PhysicsEngine phys;
 
 
@@ -250,23 +241,23 @@ int main(void)
 
 		float ratio;
 		int width, height;
-		glm::mat4 m, p, v, mvp;
+		//glm::mat4 m, p, v, mvp;
 
 		glfwGetFramebufferSize(window, &width, &height);
 		ratio = width / (float)height;
 
 		// Projection matrix
-		p = glm::perspective(0.6f,		// FOV
-							 ratio,			// Aspect ratio
-							 0.1f,			// Near clipping plane
-							 1000.0f);		// Far clipping plane
+		//p = glm::perspective(0.6f,		// FOV
+		//					 ratio,			// Aspect ratio
+		//					 0.1f,			// Near clipping plane
+		//					 1000.0f);		// Far clipping plane
 
-		// View matrix
-		v = glm::mat4(1.0f);
+		//// View matrix
+		//v = glm::mat4(1.0f);
 
-		v = glm::lookAt(scene->cameraEye,
-						scene->cameraTarget,
-						scene->upVector);
+		//v = glm::lookAt(scene->cameraEye,
+		//				scene->cameraTarget,
+		//				scene->upVector);
 
 
 		glViewport(0, 0, width, height);
