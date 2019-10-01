@@ -7,6 +7,9 @@
 
 void cLightManager::Set_Light_Data(int shader_id)
 {
+	GLint num_loc = glGetUniformLocation(shader_id, "NUMBEROFLIGHTS");
+	glUniform1i(num_loc, (int)Lights.size());
+
 	for (unsigned int i = 0; i < this->Lights.size(); ++i)
 	{
 		sLight* light = Lights[i];

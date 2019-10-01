@@ -35,8 +35,9 @@ const int POINT_LIGHT_TYPE = 0;
 const int SPOT_LIGHT_TYPE = 1;
 const int DIRECTIONAL_LIGHT_TYPE = 2;
 
-const int NUMBEROFLIGHTS = 1;
-uniform sLight theLights[NUMBEROFLIGHTS];  	// 80 uniforms
+uniform int NUMBEROFLIGHTS;
+const int LIGHT_BUFFER = 24;
+uniform sLight theLights[LIGHT_BUFFER];  	// 80 uniforms
 
 
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
@@ -44,6 +45,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 	 
 void main()  
 {
+	
 	if (bDoNotLight)
 	{
 		pixelColour.rgb = debugColour.rgb;
