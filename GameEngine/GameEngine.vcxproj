@@ -162,6 +162,7 @@
     <ClCompile Include="CErrorLog.cpp" />
     <ClCompile Include="cGLRenderStateHelper.cpp" />
     <ClCompile Include="cLayoutBuilder.cpp" />
+    <ClCompile Include="cLightBuilder.cpp" />
     <ClCompile Include="cLightManager.cpp" />
     <ClCompile Include="cModelBuilder.cpp" />
     <ClCompile Include="cModelLoader.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="cGameObject.h" />
     <ClInclude Include="cGLRenderStateHelper.h" />
     <ClInclude Include="cLayoutBuilder.h" />
+    <ClInclude Include="cLightBuilder.h" />
     <ClInclude Include="cMesh.h" />
     <ClInclude Include="cModelBuilder.h" />
     <ClInclude Include="cModelLoader.h" />

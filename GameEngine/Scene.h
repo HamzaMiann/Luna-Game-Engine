@@ -1,10 +1,20 @@
 #pragma once
 
 #include <vector>
-#include "cGameObject.h"
-#include "AudioEngine.hpp"
-#include "cVAOManager.h"
-#include "cModelLoader.h"
+#include <string>
+#include "GLCommon.h"
+#include <glm/vec3.hpp>
+//#include "cGameObject.h"
+//#include "AudioEngine.hpp"
+//#include "cVAOManager.h"
+//#include "cModelLoader.h"
+//#include "cLightManager.h"
+
+class cGameObject;
+class cVAOManager;
+class cModelLoader;
+class AudioEngine;
+class cLightManager;
 
 class Scene
 {
@@ -18,12 +28,13 @@ public:
 
 	std::string SceneName;
 
-	GLint shaderProgID = -1;
+	int shaderProgID = -1;
 
 	object_list vecGameObjects;
 	cVAOManager* pVAOManager;
 	cModelLoader* pModelLoader;
 	AudioEngine* pAudioEngine;
+	cLightManager* pLightManager;
 
 	glm::vec3 cameraEye = glm::vec3(0.0, 1.0f, -10.0);
 	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);

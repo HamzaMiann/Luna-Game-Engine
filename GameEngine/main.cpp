@@ -20,13 +20,16 @@
 #include "sLight.h"
 #include "cLightManager.h"
 #include "cDebugRenderer.h"
+#include "AudioEngine.hpp"
+#include "cGameObject.h"
+#include "cVAOManager.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 
 Scene* scene;
 GLFWwindow* window;
-cLightManager* lightManager;
+//cLightManager* lightManager;
 
 AUDIO_ID current_sound_id = 0;
 
@@ -228,31 +231,12 @@ int main(void)
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
 
 	PhysicsEngine phys;
-	scene->LightLocation.y += 8.f;
-	sLight light;
-	light.position = glm::vec4(scene->LightLocation.x,
-							   scene->LightLocation.y,
-							   scene->LightLocation.z,
-							   1.f);
-	light.diffuse = glm::vec4(0.8f, 0.8f, 0.8f, 1.f);
-	light.specular = glm::vec4(1.f, 1.f, 1.f, 0.f);
-	light.atten = glm::vec4(0.f,
-							0.0001f,
-							0.02f,
-							1000.f);
-	light.param1 = glm::vec4(0.f,
-							 1.f,
-							 1.f,
-							 1.f);
-	light.param2 = glm::vec4(1.f,
-							 1.f,
-							 1.f,
-							 1.f);
-	lightManager = new cLightManager();
-	lightManager->Lights.push_back(&light);
 
+#if _DEBUG
 	cDebugRenderer renderer;
 	renderer.initialize();
+	phys.renderer = &renderer;
+#endif
 
 	float current_time = (float)glfwGetTime();
 	float previous_time = (float)glfwGetTime();
@@ -348,7 +332,7 @@ int main(void)
 
 	// Delete everything
 	delete scene;
-	delete lightManager;
+	//delete lightManager;
 
 	exit(EXIT_SUCCESS);
 }
@@ -461,7 +445,7 @@ void DrawObject(cGameObject* objPtr, float ratio)
 
 
 
-	lightManager->Set_Light_Data(shaderProgID);
+	scene->pLightManager->Set_Light_Data(shaderProgID);
 
 
 

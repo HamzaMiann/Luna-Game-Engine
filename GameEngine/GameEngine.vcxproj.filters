@@ -117,6 +117,9 @@
     <ClCompile Include="COpenGLError.cpp">
       <Filter>DebugRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="cLightBuilder.cpp">
+      <Filter>SceneFactory\SceneBuilders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -196,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="iDebugRenderer.h">
       <Filter>DebugRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="cLightBuilder.h">
+      <Filter>SceneFactory\SceneBuilders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

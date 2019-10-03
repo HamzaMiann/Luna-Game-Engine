@@ -2,6 +2,9 @@
 
 #include "Scene.h"
 #include "PhysicsEngine.h"
+#include "cMesh.h"
+#include "cVAOManager.h"
+#include "cGameObject.h"
 #include <math.h>
 #include <algorithm>
 using namespace std;
@@ -94,7 +97,6 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 		float speed = abs(pObj->velocity.y);
 		//printf("%f\n", speed);
 
-		printf("%f\n", speed);
 		if (pObj->isCollided)
 		{
 			// glm::distance(pObj->velocity, glm::vec3(0.f));
@@ -215,8 +217,23 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 						//if (closestDistanceSoFar < 0) pObj->positionXYZ = closestPoint;
 						if (!pObj->isCollided)
 						{
+							
 							pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
 							pObj->isCollided |= true;
+
+							if (renderer)
+							{
+								renderer->addLine(closestPoint,
+												  closestPoint + normal,
+												  glm::vec3(0.f, 1.f, 1.f),
+												  1.f);
+
+								renderer->addLine(closestPoint,
+												  closestPoint + glm::normalize(pObj->velocity),
+												  glm::vec3(0.f, 1.f, 0.f),
+												  1.f);
+							}
+
 							/*AudioEngine::Sound* sound = scene->pAudioEngine->GetSound("ball");
 							if (sound)
 							{
@@ -264,6 +281,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 			}
 		}
 	}
+
 }
 
 

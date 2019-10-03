@@ -1,6 +1,8 @@
 
 
 #include "cModelBuilder.h"
+#include "cVAOManager.h"
+#include "cModelLoader.h"
 #include <iostream>
 using namespace rapidxml;
 

@@ -1,5 +1,8 @@
 
 #include "cLayoutBuilder.h"
+#include "cGameObject.h"
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 using namespace rapidxml;
 
 void setXYZ(glm::vec3& vec3, xml_node<>* node)

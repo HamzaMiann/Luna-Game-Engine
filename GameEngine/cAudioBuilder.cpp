@@ -1,5 +1,6 @@
 
 #include "cAudioBuilder.h"
+#include "AudioEngine.hpp"
 using namespace rapidxml;
 
 void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
