@@ -157,10 +157,16 @@
   <ItemGroup>
     <ClCompile Include="AudioEngine.cpp" />
     <ClCompile Include="cAudioBuilder.cpp" />
+    <ClCompile Include="cDebugRenderer.cpp" />
+    <ClCompile Include="cDebugRenderer_BuiltInShapes.cpp" />
+    <ClCompile Include="CErrorLog.cpp" />
+    <ClCompile Include="cGLRenderStateHelper.cpp" />
     <ClCompile Include="cLayoutBuilder.cpp" />
     <ClCompile Include="cLightManager.cpp" />
     <ClCompile Include="cModelBuilder.cpp" />
     <ClCompile Include="cModelLoader.cpp" />
+    <ClCompile Include="COpenGLError.cpp" />
+    <ClCompile Include="cPhysicsInputHandler.cpp" />
     <ClCompile Include="cSceneFactory.cpp" />
     <ClCompile Include="cShader.cpp" />
     <ClCompile Include="cShaderBuilder.cpp" />
@@ -175,11 +181,15 @@
   <ItemGroup>
     <ClInclude Include="AudioEngine.hpp" />
     <ClInclude Include="cAudioBuilder.h" />
+    <ClInclude Include="cDebugRenderer.h" />
+    <ClInclude Include="CErrorLog.h" />
     <ClInclude Include="cGameObject.h" />
+    <ClInclude Include="cGLRenderStateHelper.h" />
     <ClInclude Include="cLayoutBuilder.h" />
     <ClInclude Include="cMesh.h" />
     <ClInclude Include="cModelBuilder.h" />
     <ClInclude Include="cModelLoader.h" />
+    <ClInclude Include="COpenGLError.h" />
     <ClInclude Include="cPhysicsInputHandler.h" />
     <ClInclude Include="cSceneFactory.h" />
     <ClInclude Include="cShaderBuilder.h" />
@@ -187,6 +197,7 @@
     <ClInclude Include="cShaderManager.h" />
     <ClInclude Include="cVAOManager.h" />
     <ClInclude Include="GLCommon.h" />
+    <ClInclude Include="iDebugRenderer.h" />
     <ClInclude Include="iInputHandler.h" />
     <ClInclude Include="iSceneBuilder.h" />
     <ClInclude Include="cLightManager.h" />

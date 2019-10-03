@@ -21,7 +21,8 @@ public:
 	cGameObject() { }
 	virtual ~cGameObject() {}
 
-	std::string meshName;
+	std::string meshName = "";
+	std::string tag = "";
 	glm::vec3  positionXYZ = glm::vec3(0.f, 0.f, 0.f);
 	glm::vec3  rotationXYZ = glm::vec3(0.f, 0.f, 0.f);
 	glm::vec4  objectColourRGBA = glm::vec4(1.f, 1.f, 1.f, 1.f);
@@ -29,7 +30,6 @@ public:
 
 	glm::vec3 velocity = glm::vec3(0.f, 0.f, 0.f);
 	glm::vec3 acceleration = glm::vec3(0.f, 0.f, 0.f);
-
 	float inverseMass = 1.f;	// 0.0f = infinite mass (Doesn't move)
 
 	ColliderType Collider = ColliderType::NONE;

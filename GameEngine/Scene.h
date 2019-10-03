@@ -8,6 +8,8 @@
 
 class Scene
 {
+private:
+	typedef std::vector<cGameObject*> object_list;
 public:
 	Scene() {}
 	~Scene();
@@ -18,7 +20,7 @@ public:
 
 	GLint shaderProgID = -1;
 
-	std::vector<cGameObject*> vecGameObjects;
+	object_list vecGameObjects;
 	cVAOManager* pVAOManager;
 	cModelLoader* pModelLoader;
 	AudioEngine* pAudioEngine;

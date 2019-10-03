@@ -19,6 +19,7 @@
 #include "Scene.h"
 #include "sLight.h"
 #include "cLightManager.h"
+#include "cDebugRenderer.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -250,6 +251,8 @@ int main(void)
 	lightManager = new cLightManager();
 	lightManager->Lights.push_back(&light);
 
+	cDebugRenderer renderer;
+	renderer.initialize();
 
 	float current_time = (float)glfwGetTime();
 	float previous_time = (float)glfwGetTime();
@@ -270,19 +273,6 @@ int main(void)
 
 		glfwGetFramebufferSize(window, &width, &height);
 		ratio = width / (float)height;
-
-		// Projection matrix
-		//p = glm::perspective(0.6f,		// FOV
-		//					 ratio,			// Aspect ratio
-		//					 0.1f,			// Near clipping plane
-		//					 1000.0f);		// Far clipping plane
-
-		//// View matrix
-		//v = glm::mat4(1.0f);
-
-		//v = glm::lookAt(scene->cameraEye,
-		//				scene->cameraTarget,
-		//				scene->upVector);
 
 
 		glViewport(0, 0, width, height);
@@ -308,6 +298,31 @@ int main(void)
 			DrawObject(objPtr, ratio);
 
 		}//for (int index...
+
+#if _DEBUG
+
+		renderer.addLine(scene->vecGameObjects[1]->positionXYZ,
+						 (scene->vecGameObjects[1]->positionXYZ + scene->vecGameObjects[1]->velocity * delta_time),
+						 glm::vec3(1.f, 1.f, 0.f),
+						 2.0f);
+
+		glm::mat4 p, v;
+
+		// Projection matrix
+		p = glm::perspective(0.6f,		// FOV
+							 ratio,			// Aspect ratio
+							 0.1f,			// Near clipping plane
+							 1000.0f);		// Far clipping plane
+
+		// View matrix
+		v = glm::mat4(1.0f);
+
+		v = glm::lookAt(scene->cameraEye,
+						scene->cameraTarget,
+						scene->upVector);
+
+		renderer.RenderDebugObjects(v, p, 0.01f);
+#endif
 
 		/*float closestDistanceSoFar = FLT_MAX;
 		glm::vec3 closestPoint = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -343,6 +358,9 @@ int main(void)
 
 void DrawObject(cGameObject* objPtr, float ratio)
 {
+	GLint shaderProgID = scene->shaderProgID;
+	glUseProgram(shaderProgID);
+
 	glm::mat4 m, p, v, mvp;
 
 	// Projection matrix
@@ -410,8 +428,7 @@ void DrawObject(cGameObject* objPtr, float ratio)
 
 	// Choose which shader to use
 	//glUseProgram(program);
-	GLint shaderProgID = scene->shaderProgID;
-	glUseProgram(shaderProgID);
+	
 
 	GLint matModel_UL = glGetUniformLocation(shaderProgID, "matModel");
 	GLint matView_UL = glGetUniformLocation(shaderProgID, "matView");

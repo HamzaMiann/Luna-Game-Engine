@@ -67,7 +67,7 @@
     
     <GameObject mesh="plane_ground">
       <Position x="0.0" y="-0.5" z="0.0"/>
-      <Scale>10.0</Scale>
+      <Scale>100.0</Scale>
       <Colour x="1.0" y="0.0" z="0.0" w="1.0"/>
       <IMass>0.0</IMass>
       <Collider>MESH</Collider>
@@ -76,7 +76,7 @@
     <GameObject mesh="sphere">
       <Position x="0.0" y="6.0" z="0.0"/>
       <Rotation x="0.0" y="0.0" z="0.0"/>
-      <Scale>0.1</Scale>
+      <Scale>0.5</Scale>
       <Colour x="1.0" y="1.0" z="1.0" w="1.0"/>
       <IMass>1.0</IMass>
       <Collider>SPHERE</Collider>

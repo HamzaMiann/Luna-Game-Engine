@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "PhysicsEngine.h"
 #include <math.h>
+#include <algorithm>
 using namespace std;
 
 
@@ -90,9 +91,10 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 		pObj->velocity += (Gravity * deltaTime);
 		pObj->velocity *= 1.f - (drag * deltaTime);
 
-		float speed = pObj->velocity.y;
+		float speed = abs(pObj->velocity.y);
 		//printf("%f\n", speed);
 
+		printf("%f\n", speed);
 		if (pObj->isCollided)
 		{
 			// glm::distance(pObj->velocity, glm::vec3(0.f));
@@ -100,11 +102,13 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 			{
 				pObj->velocity.y *= friction;
 			}
+			speed = abs(pObj->velocity.y);
 			if (speed <= 0.4f)
 			{
 				pObj->velocity.y *= friction;
 			}
-			if (speed <= 0.25f)
+			speed = abs(pObj->velocity.y);
+			if (speed <= 0.2f)
 			{
 				pObj->velocity.y = 0.f;//glm::vec3(0.f);
 				//pObj->velocity.x *= friction;
@@ -127,8 +131,9 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 			pObj->velocity.z = pObj->velocity.z * drag;
 		}*/
 		pObj->positionXYZ += (pObj->velocity * deltaTime);
-
 		pObj->isCollided = false;
+
+		
 
 		// Test to see if it's hit the cube
 
@@ -151,9 +156,19 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 
 	return;
 }
-
+struct cPair
+{
+	cPair(unsigned int _first, unsigned int _second) :
+		first(_first), second(_second)
+	{
+	}
+	unsigned int first = 0;
+	unsigned int second = 0;
+};
 void PhysicsEngine::CheckCollisions(Scene* scene)
 {
+	std::vector<cPair> collisionHistory;
+
 	for (size_t i = 0; i < scene->vecGameObjects.size(); ++i)
 	{
 		// object to check collisions on
@@ -166,6 +181,19 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 		{
 			if (k != i && scene->vecGameObjects[k]->Collider != NONE)
 			{
+				bool shouldContinue = false;
+				for (unsigned int j = 0; j < collisionHistory.size(); ++j)
+				{
+					if (collisionHistory[j].first == k && collisionHistory[j].second == i)
+					{
+						shouldContinue = true;
+						break;
+					}
+				}
+				if (shouldContinue) continue;
+
+				collisionHistory.push_back(cPair(i, k));
+
 				cGameObject* colliderObject = scene->vecGameObjects[k];
 				float closestDistanceSoFar = FLT_MAX;
 				glm::vec3 closestPoint = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -189,14 +217,14 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 						{
 							pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
 							pObj->isCollided |= true;
-							AudioEngine::Sound* sound = scene->pAudioEngine->GetSound("ball");
+							/*AudioEngine::Sound* sound = scene->pAudioEngine->GetSound("ball");
 							if (sound)
 							{
-								float volume = glm::distance(pObj->velocity, glm::vec3(0.f));
+								float volume = glm::length(pObj->velocity);
 								volume = volume > 1.f ? 1.f : volume;
 								sound->set_volume(volume);
 								scene->pAudioEngine->PlaySound(sound);
-							}
+							}*/
 						}
 					}
 					else

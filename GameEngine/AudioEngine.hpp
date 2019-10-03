@@ -8,9 +8,10 @@
 
 class AudioEngine
 {
-	class Sound;
 
 private:
+	class Sound;
+
 
 	FMOD::System* system;
 	FMOD_RESULT status;
