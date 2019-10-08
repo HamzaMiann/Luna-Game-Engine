@@ -41,14 +41,16 @@
   <Models>
     <Model file="sphere_XYZ_N.ply"
            friendlyName="sphere"/>
-    <Model file="plane_XYZ_N.ply"
+    <!--<Model file="plane_XYZ_N.ply"
            friendlyName="plane_ground"/>
     <Model file="plane_wall1_XYZ_N.ply"
            friendlyName="plane_wall"/>
     <Model file="plane_wall2_XYZ_N.ply"
            friendlyName="plane_wall2"/>
     <Model file="plane_angle_XYZ_N.ply"
-           friendlyName="plane_angle"/>
+           friendlyName="plane_angle"/>-->
+    <Model file="spaceship_XYZ_N.ply"
+           friendlyName="space_ship"/>
   </Models>
 
   <Lights>

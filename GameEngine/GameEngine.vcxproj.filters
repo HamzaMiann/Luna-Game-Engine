@@ -49,6 +49,12 @@
     <Filter Include="DebugRenderer">
       <UniqueIdentifier>{aad5e934-7cc7-4c00-9524-7c82189dc4ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SpaceGame">
+      <UniqueIdentifier>{195fb842-441f-468d-9d07-7ccda3b548b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpaceGame\Interfaces">
+      <UniqueIdentifier>{bf1ad1a8-91a5-43bc-9d1c-73e10e2b23f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">
@@ -122,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="cAudioInputHandler.cpp">
       <Filter>InputHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="cUniverse.cpp">
+      <Filter>SpaceGame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +217,21 @@
     </ClInclude>
     <ClInclude Include="cAudioInputHandler.h">
       <Filter>InputHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="iMessageInterface.h">
+      <Filter>SpaceGame\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="cUniverse.h">
+      <Filter>SpaceGame</Filter>
+    </ClInclude>
+    <ClInclude Include="cStar.h">
+      <Filter>SpaceGame</Filter>
+    </ClInclude>
+    <ClInclude Include="cPlanet.h">
+      <Filter>SpaceGame</Filter>
+    </ClInclude>
+    <ClInclude Include="cSpaceShip.h">
+      <Filter>SpaceGame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
