@@ -42,7 +42,18 @@ uniform sLight theLights[LIGHT_BUFFER];  	// 80 uniforms
 
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular );
-	 
+
+float getFogFactor(float d)
+{
+    const float FogMax = 40.0;
+    const float FogMin = 20.0;
+
+    if (d>=FogMax) return 1;
+    if (d<=FogMin) return 0;
+
+    return 1 - (FogMax - d) / (FogMax - FogMin);
+}
+
 void main()  
 {
 	
@@ -50,17 +61,24 @@ void main()
 	{
 		pixelColour.rgb = diffuseColour.rgb;
 		pixelColour.a = 1.0f;
+		float d = distance(eyeLocation, fVertWorldLocation);
+		float alpha = getFogFactor(d);
+		pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), alpha);
 		return;
 	}
-	
+
 	vec4 materialColour = diffuseColour;
 	vec4 specColour = specularColour;
 
 	vec4 outColour = calcualteLightContrib( materialColour.rgb, fNormal.xyz, 
 	                                        fVertWorldLocation.xyz, specColour );
 
-											
+							
+	float d = distance(eyeLocation, fVertWorldLocation);
+	float alpha = getFogFactor(d);
+
 	pixelColour = outColour;
+	pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), alpha);
 	
 } // end main
 
