@@ -53,17 +53,17 @@
 
   <Lights>
     <Light>
-      <Position x="0.0" y="8.0" z="0.0" w="1.0"/>
+      <Position x="0.0" y="0.0" z="0.0" w="1.0"/>
       <Diffuse x="1.0" y="1.0" z="1.0" w="1.0"/>
       <Specular x="1.0" y="1.0" z="1.0" w="1.0"/>
-      <Atten x="0.0" y="0.0001" z="0.02" w="1000.0"/>
+      <Atten x="0.8" y="0.0001" z="0.02" w="1000.0"/>
       <Direction x="0.0" y="0.0" z="0.0" w="0.0"/>
       <Param1 x="0.0" y="1.0" z="1.0" w="1.0"/>
       <Param2 x="1.0" y="1.0" z="1.0" w="1.0"/>
     </Light>
   </Lights>
 
-  <Layout>
+  <!--<Layout>
     
     <GameObject mesh="plane_ground">
       <Position x="0.0" y="-0.5" z="0.0"/>
@@ -73,7 +73,7 @@
       <Collider>MESH</Collider>
     </GameObject>
     
-    <GameObject mesh="sphere">
+    <GameObject mesh="sphere" tag="player">
       <Position x="0.0" y="6.0" z="0.0"/>
       <Rotation x="0.0" y="0.0" z="0.0"/>
       <Scale>0.5</Scale>
@@ -108,6 +108,6 @@
       <Collider>MESH</Collider>
     </GameObject>
 
-  </Layout>
+  </Layout>-->
   
 </Scene>

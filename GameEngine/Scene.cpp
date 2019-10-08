@@ -21,6 +21,8 @@ Scene::~Scene()
 Scene* Scene::LoadFromXML(std::string filename)
 {
 	Scene* newScene = new Scene();
+	newScene->SceneName = filename;
+
 	xml_document<> doc;
 	xml_node<>* root_node;
 	cSceneFactory factory;

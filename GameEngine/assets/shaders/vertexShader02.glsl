@@ -29,9 +29,10 @@ void main()
 	// Vertex location in "world space"
 	fVertWorldLocation = matModel * vec4(vertPosition.xyz, 1.0);		
 	
+	mat4 matInv = inverse(transpose(matModel));
+
     fColour = vColour;
 	fNormal = vNormal;
-//	fNormal = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
 	fUVx2 = vUVx2;
-//	fUVx2 = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }

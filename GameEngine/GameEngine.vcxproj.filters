@@ -120,6 +120,9 @@
     <ClCompile Include="cLightBuilder.cpp">
       <Filter>SceneFactory\SceneBuilders</Filter>
     </ClCompile>
+    <ClCompile Include="cAudioInputHandler.cpp">
+      <Filter>InputHandler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="cLightBuilder.h">
       <Filter>SceneFactory\SceneBuilders</Filter>
+    </ClInclude>
+    <ClInclude Include="cAudioInputHandler.h">
+      <Filter>InputHandler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

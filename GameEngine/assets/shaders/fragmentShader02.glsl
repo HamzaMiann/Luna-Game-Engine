@@ -10,7 +10,7 @@ uniform vec4 specularColour;
 
 // Used to draw debug (or unlit) objects
 uniform vec4 debugColour;
-uniform bool bDoNotLight;		
+uniform bool isUniform;		
 
 uniform vec4 eyeLocation;
 
@@ -46,15 +46,15 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 void main()  
 {
 	
-	if (bDoNotLight)
+	if (isUniform)
 	{
-		pixelColour.rgb = debugColour.rgb;
+		pixelColour.rgb = diffuseColour.rgb;
 		pixelColour.a = 1.0f;
 		return;
 	}
 	
 	vec4 materialColour = diffuseColour;
-	vec4 specColour = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	vec4 specColour = specularColour;
 
 	vec4 outColour = calcualteLightContrib( materialColour.rgb, fNormal.xyz, 
 	                                        fVertWorldLocation.xyz, specColour );
@@ -62,11 +62,7 @@ void main()
 											
 	pixelColour = outColour;
 	
-//	pixelColour.rgb += vec3(0.5f, 0.5f, 0.5f);
-//	pixelColour.rgb += fNormal.xyz;
-//	pixelColour.rgb += fVertWorldLocation.xyz;
-	
-}	// Ooops
+} // end main
 
 
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 

@@ -1,8 +1,9 @@
 #pragma once
 
+#include <stdlib.h>			// For rand()
 #include <math.h>
-#define PI 3.14159265
 #include <glm/vec3.hpp>
+#define PI 3.14159265
 
 namespace Mathf
 {
@@ -44,5 +45,15 @@ namespace Mathf
 	{
 		return (from - to);
 	}
+
+
+	template <class T>
+	T randInRange(T min, T max)
+	{
+		double value =
+			min + static_cast <double> (rand())
+			/ (static_cast <double> (RAND_MAX / (static_cast<double>(max - min))));
+		return static_cast<T>(value);
+	};
 
 }

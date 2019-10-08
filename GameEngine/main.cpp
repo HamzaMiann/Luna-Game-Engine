@@ -11,53 +11,27 @@
 #include <stdio.h>		// c libs
 
 #include <iostream>
-#include <sstream>
 #include <string>
 
 #include "Mathf.h"
 #include "PhysicsEngine.h"
 #include "Scene.h"
-#include "sLight.h"
 #include "cLightManager.h"
 #include "cDebugRenderer.h"
-#include "AudioEngine.hpp"
 #include "cGameObject.h"
 #include "cVAOManager.h"
+
+#include "iInputHandler.h"
+#include "cPhysicsInputHandler.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 
 Scene* scene;
 GLFWwindow* window;
-//cLightManager* lightManager;
-
-AUDIO_ID current_sound_id = 0;
-
-glm::vec3 originalBallPosition = glm::vec3(0.0f, 6.0f, 0.0f);
+iInputHandler* pInputHandler;
 
 void DrawObject(cGameObject* objPtr, float ratio);
-
-
-static std::string get_sound_details(AudioEngine::Sound* sound, std::string friendlyName)
-{
-	std::ostringstream ss;
-
-	ss << '[' << sound->get_name() << "] ";
-	unsigned int seconds = sound->get_position() / 1000;
-	unsigned int minutes = seconds / 60;
-	unsigned int sec = seconds - (minutes * 60);
-	unsigned int size = sound->get_size() / 1000;
-	unsigned int size_minutes = size / 60;
-	unsigned int size_sec = size - (size_minutes * 60);
-	ss << "format(" << sound->get_format() << ") ";
-	ss << "type(" << sound->get_type() << ") ";
-	ss << "[" << minutes << ":" << sec << " / " << size_minutes << ":" << size_sec << "] ";
-	ss << "Vol(" << sound->get_volume() << ") ";
-	ss << "Fq(" << sound->get_frequency() << ") ";
-	ss << "Pan(" << sound->get_pan() << ") ";
-
-	return ss.str();
-}
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -65,31 +39,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-	{
-		scene->vecGameObjects[1]->velocity += scene->upVector * 2.f;
-		scene->pAudioEngine->PlaySound("bounce");
-	}
-
-	if (key == GLFW_KEY_R && action == GLFW_PRESS)
-	{
-		scene->vecGameObjects[1]->positionXYZ = originalBallPosition;
-		scene->vecGameObjects[1]->velocity = glm::vec3(0.f);
-		scene->pAudioEngine->PlaySound("respawn");
-	}
-
-	if (scene->pAudioEngine && scene->pAudioEngine->Num_Sounds() > 0)
-	{
-		int max = scene->pAudioEngine->Num_Sounds();
-		
-		if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
-		{
-			current_sound_id++;
-			if (current_sound_id >= max) current_sound_id = 0;
-		}
-		
-	}
-
+	if (pInputHandler) pInputHandler->key_callback(window, key, scancode, action, mods);
 }
 
 static void error_callback(int error, const char* description)
@@ -104,99 +54,38 @@ static void HandleInput(GLFWwindow* window)
 	glm::vec3 rightVector = Mathf::get_rotated_vector(-90.f, glm::vec3(0.f), forwardVector);
 	glm::vec3 leftVector = Mathf::get_rotated_vector(90.f, glm::vec3(0.f), forwardVector);
 
-	if (scene->pAudioEngine && scene->pAudioEngine->Num_Sounds() > 0)
-	{
-		AudioEngine::Sound* current_sound = scene->pAudioEngine->GetSound(current_sound_id);
-		if (glfwGetKey(window, GLFW_KEY_1))
-		{
-			current_sound->set_volume(current_sound->get_volume() - 0.01f);
-		}
-		if (glfwGetKey(window, GLFW_KEY_2))
-		{
-			current_sound->set_volume(current_sound->get_volume() + 0.01f);
-		}
-		if (glfwGetKey(window, GLFW_KEY_3))
-		{
-			current_sound->set_pitch(current_sound->get_pitch() - 0.01f);
-		}
-		if (glfwGetKey(window, GLFW_KEY_4))
-		{
-			current_sound->set_pitch(current_sound->get_pitch() + 0.01f);
-		}
-		if (glfwGetKey(window, GLFW_KEY_5))
-		{
-			current_sound->set_pan(current_sound->get_pan() - 0.01f);
-		}
-		if (glfwGetKey(window, GLFW_KEY_6))
-		{
-			current_sound->set_pan(current_sound->get_pan() + 0.01f);
-		}
-
-	}
 
 	// Move the camera (A & D for left and right, along the x axis)
 	if (glfwGetKey(window, GLFW_KEY_A))
 	{
 		Mathf::rotate_vector(-5.f, scene->cameraTarget, scene->cameraEye);
-		//cameraEye.x -= 0.1f;		// Move the camera -0.01f units
 	}
 	if (glfwGetKey(window, GLFW_KEY_D))
 	{
 		Mathf::rotate_vector(5.f, scene->cameraTarget, scene->cameraEye);
-		//cameraEye.x += 0.1f;		// Move the camera +0.01f units
 	}
 
 	// Move the camera (Q & E for up and down, along the y axis)
 	if (glfwGetKey(window, GLFW_KEY_Q))
 	{
-		scene->cameraEye.y -= 0.1f;		// Move the camera -0.01f units
+		scene->cameraEye.y -= 0.1f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_E))
 	{
-		scene->cameraEye.y += 0.1f;		// Move the camera +0.01f units
+		scene->cameraEye.y += 0.1f;
 	}
 
 	// Move the camera (W & S for towards and away, along the z axis)
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
 		scene->cameraEye += forwardVector * 0.1f;
-		//cameraEye.z += 0.5f;		// Move the camera -0.01f units
 	}
 	if (glfwGetKey(window, GLFW_KEY_S))
 	{
 		scene->cameraEye += backwardsVector * 0.1f;
-		//cameraEye.z -= 0.5f;		// Move the camera +0.01f units
 	}
 
-
-	if (glfwGetKey(window, GLFW_KEY_J))
-	{
-		scene->LightLocation.x -= 0.1f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_K))
-	{
-		scene->LightLocation.x += 0.1f;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_UP))
-	{
-		scene->vecGameObjects[1]->velocity += Mathf::get_direction_vector(scene->vecGameObjects[1]->positionXYZ,
-																		  scene->vecGameObjects[1]->positionXYZ + forwardVector) * 0.01f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN))
-	{
-		scene->vecGameObjects[1]->velocity -= Mathf::get_direction_vector(scene->vecGameObjects[1]->positionXYZ,
-																		  scene->vecGameObjects[1]->positionXYZ + forwardVector) * 0.01f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT))
-	{
-		scene->vecGameObjects[1]->velocity += rightVector * 0.01f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT))
-	{
-		scene->vecGameObjects[1]->velocity += leftVector * 0.01f;
-	}
-
+	if (pInputHandler) pInputHandler->HandleInput(window);
 	
 }
 
@@ -231,6 +120,36 @@ int main(void)
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
 
 	PhysicsEngine phys;
+
+	pInputHandler = new cPhysicsInputHandler(*scene);
+
+	cGameObject* sun = new cGameObject;
+	sun->inverseMass = 0.f;
+	sun->positionXYZ = glm::vec3(0.f, 0.f, 0.f);
+	sun->meshName = "sphere";
+	sun->scale = 1.f;
+	sun->objectColourRGBA = glm::vec4(.99f, .9f, 0.f, 1.f);
+	sun->uniformColour = true;
+
+	cGameObject* planetX = new cGameObject;
+	planetX->inverseMass = 0.f;
+	planetX->positionXYZ = glm::vec3(2.f, 0.f, 0.f);
+	planetX->meshName = "sphere";
+	planetX->scale = 0.2f;
+	planetX->objectColourRGBA = glm::vec4(0.f, .3f, 0.8f, 1.f);
+
+	cGameObject* planetY = new cGameObject;
+	planetY->inverseMass = 0.f;
+	planetY->positionXYZ = glm::vec3(5.f, 0.f, 0.f);
+	planetY->meshName = "sphere";
+	planetY->scale = 0.4f;
+	planetY->objectColourRGBA = glm::vec4(.5f, .3f, 0.f, 1.f);
+
+	scene->vecGameObjects.push_back(sun);
+	scene->vecGameObjects.push_back(planetX);
+	scene->vecGameObjects.push_back(planetY);
+
+	float rotationSpeed = 55.f;
 
 #if _DEBUG
 	cDebugRenderer renderer;
@@ -269,9 +188,18 @@ int main(void)
 		phys.CheckCollisions(scene);
 		phys.IntegrationStep(scene, /*delta_time*/delta_time);
 
-		std::string friendlyName = scene->pAudioEngine->Get_Name(current_sound_id);
-		glfwSetWindowTitle(window, get_sound_details(scene->pAudioEngine->GetSound(current_sound_id), friendlyName).c_str());
+		
+		Mathf::rotate_vector(delta_time * rotationSpeed,
+							 sun->positionXYZ,
+							 planetX->positionXYZ
+		);
 
+		Mathf::rotate_vector(delta_time * rotationSpeed / 3.f,
+							 sun->positionXYZ,
+							 planetY->positionXYZ
+		);
+		
+		
 		// **************************************************
 		// **************************************************
 		// Loop to draw everything in the scene
@@ -285,10 +213,10 @@ int main(void)
 
 #if _DEBUG
 
-		renderer.addLine(scene->vecGameObjects[1]->positionXYZ,
+		/*renderer.addLine(scene->vecGameObjects[1]->positionXYZ,
 						 (scene->vecGameObjects[1]->positionXYZ + scene->vecGameObjects[1]->velocity * delta_time),
 						 glm::vec3(1.f, 1.f, 0.f),
-						 2.0f);
+						 2.0f);*/
 
 		glm::mat4 p, v;
 
@@ -424,9 +352,6 @@ void DrawObject(cGameObject* objPtr, float ratio)
 
 
 
-
-
-
 	GLint eye_loc = glGetUniformLocation(shaderProgID, "eyeLocation");
 	glUniform4f(eye_loc,
 				scene->cameraEye.x,
@@ -443,37 +368,19 @@ void DrawObject(cGameObject* objPtr, float ratio)
 				objPtr->objectColourRGBA.w
 	);
 
+	GLint spec_loc = glGetUniformLocation(shaderProgID, "specularColour");
+	glUniform4f(spec_loc,
+				1.f, 1.f, 0.f, 1.f
+	);
+
+	GLint isUniform_location = glGetUniformLocation(shaderProgID, "isUniform");
+	glUniform1i(isUniform_location, objPtr->uniformColour);
 
 
 	scene->pLightManager->Set_Light_Data(shaderProgID);
 
 
-
-
-
-	// Find the location of the uniform variable newColour
-	GLint newColour_location = glGetUniformLocation(shaderProgID, "newColour");
-
-	glUniform3f(newColour_location,
-				objPtr->objectColourRGBA.r,
-				objPtr->objectColourRGBA.g,
-				objPtr->objectColourRGBA.b);
-
-	GLint newColourRed_UL = glGetUniformLocation(shaderProgID, "newColourRed");
-	GLint newColourGreen_UL = glGetUniformLocation(shaderProgID, "newColourGreen");
-	GLint newColourBlue_UL = glGetUniformLocation(shaderProgID, "newColourBlue");
-
-	glUniform1f(newColourRed_UL, objPtr->objectColourRGBA.r);
-	glUniform1f(newColourGreen_UL, objPtr->objectColourRGBA.g);
-	glUniform1f(newColourBlue_UL, objPtr->objectColourRGBA.b);
-
-
-	GLint lighPosition_UL = glGetUniformLocation(shaderProgID, "lightPosition");
-	glUniform3f(lighPosition_UL,
-				scene->LightLocation.x,
-				scene->LightLocation.y,
-				scene->LightLocation.z);
-
+	
 
 
 	// This will change the fill mode to something 
