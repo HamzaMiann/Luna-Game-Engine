@@ -123,7 +123,7 @@ int main(void)
 
 	pInputHandler = new cPhysicsInputHandler(*scene);
 
-	cGameObject* sun = new cGameObject;
+	/*cGameObject* sun = new cGameObject;
 	sun->inverseMass = 0.f;
 	sun->positionXYZ = glm::vec3(0.f, 0.f, 0.f);
 	sun->meshName = "sphere";
@@ -149,7 +149,7 @@ int main(void)
 	scene->vecGameObjects.push_back(planetX);
 	scene->vecGameObjects.push_back(planetY);
 
-	float rotationSpeed = 55.f;
+	float rotationSpeed = 55.f;*/
 
 #if _DEBUG
 	cDebugRenderer renderer;
@@ -189,7 +189,7 @@ int main(void)
 		phys.IntegrationStep(scene, /*delta_time*/delta_time);
 
 		
-		Mathf::rotate_vector(delta_time * rotationSpeed,
+		/*Mathf::rotate_vector(delta_time * rotationSpeed,
 							 sun->positionXYZ,
 							 planetX->positionXYZ
 		);
@@ -197,7 +197,7 @@ int main(void)
 		Mathf::rotate_vector(delta_time * rotationSpeed / 3.f,
 							 sun->positionXYZ,
 							 planetY->positionXYZ
-		);
+		);*/
 		
 		
 		// **************************************************
