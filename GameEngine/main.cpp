@@ -157,9 +157,9 @@ int main(void)
 	//float rotationSpeed = 55.f;
 
 #if _DEBUG
-	cDebugRenderer renderer;
-	renderer.initialize();
-	phys.renderer = &renderer;
+	cDebugRenderer* renderer = cDebugRenderer::GetInstance();
+	renderer->initialize();
+	phys.renderer = renderer;
 #endif
 
 	float current_time = (float)glfwGetTime();
@@ -239,7 +239,7 @@ int main(void)
 						scene->cameraTarget,
 						scene->upVector);
 
-		renderer.RenderDebugObjects(v, p, 0.01f);
+		renderer->RenderDebugObjects(v, p, 0.01f);
 #endif
 
 		/*float closestDistanceSoFar = FLT_MAX;
@@ -385,8 +385,6 @@ void DrawObject(cGameObject* objPtr, float ratio)
 
 	scene->pLightManager->Set_Light_Data(shaderProgID);
 
-
-	
 
 
 	// This will change the fill mode to something 

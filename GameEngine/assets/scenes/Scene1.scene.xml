@@ -49,7 +49,7 @@
            friendlyName="plane_wall2"/>
     <Model file="plane_angle_XYZ_N.ply"
            friendlyName="plane_angle"/>-->
-    <Model file="spaceship_XYZ_N.ply"
+    <Model file="ufo2_XYZ_N.ply"
            friendlyName="space_ship"/>
   </Models>
 

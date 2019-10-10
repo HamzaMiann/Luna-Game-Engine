@@ -3,6 +3,56 @@
 #include "cLightManager.h"
 #include "Mathf.h"
 
+sNVPair cUniverse::ReceiveMessage(sNVPair message)
+{
+	if (message.name == "get closest planet")
+	{
+		float closest = FLT_MAX;
+		glm::vec3* closestPtr = nullptr;
+		for (int i = 0; i < planets.size(); ++i)
+		{
+			for (int k = 0; k < planets[i].size(); ++k)
+			{
+				float r = planets[i][k]->ResourcesLeft;
+				if (r < 1.f) continue;
+
+				float distance = glm::distance2(planets[i][k]->positionXYZ, message.v3Value);
+				if (distance < closest);
+				{
+					closest = distance;
+					closestPtr = &planets[i][k]->positionXYZ;
+				}
+			}
+		}
+		message.v3Ptr = closestPtr;
+	}
+	else if (message.name == "harvest energy from planet")
+	{
+		for (int i = 0; i < planets.size(); ++i)
+		{
+			for (int k = 0; k < planets[i].size(); ++k)
+			{
+				if (&planets[i][k]->positionXYZ == message.v3Ptr)
+				{
+					printf("Ship taking resource from planet. %f left.\n", planets[i][k]->ResourcesLeft);
+					if (planets[i][k]->ResourcesLeft > 0.f)
+					{
+						planets[i][k]->ResourcesLeft -= 1.f;
+						message.fValue = 1.f;
+						message.name = "add energy";
+					}
+					else
+					{
+						message.name = "empty";
+					}
+					break;
+				}
+			}
+		}
+	}
+	return message;
+}
+
 void cUniverse::Instantiate(Scene* scene, std::size_t number_of_stars, std::size_t number_of_planets)
 {
 	// the first given light is the template light
@@ -56,6 +106,11 @@ void cUniverse::Instantiate(Scene* scene, std::size_t number_of_stars, std::size
 		}
 	}
 
+	cSpaceShip* ship = new cSpaceShip;
+	ship->Set_World(this);
+	ships.push_back(ship);
+	scene->vecGameObjects.push_back(ship);
+
 	// erase the first light which was added as a template
 	scene->pLightManager->Lights.erase(scene->pLightManager->Lights.begin());
 }
@@ -75,5 +130,9 @@ void cUniverse::Update(float delta_time)
 			ptr->positionXYZ += star->positionXYZ;
 			//ptr->positionXYZ.x += delta_time;
 		}
+	}
+	for (unsigned int n = 0; n < ships.size(); ++n)
+	{
+		ships[n]->Update();
 	}
 }

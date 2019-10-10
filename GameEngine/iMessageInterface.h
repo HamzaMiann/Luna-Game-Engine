@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
+#include "sNVPair.h"
 
 class iMessageInterface
 {
 public:
 	virtual ~iMessageInterface() {}
-	virtual void ReceiveMessage(std::string message) = 0;
+	virtual sNVPair ReceiveMessage(sNVPair message) = 0;
 };

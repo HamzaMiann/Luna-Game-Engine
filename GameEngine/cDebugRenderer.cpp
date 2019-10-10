@@ -175,7 +175,12 @@ const std::string cDebugRenderer::DEFAULT_FRAG_SHADER_SOURCE = "\
 //};
 
 #include <iostream>
-
+cDebugRenderer* myInstance = nullptr;
+cDebugRenderer* cDebugRenderer::GetInstance(void)
+{
+	if (!myInstance) myInstance = new cDebugRenderer;
+	return myInstance;
+}
 // Used to compile the shader
 void cDebugRenderer::m_parseStringIntoMultiLine( std::string singleLineSource, std::vector<std::string> &vecMultiline )
 {

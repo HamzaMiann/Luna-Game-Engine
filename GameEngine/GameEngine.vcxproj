@@ -174,12 +174,14 @@
     <ClCompile Include="cShaderBuilder.cpp" />
     <ClCompile Include="cShaderHelper.cpp" />
     <ClCompile Include="cShaderManager.cpp" />
+    <ClCompile Include="cSpaceShip.cpp" />
     <ClCompile Include="cUniverse.cpp" />
     <ClCompile Include="cVAOManager.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="sNVPair.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioEngine.hpp" />
@@ -215,6 +217,7 @@
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="sLight.h" />
+    <ClInclude Include="sNVPair.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\fragmentShader01.glsl" />

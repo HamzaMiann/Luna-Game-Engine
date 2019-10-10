@@ -14,5 +14,5 @@ public:
 		this->objectColourRGBA = glm::vec4(.9f, .7f, .0f, 1.f);
 		this->inverseMass = 0.f;
 	}
-	virtual void ReceiveMessage(std::string message) override {}
+	virtual sNVPair ReceiveMessage(sNVPair message) override { return sNVPair(); }
 };

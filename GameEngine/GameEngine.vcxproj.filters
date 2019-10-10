@@ -132,6 +132,12 @@
     <ClCompile Include="cUniverse.cpp">
       <Filter>SpaceGame</Filter>
     </ClCompile>
+    <ClCompile Include="sNVPair.cpp">
+      <Filter>SpaceGame</Filter>
+    </ClCompile>
+    <ClCompile Include="cSpaceShip.cpp">
+      <Filter>SpaceGame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -231,6 +237,9 @@
       <Filter>SpaceGame</Filter>
     </ClInclude>
     <ClInclude Include="cSpaceShip.h">
+      <Filter>SpaceGame</Filter>
+    </ClInclude>
+    <ClInclude Include="sNVPair.h">
       <Filter>SpaceGame</Filter>
     </ClInclude>
   </ItemGroup>

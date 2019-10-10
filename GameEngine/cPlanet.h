@@ -17,5 +17,5 @@ public:
 		this->inverseMass = 0.f;
 		this->RotationSpeed = rand() % 10 + 10;
 	}
-	virtual void ReceiveMessage(std::string message) override {}
+	virtual sNVPair ReceiveMessage(sNVPair message) override { return sNVPair(); }
 };
