@@ -137,6 +137,8 @@ int main(void)
 	planetX->meshName = "sphere";
 	planetX->scale = 0.2f;
 	planetX->objectColourRGBA = glm::vec4(0.f, .3f, 0.8f, 1.f);
+	planetX->specularIntensity = 100.f;
+	planetX->specularColour = sun->objectColourRGBA;
 
 	cGameObject* planetY = new cGameObject;
 	planetY->inverseMass = 0.f;
@@ -144,6 +146,7 @@ int main(void)
 	planetY->meshName = "sphere";
 	planetY->scale = 0.4f;
 	planetY->objectColourRGBA = glm::vec4(.5f, .3f, 0.f, 1.f);
+	planetY->specularColour = sun->objectColourRGBA;
 
 	scene->vecGameObjects.push_back(sun);
 	scene->vecGameObjects.push_back(planetX);
@@ -370,7 +373,10 @@ void DrawObject(cGameObject* objPtr, float ratio)
 
 	GLint spec_loc = glGetUniformLocation(shaderProgID, "specularColour");
 	glUniform4f(spec_loc,
-				1.f, 1.f, 0.f, 1.f
+				objPtr->specularColour.x,
+				objPtr->specularColour.y,
+				objPtr->specularColour.z,
+				objPtr->specularIntensity
 	);
 
 	GLint isUniform_location = glGetUniformLocation(shaderProgID, "isUniform");

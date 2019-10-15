@@ -23,58 +23,8 @@ struct Sphere
 // Closest point in 3D space. XYZ 
 Point ClosestPtPointTriangle(Point p, Point a, Point b, Point c);
 int TestSphereTriangle(Sphere s, Point a, Point b, Point c, Point& p);
-
-void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3& closestPoint, glm::vec3& normalVector, cGameObject* const meshObject, cGameObject* const pObj)
-{
-	cMesh* mesh = scene.pVAOManager->FindMeshByModelName(meshObject->meshName);
-	if (!mesh) return;
-
-	for (unsigned int triIndex = 0;
-		 triIndex != mesh->vecTriangles.size();
-		 triIndex++)
-	{
-		sPlyTriangle& curTriangle = mesh->vecTriangles[triIndex];
-
-		// Get the vertices of the triangle
-		sPlyVertexXYZ triVert1 = mesh->vecVertices[curTriangle.vert_index_1];
-		sPlyVertexXYZ triVert2 = mesh->vecVertices[curTriangle.vert_index_2];
-		sPlyVertexXYZ triVert3 = mesh->vecVertices[curTriangle.vert_index_3];
-
-		Point triVertPoint1;
-		triVertPoint1.x = (triVert1.x * meshObject->scale + meshObject->positionXYZ.x);
-		triVertPoint1.y = (triVert1.y * meshObject->scale + meshObject->positionXYZ.y);
-		triVertPoint1.z = (triVert1.z * meshObject->scale + meshObject->positionXYZ.z);
-
-		Point triVertPoint2;
-		triVertPoint2.x = (triVert2.x * meshObject->scale + meshObject->positionXYZ.x);
-		triVertPoint2.y = (triVert2.y * meshObject->scale + meshObject->positionXYZ.y);
-		triVertPoint2.z = (triVert2.z * meshObject->scale + meshObject->positionXYZ.z);
-
-		Point triVertPoint3;
-		triVertPoint3.x = (triVert3.x * meshObject->scale + meshObject->positionXYZ.x);
-		triVertPoint3.y = (triVert3.y * meshObject->scale + meshObject->positionXYZ.y);
-		triVertPoint3.z = (triVert3.z * meshObject->scale + meshObject->positionXYZ.z);
-
-		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
-			pObj->positionXYZ,
-			triVertPoint1, triVertPoint2, triVertPoint3
-		);
-
-		// Is this the closest so far?
-		float distanceNow = glm::distance(curClosetPoint, pObj->positionXYZ);
-
-		// is this closer than the closest distance
-		if (distanceNow <= closestDistanceSoFar)
-		{
-			closestDistanceSoFar = distanceNow;
-			closestPoint = curClosetPoint;
-			normalVector.x = (triVert1.nx + triVert2.nx + triVert3.nx) / 3.f;
-			normalVector.y = (triVert1.ny + triVert2.ny + triVert3.ny) / 3.f;
-			normalVector.z = (triVert1.nz + triVert2.nz + triVert3.nz) / 3.f;
-		}
-	}
-}
-
+void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3& closestPoint, glm::vec3& normalVector, cGameObject* const meshObject, cGameObject* const pObj);
+void sphereCollisionResponse(cGameObject* a, cGameObject* b, PhysicsEngine* phys);
 
 void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 {
@@ -83,6 +33,8 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 	{
 		// Forward Explicit Euler Integration
 		cGameObject* pObj = (scene->vecGameObjects[i]);
+
+		pObj->previousXYZ = pObj->positionXYZ;
 
 		// if infinite mass, don't run physics
 		if (pObj->inverseMass == 0.f) continue;
@@ -135,7 +87,7 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 		pObj->positionXYZ += (pObj->velocity * deltaTime);
 		pObj->isCollided = false;
 
-		
+
 
 		// Test to see if it's hit the cube
 
@@ -203,50 +155,36 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 				switch (colliderObject->Collider)
 				{
 				case MESH:
-					
+
 					FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, colliderObject, pObj);
 
 					if (pObj->Collider == SPHERE)
 						closestDistanceSoFar -= pObj->scale;
-					
+
 					if (abs(closestDistanceSoFar) <= 0.1f)
 					{
 						//printf("%f\n", glm::dot(pObj->velocity, normal));
 						if (glm::dot(pObj->velocity, normal) > 0)
 							break;
-						//if (closestDistanceSoFar < 0) pObj->positionXYZ = closestPoint;
-						if (!pObj->isCollided)
+
+						if (closestDistanceSoFar < 0.f)
+							pObj->positionXYZ = pObj->previousXYZ;
+
+						pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
+						pObj->isCollided |= true;
+
+						if (renderer)
 						{
-							
-							pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
-							pObj->isCollided |= true;
+							renderer->addLine(closestPoint,
+											  closestPoint + normal,
+											  glm::vec3(0.f, 1.f, 1.f),
+											  1.f);
 
-							if (renderer)
-							{
-								renderer->addLine(closestPoint,
-												  closestPoint + normal,
-												  glm::vec3(0.f, 1.f, 1.f),
-												  1.f);
-
-								renderer->addLine(closestPoint,
-												  closestPoint + glm::normalize(pObj->velocity),
-												  glm::vec3(0.f, 1.f, 0.f),
-												  1.f);
-							}
-
-							/*AudioEngine::Sound* sound = scene->pAudioEngine->GetSound("ball");
-							if (sound)
-							{
-								float volume = glm::length(pObj->velocity);
-								volume = volume > 1.f ? 1.f : volume;
-								sound->set_volume(volume);
-								scene->pAudioEngine->PlaySound(sound);
-							}*/
+							renderer->addLine(closestPoint,
+											  closestPoint + glm::normalize(pObj->velocity),
+											  glm::vec3(0.f, 1.f, 0.f),
+											  1.f);
 						}
-					}
-					else
-					{
-						pObj->isCollided |= false;
 					}
 
 					break;
@@ -254,21 +192,10 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 					if (pObj->Collider == SPHERE)
 					{
 						float distance = glm::distance(pObj->positionXYZ, colliderObject->positionXYZ);
-						distance -= (pObj->scale + colliderObject->scale) / 2.f;
+						distance -= (pObj->scale + colliderObject->scale);// / 2.f;
 						if (distance <= 0.1f)
 						{
-							//pObj->acceleration = (pObj->acceleration) * -1.f;
-							//colliderObject->acceleration = (colliderObject->acceleration) * -1.f;
-							if (!pObj->isCollided)
-							{
-								pObj->velocity = (pObj->velocity) * -1.f;
-								colliderObject->velocity = (colliderObject->velocity) * -1.f;
-								pObj->isCollided = true;
-							}
-						}
-						else
-						{
-							pObj->isCollided = false;
+							sphereCollisionResponse(pObj, colliderObject, this);
 						}
 					}
 					break;
@@ -285,6 +212,115 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 }
 
 
+void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3& closestPoint, glm::vec3& normalVector, cGameObject* const meshObject, cGameObject* const pObj)
+{
+	cMesh* mesh = scene.pVAOManager->FindMeshByModelName(meshObject->meshName);
+	if (!mesh) return;
+
+	for (unsigned int triIndex = 0;
+		 triIndex != mesh->vecTriangles.size();
+		 triIndex++)
+	{
+		sPlyTriangle& curTriangle = mesh->vecTriangles[triIndex];
+
+		// Get the vertices of the triangle
+		sPlyVertexXYZ triVert1 = mesh->vecVertices[curTriangle.vert_index_1];
+		sPlyVertexXYZ triVert2 = mesh->vecVertices[curTriangle.vert_index_2];
+		sPlyVertexXYZ triVert3 = mesh->vecVertices[curTriangle.vert_index_3];
+
+		Point triVertPoint1;
+		triVertPoint1.x = (triVert1.x * meshObject->scale + meshObject->positionXYZ.x);
+		triVertPoint1.y = (triVert1.y * meshObject->scale + meshObject->positionXYZ.y);
+		triVertPoint1.z = (triVert1.z * meshObject->scale + meshObject->positionXYZ.z);
+
+		Point triVertPoint2;
+		triVertPoint2.x = (triVert2.x * meshObject->scale + meshObject->positionXYZ.x);
+		triVertPoint2.y = (triVert2.y * meshObject->scale + meshObject->positionXYZ.y);
+		triVertPoint2.z = (triVert2.z * meshObject->scale + meshObject->positionXYZ.z);
+
+		Point triVertPoint3;
+		triVertPoint3.x = (triVert3.x * meshObject->scale + meshObject->positionXYZ.x);
+		triVertPoint3.y = (triVert3.y * meshObject->scale + meshObject->positionXYZ.y);
+		triVertPoint3.z = (triVert3.z * meshObject->scale + meshObject->positionXYZ.z);
+
+		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
+			pObj->positionXYZ,
+			triVertPoint1, triVertPoint2, triVertPoint3
+		);
+
+		// Is this the closest so far?
+		float distanceNow = glm::distance(curClosetPoint, pObj->positionXYZ);
+
+		// is this closer than the closest distance
+		if (distanceNow <= closestDistanceSoFar)
+		{
+			closestDistanceSoFar = distanceNow;
+			closestPoint = curClosetPoint;
+			normalVector.x = (triVert1.nx + triVert2.nx + triVert3.nx) / 3.f;
+			normalVector.y = (triVert1.ny + triVert2.ny + triVert3.ny) / 3.f;
+			normalVector.z = (triVert1.nz + triVert2.nz + triVert3.nz) / 3.f;
+		}
+	}
+}
+
+
+// code for collision response between spheres
+void sphereCollisionResponse(cGameObject* a, cGameObject* b, PhysicsEngine* phys)
+{
+	glm::vec3 U1x, U1y, U2x, U2y, V1x, V1y, V2x, V2y;
+
+	float m1, m2, x1, x2;
+	glm::vec3 v1temp, v1, v2, v1x, v2x, v1y, v2y, x(a->positionXYZ - b->positionXYZ);
+
+	glm::normalize(x);
+	v1 = a->velocity;
+	x1 = dot(x, v1);
+	v1x = x * x1;
+	v1y = v1 - v1x;
+	m1 = 1.0f; //mass of 1
+
+	x = x * -1.0f;
+	v2 = b->velocity;
+	x2 = dot(x, v2);
+	v2x = x * x2;
+	v2y = v2 - v2x;
+	m2 = 1.0f; //mass of 1
+
+
+	a->velocity = glm::vec3(v1x * (m1 - m2) / (m1 + m2) + v2x * (2 * m2) / (m1 + m2) + v1y) / 4.0f;
+	b->velocity = glm::vec3(v1x * (2 * m1) / (m1 + m2) + v2x * (m2 - m1) / (m1 + m2) + v2y) / 4.0f;
+
+	if (glm::length(a->velocity) < 0.2f);
+	a->velocity *= 5.f;
+	if (glm::length(b->velocity) < 0.2f);
+	b->velocity *= 5.f;
+
+	/*float distance = glm::distance(a->previousXYZ, b->previousXYZ) - (a->scale + b->scale);
+	if (distance <= 0.1f)
+	{
+		a->positionXYZ = a->positionXYZ + (b->previousXYZ - a->previousXYZ) * 1.5f;
+		b->positionXYZ = b->positionXYZ + (b->previousXYZ - a->previousXYZ) * -1.5f;
+		a->previousXYZ = a->positionXYZ;
+		b->previousXYZ = b->positionXYZ;
+	}*/
+
+	//set the position of the spheres to their previous non contact positions to unstick them.
+	a->positionXYZ = a->previousXYZ;
+	b->positionXYZ = b->previousXYZ;
+
+	if (phys->renderer)
+	{
+		phys->renderer->addLine(a->positionXYZ,
+								a->positionXYZ + a->velocity,
+								glm::vec3(.5f, .9f, .5f),
+								.1f);
+
+		phys->renderer->addLine(b->positionXYZ,
+								b->positionXYZ + b->velocity,
+								glm::vec3(.5f, .9f, .5f),
+								.1f);
+	}
+}
 
 
 // Closest point in 3D space. XYZ 
