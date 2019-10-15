@@ -23,6 +23,8 @@
 
 #include "iInputHandler.h"
 #include "cPhysicsInputHandler.h"
+#include "cLightController.h"
+#include "cLayoutController.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -121,38 +123,8 @@ int main(void)
 
 	PhysicsEngine phys;
 
-	pInputHandler = new cPhysicsInputHandler(*scene);
+	pInputHandler = new cLayoutController(*scene);
 
-	cGameObject* sun = new cGameObject;
-	sun->inverseMass = 0.f;
-	sun->positionXYZ = glm::vec3(0.f, 0.f, 0.f);
-	sun->meshName = "sphere";
-	sun->scale = 1.f;
-	sun->objectColourRGBA = glm::vec4(.99f, .9f, 0.f, 1.f);
-	sun->uniformColour = true;
-
-	cGameObject* planetX = new cGameObject;
-	planetX->inverseMass = 0.f;
-	planetX->positionXYZ = glm::vec3(2.f, 0.f, 0.f);
-	planetX->meshName = "sphere";
-	planetX->scale = 0.2f;
-	planetX->objectColourRGBA = glm::vec4(0.f, .3f, 0.8f, 1.f);
-	planetX->specularIntensity = 100.f;
-	planetX->specularColour = sun->objectColourRGBA;
-
-	cGameObject* planetY = new cGameObject;
-	planetY->inverseMass = 0.f;
-	planetY->positionXYZ = glm::vec3(5.f, 0.f, 0.f);
-	planetY->meshName = "sphere";
-	planetY->scale = 0.4f;
-	planetY->objectColourRGBA = glm::vec4(.5f, .3f, 0.f, 1.f);
-	planetY->specularColour = sun->objectColourRGBA;
-
-	scene->vecGameObjects.push_back(sun);
-	scene->vecGameObjects.push_back(planetX);
-	scene->vecGameObjects.push_back(planetY);
-
-	float rotationSpeed = 55.f;
 
 #if _DEBUG
 	cDebugRenderer renderer;
@@ -190,18 +162,6 @@ int main(void)
 		// Update the objects' physics
 		phys.CheckCollisions(scene);
 		phys.IntegrationStep(scene, /*delta_time*/delta_time);
-
-		
-		Mathf::rotate_vector(delta_time * rotationSpeed,
-							 sun->positionXYZ,
-							 planetX->positionXYZ
-		);
-
-		Mathf::rotate_vector(delta_time * rotationSpeed / 3.f,
-							 sun->positionXYZ,
-							 planetY->positionXYZ
-		);
-		
 		
 		// **************************************************
 		// **************************************************
@@ -239,14 +199,6 @@ int main(void)
 		renderer.RenderDebugObjects(v, p, 0.01f);
 #endif
 
-		/*float closestDistanceSoFar = FLT_MAX;
-		glm::vec3 closestPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);*/
-
-		//FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, scene->vecGameObjects[0], scene->vecGameObjects[1]);
-
-		//debugSphere.positionXYZ = closestPoint;
-		//DrawObject(&debugSphere, ratio);
 
 		 // **************************************************
 		// **************************************************
@@ -300,9 +252,9 @@ void DrawObject(cGameObject* objPtr, float ratio)
 	// ******* TRANSLATION TRANSFORM *********
 	glm::mat4 matTrans
 		= glm::translate(glm::mat4(1.0f),
-						 glm::vec3(objPtr->positionXYZ.x,
-								   objPtr->positionXYZ.y,
-								   objPtr->positionXYZ.z));
+						 glm::vec3(objPtr->pos.x,
+								   objPtr->pos.y,
+								   objPtr->pos.z));
 	m = m * matTrans;
 	// ******* TRANSLATION TRANSFORM *********
 
@@ -311,17 +263,17 @@ void DrawObject(cGameObject* objPtr, float ratio)
 	// ******* ROTATION TRANSFORM *********
 	//mat4x4_rotate_Z(m, m, (float) glfwGetTime());
 	glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
-									objPtr->rotationXYZ.z,					// Angle
+									objPtr->rotation.z,					// Angle
 									glm::vec3(0.0f, 0.0f, 1.0f));
 	m = m * rotateZ;
 
 	glm::mat4 rotateY = glm::rotate(glm::mat4(1.0f),
-									objPtr->rotationXYZ.y,	//(float)glfwGetTime(),					// Angle
+									objPtr->rotation.y,	//(float)glfwGetTime(),					// Angle
 									glm::vec3(0.0f, 1.0f, 0.0f));
 	m = m * rotateY;
 
 	glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
-									objPtr->rotationXYZ.x,	// (float)glfwGetTime(),					// Angle
+									objPtr->rotation.x,	// (float)glfwGetTime(),					// Angle
 									glm::vec3(1.0f, 0.0f, 0.0f));
 	m = m * rotateX;
 	// ******* ROTATION TRANSFORM *********
@@ -365,18 +317,18 @@ void DrawObject(cGameObject* objPtr, float ratio)
 
 	GLint diff_loc = glGetUniformLocation(shaderProgID, "diffuseColour");
 	glUniform4f(diff_loc,
-				objPtr->objectColourRGBA.x,
-				objPtr->objectColourRGBA.y,
-				objPtr->objectColourRGBA.z,
-				objPtr->objectColourRGBA.w
+				objPtr->colour.x,
+				objPtr->colour.y,
+				objPtr->colour.z,
+				objPtr->colour.w
 	);
 
 	GLint spec_loc = glGetUniformLocation(shaderProgID, "specularColour");
 	glUniform4f(spec_loc,
-				objPtr->specularColour.x,
-				objPtr->specularColour.y,
-				objPtr->specularColour.z,
-				objPtr->specularIntensity
+				objPtr->specColour.x,
+				objPtr->specColour.y,
+				objPtr->specColour.z,
+				objPtr->specIntensity
 	);
 
 	GLint isUniform_location = glGetUniformLocation(shaderProgID, "isUniform");
@@ -393,8 +345,15 @@ void DrawObject(cGameObject* objPtr, float ratio)
 	//  GL_FILL is solid 
 	//  GL_LINE is "wireframe"
 	//glPointSize(15.0f);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	if (objPtr->isWireframe)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 
 	sModelDrawInfo drawInfo;
 	if (scene->pVAOManager->FindDrawInfoByModelName(objPtr->meshName, drawInfo))

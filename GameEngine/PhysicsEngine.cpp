@@ -34,7 +34,7 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 		// Forward Explicit Euler Integration
 		cGameObject* pObj = (scene->vecGameObjects[i]);
 
-		pObj->previousXYZ = pObj->positionXYZ;
+		pObj->previousPos = pObj->pos;
 
 		// if infinite mass, don't run physics
 		if (pObj->inverseMass == 0.f) continue;
@@ -84,7 +84,7 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 			pObj->velocity.y = pObj->velocity.y * drag;
 			pObj->velocity.z = pObj->velocity.z * drag;
 		}*/
-		pObj->positionXYZ += (pObj->velocity * deltaTime);
+		pObj->pos += (pObj->velocity * deltaTime);
 		pObj->isCollided = false;
 
 
@@ -168,7 +168,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 							break;
 
 						if (closestDistanceSoFar < 0.f)
-							pObj->positionXYZ = pObj->previousXYZ;
+							pObj->pos = pObj->previousPos;
 
 						pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
 						pObj->isCollided |= true;
@@ -191,7 +191,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 				case SPHERE:
 					if (pObj->Collider == SPHERE)
 					{
-						float distance = glm::distance(pObj->positionXYZ, colliderObject->positionXYZ);
+						float distance = glm::distance(pObj->pos, colliderObject->pos);
 						distance -= (pObj->scale + colliderObject->scale);// / 2.f;
 						if (distance <= 0.1f)
 						{
@@ -229,27 +229,27 @@ void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3
 		sPlyVertexXYZ triVert3 = mesh->vecVertices[curTriangle.vert_index_3];
 
 		Point triVertPoint1;
-		triVertPoint1.x = (triVert1.x * meshObject->scale + meshObject->positionXYZ.x);
-		triVertPoint1.y = (triVert1.y * meshObject->scale + meshObject->positionXYZ.y);
-		triVertPoint1.z = (triVert1.z * meshObject->scale + meshObject->positionXYZ.z);
+		triVertPoint1.x = (triVert1.x * meshObject->scale + meshObject->pos.x);
+		triVertPoint1.y = (triVert1.y * meshObject->scale + meshObject->pos.y);
+		triVertPoint1.z = (triVert1.z * meshObject->scale + meshObject->pos.z);
 
 		Point triVertPoint2;
-		triVertPoint2.x = (triVert2.x * meshObject->scale + meshObject->positionXYZ.x);
-		triVertPoint2.y = (triVert2.y * meshObject->scale + meshObject->positionXYZ.y);
-		triVertPoint2.z = (triVert2.z * meshObject->scale + meshObject->positionXYZ.z);
+		triVertPoint2.x = (triVert2.x * meshObject->scale + meshObject->pos.x);
+		triVertPoint2.y = (triVert2.y * meshObject->scale + meshObject->pos.y);
+		triVertPoint2.z = (triVert2.z * meshObject->scale + meshObject->pos.z);
 
 		Point triVertPoint3;
-		triVertPoint3.x = (triVert3.x * meshObject->scale + meshObject->positionXYZ.x);
-		triVertPoint3.y = (triVert3.y * meshObject->scale + meshObject->positionXYZ.y);
-		triVertPoint3.z = (triVert3.z * meshObject->scale + meshObject->positionXYZ.z);
+		triVertPoint3.x = (triVert3.x * meshObject->scale + meshObject->pos.x);
+		triVertPoint3.y = (triVert3.y * meshObject->scale + meshObject->pos.y);
+		triVertPoint3.z = (triVert3.z * meshObject->scale + meshObject->pos.z);
 
 		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
-			pObj->positionXYZ,
+			pObj->pos,
 			triVertPoint1, triVertPoint2, triVertPoint3
 		);
 
 		// Is this the closest so far?
-		float distanceNow = glm::distance(curClosetPoint, pObj->positionXYZ);
+		float distanceNow = glm::distance(curClosetPoint, pObj->pos);
 
 		// is this closer than the closest distance
 		if (distanceNow <= closestDistanceSoFar)
@@ -270,7 +270,7 @@ void sphereCollisionResponse(cGameObject* a, cGameObject* b, PhysicsEngine* phys
 	glm::vec3 U1x, U1y, U2x, U2y, V1x, V1y, V2x, V2y;
 
 	float m1, m2, x1, x2;
-	glm::vec3 v1temp, v1, v2, v1x, v2x, v1y, v2y, x(a->positionXYZ - b->positionXYZ);
+	glm::vec3 v1temp, v1, v2, v1x, v2x, v1y, v2y, x(a->pos - b->pos);
 
 	glm::normalize(x);
 	v1 = a->velocity;
@@ -305,18 +305,18 @@ void sphereCollisionResponse(cGameObject* a, cGameObject* b, PhysicsEngine* phys
 	}*/
 
 	//set the position of the spheres to their previous non contact positions to unstick them.
-	a->positionXYZ = a->previousXYZ;
-	b->positionXYZ = b->previousXYZ;
+	a->pos = a->previousPos;
+	b->pos = b->previousPos;
 
 	if (phys->renderer)
 	{
-		phys->renderer->addLine(a->positionXYZ,
-								a->positionXYZ + a->velocity,
+		phys->renderer->addLine(a->pos,
+								a->pos + a->velocity,
 								glm::vec3(.5f, .9f, .5f),
 								.1f);
 
-		phys->renderer->addLine(b->positionXYZ,
-								b->positionXYZ + b->velocity,
+		phys->renderer->addLine(b->pos,
+								b->pos + b->velocity,
 								glm::vec3(.5f, .9f, .5f),
 								.1f);
 	}

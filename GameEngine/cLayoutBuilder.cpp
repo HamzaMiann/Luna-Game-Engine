@@ -38,15 +38,15 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				std::string propName = property_node->name();
 				if (propName == "Position")
 				{
-					setXYZ(ptr->positionXYZ, property_node);
+					setXYZ(ptr->pos, property_node);
 				}
 				else if (propName == "Rotation")
 				{
-					setXYZ(ptr->rotationXYZ, property_node);
+					setXYZ(ptr->rotation, property_node);
 				}
 				else if (propName == "Colour")
 				{
-					setXYZW(ptr->objectColourRGBA, property_node);
+					setXYZW(ptr->colour, property_node);
 				}
 				else if (propName == "Velocity")
 				{
@@ -63,6 +63,14 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				else if (propName == "IMass")
 				{
 					ptr->inverseMass = strtof(property_node->value(), 0);
+				}
+				else if (propName == "SpecIntensity")
+				{
+					ptr->specIntensity = strtof(property_node->value(), 0);
+				}
+				else if (propName == "SpecColour")
+				{
+					setXYZ(ptr->specColour, property_node);
 				}
 				else if (propName == "Collider")
 				{

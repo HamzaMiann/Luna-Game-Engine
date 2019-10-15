@@ -49,6 +49,9 @@
     <Filter Include="DebugRenderer">
       <UniqueIdentifier>{aad5e934-7cc7-4c00-9524-7c82189dc4ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="InputHandler\Handlers">
+      <UniqueIdentifier>{ff060f73-92b9-45d6-adb6-f69f134d3be6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">
@@ -99,9 +102,6 @@
     <ClCompile Include="cLightManager.cpp">
       <Filter>Lighting</Filter>
     </ClCompile>
-    <ClCompile Include="cPhysicsInputHandler.cpp">
-      <Filter>InputHandler</Filter>
-    </ClCompile>
     <ClCompile Include="cDebugRenderer.cpp">
       <Filter>DebugRenderer</Filter>
     </ClCompile>
@@ -121,7 +121,19 @@
       <Filter>SceneFactory\SceneBuilders</Filter>
     </ClCompile>
     <ClCompile Include="cAudioInputHandler.cpp">
-      <Filter>InputHandler</Filter>
+      <Filter>InputHandler\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="cPhysicsInputHandler.cpp">
+      <Filter>InputHandler\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="cLightController.cpp">
+      <Filter>InputHandler\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLightSave.cpp">
+      <Filter>SceneFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="cLayoutController.cpp">
+      <Filter>InputHandler\Handlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -176,9 +188,6 @@
     <ClInclude Include="iInputHandler.h">
       <Filter>InputHandler</Filter>
     </ClInclude>
-    <ClInclude Include="cPhysicsInputHandler.h">
-      <Filter>InputHandler</Filter>
-    </ClInclude>
     <ClInclude Include="cLayoutBuilder.h">
       <Filter>SceneFactory\SceneBuilders</Filter>
     </ClInclude>
@@ -207,7 +216,19 @@
       <Filter>SceneFactory\SceneBuilders</Filter>
     </ClInclude>
     <ClInclude Include="cAudioInputHandler.h">
-      <Filter>InputHandler</Filter>
+      <Filter>InputHandler\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="cPhysicsInputHandler.h">
+      <Filter>InputHandler\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="cLightController.h">
+      <Filter>InputHandler\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="rapid_definitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cLayoutController.h">
+      <Filter>InputHandler\Handlers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

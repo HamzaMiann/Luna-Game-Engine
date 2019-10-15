@@ -51,6 +51,23 @@ Scene* Scene::LoadFromXML(std::string filename)
 		}
 	}
 
+	filestream.close();
+
 	return newScene;
 
+}
+
+bool Scene::SaveToFile()
+{
+	return SaveLights() && SaveAudio() && SaveLayout();
+}
+
+bool Scene::SaveAudio()
+{
+	return true;
+}
+
+bool Scene::SaveLayout()
+{
+	return true;
 }

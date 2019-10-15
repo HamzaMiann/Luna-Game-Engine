@@ -22,33 +22,33 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{AC89A0D6-36A9-4B42-948D-5A55BA436D9A}</ProjectGuid>
     <RootNamespace>GDP201920</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>GameEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -163,7 +163,9 @@
     <ClCompile Include="CErrorLog.cpp" />
     <ClCompile Include="cGLRenderStateHelper.cpp" />
     <ClCompile Include="cLayoutBuilder.cpp" />
+    <ClCompile Include="cLayoutController.cpp" />
     <ClCompile Include="cLightBuilder.cpp" />
+    <ClCompile Include="cLightController.cpp" />
     <ClCompile Include="cLightManager.cpp" />
     <ClCompile Include="cModelBuilder.cpp" />
     <ClCompile Include="cModelLoader.cpp" />
@@ -179,6 +181,7 @@
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneLightSave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioEngine.hpp" />
@@ -189,7 +192,9 @@
     <ClInclude Include="cGameObject.h" />
     <ClInclude Include="cGLRenderStateHelper.h" />
     <ClInclude Include="cLayoutBuilder.h" />
+    <ClInclude Include="cLayoutController.h" />
     <ClInclude Include="cLightBuilder.h" />
+    <ClInclude Include="cLightController.h" />
     <ClInclude Include="cMesh.h" />
     <ClInclude Include="cModelBuilder.h" />
     <ClInclude Include="cModelLoader.h" />
@@ -207,6 +212,7 @@
     <ClInclude Include="cLightManager.h" />
     <ClInclude Include="Mathf.h" />
     <ClInclude Include="PhysicsEngine.h" />
+    <ClInclude Include="rapid_definitions.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="sLight.h" />
   </ItemGroup>

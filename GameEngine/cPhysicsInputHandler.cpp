@@ -16,13 +16,13 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_UP))
 	{
-		_scene.vecGameObjects[1]->velocity += Mathf::get_direction_vector(_scene.vecGameObjects[1]->positionXYZ,
-																		  _scene.vecGameObjects[1]->positionXYZ + forwardVector) * 0.01f;
+		_scene.vecGameObjects[1]->velocity += Mathf::get_direction_vector(_scene.vecGameObjects[1]->pos,
+																		  _scene.vecGameObjects[1]->pos + forwardVector) * 0.01f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN))
 	{
-		_scene.vecGameObjects[1]->velocity -= Mathf::get_direction_vector(_scene.vecGameObjects[1]->positionXYZ,
-																		  _scene.vecGameObjects[1]->positionXYZ + forwardVector) * 0.01f;
+		_scene.vecGameObjects[1]->velocity -= Mathf::get_direction_vector(_scene.vecGameObjects[1]->pos,
+																		  _scene.vecGameObjects[1]->pos + forwardVector) * 0.01f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT))
 	{
@@ -46,7 +46,7 @@ void cPhysicsInputHandler::key_callback(GLFWwindow* window, int key, int scancod
 
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
-		_scene.vecGameObjects[1]->positionXYZ = originalBallPosition;
+		_scene.vecGameObjects[1]->pos = originalBallPosition;
 		_scene.vecGameObjects[1]->velocity = glm::vec3(0.f);
 		//_scene.pAudioEngine->PlaySound("respawn");
 	}
