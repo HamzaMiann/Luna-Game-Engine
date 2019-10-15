@@ -176,11 +176,6 @@ int main(void)
 
 #if _DEBUG
 
-		/*renderer.addLine(scene->vecGameObjects[1]->positionXYZ,
-						 (scene->vecGameObjects[1]->positionXYZ + scene->vecGameObjects[1]->velocity * delta_time),
-						 glm::vec3(1.f, 1.f, 0.f),
-						 2.0f);*/
-
 		glm::mat4 p, v;
 
 		// Projection matrix
@@ -304,6 +299,10 @@ void DrawObject(cGameObject* objPtr, float ratio)
 	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m));
 	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
 	glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p));
+
+	GLint matModelIT_UL = glGetUniformLocation(shaderProgID, "matModelInverTrans");
+	glm::mat4 matModelInverseTranspose = glm::inverse(glm::transpose(m));
+	glUniformMatrix4fv(matModelIT_UL, 1, GL_FALSE, glm::value_ptr(matModelInverseTranspose));
 
 
 

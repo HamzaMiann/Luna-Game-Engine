@@ -66,6 +66,17 @@ void cLayoutController::HandleInput(GLFWwindow * window)
 		this->_scene.vecGameObjects[index]->rotation.y -= 0.1f;
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_EQUAL))
+	{
+		this->_scene.vecGameObjects[index]->scale *= 1.05f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_MINUS))
+	{
+		this->_scene.vecGameObjects[index]->scale *= 0.95f;
+	}
+
+	_scene.cameraTarget = _scene.vecGameObjects[index]->pos;
+
 
 }
 

@@ -32,7 +32,7 @@ void main()
 	//mat4 matInv = inverse(transpose(matModel));
 
     fColour = vColour;
-	fNormal = vNormal;
+	fNormal = matModelInverTrans * vNormal;
 
 	fUVx2 = vUVx2;
 }

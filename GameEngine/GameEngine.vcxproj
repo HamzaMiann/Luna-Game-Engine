@@ -181,6 +181,7 @@
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneLayoutSave.cpp" />
     <ClCompile Include="SceneLightSave.cpp" />
   </ItemGroup>
   <ItemGroup>

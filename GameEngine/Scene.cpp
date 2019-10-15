@@ -66,8 +66,3 @@ bool Scene::SaveAudio()
 {
 	return true;
 }
-
-bool Scene::SaveLayout()
-{
-	return true;
-}
