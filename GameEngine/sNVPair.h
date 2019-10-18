@@ -14,6 +14,7 @@ struct sNVPair
 	sNVPair(std::string name_, float fValue_);
 	sNVPair(std::string name_, int iValue_);
 	sNVPair(std::string name_, glm::vec3 v3Value_);
+	sNVPair(std::string name_, glm::vec3* v3Ptr_) : name(name_), v3Ptr(v3Ptr_) {}
 
 	sNVPair(std::string sValue_);
 	sNVPair(float fValue_);

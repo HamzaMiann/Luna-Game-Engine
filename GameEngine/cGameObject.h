@@ -31,6 +31,9 @@ public:
 	float scale = 1.f;
 	bool uniformColour = false;
 
+	glm::vec3 specularColour = glm::vec3(1.f);
+	float specularStrength = 1.f;
+
 	glm::vec3 velocity = glm::vec3(0.f, 0.f, 0.f);
 	glm::vec3 acceleration = glm::vec3(0.f, 0.f, 0.f);
 	float inverseMass = 1.f;

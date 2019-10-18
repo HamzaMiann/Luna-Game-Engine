@@ -1,29 +1,38 @@
 #pragma once
 
-#include "cGameObject.h"
-#include "iMessageInterface.h"
-#include "cDebugRenderer.h"
+#include "cSpaceObject.h"
+#include "iImplementation.h"
 
-class cSpaceShip : public cGameObject, public iMessageInterface
+class cSpaceShip : public cSpaceObject
 {
 private:
 	iMessageInterface* pWorld;
-	glm::vec3* target = nullptr;
+	iImplementation* pLogic;
+
 public:
+
 	cSpaceShip()
 	{
-		this->inverseMass = 0.f;
 		this->meshName = "space_ship";
-		//this->uniformColour = true;
-		
-		this->objectColourRGBA = glm::vec4(.5f);
-		this->scale = .2f;
+		this->inverseMass = 0.f;
 	}
+
 	void Set_World(iMessageInterface* interface)
 	{
 		this->pWorld = interface;
 	}
-	virtual sNVPair ReceiveMessage(sNVPair message) override { return sNVPair(); }
+
+	iMessageInterface* Get_World()
+	{
+		return this->pWorld;
+	}
+
+	void Set_Implementation(iImplementation* impl)
+	{
+		pLogic = impl;
+	}
+
+	virtual sNVPair ReceiveMessage(sNVPair message) override;
 	virtual void Update();
 	
 };

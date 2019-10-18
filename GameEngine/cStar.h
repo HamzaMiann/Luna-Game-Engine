@@ -1,9 +1,8 @@
 #pragma once
 
-#include "cGameObject.h"
-#include "iMessageInterface.h"
+#include "cSpaceObject.h"
 
-class cStar : public cGameObject, public iMessageInterface
+class cStar : public cSpaceObject
 {
 public:
 	cStar()

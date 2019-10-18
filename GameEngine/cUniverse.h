@@ -1,22 +1,32 @@
 #pragma once
 
-#include "iMessageInterface.h"
-#include "cStar.h"
-#include "cPlanet.h"
-#include "cSpaceShip.h"
+#include "cSpaceFactory.h"
 #include <vector>
+#include <map>
 
 class Scene;
 
 class cUniverse : public iMessageInterface
 {
 private:
-	std::vector<cStar*> stars;
-	std::vector<std::vector<cPlanet*>> planets;
-	std::vector<cSpaceShip*> ships;
+	cSpaceFactory factory;
+
+	std::vector<cSpaceObject*> stars;
+	std::vector<std::vector<cSpaceObject*>> planets;
+	std::vector<cSpaceObject*> ships;
+
+	std::map<glm::vec3*, cSpaceObject*> planetsByPosition;
+
+	std::map<glm::vec3*, glm::vec3*> shipPairs;
+
+	cUniverse() {};
+
 
 public:
-	cUniverse() {};
+
+	~cUniverse() {}
+
+	static cUniverse* Get_Instance();
 	
 	virtual sNVPair ReceiveMessage(sNVPair message) override;
 	

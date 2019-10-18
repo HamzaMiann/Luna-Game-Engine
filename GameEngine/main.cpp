@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <string>
+#include <chrono>
 
 #include "Mathf.h"
 #include "PhysicsEngine.h"
@@ -110,6 +111,7 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
+	
 	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -125,40 +127,16 @@ int main(void)
 
 	pInputHandler = new cPhysicsInputHandler(*scene);
 
-	cUniverse* pUniverse = new cUniverse;
+	// randomize
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	srand(seed);
+
+	cUniverse* pUniverse = cUniverse::Get_Instance();
 	pUniverse->Instantiate(scene, 5, 3);
 
-	/*cGameObject* sun = new cGameObject;
-	sun->inverseMass = 0.f;
-	sun->positionXYZ = glm::vec3(0.f, 0.f, 0.f);
-	sun->meshName = "sphere";
-	sun->scale = 1.f;
-	sun->objectColourRGBA = glm::vec4(.99f, .9f, 0.f, 1.f);
-	sun->uniformColour = true;
-
-	cGameObject* planetX = new cGameObject;
-	planetX->inverseMass = 0.f;
-	planetX->positionXYZ = glm::vec3(2.f, 0.f, 0.f);
-	planetX->meshName = "sphere";
-	planetX->scale = 0.2f;
-	planetX->objectColourRGBA = glm::vec4(0.f, .3f, 0.8f, 1.f);
-
-	cGameObject* planetY = new cGameObject;
-	planetY->inverseMass = 0.f;
-	planetY->positionXYZ = glm::vec3(5.f, 0.f, 0.f);
-	planetY->meshName = "sphere";
-	planetY->scale = 0.4f;
-	planetY->objectColourRGBA = glm::vec4(.5f, .3f, 0.f, 1.f);
-
-	scene->vecGameObjects.push_back(sun);
-	scene->vecGameObjects.push_back(planetX);
-	scene->vecGameObjects.push_back(planetY);*/
-
-	//float rotationSpeed = 55.f;
-
-#if _DEBUG
 	cDebugRenderer* renderer = cDebugRenderer::GetInstance();
 	renderer->initialize();
+#if _DEBUG
 	phys.renderer = renderer;
 #endif
 
@@ -192,17 +170,6 @@ int main(void)
 		// Update the objects' physics
 		phys.CheckCollisions(scene);
 		phys.IntegrationStep(scene, /*delta_time*/delta_time);
-
-		
-		/*Mathf::rotate_vector(delta_time * rotationSpeed,
-							 sun->positionXYZ,
-							 planetX->positionXYZ
-		);
-
-		Mathf::rotate_vector(delta_time * rotationSpeed / 3.f,
-							 sun->positionXYZ,
-							 planetY->positionXYZ
-		);*/
 		
 		pUniverse->Update(delta_time);
 		
@@ -216,13 +183,6 @@ int main(void)
 			DrawObject(objPtr, ratio);
 
 		}//for (int index...
-
-#if _DEBUG
-
-		/*renderer.addLine(scene->vecGameObjects[1]->positionXYZ,
-						 (scene->vecGameObjects[1]->positionXYZ + scene->vecGameObjects[1]->velocity * delta_time),
-						 glm::vec3(1.f, 1.f, 0.f),
-						 2.0f);*/
 
 		glm::mat4 p, v;
 
@@ -240,16 +200,6 @@ int main(void)
 						scene->upVector);
 
 		renderer->RenderDebugObjects(v, p, 0.01f);
-#endif
-
-		/*float closestDistanceSoFar = FLT_MAX;
-		glm::vec3 closestPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);*/
-
-		//FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, scene->vecGameObjects[0], scene->vecGameObjects[1]);
-
-		//debugSphere.positionXYZ = closestPoint;
-		//DrawObject(&debugSphere, ratio);
 
 		 // **************************************************
 		// **************************************************
@@ -265,7 +215,7 @@ int main(void)
 
 
 	// Delete everything
-	delete scene;
+	//delete scene;
 	//delete lightManager;
 
 	exit(EXIT_SUCCESS);
@@ -376,7 +326,10 @@ void DrawObject(cGameObject* objPtr, float ratio)
 
 	GLint spec_loc = glGetUniformLocation(shaderProgID, "specularColour");
 	glUniform4f(spec_loc,
-				1.f, 1.f, 0.f, 1.f
+				objPtr->specularColour.x,
+				objPtr->specularColour.y,
+				objPtr->specularColour.z,
+				objPtr->specularStrength
 	);
 
 	GLint isUniform_location = glGetUniformLocation(shaderProgID, "isUniform");

@@ -3,21 +3,31 @@
 #include "cLightManager.h"
 #include "Mathf.h"
 
+static cUniverse* universe_instance;
+cUniverse* cUniverse::Get_Instance()
+{
+	if (!universe_instance) universe_instance = new cUniverse();
+	return universe_instance;
+}
+
 sNVPair cUniverse::ReceiveMessage(sNVPair message)
 {
 	if (message.name == "get closest planet")
 	{
 		float closest = FLT_MAX;
 		glm::vec3* closestPtr = nullptr;
+
+		// loop through each planet to find the closest planet
 		for (int i = 0; i < planets.size(); ++i)
 		{
 			for (int k = 0; k < planets[i].size(); ++k)
 			{
-				float r = planets[i][k]->ResourcesLeft;
+				// if energy is less than 1, assume 0
+				float r = planets[i][k]->ReceiveMessage(sNVPair("get_energy", 0.f)).fValue;
 				if (r < 1.f) continue;
 
-				float distance = glm::distance2(planets[i][k]->positionXYZ, message.v3Value);
-				if (distance < closest);
+				float distance = glm::distance(planets[i][k]->positionXYZ, message.v3Value);
+				if (distance < closest)
 				{
 					closest = distance;
 					closestPtr = &planets[i][k]->positionXYZ;
@@ -28,23 +38,39 @@ sNVPair cUniverse::ReceiveMessage(sNVPair message)
 	}
 	else if (message.name == "harvest energy from planet")
 	{
-		for (int i = 0; i < planets.size(); ++i)
+		// get the object by pointer
+		cSpaceObject* planet = planetsByPosition[message.v3Ptr];
+		float resources = planet->ReceiveMessage(sNVPair("get_energy", 0.f)).fValue;
+		printf("Ship taking resource from planet. %f left.\n", resources);
+
+		if (resources > 0.f)
 		{
-			for (int k = 0; k < planets[i].size(); ++k)
+			planet->ReceiveMessage(sNVPair("remove_energy", .5f));
+			message.fValue = .5f;
+			message.name = "add energy";
+		}
+		else
+		{
+			message.name = "empty";
+		}
+	}
+	else if (message.name == "get closest enemy")
+	{
+		message.v3Ptr = shipPairs[message.v3Ptr];
+	}
+	else if (message.name == "attack enemy")
+	{
+		message.v3Ptr = shipPairs[message.v3Ptr];
+		for (unsigned int i = 0; i < ships.size(); ++i)
+		{
+			if (&ships[i]->positionXYZ == message.v3Ptr)
 			{
-				if (&planets[i][k]->positionXYZ == message.v3Ptr)
+				if (ships[i]->ReceiveMessage(sNVPair("take damage", message.fValue)).name == "dead")
 				{
-					printf("Ship taking resource from planet. %f left.\n", planets[i][k]->ResourcesLeft);
-					if (planets[i][k]->ResourcesLeft > 0.f)
-					{
-						planets[i][k]->ResourcesLeft -= 1.f;
-						message.fValue = 1.f;
-						message.name = "add energy";
-					}
-					else
-					{
-						message.name = "empty";
-					}
+					shipPairs.erase(shipPairs[message.v3Ptr]);
+					shipPairs.erase(message.v3Ptr);
+					ships[i]->meshName = "";
+					ships.erase(ships.begin() + i);
 					break;
 				}
 			}
@@ -59,11 +85,10 @@ void cUniverse::Instantiate(Scene* scene, std::size_t number_of_stars, std::size
 	sLight* originalLight = scene->pLightManager->Lights[0];
 	for (unsigned int i = 0; i < number_of_stars; ++i)
 	{
-		cStar* star = new cStar;
+		cSpaceObject* star = this->factory.make_object("star");
 		bool tooClose = true;
 		while (tooClose)
 		{
-			//srand((unsigned int)((float)glfwGetTime() * 100.f + i));
 			star->positionXYZ = glm::vec3(rand() % (20) - 10,
 										  rand() % (20) - 10,
 										  rand() % (20) - 10);
@@ -77,7 +102,6 @@ void cUniverse::Instantiate(Scene* scene, std::size_t number_of_stars, std::size
 			}
 		}
 		
-		//star->positionXYZ = glm::vec3(0.1f);
 		stars.push_back(star);
 		scene->vecGameObjects.push_back(star);
 
@@ -92,22 +116,34 @@ void cUniverse::Instantiate(Scene* scene, std::size_t number_of_stars, std::size
 		
 		scene->pLightManager->Lights.push_back(light);
 
-		planets.push_back(std::vector<cPlanet*>());
+		planets.push_back(std::vector<cSpaceObject*>());
 		for (unsigned int k = 0; k < number_of_planets; ++k)
 		{
-			cPlanet* planet = new cPlanet;
+			cSpaceObject* planet = this->factory.make_object("planet");
 			planet->positionXYZ = glm::vec3(star->positionXYZ.x + rand() % 2 + (k + 2),
 											star->positionXYZ.y,
 											star->positionXYZ.z + rand() % 2 + (k + 2));
 			planets[i].push_back(planet);
 			scene->vecGameObjects.push_back(planet);
 
+			planetsByPosition[&planet->positionXYZ] = planet;
+
 			if (rand() % 2 == 1) break;
 		}
 	}
 
-	cSpaceShip* ship = new cSpaceShip;
-	ship->Set_World(this);
+	cSpaceObject* ship = this->factory.make_object("ship");
+	this->factory.build_details(ship, "basic_ship");
+	ships.push_back(ship);
+	scene->vecGameObjects.push_back(ship);
+
+	ship = this->factory.make_object("ship");
+	this->factory.build_details(ship, "green_ship");
+	ships.push_back(ship);
+	scene->vecGameObjects.push_back(ship);
+
+	ship = this->factory.make_object("ship");
+	this->factory.build_details(ship, "basic_ship");
 	ships.push_back(ship);
 	scene->vecGameObjects.push_back(ship);
 
@@ -115,24 +151,66 @@ void cUniverse::Instantiate(Scene* scene, std::size_t number_of_stars, std::size
 	scene->pLightManager->Lights.erase(scene->pLightManager->Lights.begin());
 }
 
+
 void cUniverse::Update(float delta_time)
 {
+	// loop through all stars
 	for (unsigned int i = 0; i < stars.size(); ++i)
 	{
-		cStar* star = stars[i];
+		cSpaceObject* star = stars[i];
+
+		// loop through each planet of each star
 		for (unsigned int k = 0; k < planets[i].size(); ++k)
 		{
-			cPlanet* ptr = planets[i][k];
-			ptr->positionXYZ -= star->positionXYZ;
-			Mathf::rotate_vector(delta_time * ptr->RotationSpeed,
-								 glm::vec3(0.f),
-								 ptr->positionXYZ);
-			ptr->positionXYZ += star->positionXYZ;
-			//ptr->positionXYZ.x += delta_time;
+			// rotate the planet around the star
+			cSpaceObject* planet = planets[i][k];
+			Mathf::rotate_vector(delta_time * planet->ReceiveMessage(sNVPair("get_speed", 0.f)).fValue,
+								 star->positionXYZ,
+								 planet->positionXYZ);
 		}
 	}
+	
+	// refresh the ship pairs
+	shipPairs.clear();
+
+	// loop through all ships
 	for (unsigned int n = 0; n < ships.size(); ++n)
 	{
+		// Run through all other ships to find the closest ship
+		//--------------------------------------
+		glm::vec3* ptr = shipPairs[&ships[n]->positionXYZ];
+		if (!ptr)
+		{
+			float distance = FLT_MAX;
+			glm::vec3* closest = nullptr;
+			
+			for (unsigned int m = 0; m < ships.size(); ++m)
+			{
+				if (m == n) continue;
+
+				float d = glm::distance(ships[n]->positionXYZ, ships[n]->positionXYZ);
+				if (d < distance)
+				{
+					distance = d;
+					closest = &ships[m]->positionXYZ;
+				}
+			}
+
+			// if a closest ship was found, store it as a pair
+			if (closest)
+			{
+				shipPairs[&ships[n]->positionXYZ] = closest;
+				shipPairs[closest] = &ships[n]->positionXYZ;
+			}
+		}
+		//--------------------------------------
+
+		unsigned int current_size = ships.size();
+
+		// update ship logic
 		ships[n]->Update();
+
+		if (ships.size() < current_size) --n;
+
 	}
 }

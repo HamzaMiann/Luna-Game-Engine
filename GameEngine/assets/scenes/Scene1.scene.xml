@@ -41,14 +41,6 @@
   <Models>
     <Model file="sphere_XYZ_N.ply"
            friendlyName="sphere"/>
-    <!--<Model file="plane_XYZ_N.ply"
-           friendlyName="plane_ground"/>
-    <Model file="plane_wall1_XYZ_N.ply"
-           friendlyName="plane_wall"/>
-    <Model file="plane_wall2_XYZ_N.ply"
-           friendlyName="plane_wall2"/>
-    <Model file="plane_angle_XYZ_N.ply"
-           friendlyName="plane_angle"/>-->
     <Model file="ufo2_XYZ_N.ply"
            friendlyName="space_ship"/>
   </Models>
@@ -64,52 +56,5 @@
       <Param2 x="1.0" y="1.0" z="1.0" w="1.0"/>
     </Light>
   </Lights>
-
-  <!--<Layout>
-    
-    <GameObject mesh="plane_ground">
-      <Position x="0.0" y="-0.5" z="0.0"/>
-      <Scale>100.0</Scale>
-      <Colour x="1.0" y="0.0" z="0.0" w="1.0"/>
-      <IMass>0.0</IMass>
-      <Collider>MESH</Collider>
-    </GameObject>
-    
-    <GameObject mesh="sphere" tag="player">
-      <Position x="0.0" y="6.0" z="0.0"/>
-      <Rotation x="0.0" y="0.0" z="0.0"/>
-      <Scale>0.5</Scale>
-      <Colour x="1.0" y="1.0" z="1.0" w="1.0"/>
-      <IMass>1.0</IMass>
-      <Collider>SPHERE</Collider>
-      <Velocity x="0.1" y="0.0" z="0.0"/>
-      <Acceleration x="0.0" y="0.0" z="0.0"/>
-    </GameObject>
-    
-    <GameObject mesh="plane_wall">
-      <Position x="0.0" y="0.0" z="2.0"/>
-      <Scale>10.0</Scale>
-      <Colour x="1.0" y="0.0" z="0.0" w="1.0"/>
-      <IMass>0.0</IMass>
-      <Collider>MESH</Collider>
-    </GameObject>
-
-    <GameObject mesh="plane_wall2">
-      <Position x="2.0" y="0.0" z="0.0"/>
-      <Scale>10.0</Scale>
-      <Colour x="1.0" y="0.0" z="0.0" w="1.0"/>
-      <IMass>0.0</IMass>
-      <Collider>MESH</Collider>
-    </GameObject>
-
-    <GameObject mesh="plane_angle">
-      <Position x="-3.0" y="0.0" z="0.0"/>
-      <Scale>10.0</Scale>
-      <Colour x="1.0" y="0.0" z="0.0" w="1.0"/>
-      <IMass>0.0</IMass>
-      <Collider>MESH</Collider>
-    </GameObject>
-
-  </Layout>-->
   
 </Scene>

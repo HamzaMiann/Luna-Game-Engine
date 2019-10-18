@@ -46,7 +46,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 float getFogFactor(float d)
 {
     const float FogMax = 100.0;
-    const float FogMin = 20.0;
+    const float FogMin = 40.0;
 
     if (d>=FogMax) return 1;
     if (d<=FogMin) return 0;

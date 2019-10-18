@@ -55,6 +55,18 @@
     <Filter Include="SpaceGame\Interfaces">
       <UniqueIdentifier>{bf1ad1a8-91a5-43bc-9d1c-73e10e2b23f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SpaceGame\Entities">
+      <UniqueIdentifier>{d14b3bfd-96b1-4199-9e37-438dffa9e625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpaceGame\Factory">
+      <UniqueIdentifier>{6d6f19cd-c1b4-4a51-86e8-7f733e5d5656}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpaceGame\Data">
+      <UniqueIdentifier>{b0447b1d-7794-49b2-96c0-60780a803ba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpaceGame\PIMPL">
+      <UniqueIdentifier>{fd1d59e1-83d3-4808-bddb-2344f5ea63bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">
@@ -129,14 +141,20 @@
     <ClCompile Include="cAudioInputHandler.cpp">
       <Filter>InputHandler</Filter>
     </ClCompile>
+    <ClCompile Include="cSpaceShip.cpp">
+      <Filter>SpaceGame\Entities</Filter>
+    </ClCompile>
     <ClCompile Include="cUniverse.cpp">
-      <Filter>SpaceGame</Filter>
+      <Filter>SpaceGame\Entities</Filter>
     </ClCompile>
     <ClCompile Include="sNVPair.cpp">
-      <Filter>SpaceGame</Filter>
+      <Filter>SpaceGame\Data</Filter>
     </ClCompile>
-    <ClCompile Include="cSpaceShip.cpp">
-      <Filter>SpaceGame</Filter>
+    <ClCompile Include="cSpaceFactory.cpp">
+      <Filter>SpaceGame\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="cSpaceShipImplementation.cpp">
+      <Filter>SpaceGame\PIMPL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -227,20 +245,32 @@
     <ClInclude Include="iMessageInterface.h">
       <Filter>SpaceGame\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="cUniverse.h">
-      <Filter>SpaceGame</Filter>
-    </ClInclude>
-    <ClInclude Include="cStar.h">
-      <Filter>SpaceGame</Filter>
-    </ClInclude>
-    <ClInclude Include="cPlanet.h">
-      <Filter>SpaceGame</Filter>
+    <ClInclude Include="iImplementation.h">
+      <Filter>SpaceGame\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="cSpaceShip.h">
-      <Filter>SpaceGame</Filter>
+      <Filter>SpaceGame\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="cPlanet.h">
+      <Filter>SpaceGame\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="cStar.h">
+      <Filter>SpaceGame\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="cUniverse.h">
+      <Filter>SpaceGame\Entities</Filter>
     </ClInclude>
     <ClInclude Include="sNVPair.h">
-      <Filter>SpaceGame</Filter>
+      <Filter>SpaceGame\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="cSpaceFactory.h">
+      <Filter>SpaceGame\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="cSpaceObject.h">
+      <Filter>SpaceGame\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="cSpaceShipImplementation.h">
+      <Filter>SpaceGame\PIMPL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
