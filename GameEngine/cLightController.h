@@ -2,11 +2,14 @@
 
 #include "iInputHandler.h"
 #include "Scene.h"
+#include <glm/vec4.hpp>
 
 class cLightController : public iInputHandler
 {
 private:
 	unsigned int index = 0;
+	unsigned int property_index = 0;
+	glm::vec4* property;
 	Scene& _scene;
 public:
 	cLightController() = delete;

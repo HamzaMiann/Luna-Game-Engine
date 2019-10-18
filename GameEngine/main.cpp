@@ -123,7 +123,7 @@ int main(void)
 
 	PhysicsEngine phys;
 
-	pInputHandler = new cLayoutController(*scene);
+	pInputHandler = new cLightController(*scene);
 
 
 #if _DEBUG
