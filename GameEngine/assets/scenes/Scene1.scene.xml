@@ -49,11 +49,40 @@
            friendlyName="plane_wall2"/>
     <Model file="plane_angle_XYZ_N.ply"
            friendlyName="plane_angle"/>
+    <Model file="rectangle_XYZ_N.ply"
+           friendlyName="rectangle"/>
   </Models>
 
   <Lights>
     <Light>
-      <Position x="0.0" y="0.0" z="0.0" w="1.0"/>
+      <Position x="-5.0" y="5.0" z="0.0" w="1.0"/>
+      <Diffuse x="1.0" y="1.0" z="1.0" w="1.0"/>
+      <Specular x="1.0" y="1.0" z="1.0" w="1.0"/>
+      <Atten x="0.8" y="0.0001" z="0.02" w="1000.0"/>
+      <Direction x="0.0" y="0.0" z="0.0" w="0.0"/>
+      <Param1 x="0.0" y="1.0" z="1.0" w="1.0"/>
+      <Param2 x="1.0" y="1.0" z="1.0" w="1.0"/>
+    </Light>
+    <Light>
+      <Position x="8.0" y="5.0" z="0.0" w="1.0"/>
+      <Diffuse x="1.0" y="1.0" z="1.0" w="1.0"/>
+      <Specular x="1.0" y="1.0" z="1.0" w="1.0"/>
+      <Atten x="0.8" y="0.0001" z="0.02" w="1000.0"/>
+      <Direction x="0.0" y="0.0" z="0.0" w="0.0"/>
+      <Param1 x="0.0" y="1.0" z="1.0" w="1.0"/>
+      <Param2 x="1.0" y="1.0" z="1.0" w="1.0"/>
+    </Light>
+    <Light>
+      <Position x="0.0" y="5.0" z="5.0" w="1.0"/>
+      <Diffuse x="1.0" y="1.0" z="1.0" w="1.0"/>
+      <Specular x="1.0" y="1.0" z="1.0" w="1.0"/>
+      <Atten x="0.8" y="0.0001" z="0.02" w="1000.0"/>
+      <Direction x="0.0" y="0.0" z="0.0" w="0.0"/>
+      <Param1 x="0.0" y="1.0" z="1.0" w="1.0"/>
+      <Param2 x="1.0" y="1.0" z="1.0" w="1.0"/>
+    </Light>
+    <Light>
+      <Position x="0.0" y="5.0" z="-8.0" w="1.0"/>
       <Diffuse x="1.0" y="1.0" z="1.0" w="1.0"/>
       <Specular x="1.0" y="1.0" z="1.0" w="1.0"/>
       <Atten x="0.8" y="0.0001" z="0.02" w="1000.0"/>
@@ -95,19 +124,8 @@
       <Acceleration x="0.0" y="0.0" z="0.0"/>
     </GameObject>
 
-    <!--<GameObject mesh="sphere">
-      <Position x="1.0" y="10.0" z="1.0"/>
-      <Rotation x="0.0" y="0.0" z="0.0"/>
-      <Scale>0.3</Scale>
-      <Colour x="1.0" y="1.0" z="1.0" w="1.0"/>
-      <IMass>1.0</IMass>
-      <Collider>SPHERE</Collider>
-      <Velocity x="-1.3" y="0.0" z="0.0"/>
-      <Acceleration x="0.0" y="0.0" z="0.0"/>
-    </GameObject>
-
     <GameObject mesh="sphere">
-      <Position x="0.0" y="8.0" z="0.0"/>
+      <Position x="-2.0" y="8.0" z="0.0"/>
       <Rotation x="0.0" y="0.0" z="0.0"/>
       <Scale>0.5</Scale>
       <Colour x="1.0" y="1.0" z="1.0" w="1.0"/>
@@ -115,28 +133,79 @@
       <Collider>SPHERE</Collider>
       <Velocity x="0.3" y="0.0" z="0.0"/>
       <Acceleration x="0.0" y="0.0" z="0.0"/>
-    </GameObject>-->
+    </GameObject>
+
+    <GameObject mesh="sphere">
+      <Position x="-3.0" y="8.0" z="-1.0"/>
+      <Rotation x="0.0" y="0.0" z="0.0"/>
+      <Scale>0.4</Scale>
+      <Colour x="1.0" y="1.0" z="1.0" w="1.0"/>
+      <IMass>1.0</IMass>
+      <Collider>SPHERE</Collider>
+      <Velocity x="0.3" y="0.0" z="1.0"/>
+      <Acceleration x="0.0" y="0.0" z="0.0"/>
+    </GameObject>
+
+    <GameObject mesh="sphere">
+      <Position x="-5.0" y="10.0" z="-1.0"/>
+      <Rotation x="0.0" y="0.0" z="0.0"/>
+      <Scale>0.4</Scale>
+      <Colour x="1.0" y="1.0" z="1.0" w="1.0"/>
+      <IMass>1.0</IMass>
+      <Collider>SPHERE</Collider>
+      <Velocity x="0.3" y="0.0" z="1.0"/>
+      <Acceleration x="0.0" y="0.0" z="0.0"/>
+    </GameObject>
+
+    <GameObject mesh="sphere">
+      <Position x="7.0" y="8.0" z="0.0"/>
+      <Rotation x="0.0" y="0.0" z="0.0"/>
+      <Scale>0.4</Scale>
+      <Colour x="1.0" y="1.0" z="1.0" w="1.0"/>
+      <IMass>1.0</IMass>
+      <Collider>SPHERE</Collider>
+      <Velocity x="-2.0" y="0.0" z="1.0"/>
+      <Acceleration x="0.0" y="0.0" z="0.0"/>
+    </GameObject>
+
+    <GameObject mesh="rectangle" tag="sine">
+      <Position x="0.0" y="1.0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.0" y="0.0" z="0.0" w="1.0"/>
+      <IMass>1.0</IMass>
+      <Collider>MESH</Collider>
+    </GameObject>
     
-    <GameObject mesh="plane_wall">
-      <Position x="0.0" y="0.0" z="2.0"/>
-      <Scale>10.0</Scale>
+    <GameObject mesh="rectangle">
+      <Position x="0.0" y="0.0" z="20.0"/>
+      <Scale>5.0</Scale>
       <Colour x="1.0" y="0.0" z="0.0" w="1.0"/>
       <IMass>0.0</IMass>
       <Collider>MESH</Collider>
     </GameObject>
 
-    <GameObject mesh="plane_wall2">
-      <Position x="2.0" y="0.0" z="0.0"/>
-      <Scale>10.0</Scale>
-      <Colour x="1.0" y="0.0" z="0.0" w="1.0"/>
+
+    <GameObject mesh="rectangle">
+      <Position x="9.0" y="0.0" z="3.0"/>
+      <Scale>4.5</Scale>
+      <Colour x="0.1" y="0.1" z="0.9" w="1.0"/>
       <IMass>0.0</IMass>
       <Collider>MESH</Collider>
     </GameObject>
+    
 
     <GameObject mesh="plane_angle">
-      <Position x="-3.0" y="0.0" z="0.0"/>
-      <Scale>10.0</Scale>
+      <Position x="-5.0" y="0.0" z="0.0"/>
+      <Scale>50.0</Scale>
       <Colour x="1.0" y="0.0" z="0.0" w="1.0"/>
+      <IMass>0.0</IMass>
+      <Collider>MESH</Collider>
+    </GameObject>
+
+    <GameObject mesh="rectangle">
+      <Position x="0.0" y="0.0" z="-1.0"/>
+      <Scale>0.6</Scale>
+      <Colour x="0.2" y="0.9" z="0.1" w="1.0"/>
       <IMass>0.0</IMass>
       <Collider>MESH</Collider>
     </GameObject>

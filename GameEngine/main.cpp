@@ -123,33 +123,15 @@ int main(void)
 
 	pInputHandler = new cPhysicsInputHandler(*scene);
 
-	/*cGameObject* sun = new cGameObject;
-	sun->inverseMass = 0.f;
-	sun->positionXYZ = glm::vec3(0.f, 0.f, 0.f);
-	sun->meshName = "sphere";
-	sun->scale = 1.f;
-	sun->objectColourRGBA = glm::vec4(.99f, .9f, 0.f, 1.f);
-	sun->uniformColour = true;
-
-	cGameObject* planetX = new cGameObject;
-	planetX->inverseMass = 0.f;
-	planetX->positionXYZ = glm::vec3(2.f, 0.f, 0.f);
-	planetX->meshName = "sphere";
-	planetX->scale = 0.2f;
-	planetX->objectColourRGBA = glm::vec4(0.f, .3f, 0.8f, 1.f);
-
-	cGameObject* planetY = new cGameObject;
-	planetY->inverseMass = 0.f;
-	planetY->positionXYZ = glm::vec3(5.f, 0.f, 0.f);
-	planetY->meshName = "sphere";
-	planetY->scale = 0.4f;
-	planetY->objectColourRGBA = glm::vec4(.5f, .3f, 0.f, 1.f);
-
-	scene->vecGameObjects.push_back(sun);
-	scene->vecGameObjects.push_back(planetX);
-	scene->vecGameObjects.push_back(planetY);
-
-	float rotationSpeed = 55.f;*/
+	cGameObject* sinObject = nullptr;
+	for (unsigned int n = 0; n < scene->vecGameObjects.size(); ++n)
+	{
+		if (scene->vecGameObjects[n]->tag == "sine")
+		{
+			sinObject = scene->vecGameObjects[n];
+			break;
+		}
+	}
 
 #if _DEBUG
 	cDebugRenderer renderer;
@@ -161,11 +143,37 @@ int main(void)
 	float previous_time = (float)glfwGetTime();
 	float delta_time = 0.f;
 
+	std::vector<float> time_buffer;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		previous_time = current_time;
 		current_time = (float)glfwGetTime();
 		delta_time = current_time - previous_time;
+
+		// Average out the delta time to avoid randoms
+		//-------------------------------------------------
+		time_buffer.push_back(delta_time);
+		if (time_buffer.size() > 10)
+			time_buffer.erase(time_buffer.begin());
+
+		float average = 0.f;
+		unsigned int k = 0;
+		for (; k < time_buffer.size(); ++k)
+		{
+			average += time_buffer[k];
+		}
+		average /= (float)k;
+
+		/*if (average != 0.f && delta_time > 2.f * average)
+		{
+			average *= (float)k;
+			average -= delta_time;
+			average /= (float)k;
+			time_buffer.erase(time_buffer.end() - 1);
+		}*/
+		delta_time = average;
+		//------------------------------------------------
 
 		// Handle key inputs
 		HandleInput(window);
@@ -189,17 +197,13 @@ int main(void)
 		phys.IntegrationStep(scene, /*delta_time*/delta_time);
 
 		
-		/*Mathf::rotate_vector(delta_time * rotationSpeed,
-							 sun->positionXYZ,
-							 planetX->positionXYZ
-		);
+		if (sinObject)
+		{
+			sinObject->positionXYZ.y = 2.f;
+			sinObject->velocity.y = 0.f;
+			sinObject->velocity.x = sin((float)glfwGetTime()) * 2.f;
+		}
 
-		Mathf::rotate_vector(delta_time * rotationSpeed / 3.f,
-							 sun->positionXYZ,
-							 planetY->positionXYZ
-		);*/
-		
-		
 		// **************************************************
 		// **************************************************
 		// Loop to draw everything in the scene
@@ -213,10 +217,6 @@ int main(void)
 
 #if _DEBUG
 
-		/*renderer.addLine(scene->vecGameObjects[1]->positionXYZ,
-						 (scene->vecGameObjects[1]->positionXYZ + scene->vecGameObjects[1]->velocity * delta_time),
-						 glm::vec3(1.f, 1.f, 0.f),
-						 2.0f);*/
 
 		glm::mat4 p, v;
 
@@ -236,14 +236,6 @@ int main(void)
 		renderer.RenderDebugObjects(v, p, 0.01f);
 #endif
 
-		/*float closestDistanceSoFar = FLT_MAX;
-		glm::vec3 closestPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);*/
-
-		//FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, scene->vecGameObjects[0], scene->vecGameObjects[1]);
-
-		//debugSphere.positionXYZ = closestPoint;
-		//DrawObject(&debugSphere, ratio);
 
 		 // **************************************************
 		// **************************************************
@@ -370,7 +362,7 @@ void DrawObject(cGameObject* objPtr, float ratio)
 
 	GLint spec_loc = glGetUniformLocation(shaderProgID, "specularColour");
 	glUniform4f(spec_loc,
-				1.f, 1.f, 0.f, 1.f
+				1.f, 1.f, 0.f, 100.f
 	);
 
 	GLint isUniform_location = glGetUniformLocation(shaderProgID, "isUniform");

@@ -161,17 +161,26 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 					if (pObj->Collider == SPHERE)
 						closestDistanceSoFar -= pObj->scale;
 					
-					if (abs(closestDistanceSoFar) <= 0.1f)
+					if (abs(closestDistanceSoFar) <= 0.08f)
 					{
-						//printf("%f\n", glm::dot(pObj->velocity, normal));
+						if (glm::dot(glm::normalize(Gravity), normal) == 0)
+						{
+							if (colliderObject->inverseMass != 0.0f)
+							{
+								pObj->velocity += colliderObject->velocity;
+							}
+						}
+
+
 						if (glm::dot(pObj->velocity, normal) > 0)
 							break;
 
 						if (closestDistanceSoFar < 0.f)
-							pObj->positionXYZ = pObj->previousXYZ;
+							pObj->positionXYZ.y = pObj->previousXYZ.y;
 
 						pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
 						pObj->isCollided |= true;
+
 
 						if (renderer)
 						{
