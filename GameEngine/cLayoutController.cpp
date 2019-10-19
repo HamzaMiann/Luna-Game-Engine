@@ -3,9 +3,16 @@
 #include "cGameObject.h"
 #include <iostream>
 
+glm::vec3 original_target_position;
 
 cLayoutController::cLayoutController(Scene& scene) : _scene(scene)
 {
+	original_target_position = _scene.cameraTarget;
+}
+
+cLayoutController::~cLayoutController()
+{
+	_scene.cameraTarget = original_target_position;
 }
 
 void cLayoutController::HandleInput(GLFWwindow * window)

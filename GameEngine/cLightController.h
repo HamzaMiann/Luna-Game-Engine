@@ -14,7 +14,7 @@ private:
 public:
 	cLightController() = delete;
 	cLightController(Scene& scene);
-	virtual ~cLightController() {}
+	virtual ~cLightController();
 	virtual void HandleInput(GLFWwindow* window);
 	virtual void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 };

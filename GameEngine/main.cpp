@@ -29,6 +29,8 @@
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 
+unsigned int input_id = 0;
+
 Scene* scene;
 GLFWwindow* window;
 iInputHandler* pInputHandler;
@@ -40,6 +42,20 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
+
+	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+	{
+		delete pInputHandler;
+		input_id++;
+		if (input_id % 2 == 1)
+		{
+			pInputHandler = new cLightController(*scene);
+		}
+		else
+		{
+			pInputHandler = new cLayoutController(*scene);
+		}
+	}
 
 	if (pInputHandler) pInputHandler->key_callback(window, key, scancode, action, mods);
 }
@@ -123,7 +139,7 @@ int main(void)
 
 	PhysicsEngine phys;
 
-	pInputHandler = new cLightController(*scene);
+	pInputHandler = new cLayoutController(*scene);
 
 
 #if _DEBUG

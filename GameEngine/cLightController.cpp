@@ -10,15 +10,35 @@ cGameObject* dbg_object;
 cLightController::cLightController(Scene& scene) : _scene(scene)
 {
 #if _DEBUG
-	dbg_object = new cGameObject();
-	dbg_object->isWireframe = true;
-	dbg_object->meshName = "sphere";
-	dbg_object->scale = 0.2f;
-	dbg_object->inverseMass = 0.f;
-	dbg_object->uniformColour = true;
-	_scene.vecGameObjects.push_back(dbg_object);
+	if (!dbg_object)
+	{
+		dbg_object = new cGameObject();
+		dbg_object->isWireframe = true;
+		dbg_object->meshName = "sphere";
+		dbg_object->scale = 0.2f;
+		dbg_object->inverseMass = 0.f;
+		dbg_object->uniformColour = true;
+		_scene.vecGameObjects.push_back(dbg_object);
+	}
 #endif
 	property = &_scene.pLightManager->Lights[index]->diffuse;
+}
+
+cLightController::~cLightController()
+{
+#if _DEBUG
+	if (dbg_object)
+	{
+		_scene.vecGameObjects.erase(
+			std::find(_scene.vecGameObjects.begin(),
+					  _scene.vecGameObjects.end(),
+					  dbg_object
+			)
+		);
+		delete dbg_object;
+		dbg_object = nullptr;
+	}
+#endif
 }
 
 void cLightController::HandleInput(GLFWwindow * window)
