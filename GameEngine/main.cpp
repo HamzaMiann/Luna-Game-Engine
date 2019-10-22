@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 
 #include "Mathf.h"
 #include "PhysicsEngine.h"
@@ -30,6 +31,7 @@
 Scene* scene;
 GLFWwindow* window;
 iInputHandler* pInputHandler;
+std::map<cGameObject*, glm::vec3> original_positions;
 
 void DrawObject(cGameObject* objPtr, float ratio);
 
@@ -133,6 +135,11 @@ int main(void)
 		}
 	}
 
+	for (unsigned int i = 0; i < scene->vecGameObjects.size(); ++i)
+	{
+		original_positions[scene->vecGameObjects[i]] = scene->vecGameObjects[i]->positionXYZ;
+	}
+
 #if _DEBUG
 	cDebugRenderer renderer;
 	renderer.initialize();
@@ -210,7 +217,11 @@ int main(void)
 		for (int index = 0; index != scene->vecGameObjects.size(); index++)
 		{
 			cGameObject* objPtr = scene->vecGameObjects[index];
-			
+			if (objPtr->positionXYZ.y < -10.f)
+			{
+				objPtr->positionXYZ = original_positions[objPtr];
+				objPtr->velocity = glm::vec3(0.f);
+			}
 			DrawObject(objPtr, ratio);
 
 		}//for (int index...

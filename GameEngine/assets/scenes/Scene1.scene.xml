@@ -1,36 +1,6 @@
 <?xml version="1.0"?>
 <Scene name="Media Fundamentals Project 1">
   <Audio API="FMOD">
-    <!--<Sound file="music_game.mp3"
-           volume="1.0"
-           pitch="0.5"
-           pan="0"
-           streamed="true"
-           friendlyName="music"/>
-    <Sound file="effect_rain.mp3"
-           volume="0.5"
-           pitch="1.0"
-           pan="0.0"
-           streamed="true"
-           friendlyName="rain"/>
-    <Sound file="effect_bounce.wav"
-           volume="1.0"
-           pitch="1.0"
-           pan="0.0"
-           streamed="false"
-           friendlyName="bounce"/>
-    <Sound file="effect_ball_hit.wav"
-           volume="1.0"
-           pitch="1.0"
-           pan="0.0"
-           streamed="false"
-           friendlyName="ball"/>
-    <Sound file="respawn_2.mp3"
-           volume="0.5"
-           pitch="1.5"
-           pan="0.0"
-           streamed="false"
-           friendlyName="respawn"/>-->
   </Audio>
   
   <Shader>
@@ -106,7 +76,7 @@
       <Position x="0.0" y="6.0" z="0.0"/>
       <Rotation x="0.0" y="0.0" z="0.0"/>
       <Scale>0.5</Scale>
-      <Colour x="1.0" y="1.0" z="1.0" w="1.0"/>
+      <Colour x="0.1" y="0.3" z="0.9" w="1.0"/>
       <IMass>1.0</IMass>
       <Collider>SPHERE</Collider>
       <Velocity x="0.1" y="0.0" z="0.0"/>
