@@ -20,6 +20,10 @@ cSpaceObject * cSpaceFactory::make_object(std::string type)
 	{
 		return new cSpaceShip();
 	}
+	if (type == "box")
+	{
+		return new cBox();
+	}
 	return nullptr;
 }
 
@@ -57,6 +61,21 @@ bool cSpaceFactory::build_details(cSpaceObject * object, std::string type)
 		object->objectColourRGBA = glm::vec4(.1f, 1.f, .1f, 1.f);
 		object->scale = .25f;
 		((cSpaceShip*)object)->Set_Implementation(new cSpaceShipImplementation());
+		((cSpaceShip*)object)->Set_World(cUniverse::Get_Instance());
+		return true;
+	}
+	if (type == "nothing_ship")
+	{
+		object->positionXYZ = glm::vec3(
+			rand() % 30 - 15,
+			rand() % 30 - 15,
+			rand() % 30 - 15
+		);
+		object->previousXYZ = object->positionXYZ;
+		object->specularStrength = 50.f;
+		object->objectColourRGBA = glm::vec4(.1f, 1.f, .1f, 1.f);
+		object->scale = .25f;
+		((cSpaceShip*)object)->Set_Implementation(new cDoNothingImpl());
 		((cSpaceShip*)object)->Set_World(cUniverse::Get_Instance());
 		return true;
 	}

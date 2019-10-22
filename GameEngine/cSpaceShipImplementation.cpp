@@ -79,3 +79,25 @@ void cSpaceShipImplementation::Update(iMessageInterface * mediator, cGameObject 
 		}
 	}
 }
+
+
+sNVPair cDoNothingImpl::ReceiveMessage(sNVPair message)
+{
+	sNVPair returnMessage("ok", 0.f);
+	if (message.name == "take damage")
+	{
+		health -= message.fValue;
+		printf("Taking damage! Health left: %f\n", health);
+		if (health <= 0.f)
+		{
+			returnMessage.name = "dead";
+			printf("--DEAD--\n");
+		}
+	}
+	return returnMessage;
+}
+
+void cDoNothingImpl::Update(iMessageInterface * mediator, cGameObject * self)
+{
+	mediator->ReceiveMessage(sNVPair("attack all", 0.f));
+}

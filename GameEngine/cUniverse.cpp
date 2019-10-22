@@ -76,6 +76,20 @@ sNVPair cUniverse::ReceiveMessage(sNVPair message)
 			}
 		}
 	}
+	else if (message.name == "attack all")
+	{
+		for (unsigned int i = 0; i < ships.size(); ++i)
+		{
+			if (ships[i]->ReceiveMessage(sNVPair("take damage", 10.f)).name == "dead")
+			{
+				shipPairs.erase(shipPairs[message.v3Ptr]);
+				shipPairs.erase(message.v3Ptr);
+				ships[i]->meshName = "";
+				ships.erase(ships.begin() + i);
+				break;
+			}
+		}
+	}
 	return message;
 }
 

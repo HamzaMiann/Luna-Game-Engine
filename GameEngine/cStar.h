@@ -15,3 +15,18 @@ public:
 	}
 	virtual sNVPair ReceiveMessage(sNVPair message) override { return sNVPair(); }
 };
+
+
+class cBox : public cSpaceObject
+{
+public:
+	cBox()
+	{
+		this->scale = 2.f;
+		this->meshName = "cube";
+		this->uniformColour = true;
+		this->objectColourRGBA = glm::vec4(.9f, .7f, .0f, 1.f);
+		this->inverseMass = 0.f;
+	}
+	virtual sNVPair ReceiveMessage(sNVPair message) override { return sNVPair(); }
+};

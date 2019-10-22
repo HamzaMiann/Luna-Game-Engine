@@ -15,3 +15,17 @@ public:
 	virtual sNVPair ReceiveMessage(sNVPair message);
 	virtual void Update(iMessageInterface* mediator, cGameObject* self);
 };
+
+
+class cDoNothingImpl : public iImplementation
+{
+private:
+	glm::vec3* target = nullptr;
+	float health = 100.f;
+	float damage = 2.f;
+
+public:
+	virtual ~cDoNothingImpl() {}
+	virtual sNVPair ReceiveMessage(sNVPair message);
+	virtual void Update(iMessageInterface* mediator, cGameObject* self);
+};
