@@ -9,7 +9,6 @@ cGameObject* dbg_object;
 
 cLightController::cLightController(Scene& scene) : _scene(scene)
 {
-#if _DEBUG
 	if (!dbg_object)
 	{
 		dbg_object = new cGameObject();
@@ -20,13 +19,11 @@ cLightController::cLightController(Scene& scene) : _scene(scene)
 		dbg_object->uniformColour = true;
 		_scene.vecGameObjects.push_back(dbg_object);
 	}
-#endif
 	property = &_scene.pLightManager->Lights[index]->diffuse;
 }
 
 cLightController::~cLightController()
 {
-#if _DEBUG
 	if (dbg_object)
 	{
 		_scene.vecGameObjects.erase(
@@ -38,7 +35,6 @@ cLightController::~cLightController()
 		delete dbg_object;
 		dbg_object = nullptr;
 	}
-#endif
 }
 
 void cLightController::HandleInput(GLFWwindow * window)
