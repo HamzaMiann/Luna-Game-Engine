@@ -10,8 +10,6 @@ using namespace std;
 
 Scene::~Scene()
 {
-	if (this->pAudioEngine)
-		delete pAudioEngine;
 	if (this->pModelLoader)
 		delete pModelLoader;
 	if (this->pVAOManager)

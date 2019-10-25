@@ -152,9 +152,6 @@
     <ClInclude Include="cModelLoader.h">
       <Filter>ModelLoading</Filter>
     </ClInclude>
-    <ClInclude Include="cMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="cGameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -233,6 +230,9 @@
     <ClInclude Include="cLayoutController.h">
       <Filter>InputHandler\Handlers</Filter>
     </ClInclude>
+    <ClInclude Include="cMesh.h">
+      <Filter>ModelLoading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\fragmentShader01.glsl">
@@ -250,6 +250,9 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\scenes\scene1.scene.xml">
+      <Filter>SceneFactory\Scenes</Filter>
+    </Xml>
+    <Xml Include="assets\scenes\physics.scene.xml">
       <Filter>SceneFactory\Scenes</Filter>
     </Xml>
   </ItemGroup>

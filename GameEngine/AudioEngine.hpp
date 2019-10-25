@@ -6,18 +6,21 @@
 
 #define AUDIO_ID int
 
-class AudioEngine
-{
 
+static class AudioEngine
+{
 private:
 	class Sound;
-
 
 	FMOD::System* system;
 	FMOD_RESULT status;
 	std::vector<Sound*> Sounds;
 	std::vector<std::string> SoundNames;
 
+	AudioEngine()
+	{
+		system = 0; status = FMOD_OK;
+	}
 
 public:
 
@@ -64,8 +67,12 @@ public:
 		std::string get_type();
 	};
 
+	static AudioEngine* Instance()
+	{
+		static AudioEngine instance;
+		return &instance;
+	}
 
-	AudioEngine() { system = 0; status = FMOD_OK; }
 	~AudioEngine();
 
 	void Init();
@@ -74,10 +81,11 @@ public:
 	std::string Get_Name(int i) { return this->SoundNames[i]; }
 
 	AUDIO_ID Create_Sound(std::string filename, std::string friendlyName, bool streamed = false);
+	Sound* Create_Sound(std::string filename, bool streamed = false);
 	void PlaySound(Sound* sound);
 	void PlaySound(AUDIO_ID sound_id);
 	void PlaySound(std::string friendlyName);
 	Sound* GetSound(AUDIO_ID sound_id);
 	Sound* GetSound(std::string friendlyName);
-	
+
 };

@@ -4,6 +4,11 @@ class Scene;
 class cGameObject;
 #include "cDebugRenderer.h"
 
+struct cAABB
+{
+	float x;
+};
+
 class PhysicsEngine
 {
 public:
@@ -14,10 +19,13 @@ public:
 	const float drag = 0.8f;
 	const float friction = 0.7f;
 
+	std::map<cGameObject*, cAABB> AABBs;
+
 	cDebugRenderer* renderer;
 
 	void IntegrationStep(Scene* scene, float deltaTime);
 	void CheckCollisions(Scene* scene);
+	void GenerateAABB(Scene* scene) {}
 };
 
 void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3& closestPoint, glm::vec3& normalVector, cGameObject* const meshObject, cGameObject* const pObj);

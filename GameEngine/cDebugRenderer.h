@@ -18,9 +18,17 @@ class cGLRenderStateHelper;	// Forward declare so we don't have to include the G
 
 class cDebugRenderer : public iDebugRenderer
 {
-public:
+private:
 	cDebugRenderer();
+
+public:
 	~cDebugRenderer();
+
+	static cDebugRenderer* Instance()
+	{
+		static cDebugRenderer instance;
+		return &instance;
+	}
 
 	// Default maximum number of objects in buffer before a resize is forced
 	static const unsigned int DEFAULTNUMBEROFTRIANGLES = 1000;

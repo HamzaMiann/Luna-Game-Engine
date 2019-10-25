@@ -29,8 +29,9 @@ public:
 	glm::vec4  colour = glm::vec4(1.f, 1.f, 1.f, 1.f);
 	float scale = 1.f;
 
-	glm::vec3 specColour = glm::vec3(1.f, 1.f, 1.f);
+	glm::vec3 specColour = glm::vec3(.5f, .5f, .5f);
 	float specIntensity = 1.f;
+	bool customSpecularity = false;
 	bool uniformColour = false;
 	bool isWireframe = false;
 

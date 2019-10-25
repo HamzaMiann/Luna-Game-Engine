@@ -70,10 +70,10 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 			}
 		}
 
-		/*if (glm::distance(glm::vec3(0.f), (pObj->positionXYZ + (pObj->velocity * deltaTime))) <= 0.5f)
+		/*if (glm::distance(glm::vec3(0.f), (pObj->pos + (pObj->velocity * deltaTime))) <= 0.5f)
 		{
-			float lastY = glm::distance(glm::vec3(0.f), pObj->positionXYZ);
-			float newY = glm::distance(glm::vec3(0.f), (pObj->positionXYZ + (pObj->velocity * deltaTime)));
+			float lastY = glm::distance(glm::vec3(0.f), pObj->pos);
+			float newY = glm::distance(glm::vec3(0.f), (pObj->pos + (pObj->velocity * deltaTime)));
 			if (abs(lastY - newY) <= 0.5f * deltaTime) pObj->velocity *= friction;
 			if (abs(lastY - newY) <= 0.4f * deltaTime) pObj->velocity *= friction;
 			if (abs(lastY - newY) <= 0.2f * deltaTime)
@@ -161,17 +161,26 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 					if (pObj->Collider == SPHERE)
 						closestDistanceSoFar -= pObj->scale;
 
-					if (abs(closestDistanceSoFar) <= 0.1f)
+					if (abs(closestDistanceSoFar) <= 0.08f)
 					{
-						//printf("%f\n", glm::dot(pObj->velocity, normal));
+						if (glm::dot(glm::normalize(Gravity), normal) == 0)
+						{
+							if (colliderObject->inverseMass != 0.0f)
+							{
+								pObj->velocity += colliderObject->velocity;
+							}
+						}
+
+
 						if (glm::dot(pObj->velocity, normal) > 0)
 							break;
 
 						if (closestDistanceSoFar < 0.f)
-							pObj->pos = pObj->previousPos;
+							pObj->pos.y = pObj->previousPos.y;
 
 						pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
 						pObj->isCollided |= true;
+
 
 						if (renderer)
 						{
@@ -217,35 +226,26 @@ void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3
 	cMesh* mesh = scene.pVAOManager->FindMeshByModelName(meshObject->meshName);
 	if (!mesh) return;
 
-	for (unsigned int triIndex = 0;
-		 triIndex != mesh->vecTriangles.size();
-		 triIndex++)
+	glm::mat4 transform(1.f);
+	transform *= glm::rotate(glm::mat4(1.0f),
+							 meshObject->rotation.z,
+							 glm::vec3(0.0f, 0.0f, 1.0f));
+	transform *= glm::rotate(glm::mat4(1.0f),
+							 meshObject->rotation.y,
+							 glm::vec3(0.0f, 1.0f, 0.0f));
+	transform *= glm::rotate(glm::mat4(1.0f),
+							 meshObject->rotation.x,
+							 glm::vec3(1.0f, 0.0f, 0.0f));
+
+	for (unsigned int i = 0; i < mesh->vecMeshTriangles.size(); ++i)
 	{
-		sPlyTriangle& curTriangle = mesh->vecTriangles[triIndex];
-
-		// Get the vertices of the triangle
-		sPlyVertexXYZ triVert1 = mesh->vecVertices[curTriangle.vert_index_1];
-		sPlyVertexXYZ triVert2 = mesh->vecVertices[curTriangle.vert_index_2];
-		sPlyVertexXYZ triVert3 = mesh->vecVertices[curTriangle.vert_index_3];
-
-		Point triVertPoint1;
-		triVertPoint1.x = (triVert1.x * meshObject->scale + meshObject->pos.x);
-		triVertPoint1.y = (triVert1.y * meshObject->scale + meshObject->pos.y);
-		triVertPoint1.z = (triVert1.z * meshObject->scale + meshObject->pos.z);
-
-		Point triVertPoint2;
-		triVertPoint2.x = (triVert2.x * meshObject->scale + meshObject->pos.x);
-		triVertPoint2.y = (triVert2.y * meshObject->scale + meshObject->pos.y);
-		triVertPoint2.z = (triVert2.z * meshObject->scale + meshObject->pos.z);
-
-		Point triVertPoint3;
-		triVertPoint3.x = (triVert3.x * meshObject->scale + meshObject->pos.x);
-		triVertPoint3.y = (triVert3.y * meshObject->scale + meshObject->pos.y);
-		triVertPoint3.z = (triVert3.z * meshObject->scale + meshObject->pos.z);
+		sMeshTriangle curTriangle = mesh->vecMeshTriangles[i];
 
 		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
 			pObj->pos,
-			triVertPoint1, triVertPoint2, triVertPoint3
+			glm::vec3(transform * glm::vec4(curTriangle.first, 1.f)) * meshObject->scale + meshObject->pos,
+			glm::vec3(transform * glm::vec4(curTriangle.second, 1.f)) * meshObject->scale + meshObject->pos,
+			glm::vec3(transform * glm::vec4(curTriangle.third, 1.f)) * meshObject->scale + meshObject->pos
 		);
 
 		// Is this the closest so far?
@@ -256,9 +256,7 @@ void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3
 		{
 			closestDistanceSoFar = distanceNow;
 			closestPoint = curClosetPoint;
-			normalVector.x = (triVert1.nx + triVert2.nx + triVert3.nx) / 3.f;
-			normalVector.y = (triVert1.ny + triVert2.ny + triVert3.ny) / 3.f;
-			normalVector.z = (triVert1.nz + triVert2.nz + triVert3.nz) / 3.f;
+			normalVector = transform * glm::vec4(curTriangle.normal, 1.f);
 		}
 	}
 }
@@ -295,13 +293,13 @@ void sphereCollisionResponse(cGameObject* a, cGameObject* b, PhysicsEngine* phys
 	if (glm::length(b->velocity) < 0.2f);
 	b->velocity *= 5.f;
 
-	/*float distance = glm::distance(a->previousXYZ, b->previousXYZ) - (a->scale + b->scale);
+	/*float distance = glm::distance(a->previousPos, b->previousPos) - (a->scale + b->scale);
 	if (distance <= 0.1f)
 	{
-		a->positionXYZ = a->positionXYZ + (b->previousXYZ - a->previousXYZ) * 1.5f;
-		b->positionXYZ = b->positionXYZ + (b->previousXYZ - a->previousXYZ) * -1.5f;
-		a->previousXYZ = a->positionXYZ;
-		b->previousXYZ = b->positionXYZ;
+		a->pos = a->pos + (b->previousPos - a->previousPos) * 1.5f;
+		b->pos = b->pos + (b->previousPos - a->previousPos) * -1.5f;
+		a->previousPos = a->pos;
+		b->previousPos = b->pos;
 	}*/
 
 	//set the position of the spheres to their previous non contact positions to unstick them.

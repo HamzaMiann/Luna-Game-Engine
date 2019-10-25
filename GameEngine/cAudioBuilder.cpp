@@ -5,7 +5,7 @@ using namespace rapidxml;
 
 void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
 {
-	scene.pAudioEngine = new AudioEngine();
+	scene.pAudioEngine = AudioEngine::Instance();
 	scene.pAudioEngine->Init();
 
 	for (xml_node<>* sound_node = node->first_node("Sound"); sound_node; sound_node = sound_node->next_sibling("Sound"))

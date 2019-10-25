@@ -78,6 +78,14 @@ bool cModelLoader::LoadPlyModel(
 		theFile >> tempVertex.x >> tempVertex.y >> tempVertex.z;
 		theFile >> tempVertex.nx >> tempVertex.ny >> tempVertex.nz;
 
+		if (tempVertex.x < theMesh.min.x) theMesh.min.x = tempVertex.x;
+		if (tempVertex.y < theMesh.min.y) theMesh.min.y = tempVertex.y;
+		if (tempVertex.z < theMesh.min.z) theMesh.min.z = tempVertex.z;
+
+		if (tempVertex.x > theMesh.max.x) theMesh.max.x = tempVertex.x;
+		if (tempVertex.y > theMesh.max.y) theMesh.max.y = tempVertex.y;
+		if (tempVertex.z > theMesh.max.z) theMesh.max.z = tempVertex.z;
+
 		// Add this temp vertex to the vector of vertices
 		// (cMesh &theMesh)
 		theMesh.vecVertices.push_back( tempVertex );
@@ -96,8 +104,29 @@ bool cModelLoader::LoadPlyModel(
 
 		// Add this triangle
 		theMesh.vecTriangles.push_back(tempTriangle);
+
+		// calculate and cache mesh triangle
+		sMeshTriangle tempMeshTriangle;
+		sPlyVertexXYZ first = theMesh.vecVertices[tempTriangle.vert_index_1];
+		sPlyVertexXYZ second = theMesh.vecVertices[tempTriangle.vert_index_2];
+		sPlyVertexXYZ third = theMesh.vecVertices[tempTriangle.vert_index_3];
+		tempMeshTriangle.first = glm::vec3(first.x, first.y, first.z);
+		tempMeshTriangle.second = glm::vec3(second.x, second.y, second.z);
+		tempMeshTriangle.third = glm::vec3(third.x, third.y, third.z);
+		tempMeshTriangle.normal.x = (first.nx + second.nx + third.nx) / 3.f;
+		tempMeshTriangle.normal.y = (first.ny + second.ny + third.ny) / 3.f;
+		tempMeshTriangle.normal.z = (first.nz + second.nz + third.nz) / 3.f;
+
+		theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
 	}
 
+	if (theMesh.min.x < min.x) min.x = theMesh.min.x;
+	if (theMesh.min.y < min.y) min.y = theMesh.min.y;
+	if (theMesh.min.z < min.z) min.z = theMesh.min.z;
+
+	if (theMesh.max.x > max.x) max.x = theMesh.max.x;
+	if (theMesh.max.y > max.y) max.y = theMesh.max.y;
+	if (theMesh.max.z > max.z) max.z = theMesh.max.z;
 
 	return true;
 }

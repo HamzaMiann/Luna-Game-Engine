@@ -25,6 +25,7 @@
 #include "cPhysicsInputHandler.h"
 #include "cLightController.h"
 #include "cLayoutController.h"
+#include "cModelLoader.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -35,7 +36,7 @@ Scene* scene;
 GLFWwindow* window;
 iInputHandler* pInputHandler;
 
-void DrawObject(cGameObject* objPtr, float ratio);
+void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p);
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -47,13 +48,17 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	{
 		delete pInputHandler;
 		input_id++;
-		if (input_id % 2 == 1)
+		if (input_id % 3 == 1)
 		{
 			pInputHandler = new cLightController(*scene);
 		}
-		else
+		else if (input_id % 3 == 2)
 		{
 			pInputHandler = new cLayoutController(*scene);
+		}
+		else
+		{
+			pInputHandler = new cPhysicsInputHandler(*scene);
 		}
 	}
 
@@ -132,31 +137,68 @@ int main(void)
 	glfwSwapInterval(1);
 
 	// Load scene from file
-	scene = Scene::LoadFromXML("scene1.scene.xml");
+	scene = Scene::LoadFromXML("physics.scene.xml");
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
 
 	PhysicsEngine phys;
+	phys.GenerateAABB(scene);
 
 	pInputHandler = new cLayoutController(*scene);
 
+	/*cGameObject* boundary = new cGameObject;
+	boundary->meshName = "cube";
+	boundary->scale = glm::distance(scene->pModelLoader->min, scene->pModelLoader->max) * 2.f;
+	boundary->pos = (scene->pModelLoader->min + scene->pModelLoader->max) / 2.f;
+	boundary->isWireframe = true;
+	boundary->uniformColour = true;
+	boundary->colour = glm::vec4(1.f, 0.f, 0.f, 1.f);
+	boundary->inverseMass = 0.f;
+	scene->vecGameObjects.push_back(boundary);*/
+
 
 #if _DEBUG
-	cDebugRenderer renderer;
-	renderer.initialize();
-	phys.renderer = &renderer;
+	cDebugRenderer* renderer = cDebugRenderer::Instance();
+	renderer->initialize();
+	phys.renderer = renderer;
 #endif
 
 	float current_time = (float)glfwGetTime();
 	float previous_time = (float)glfwGetTime();
 	float delta_time = 0.f;
 
+	std::vector<float> time_buffer;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		previous_time = current_time;
 		current_time = (float)glfwGetTime();
 		delta_time = current_time - previous_time;
+
+		// Average out the delta time to avoid randoms
+		//-------------------------------------------------
+		time_buffer.push_back(delta_time);
+		if (time_buffer.size() > 10)
+			time_buffer.erase(time_buffer.begin());
+
+		float average = 0.f;
+		unsigned int k = 0;
+		for (; k < time_buffer.size(); ++k)
+		{
+			average += time_buffer[k];
+		}
+		average /= (float)k;
+
+		/*if (average != 0.f && delta_time > 2.f * average)
+		{
+			average *= (float)k;
+			average -= delta_time;
+			average /= (float)k;
+			time_buffer.erase(time_buffer.end() - 1);
+		}*/
+		delta_time = average;
+		//------------------------------------------------
 
 		// Handle key inputs
 		HandleInput(window);
@@ -178,20 +220,10 @@ int main(void)
 		// Update the objects' physics
 		phys.CheckCollisions(scene);
 		phys.IntegrationStep(scene, /*delta_time*/delta_time);
-		
+
+
 		// **************************************************
 		// **************************************************
-		// Loop to draw everything in the scene
-		for (int index = 0; index != scene->vecGameObjects.size(); index++)
-		{
-			cGameObject* objPtr = scene->vecGameObjects[index];
-			
-			DrawObject(objPtr, ratio);
-
-		}//for (int index...
-
-#if _DEBUG
-
 		glm::mat4 p, v;
 
 		// Projection matrix
@@ -206,8 +238,22 @@ int main(void)
 		v = glm::lookAt(scene->cameraEye,
 						scene->cameraTarget,
 						scene->upVector);
+		
+		
+		// Loop to draw everything in the scene
+		for (int index = 0; index != scene->vecGameObjects.size(); index++)
+		{
+			cGameObject* objPtr = scene->vecGameObjects[index];
 
-		renderer.RenderDebugObjects(v, p, 0.01f);
+			DrawObject(objPtr, ratio, v, p);
+
+		}//for (int index...
+		// **************************************************
+		// **************************************************
+
+#if _DEBUG
+
+		renderer->RenderDebugObjects(v, p, 0.01f);
 #endif
 
 
@@ -234,28 +280,13 @@ int main(void)
 
 
 
-void DrawObject(cGameObject* objPtr, float ratio)
+void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
 {
 	GLint shaderProgID = scene->shaderProgID;
 	glUseProgram(shaderProgID);
 
-	glm::mat4 m, p, v, mvp;
+	glm::mat4 m, mvp;
 
-	// Projection matrix
-	p = glm::perspective(0.6f,		// FOV
-						 ratio,			// Aspect ratio
-						 0.1f,			// Near clipping plane
-						 1000.0f);		// Far clipping plane
-
-	// View matrix
-	v = glm::mat4(1.0f);
-
-	v = glm::lookAt(scene->cameraEye,
-					scene->cameraTarget,
-					scene->upVector);
-
-	//cGameObject* objPtr = scene->vecGameObjects[index];
-	//         mat4x4_identity(m);
 	m = glm::mat4(1.0f);
 
 
