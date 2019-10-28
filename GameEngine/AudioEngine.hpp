@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fmod/fmod.hpp>
+#include <glm/vec3.hpp>
 #include <vector>
 #include <string>
 
@@ -22,8 +23,11 @@ private:
 
 	struct AudioListener
 	{
-		FMOD_VECTOR location;
-		FMOD_VECTOR look_at;
+		FMOD_VECTOR previousLoc = { 0.f, 0.f, 0.f };
+		FMOD_VECTOR location = { 0.f, 0.f, 0.f };
+		FMOD_VECTOR direction = { 0.f, 0.f, -1.f };
+		FMOD_VECTOR up = { 0.f, 1.f, 0.f };
+		FMOD_VECTOR velocity = { 0.f, 0.f, 0.f };
 	} listener;
 
 	AudioEngine()
@@ -111,6 +115,6 @@ public:
 	Sound* GetSound(AUDIO_ID sound_id);
 	Sound* GetSound(std::string friendlyName);
 
-	void Update3d();
+	void Update3d(glm::vec3 const& camera, glm::vec3 const& target, float delta_time);
 
 };

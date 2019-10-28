@@ -48,7 +48,7 @@ bool AudioEngine::Sound::update_3d()
 {
 	if (_details_3d._attached)
 	{
-		_details_3d._pos = { _details_3d._attached->pos.x, _details_3d._attached->pos.y, _details_3d._attached->pos.z };
+		_details_3d._pos = { -_details_3d._attached->pos.x, _details_3d._attached->pos.y, _details_3d._attached->pos.z };
 		_details_3d._velocity = { _details_3d._attached->velocity.x, _details_3d._attached->velocity.y, _details_3d._attached->velocity.z };
 		FMOD_RESULT status = _channel->set3DAttributes(&_details_3d._pos, &_details_3d._velocity);
 		_exit_on_failure(status);

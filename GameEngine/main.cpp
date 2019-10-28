@@ -26,6 +26,7 @@
 #include "cLightController.h"
 #include "cLayoutController.h"
 #include "cModelLoader.h"
+#include "AudioEngine.hpp"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -145,17 +146,8 @@ int main(void)
 	PhysicsEngine phys;
 	phys.GenerateAABB(scene);
 
-	pInputHandler = new cLayoutController(*scene);
+	pInputHandler = new cPhysicsInputHandler(*scene);
 
-	/*cGameObject* boundary = new cGameObject;
-	boundary->meshName = "cube";
-	boundary->scale = glm::distance(scene->pModelLoader->min, scene->pModelLoader->max) * 2.f;
-	boundary->pos = (scene->pModelLoader->min + scene->pModelLoader->max) / 2.f;
-	boundary->isWireframe = true;
-	boundary->uniformColour = true;
-	boundary->colour = glm::vec4(1.f, 0.f, 0.f, 1.f);
-	boundary->inverseMass = 0.f;
-	scene->vecGameObjects.push_back(boundary);*/
 
 
 #if _DEBUG
@@ -169,6 +161,9 @@ int main(void)
 	float delta_time = 0.f;
 
 	std::vector<float> time_buffer;
+
+	scene->pAudioEngine->PlaySound("music");
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -213,6 +208,8 @@ int main(void)
 		phys.CheckCollisions(scene);
 		phys.IntegrationStep(scene, /*delta_time*/delta_time);
 
+
+		scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
 
 		// **************************************************
 		// **************************************************

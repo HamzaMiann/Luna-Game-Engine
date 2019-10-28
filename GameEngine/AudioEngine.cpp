@@ -1,5 +1,6 @@
 #include "AudioEngine.hpp"
 #include "fmod_helper.h"
+#include <glm/glm.hpp>
 #undef PlaySound
 
 void exit_on_failure(FMOD_RESULT status)
@@ -156,12 +157,25 @@ AudioEngine::Sound* AudioEngine::GetSound(std::string friendlyName)
 }
 
 
-void AudioEngine::Update3d()
+void AudioEngine::Update3d(glm::vec3 const& camera, glm::vec3 const& target, float delta_time)
 {
-	status = system->set3DListenerAttributes(0, &_al->position, &_al->velocity, &_al->forward, &_al->up);
+	listener.previousLoc = listener.location;
+	listener.location = { -camera.x, camera.y, camera.z };
+	listener.velocity = {
+		(listener.location.x - listener.previousLoc.x) / delta_time,
+		(listener.location.y - listener.previousLoc.y) / delta_time,
+		(listener.location.z - listener.previousLoc.z) / delta_time
+	};
+	glm::vec3 forward = glm::normalize(target - camera);
+	forward.y = 0.f;
+	forward = glm::normalize(forward);
+	listener.direction = { forward.x, forward.y, forward.z };
+	status = system->set3DListenerAttributes(0, &listener.location, &listener.velocity, &listener.direction, &listener.up);
 	exit_on_failure(status);
 	for (unsigned int i = 0; i < Sounds_3d.size(); ++i)
 	{
 		this->Sounds[Sounds_3d[i]]->update_3d();
 	}
+	status = system->update();
+	exit_on_failure(status);
 }

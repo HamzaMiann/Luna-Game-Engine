@@ -214,6 +214,7 @@
     <ClInclude Include="iSceneBuilder.h" />
     <ClInclude Include="cLightManager.h" />
     <ClInclude Include="Mathf.h" />
+    <ClInclude Include="octree.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="rapid_definitions.h" />
     <ClInclude Include="Scene.h" />
