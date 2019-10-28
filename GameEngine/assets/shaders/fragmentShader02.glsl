@@ -4,15 +4,20 @@ in vec4 fColour;
 in vec4 fVertWorldLocation;
 in vec4 fNormal;
 in vec4 fUVx2;
-	
+
+// Object
 uniform vec4 diffuseColour;
 uniform vec4 specularColour;
-
-// Used to draw debug (or unlit) objects
-uniform vec4 debugColour;
-uniform bool isUniform;		
-
 uniform vec4 eyeLocation;
+// Used to draw debug (or unlit) objects
+uniform bool isUniform;
+
+
+// Globals
+uniform float iTime;
+uniform vec2 iResolution;
+
+
 
 out vec4 pixelColour;			// RGB A   (0 to 1) 
 
@@ -35,24 +40,21 @@ const int POINT_LIGHT_TYPE = 0;
 const int SPOT_LIGHT_TYPE = 1;
 const int DIRECTIONAL_LIGHT_TYPE = 2;
 
-uniform int NUMBEROFLIGHTS;
+// Lights
 const int LIGHT_BUFFER = 24;
-uniform sLight theLights[LIGHT_BUFFER];  	// 80 uniforms
+uniform int NUMBEROFLIGHTS;
+uniform sLight theLights[LIGHT_BUFFER];
 
 
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular );
+float getFogFactor(float d);
+float rand(float s, float r) { return mod(mod(s, r + iTime) * 112341, 1); }
 
-float getFogFactor(float d)
-{
-    const float FogMax = 80.0;
-    const float FogMin = 30.0;
-
-    if (d>=FogMax) return 1;
-    if (d<=FogMin) return 0;
-
-    return 1 - (FogMax - d) / (FogMax - FogMin);
-}
+float GetFogValue() { return getFogFactor(distance(eyeLocation, fVertWorldLocation)); }
+vec4 GetRandValue() { return vec4(rand(gl_FragCoord.x, fVertWorldLocation.x), rand(gl_FragCoord.y, fVertWorldLocation.y), rand(gl_FragCoord.z, fVertWorldLocation.z), 1); }
+vec4 GetSineColValue() { return vec4(sin(gl_FragCoord.x/iResolution.x), sin(gl_FragCoord.y/iResolution.y), cos(gl_FragCoord.z), 1); }
+vec4 GetTimeColValue(vec2 uv) { return vec4(0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4)), 1.0); }
 
 void main()  
 {
@@ -73,12 +75,14 @@ void main()
 	vec4 outColour = calcualteLightContrib( materialColour.rgb, fNormal.xyz, 
 	                                        fVertWorldLocation.xyz, specColour );
 
-							
-	float d = distance(eyeLocation, fVertWorldLocation);
-	float alpha = getFogFactor(d);
-
+						
 	pixelColour = outColour;
-	pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), alpha);
+
+	pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetFogValue());
+	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetRandValue());
+	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetSineColValue());
+	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetTimeColValue(gl_FragCoord.xy/iResolution.xy));
+
 	
 } // end main
 
@@ -229,4 +233,16 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 	finalObjectColour.a = 1.0f;
 	
 	return finalObjectColour;
+}
+
+
+float getFogFactor(float d)
+{
+    const float FogMax = 80.0;
+    const float FogMin = 30.0;
+
+    if (d>=FogMax) return 1;
+    if (d<=FogMin) return 0;
+
+    return 1 - (FogMax - d) / (FogMax - FogMin);
 }

@@ -190,13 +190,6 @@ int main(void)
 		}
 		average /= (float)k;
 
-		/*if (average != 0.f && delta_time > 2.f * average)
-		{
-			average *= (float)k;
-			average -= delta_time;
-			average /= (float)k;
-			time_buffer.erase(time_buffer.end() - 1);
-		}*/
 		delta_time = average;
 		//------------------------------------------------
 
@@ -205,7 +198,6 @@ int main(void)
 
 		float ratio;
 		int width, height;
-		//glm::mat4 m, p, v, mvp;
 
 		glfwGetFramebufferSize(window, &width, &height);
 		ratio = width / (float)height;
@@ -238,6 +230,15 @@ int main(void)
 		v = glm::lookAt(scene->cameraEye,
 						scene->cameraTarget,
 						scene->upVector);
+
+		// set time
+		glUniform1f(glGetUniformLocation(scene->shaderProgID, "iTime"),
+			(float)glfwGetTime());
+
+		// set resolution
+		glUniform2f(glGetUniformLocation(scene->shaderProgID, "iResolution"),
+					width,
+					height);
 		
 		
 		// Loop to draw everything in the scene

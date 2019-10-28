@@ -27,10 +27,12 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 		cGameObject* ptr = nullptr;
 		std::string objectName = object_node->name();
 		xml_attribute<>* meshAttr = object_node->first_attribute("mesh");
+		xml_attribute<>* tagAttr = object_node->first_attribute("tag");
 		if (objectName == "GameObject")
 		{
 			ptr = ptr = new cGameObject();
 			if (meshAttr) ptr->meshName = meshAttr->value();
+			if (tagAttr) ptr->tag = tagAttr->value();
 			for (xml_node<>* property_node = object_node->first_node();
 				 property_node;
 				 property_node = property_node->next_sibling())

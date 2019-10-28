@@ -1,6 +1,7 @@
 
 #include "cAudioBuilder.h"
 #include "AudioEngine.hpp"
+#include "cGameObject.h"
 using namespace rapidxml;
 
 void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
@@ -8,11 +9,15 @@ void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
 	scene.pAudioEngine = AudioEngine::Instance();
 	scene.pAudioEngine->Init();
 
-	for (xml_node<>* sound_node = node->first_node("Sound"); sound_node; sound_node = sound_node->next_sibling("Sound"))
+	for (xml_node<>* sound_node = node->first_node(); sound_node; sound_node = sound_node->next_sibling())
 	{
+		std::string node_name = sound_node->name();
+		if (node_name != "Sound" && node_name != "Sound3D") continue;
+
 		xml_attribute<>* file = sound_node->first_attribute("file");
 		xml_attribute<>* friendly = sound_node->first_attribute("friendlyName");
 		xml_attribute<>* streamedAttr = sound_node->first_attribute("streamed");
+		xml_attribute<>* attachAttr = sound_node->first_attribute("attach");
 		if (file)
 		{
 			bool streamed = false;
@@ -25,7 +30,25 @@ void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
 				if (value == "true")
 					streamed = true;
 			}
-			AUDIO_ID id = scene.pAudioEngine->Create_Sound(file->value(), friendlyName, streamed);
+			AUDIO_ID id;
+			if (node_name == "Sound")
+				id = scene.pAudioEngine->Create_Sound(file->value(), friendlyName, streamed);
+			else if (node_name == "Sound3D")
+			{
+				std::string tag = attachAttr->value();
+				bool found = false;
+				for (unsigned int i = 0; i < scene.vecGameObjects.size(); ++i)
+				{
+					if (scene.vecGameObjects[i]->tag == tag)
+					{
+						id = scene.pAudioEngine->Create_Sound_3d(file->value(), friendlyName, scene.vecGameObjects[i]);
+						found = true;
+						break;
+					}
+				}
+				if (!found) continue;
+			}
+			else continue;
 			AudioEngine::Sound* sound = scene.pAudioEngine->GetSound(id);
 			for (xml_attribute<>* attribute = sound_node->first_attribute();
 				 attribute; attribute = attribute->next_attribute())

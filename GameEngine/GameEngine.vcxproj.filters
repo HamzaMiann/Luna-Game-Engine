@@ -138,6 +138,9 @@
     <ClCompile Include="SceneLayoutSave.cpp">
       <Filter>SceneFactory</Filter>
     </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -232,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="cMesh.h">
       <Filter>ModelLoading</Filter>
+    </ClInclude>
+    <ClInclude Include="fmod_helper.h">
+      <Filter>Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

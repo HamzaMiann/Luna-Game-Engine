@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <Scene name="Media Fundamentals Project 1">
-	<Audio API="FMOD"/>
 	<Shader>
 		<Vertex file="vertexShader02.glsl"/>
 		<Fragment file="fragmentShader02.glsl"/>
@@ -65,7 +64,7 @@
 			<IMass>0.000000</IMass>
 			<Collider>MESH</Collider>
 		</GameObject>
-		<GameObject mesh="sphere" tag="">
+		<GameObject mesh="sphere" tag="player">
 			<Position x="-0.664931" y="1.091834" z="0.876774"/>
 			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
 			<Colour x="0.100000" y="0.300000" z="0.900000" w="1.000000"/>
@@ -150,5 +149,8 @@
 			<Collider>MESH</Collider>
 		</GameObject>
 	</Layout>
+  <Audio API="FMOD">
+    <Sound3D file="music_game.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music" attach="player"/>
+  </Audio>
 </Scene>
 
