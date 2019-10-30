@@ -4,35 +4,43 @@
 #include "AudioEngine.hpp"
 #include <sstream>
 
-AUDIO_ID current_sound_id = 0;
 
-static std::string get_sound_details(AudioEngine::Sound* sound, std::string friendlyName)
+static std::string get_sound_details(AudioEngine::SoundGroup* sound_group, std::string friendlyName)
 {
 	std::ostringstream ss;
 
-	ss << '[' << sound->get_name() << "] ";
-	unsigned int seconds = sound->get_position() / 1000;
+	AudioEngine::Sound* sound = sound_group->sounds[0];
+	if (!sound) return "";
+
+	ss << "[GROUP: " << sound_group->name << "] ";
+	/*unsigned int seconds = sound->get_position() / 1000;
 	unsigned int minutes = seconds / 60;
 	unsigned int sec = seconds - (minutes * 60);
 	unsigned int size = sound->get_size() / 1000;
 	unsigned int size_minutes = size / 60;
-	unsigned int size_sec = size - (size_minutes * 60);
-	ss << "format(" << sound->get_format() << ") ";
-	ss << "type(" << sound->get_type() << ") ";
-	ss << "[" << minutes << ":" << sec << " / " << size_minutes << ":" << size_sec << "] ";
+	unsigned int size_sec = size - (size_minutes * 60);*/
+	//ss << "format(" << sound->get_format() << ") ";
+	//ss << "type(" << sound->get_type() << ") ";
+	//ss << "[" << minutes << ":" << sec << " / " << size_minutes << ":" << size_sec << "] ";
 	ss << "Vol(" << sound->get_volume() << ") ";
-	ss << "Fq(" << sound->get_frequency() << ") ";
+	//ss << "Fq(" << sound->get_frequency() << ") ";
+	ss << "Pitch(" << sound->get_pitch() << ") ";
 	ss << "Pan(" << sound->get_pan() << ") ";
 
 	return ss.str();
 }
 
+cAudioInputHandler::cAudioInputHandler() : groups(AudioEngine::Instance()->GetGroupNames())
+{
+	this->engine = AudioEngine::Instance();
+}
+
 void cAudioInputHandler::HandleInput(GLFWwindow* window)
 {
-
-	if (_scene.pAudioEngine && _scene.pAudioEngine->Num_Sounds() > 0)
+	if (groups.size() > 0)
 	{
-		AudioEngine::Sound* current_sound = _scene.pAudioEngine->GetSound(current_sound_id);
+		AudioEngine::Sound* current_sound = engine->GetGroup(groups[current_sound_id])->sounds[0];
+
 		if (glfwGetKey(window, GLFW_KEY_1))
 		{
 			current_sound->set_volume(current_sound->get_volume() - 0.01f);
@@ -58,8 +66,8 @@ void cAudioInputHandler::HandleInput(GLFWwindow* window)
 			current_sound->set_pan(current_sound->get_pan() + 0.01f);
 		}
 
-		std::string friendlyName = _scene.pAudioEngine->Get_Name(current_sound_id);
-		glfwSetWindowTitle(window, get_sound_details(_scene.pAudioEngine->GetSound(current_sound_id), friendlyName).c_str());
+		std::string friendlyName = engine->Get_Name(current_sound_id);
+		glfwSetWindowTitle(window, get_sound_details(engine->GetGroup(groups[current_sound_id]), friendlyName).c_str());
 
 	}
 
@@ -69,9 +77,9 @@ void cAudioInputHandler::HandleInput(GLFWwindow* window)
 void cAudioInputHandler::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 
-	if (_scene.pAudioEngine && _scene.pAudioEngine->Num_Sounds() > 0)
+	if (groups.size() > 0)
 	{
-		int max = _scene.pAudioEngine->Num_Sounds();
+		int max = groups.size();
 
 		if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
 		{

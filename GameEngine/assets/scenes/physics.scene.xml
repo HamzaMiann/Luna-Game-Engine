@@ -150,7 +150,12 @@
 		</GameObject>
 	</Layout>
   <Audio API="FMOD">
-    <Sound3D file="effect_rain.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music" attach="player"/>
+    
+    <Sound3D file="effect_rain.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="rain" attach="player"/>
+    
+    <Sound file="music_game.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_game" group="music"/>
+    <Sound file="music_hourglass.wav" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_hourglass" group="music"/>
+    
   </Audio>
 </Scene>
 

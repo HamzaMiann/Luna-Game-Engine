@@ -2,6 +2,7 @@
 
 #include <fmod/fmod.hpp>
 #include <glm/vec3.hpp>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -12,29 +13,6 @@ class cGameObject;
 
 static class AudioEngine
 {
-private:
-	class Sound;
-
-	FMOD::System* system;
-	FMOD_RESULT status;
-	std::vector<Sound*> Sounds;
-	std::vector<std::string> SoundNames;
-	std::vector<AUDIO_ID> Sounds_3d;
-
-	struct AudioListener
-	{
-		FMOD_VECTOR previousLoc = { 0.f, 0.f, 0.f };
-		FMOD_VECTOR location = { 0.f, 0.f, 0.f };
-		FMOD_VECTOR direction = { 0.f, 0.f, -1.f };
-		FMOD_VECTOR up = { 0.f, 1.f, 0.f };
-		FMOD_VECTOR velocity = { 0.f, 0.f, 0.f };
-	} listener;
-
-	AudioEngine()
-	{
-		system = 0; status = FMOD_OK;
-	}
-
 public:
 
 	class Sound
@@ -61,6 +39,7 @@ public:
 		bool _streamed = false;
 
 		Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init);
+		Sound(FMOD::ChannelGroup* _channel_group_init, FMOD::Sound* _sound_init);
 		Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init, cGameObject* attach_to);
 	public:
 		~Sound();
@@ -93,6 +72,14 @@ public:
 		bool update_3d();
 	};
 
+	struct SoundGroup
+	{
+		std::string name = "";
+		FMOD::ChannelGroup* channel;
+		std::vector<Sound*> sounds;
+	};
+
+
 	static AudioEngine* Instance()
 	{
 		static AudioEngine instance;
@@ -107,14 +94,45 @@ public:
 	std::string Get_Name(int i) { return this->SoundNames[i]; }
 
 	AUDIO_ID Create_Sound(std::string filename, std::string friendlyName, bool streamed = false);
+	AUDIO_ID Create_Sound_Group(std::string filename, std::string friendlyName, std::string group);
 	AUDIO_ID Create_Sound_3d(std::string filename, std::string friendlyName, cGameObject* attach_to);
-	Sound* Create_Sound(std::string filename, bool streamed = false);
+
 	void PlaySound(Sound* sound);
-	void PlaySound(AUDIO_ID sound_id);
+	void PlaySound(AUDIO_ID id);
 	void PlaySound(std::string friendlyName);
+	void PlayGroup(SoundGroup* group);
+	void PlayGroup(std::string friendlyName);
+
 	Sound* GetSound(AUDIO_ID sound_id);
 	Sound* GetSound(std::string friendlyName);
+	SoundGroup* GetGroup(std::string group) { return Groups[group]; }
+	std::vector<std::string> const& GetGroupNames() { return GroupNames; }
 
 	void Update3d(glm::vec3 const& camera, glm::vec3 const& target, float delta_time);
+
+private:
+
+	FMOD::System* system;
+	FMOD_RESULT status;
+	std::vector<Sound*> Sounds;
+	std::vector<std::string> SoundNames;
+	std::vector<AUDIO_ID> Sounds_3d;
+
+	std::map<std::string, SoundGroup*> Groups;
+	std::vector<std::string> GroupNames;
+
+	struct AudioListener
+	{
+		FMOD_VECTOR previousLoc = { 0.f, 0.f, 0.f };
+		FMOD_VECTOR location = { 0.f, 0.f, 0.f };
+		FMOD_VECTOR direction = { 0.f, 0.f, -1.f };
+		FMOD_VECTOR up = { 0.f, 1.f, 0.f };
+		FMOD_VECTOR velocity = { 0.f, 0.f, 0.f };
+	} listener;
+
+	AudioEngine()
+	{
+		system = 0; status = FMOD_OK;
+	}
 
 };

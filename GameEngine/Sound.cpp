@@ -21,6 +21,16 @@ AudioEngine::Sound::Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init
 	set_pan(this->_pan);
 }
 
+AudioEngine::Sound::Sound(FMOD::ChannelGroup* _channel_group_init, FMOD::Sound* _sound_init)
+{
+	this->_channelGroup = _channel_group_init;
+	this->_sound = _sound_init;
+	this->_paused = true;
+	set_pitch(this->_pitch);
+	set_volume(this->_volume);
+	set_pan(this->_pan);
+}
+
 AudioEngine::Sound::Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init, cGameObject* attach_to)
 {
 	this->_channel = _channel_init;
@@ -50,9 +60,18 @@ bool AudioEngine::Sound::update_3d()
 	{
 		_details_3d._pos = { -_details_3d._attached->pos.x, _details_3d._attached->pos.y, _details_3d._attached->pos.z };
 		_details_3d._velocity = { _details_3d._attached->velocity.x, _details_3d._attached->velocity.y, _details_3d._attached->velocity.z };
-		FMOD_RESULT status = _channel->set3DAttributes(&_details_3d._pos, &_details_3d._velocity);
-		_exit_on_failure(status);
-		return true;
+		if (_channel)
+		{
+			FMOD_RESULT status = _channel->set3DAttributes(&_details_3d._pos, &_details_3d._velocity);
+			_exit_on_failure(status);
+			return true;
+		}
+		if (_channelGroup)
+		{
+			FMOD_RESULT status = _channelGroup->set3DAttributes(&_details_3d._pos, &_details_3d._velocity);
+			_exit_on_failure(status);
+			return true;
+		}
 	}
 
 	return false;
@@ -67,6 +86,13 @@ bool AudioEngine::Sound::set_volume(float volume)
 	if (volume <= 1.0f && volume > 0.f && this->_channel)
 	{
 		FMOD_RESULT status = _channel->setVolume(volume);
+		_exit_on_failure(status);
+		_volume = volume;
+		return true;
+	}
+	if (volume <= 1.0f && volume > 0.f && this->_channelGroup)
+	{
+		FMOD_RESULT status = _channelGroup->setVolume(volume);
 		_exit_on_failure(status);
 		_volume = volume;
 		return true;
@@ -88,6 +114,13 @@ bool AudioEngine::Sound::set_pitch(float pitch)
 		_pitch = pitch;
 		return true;
 	}
+	if (pitch <= 2.0f && pitch > 0.01f && this->_channelGroup)
+	{
+		FMOD_RESULT status = _channelGroup->setPitch(pitch);
+		_exit_on_failure(status);
+		_pitch = pitch;
+		return true;
+	}
 	return false;
 }
 
@@ -100,6 +133,13 @@ bool AudioEngine::Sound::set_pan(float pan)
 	if (pan <= 1.0f && pan >= -1.f && this->_channel)
 	{
 		FMOD_RESULT status = _channel->setPan(pan);
+		_exit_on_failure(status);
+		_pan = pan;
+		return true;
+	}
+	if (pan <= 1.0f && pan >= -1.f && this->_channelGroup)
+	{
+		FMOD_RESULT status = _channelGroup->setPan(pan);
 		_exit_on_failure(status);
 		_pan = pan;
 		return true;
@@ -120,7 +160,7 @@ bool AudioEngine::Sound::set_frequency(float frequency)
 {
 	if (frequency <= 1.0f && frequency >= -1.f && this->_channel)
 	{
-		FMOD_RESULT status = _channel->setPan(frequency);
+		FMOD_RESULT status = _channel->setFrequency(frequency);
 		_exit_on_failure(status);
 		_frequency = frequency;
 		return true;
@@ -168,6 +208,11 @@ bool AudioEngine::Sound::is_paused()
 		FMOD_RESULT status = _channel->getPaused(&_paused);
 		_exit_on_failure(status);
 	}
+	else if (_channelGroup)
+	{
+		FMOD_RESULT status = _channelGroup->getPaused(&_paused);
+		_exit_on_failure(status);
+	}
 	return _paused;
 }
 
@@ -176,6 +221,12 @@ void AudioEngine::Sound::toggle_pause()
 	if (_channel)
 	{
 		FMOD_RESULT status = _channel->setPaused(!_paused);
+		_exit_on_failure(status);
+		is_paused();
+	}
+	else if (_channelGroup)
+	{
+		FMOD_RESULT status = _channelGroup->setPaused(!_paused);
 		_exit_on_failure(status);
 		is_paused();
 	}

@@ -34,6 +34,20 @@ AudioEngine::~AudioEngine()
 	Sounds.clear();
 	SoundNames.clear();
 
+	// remove sound groups
+	std::map<std::string, SoundGroup*>::iterator it = Groups.begin();
+	while (it != Groups.end())
+	{
+		for (size_t i = 0; i < it->second->sounds.size(); ++i)
+		{
+			delete it->second->sounds[i];
+		}
+		it->second->sounds.clear();
+		delete it->second;
+		it++;
+	}
+	Groups.clear();
+
 	if (system)
 	{
 		// close the system
@@ -54,14 +68,47 @@ AUDIO_ID AudioEngine::Create_Sound(std::string filename, std::string friendlyNam
 	FMOD::Channel* channel = 0;
 	status = system->createSound(fullPath.c_str(), streamed? FMOD_CREATESTREAM : FMOD_DEFAULT, 0, &sound);
 	exit_on_failure(status);
+
 	AudioEngine::Sound* newSound = new AudioEngine::Sound(channel, sound);
 	status = system->playSound(newSound->_sound, FMOD_DEFAULT, true, &(newSound->_channel));
+	exit_on_failure(status);
+
 	newSound->_paused = true;
 	newSound->_streamed = streamed;
-	exit_on_failure(status);
+
 	Sounds.push_back(newSound);
 	SoundNames.push_back(friendlyName);
+
 	return this->Sounds.size() - 1;
+}
+
+AUDIO_ID AudioEngine::Create_Sound_Group(std::string filename, std::string friendlyName, std::string group)
+{
+	std::string fullPath = "assets\\audio\\" + filename;
+	FMOD::Sound* sound = 0;
+	FMOD::ChannelGroup* channel = 0;
+	if (!Groups[group])
+	{
+		GroupNames.push_back(group);
+		Groups[group] = new SoundGroup;
+		Groups[group]->name = group;
+		status = system->createChannelGroup(group.c_str(), &Groups[group]->channel);
+		exit_on_failure(status);
+	}
+	channel = Groups[group]->channel;
+	status = system->createSound(fullPath.c_str(), FMOD_CREATESTREAM, 0, &sound);
+	exit_on_failure(status);
+
+	AudioEngine::Sound* newSound = new AudioEngine::Sound(channel, sound);
+	status = system->playSound(newSound->_sound, Groups[group]->channel, true, 0);
+	exit_on_failure(status);
+
+	newSound->_paused = true;
+	newSound->_streamed = true;
+
+	Groups[group]->sounds.push_back(newSound);
+
+	return 0;
 }
 
 
@@ -72,13 +119,17 @@ AUDIO_ID AudioEngine::Create_Sound_3d(std::string filename, std::string friendly
 	FMOD::Channel* channel = 0;
 	status = system->createSound(fullPath.c_str(), FMOD_3D, 0, &sound);
 	exit_on_failure(status);
+
 	AudioEngine::Sound* newSound = new AudioEngine::Sound(channel, sound, attach_to);
 	status = system->playSound(newSound->_sound, FMOD_DEFAULT, true, &(newSound->_channel));
+	exit_on_failure(status);
+
 	newSound->_paused = true;
 	newSound->_streamed = false;
-	exit_on_failure(status);
+
 	Sounds.push_back(newSound);
 	SoundNames.push_back(friendlyName);
+
 	this->Sounds_3d.push_back(this->Sounds.size() - 1);
 	return this->Sounds.size() - 1;
 }
@@ -97,6 +148,20 @@ void AudioEngine::PlaySound(Sound* sound)
 			exit_on_failure(status);
 			sound->_paused = false;
 		}
+		return;
+	}
+	if (sound->_channelGroup)
+	{
+		sound->reset_position();
+		status = sound->_channelGroup->getPaused(&sound->_paused);
+		exit_on_failure(status);
+		if (sound->_paused)
+		{
+			status = sound->_channelGroup->setPaused(!sound->_paused);
+			exit_on_failure(status);
+			sound->_paused = false;
+		}
+		return;
 	}
 }
 
@@ -114,6 +179,20 @@ void AudioEngine::PlaySound(int sound_id)
 			exit_on_failure(status);
 			sound->_paused = false;
 		}
+		return;
+	}
+	if (sound->_channelGroup)
+	{
+		sound->reset_position();
+		status = sound->_channelGroup->getPaused(&sound->_paused);
+		exit_on_failure(status);
+		if (sound->_paused)
+		{
+			status = sound->_channelGroup->setPaused(!sound->_paused);
+			exit_on_failure(status);
+			sound->_paused = false;
+		}
+		return;
 	}
 }
 
@@ -136,6 +215,30 @@ void AudioEngine::PlaySound(std::string friendlyName)
 					sound->_paused = false;
 				}
 			}
+		}
+	}
+}
+
+void AudioEngine::PlayGroup(std::string friendlyName)
+{
+	for (std::map<std::string, SoundGroup*>::iterator i = Groups.begin(); i != Groups.end(); ++i)
+	{
+		if (i->first == friendlyName && i->second)
+		{
+			AudioEngine::Sound* sound = i->second->sounds[0];
+			if (sound->_channelGroup)
+			{
+				sound->reset_position();
+				status = sound->_channelGroup->getPaused(&sound->_paused);
+				exit_on_failure(status);
+				if (sound->_paused)
+				{
+					status = sound->_channelGroup->setPaused(!sound->_paused);
+					exit_on_failure(status);
+					sound->_paused = false;
+				}
+			}
+			break;
 		}
 	}
 }

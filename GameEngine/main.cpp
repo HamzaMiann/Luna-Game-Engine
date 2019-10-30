@@ -27,6 +27,7 @@
 #include "cLayoutController.h"
 #include "cModelLoader.h"
 #include "AudioEngine.hpp"
+#include "cAudioInputHandler.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -146,7 +147,7 @@ int main(void)
 	PhysicsEngine phys;
 	phys.GenerateAABB(scene);
 
-	pInputHandler = new cPhysicsInputHandler(*scene);
+	pInputHandler = new cAudioInputHandler();
 
 
 
@@ -162,7 +163,8 @@ int main(void)
 
 	std::vector<float> time_buffer;
 
-	scene->pAudioEngine->PlaySound("music");
+	//scene->pAudioEngine->PlaySound("rain");
+	//scene->pAudioEngine->PlayGroup("music");
 
 
 	while (!glfwWindowShouldClose(window))

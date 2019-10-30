@@ -1,16 +1,19 @@
 #pragma once
 
 #include "iInputHandler.h"
+#include <vector>
+#include <string>
 
-class Scene;
+class AudioEngine;
 
 class cAudioInputHandler : public iInputHandler
 {
 private:
-	Scene& _scene;
+	AudioEngine* engine;
+	int current_sound_id = 0;
+	std::vector<std::string> const& groups;
 public:
-	cAudioInputHandler() = delete;
-	cAudioInputHandler(Scene& scene) : _scene(scene) {}
+	cAudioInputHandler();
 	virtual ~cAudioInputHandler() {}
 	virtual void HandleInput(GLFWwindow* window);
 	virtual void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

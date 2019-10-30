@@ -18,6 +18,7 @@ void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
 		xml_attribute<>* friendly = sound_node->first_attribute("friendlyName");
 		xml_attribute<>* streamedAttr = sound_node->first_attribute("streamed");
 		xml_attribute<>* attachAttr = sound_node->first_attribute("attach");
+		xml_attribute<>* groupAttr = sound_node->first_attribute("group");
 		if (file)
 		{
 			bool streamed = false;
@@ -32,7 +33,16 @@ void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
 			}
 			AUDIO_ID id;
 			if (node_name == "Sound")
-				id = scene.pAudioEngine->Create_Sound(file->value(), friendlyName, streamed);
+			{
+				if (!groupAttr)
+				{
+					id = scene.pAudioEngine->Create_Sound(file->value(), friendlyName, streamed);
+				}
+				else
+				{
+					id = scene.pAudioEngine->Create_Sound_Group(file->value(), friendlyName, groupAttr->value());
+				}
+			}
 			else if (node_name == "Sound3D")
 			{
 				std::string tag = attachAttr->value();
