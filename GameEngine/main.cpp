@@ -163,7 +163,7 @@ int main(void)
 
 	std::vector<float> time_buffer;
 
-	//scene->pAudioEngine->PlaySound("rain");
+	scene->pAudioEngine->PlaySound("rain");
 	//scene->pAudioEngine->PlayGroup("music");
 
 
@@ -320,7 +320,9 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 	m = m * rotateX;
 	// ******* ROTATION TRANSFORM *********
 
-
+	GLint matModelIT_UL = glGetUniformLocation(shaderProgID, "matModelInverTrans");
+	glm::mat4 matModelInverseTranspose = glm::inverse(glm::transpose(m));
+	glUniformMatrix4fv(matModelIT_UL, 1, GL_FALSE, glm::value_ptr(matModelInverseTranspose));
 
 	// ******* SCALE TRANSFORM *********
 	glm::mat4 scale = glm::scale(glm::mat4(1.0f),
@@ -347,11 +349,7 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
 	glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p));
 
-	GLint matModelIT_UL = glGetUniformLocation(shaderProgID, "matModelInverTrans");
-	glm::mat4 matModelInverseTranspose = glm::inverse(glm::transpose(m));
-	glUniformMatrix4fv(matModelIT_UL, 1, GL_FALSE, glm::value_ptr(matModelInverseTranspose));
-
-
+	
 
 	GLint eye_loc = glGetUniformLocation(shaderProgID, "eyeLocation");
 	glUniform4f(eye_loc,

@@ -37,11 +37,11 @@ void cLayoutController::HandleInput(GLFWwindow * window)
 		this->_scene.vecGameObjects[index]->pos.x -= 0.1f;
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_PAGE_UP))
+	if (glfwGetKey(window, GLFW_KEY_T))
 	{
 		this->_scene.vecGameObjects[index]->pos.y += 0.1f;
 	}
-	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN))
+	if (glfwGetKey(window, GLFW_KEY_Y))
 	{
 		this->_scene.vecGameObjects[index]->pos.y -= 0.1f;
 	}
@@ -109,8 +109,8 @@ void cLayoutController::key_callback(GLFWwindow * window, int key, int scancode,
 	if (key == GLFW_KEY_S && action == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
 	{
 		if (_scene.SaveLayout())
-			std::cout << "Lights Saved!" << std::endl;
+			std::cout << "Layout Saved!" << std::endl;
 		else
-			std::cout << "Unable to save lights..." << std::endl;
+			std::cout << "Unable to save layout..." << std::endl;
 	}
 }

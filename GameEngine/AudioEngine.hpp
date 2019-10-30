@@ -15,6 +15,8 @@ static class AudioEngine
 {
 public:
 
+	std::map<std::string, FMOD::DSP*> DSPs;
+
 	class Sound
 	{
 	private:
@@ -39,7 +41,7 @@ public:
 		bool _streamed = false;
 
 		Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init);
-		Sound(FMOD::ChannelGroup* _channel_group_init, FMOD::Sound* _sound_init);
+		Sound(FMOD::Channel* _channel_init, FMOD::ChannelGroup* _channel_group_init, FMOD::Sound* _sound_init);
 		Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init, cGameObject* attach_to);
 	public:
 		~Sound();
@@ -77,6 +79,15 @@ public:
 		std::string name = "";
 		FMOD::ChannelGroup* channel;
 		std::vector<Sound*> sounds;
+
+		void toggle_pause();
+		bool is_paused();
+		void apply_DSP(FMOD::DSP* dsp);
+
+	private:
+		friend class AudioEngine;
+
+		bool _paused = true;
 	};
 
 
@@ -120,6 +131,7 @@ private:
 
 	std::map<std::string, SoundGroup*> Groups;
 	std::vector<std::string> GroupNames;
+
 
 	struct AudioListener
 	{

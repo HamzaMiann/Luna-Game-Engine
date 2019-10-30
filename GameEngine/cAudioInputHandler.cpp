@@ -4,6 +4,7 @@
 #include "AudioEngine.hpp"
 #include <sstream>
 
+std::map<std::string, FMOD::DSP*>::iterator dsp_it;
 
 static std::string get_sound_details(AudioEngine::SoundGroup* sound_group, std::string friendlyName)
 {
@@ -26,6 +27,7 @@ static std::string get_sound_details(AudioEngine::SoundGroup* sound_group, std::
 	//ss << "Fq(" << sound->get_frequency() << ") ";
 	ss << "Pitch(" << sound->get_pitch() << ") ";
 	ss << "Pan(" << sound->get_pan() << ") ";
+	ss << "DSP(" << dsp_it->first << ") ";
 
 	return ss.str();
 }
@@ -33,6 +35,7 @@ static std::string get_sound_details(AudioEngine::SoundGroup* sound_group, std::
 cAudioInputHandler::cAudioInputHandler() : groups(AudioEngine::Instance()->GetGroupNames())
 {
 	this->engine = AudioEngine::Instance();
+	dsp_it = engine->DSPs.begin();
 }
 
 void cAudioInputHandler::HandleInput(GLFWwindow* window)
@@ -85,6 +88,20 @@ void cAudioInputHandler::key_callback(GLFWwindow* window, int key, int scancode,
 		{
 			current_sound_id++;
 			if (current_sound_id >= max) current_sound_id = 0;
+		}
+
+		if (key == GLFW_KEY_N && action == GLFW_PRESS)
+		{
+			engine->GetGroup(groups[current_sound_id])->toggle_pause();
+		}
+
+		if (key == GLFW_KEY_M && action == GLFW_PRESS)
+		{
+			dsp_it++;
+			if (dsp_it == engine->DSPs.end())
+				dsp_it = engine->DSPs.begin();
+
+			engine->GetGroup(groups[current_sound_id])->apply_DSP((dsp_it)->second);
 		}
 
 	}

@@ -43,7 +43,7 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float deltaTime)
 		pObj->velocity += (pObj->acceleration * deltaTime);
 
 		// add external forces
-		pObj->velocity += (Gravity * deltaTime);
+		pObj->velocity += (Gravity * deltaTime * pObj->gravityScale);
 		pObj->velocity *= 1.f - (drag * deltaTime);
 
 		float speed = abs(pObj->velocity.y);

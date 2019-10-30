@@ -141,6 +141,9 @@
     <ClCompile Include="Sound.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
+    <ClCompile Include="SoundGroup.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">

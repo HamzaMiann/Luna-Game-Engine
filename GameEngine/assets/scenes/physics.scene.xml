@@ -52,7 +52,7 @@
 		</Light>
 	</Lights>
 	<Layout>
-		<GameObject mesh="plane_ground" tag="">
+		<GameObject mesh="rectangle" tag="">
 			<Position x="-0.000000" y="-0.500000" z="-1.000000"/>
 			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
 			<Colour x="1.000000" y="0.000000" z="0.000000" w="1.000000"/>
@@ -65,23 +65,11 @@
 			<Collider>MESH</Collider>
 		</GameObject>
 		<GameObject mesh="sphere" tag="player">
-			<Position x="-0.664931" y="1.091834" z="0.876774"/>
+			<Position x="-0.643652" y="1.091834" z="0.881849"/>
 			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
 			<Colour x="0.100000" y="0.300000" z="0.900000" w="1.000000"/>
 			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
-			<Velocity x="0.017308" y="0.000000" z="0.004129"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>0.500000</Scale>
-			<SpecIntensity>100.000000</SpecIntensity>
-			<IMass>1.000000</IMass>
-			<Collider>SPHERE</Collider>
-		</GameObject>
-		<GameObject mesh="sphere" tag="">
-			<Position x="0.361424" y="0.002352" z="-3.079662"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
-			<Colour x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
-			<Velocity x="0.000001" y="0.000000" z="0.000002"/>
+			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
 			<Scale>0.500000</Scale>
 			<SpecIntensity>100.000000</SpecIntensity>
@@ -101,37 +89,37 @@
 			<Collider>MESH</Collider>
 		</GameObject>
 		<GameObject mesh="rectangle" tag="">
-			<Position x="0.000000" y="0.000000" z="17.899992"/>
+			<Position x="0.000000" y="8.499996" z="19.099997"/>
 			<Rotation x="0.000000" y="-0.700000" z="0.700000"/>
 			<Colour x="1.000000" y="0.000000" z="0.000000" w="1.000000"/>
 			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>5.000000</Scale>
+			<Scale>3.675459</Scale>
 			<SpecIntensity>1.000000</SpecIntensity>
 			<IMass>0.000000</IMass>
 			<Collider>MESH</Collider>
 		</GameObject>
 		<GameObject mesh="rectangle" tag="">
-			<Position x="10.000004" y="0.000000" z="3.200000"/>
-			<Rotation x="0.000000" y="-0.100000" z="0.400000"/>
+			<Position x="16.100027" y="8.799997" z="-6.299995"/>
+			<Rotation x="3.099999" y="-0.300000" z="-0.500000"/>
 			<Colour x="0.100000" y="0.100000" z="0.900000" w="1.000000"/>
 			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>4.500000</Scale>
+			<Scale>4.410781</Scale>
 			<SpecIntensity>1.000000</SpecIntensity>
 			<IMass>0.000000</IMass>
 			<Collider>MESH</Collider>
 		</GameObject>
-		<GameObject mesh="plane_angle" tag="">
-			<Position x="-5.000000" y="0.000000" z="0.000000"/>
-			<Rotation x="0.000000" y="1.000000" z="0.000000"/>
+		<GameObject mesh="rectangle" tag="">
+			<Position x="-16.300028" y="-13.700016" z="17.400030"/>
+			<Rotation x="0.800000" y="0.700000" z="1.700000"/>
 			<Colour x="1.000000" y="0.000000" z="0.000000" w="1.000000"/>
 			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>50.000000</Scale>
+			<Scale>5.142331</Scale>
 			<SpecIntensity>1.000000</SpecIntensity>
 			<IMass>0.000000</IMass>
 			<Collider>MESH</Collider>
@@ -149,13 +137,10 @@
 			<Collider>MESH</Collider>
 		</GameObject>
 	</Layout>
-  <Audio API="FMOD">
-    
-    <Sound3D file="effect_rain.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="rain" attach="player"/>
-    
-    <Sound file="music_game.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_game" group="music"/>
-    <Sound file="music_hourglass.wav" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_hourglass" group="music"/>
-    
-  </Audio>
+	<Audio API="FMOD">
+		<Sound3D file="effect_rain.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="rain" attach="player"/>
+		<Sound file="music_game.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_game" group="music"/>
+		<Sound file="music_hourglass.wav" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_hourglass" group="music"/>
+	</Audio>
 </Scene>
 

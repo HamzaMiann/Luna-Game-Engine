@@ -37,6 +37,7 @@ public:
 
 	glm::vec3 velocity = glm::vec3(0.f, 0.f, 0.f);
 	glm::vec3 acceleration = glm::vec3(0.f, 0.f, 0.f);
+	float gravityScale = 0.f;
 	float inverseMass = 1.f;
 
 	ColliderType Collider = ColliderType::NONE;

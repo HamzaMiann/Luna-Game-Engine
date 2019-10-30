@@ -63,9 +63,7 @@ void main()
 	{
 		pixelColour.rgb = diffuseColour.rgb;
 		pixelColour.a = 1.0f;
-		float d = distance(eyeLocation, fVertWorldLocation);
-		float alpha = getFogFactor(d);
-		pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), alpha);
+		//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetFogValue());
 		return;
 	}
 
@@ -78,7 +76,7 @@ void main()
 						
 	pixelColour = outColour;
 
-	pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetFogValue());
+	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetFogValue());
 	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetRandValue());
 	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetSineColValue());
 	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetTimeColValue(gl_FragCoord.xy/iResolution.xy));

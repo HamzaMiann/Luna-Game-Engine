@@ -7,7 +7,7 @@ void exit_on_failure(FMOD_RESULT status)
 {
 	if (status != FMOD_OK)
 	{
-		std::cout << "FMOD ERROR: " << status << std::endl;
+		std::cout << "exit_on_failure FMOD ERROR: " << status << std::endl;
 		exit(1);
 	}
 }
@@ -22,6 +22,36 @@ void AudioEngine::Init()
 
 	status = system->set3DSettings(1.0f, 1.0f, 1.0f);
 	exit_on_failure(status);
+
+	// LOAD DSPs
+
+	status = system->createDSPByType(FMOD_DSP_TYPE_SFXREVERB, &DSPs["reverb"]);
+	exit_on_failure(status);
+
+	status = system->createDSPByType(FMOD_DSP_TYPE_ECHO, &DSPs["echo"]);
+	exit_on_failure(status);
+
+	status = system->createDSPByType(FMOD_DSP_TYPE_CHORUS, &DSPs["chorus"]);
+	exit_on_failure(status);
+
+	status = system->createDSPByType(FMOD_DSP_TYPE_DELAY, &DSPs["delay"]);
+	exit_on_failure(status);
+
+	status = system->createDSPByType(FMOD_DSP_TYPE_DISTORTION, &DSPs["distortion"]);
+	exit_on_failure(status);
+
+	status = system->createDSPByType(FMOD_DSP_TYPE_TREMOLO, &DSPs["tremolo"]);
+	exit_on_failure(status);
+
+	status = system->createDSPByType(FMOD_DSP_TYPE_TREMOLO, &DSPs["tremolo"]);
+	exit_on_failure(status);
+
+	status = system->createDSPByType(FMOD_DSP_TYPE_FADER, &DSPs["fader"]);
+	exit_on_failure(status);
+
+	status = system->createDSPByType(FMOD_DSP_TYPE_FADER, &DSPs["fader"]);
+	exit_on_failure(status);
+
 }
 
 AudioEngine::~AudioEngine()
@@ -48,6 +78,16 @@ AudioEngine::~AudioEngine()
 	}
 	Groups.clear();
 
+	// clear DSPs
+	std::map<std::string, FMOD::DSP*>::iterator dsp_it = DSPs.begin();
+	while (dsp_it != DSPs.end())
+	{
+		dsp_it->second->release();
+		dsp_it++;
+	}
+	DSPs.clear();
+
+	// release system
 	if (system)
 	{
 		// close the system
@@ -86,7 +126,8 @@ AUDIO_ID AudioEngine::Create_Sound_Group(std::string filename, std::string frien
 {
 	std::string fullPath = "assets\\audio\\" + filename;
 	FMOD::Sound* sound = 0;
-	FMOD::ChannelGroup* channel = 0;
+	FMOD::Channel* channel = 0;
+	FMOD::ChannelGroup* channelGroup = 0;
 	if (!Groups[group])
 	{
 		GroupNames.push_back(group);
@@ -95,16 +136,19 @@ AUDIO_ID AudioEngine::Create_Sound_Group(std::string filename, std::string frien
 		status = system->createChannelGroup(group.c_str(), &Groups[group]->channel);
 		exit_on_failure(status);
 	}
-	channel = Groups[group]->channel;
+	channelGroup = Groups[group]->channel;
 	status = system->createSound(fullPath.c_str(), FMOD_CREATESTREAM, 0, &sound);
 	exit_on_failure(status);
 
-	AudioEngine::Sound* newSound = new AudioEngine::Sound(channel, sound);
-	status = system->playSound(newSound->_sound, Groups[group]->channel, true, 0);
+	AudioEngine::Sound* newSound = new AudioEngine::Sound(channel, channelGroup, sound);
+	status = system->playSound(newSound->_sound, Groups[group]->channel, false, &(newSound->_channel));
 	exit_on_failure(status);
 
 	newSound->_paused = true;
 	newSound->_streamed = true;
+
+	status = newSound->_channelGroup->setPaused(newSound->_paused);
+	exit_on_failure(status);
 
 	Groups[group]->sounds.push_back(newSound);
 
@@ -237,6 +281,7 @@ void AudioEngine::PlayGroup(std::string friendlyName)
 					exit_on_failure(status);
 					sound->_paused = false;
 				}
+				i->second->_paused = sound->_paused;
 			}
 			break;
 		}
