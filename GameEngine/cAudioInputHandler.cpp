@@ -69,8 +69,8 @@ void cAudioInputHandler::HandleInput(GLFWwindow* window)
 			current_sound->set_pan(current_sound->get_pan() + 0.01f);
 		}
 
-		std::string friendlyName = engine->Get_Name(current_sound_id);
-		glfwSetWindowTitle(window, get_sound_details(engine->GetGroup(groups[current_sound_id]), friendlyName).c_str());
+		//std::string friendlyName = engine->Get_Name(current_sound_id);
+		glfwSetWindowTitle(window, get_sound_details(engine->GetGroup(groups[current_sound_id]), "").c_str());
 
 	}
 

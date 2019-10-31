@@ -228,12 +228,15 @@ int main(void)
 						scene->cameraTarget,
 						scene->upVector);
 
+		GLint shaderProgID = scene->shaderProgID;
+		glUseProgram(shaderProgID);
+
 		// set time
-		glUniform1f(glGetUniformLocation(scene->shaderProgID, "iTime"),
-			(float)glfwGetTime());
+		float time = glfwGetTime();
+		glUniform1f(glGetUniformLocation(shaderProgID, "iTime"),time);
 
 		// set resolution
-		glUniform2f(glGetUniformLocation(scene->shaderProgID, "iResolution"),
+		glUniform2f(glGetUniformLocation(shaderProgID, "iResolution"),
 					width,
 					height);
 		
@@ -281,7 +284,6 @@ int main(void)
 void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
 {
 	GLint shaderProgID = scene->shaderProgID;
-	glUseProgram(shaderProgID);
 
 	glm::mat4 m, mvp;
 
