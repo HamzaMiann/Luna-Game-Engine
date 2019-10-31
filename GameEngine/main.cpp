@@ -164,8 +164,6 @@ int main(void)
 	std::vector<float> time_buffer;
 
 	scene->pAudioEngine->PlaySound("rain");
-	//scene->pAudioEngine->PlayGroup("music");
-
 
 	while (!glfwWindowShouldClose(window))
 	{

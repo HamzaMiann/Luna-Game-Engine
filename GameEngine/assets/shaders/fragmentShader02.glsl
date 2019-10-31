@@ -14,7 +14,7 @@ uniform bool isUniform;
 
 
 // Globals
-uniform float iTime;
+in float fiTime;
 uniform vec2 iResolution;
 
 
@@ -49,12 +49,12 @@ uniform sLight theLights[LIGHT_BUFFER];
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular );
 float getFogFactor(float d);
-float rand(float s, float r) { return mod(mod(s, r + iTime) * 112341, 1); }
+float rand(float s, float r) { return mod(mod(s, r + fiTime) * 112341, 1); }
 
 float GetFogValue() { return getFogFactor(distance(eyeLocation, fVertWorldLocation)); }
 vec4 GetRandValue() { return vec4(rand(gl_FragCoord.x, fVertWorldLocation.x), rand(gl_FragCoord.y, fVertWorldLocation.y), rand(gl_FragCoord.z, fVertWorldLocation.z), 1); }
 vec4 GetSineColValue() { return vec4(sin(gl_FragCoord.x/iResolution.x), sin(gl_FragCoord.y/iResolution.y), cos(gl_FragCoord.z), 1); }
-vec4 GetTimeColValue(vec2 uv) { return vec4(0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4)), 1.0); }
+vec4 GetTimeColValue(vec2 uv) { return vec4(0.5 + 0.5*cos(fiTime+uv.xyx+vec3(0,2,4)), 1.0); }
 
 void main()  
 {
@@ -79,7 +79,7 @@ void main()
 	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetFogValue());
 	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetRandValue());
 	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetSineColValue());
-	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetTimeColValue(gl_FragCoord.xy/iResolution.xy));
+	pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetTimeColValue(gl_FragCoord.xy/iResolution.xy));
 
 	
 } // end main
