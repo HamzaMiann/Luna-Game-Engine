@@ -85,6 +85,10 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 					{
 						ptr->Collider = MESH;
 					}
+					else if (collider == "AABB")
+					{
+						ptr->Collider = AABB;
+					}
 					else
 					{
 						ptr->Collider = NONE;

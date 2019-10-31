@@ -22,33 +22,33 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{AC89A0D6-36A9-4B42-948D-5A55BA436D9A}</ProjectGuid>
     <RootNamespace>GDP201920</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>GameEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -178,8 +178,10 @@
     <ClCompile Include="cShaderManager.cpp" />
     <ClCompile Include="cVAOManager.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="octree.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneLayoutSave.cpp" />
     <ClCompile Include="SceneLightSave.cpp" />
@@ -187,6 +189,7 @@
     <ClCompile Include="SoundGroup.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cAABB.h" />
     <ClInclude Include="AudioEngine.hpp" />
     <ClInclude Include="fmod_helper.h" />
     <ClInclude Include="cAudioBuilder.h" />
@@ -218,6 +221,7 @@
     <ClInclude Include="octree.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="rapid_definitions.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="sLight.h" />
   </ItemGroup>
@@ -228,6 +232,7 @@
     <None Include="assets\shaders\vertexShader02.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="assets\scenes\media.scene.xml" />
     <Xml Include="assets\scenes\physics.scene.xml">
       <SubType>Designer</SubType>
     </Xml>

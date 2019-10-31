@@ -3,11 +3,7 @@
 class Scene;
 class cGameObject;
 #include "cDebugRenderer.h"
-
-struct cAABB
-{
-	float x;
-};
+#include "cAABB.h"
 
 class PhysicsEngine
 {

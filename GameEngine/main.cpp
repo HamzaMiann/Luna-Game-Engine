@@ -28,6 +28,7 @@
 #include "cModelLoader.h"
 #include "AudioEngine.hpp"
 #include "cAudioInputHandler.h"
+#include "octree.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -39,6 +40,25 @@ GLFWwindow* window;
 iInputHandler* pInputHandler;
 
 void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p);
+
+void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
+{
+	if (node == nullptr) return;
+
+	if (!node->AABB->contains(obj->pos)) return;
+
+	if (!node->has_nodes)
+	{
+		objPtr->pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
+		objPtr->scale = node->AABB->length / 2.f;
+
+		DrawObject(objPtr, ratio, v, p);
+	}
+
+	for (int i = 0; i < 8; ++i)
+		DrawOctree(obj, node->nodes[i], objPtr, ratio, v, p);
+
+}
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -147,7 +167,7 @@ int main(void)
 	PhysicsEngine phys;
 	phys.GenerateAABB(scene);
 
-	pInputHandler = new cAudioInputHandler();
+	pInputHandler = new cPhysicsInputHandler(*scene);
 
 
 
@@ -163,7 +183,26 @@ int main(void)
 
 	std::vector<float> time_buffer;
 
-	scene->pAudioEngine->PlaySound("rain");
+	//scene->pAudioEngine->PlaySound("rain");
+
+	glm::vec3 min = scene->pModelLoader->min;
+	glm::vec3 max = scene->pModelLoader->max;
+
+	cGameObject* bounds = new cGameObject;
+	bounds->pos = (max + min) / 2.f;
+	bounds->scale = glm::distance(max, min) / 2.f;
+	bounds->colour = glm::vec4(1.f, 0.f, 0.f, 1.f);
+	bounds->meshName = "cube";
+	bounds->tag = "AABB";
+	bounds->isWireframe = true;
+	bounds->inverseMass = 0.f;
+	bounds->uniformColour = true;
+	//scene->vecGameObjects.push_back(bounds);
+
+	cGameObject* sphere = scene->vecGameObjects[1];
+
+	octree* tree = new octree;
+	tree->generate_tree(min, glm::distance(min, max));
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -219,7 +258,7 @@ int main(void)
 		p = glm::perspective(0.6f,		// FOV
 							 ratio,			// Aspect ratio
 							 0.1f,			// Near clipping plane
-							 1000.0f);		// Far clipping plane
+							 100'000.f);		// Far clipping plane
 
 		// View matrix
 		v = glm::mat4(1.0f);
@@ -257,6 +296,7 @@ int main(void)
 		renderer->RenderDebugObjects(v, p, 0.01f);
 #endif
 
+		DrawOctree(sphere, tree->main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************
@@ -335,7 +375,7 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 
 
 	//mat4x4_mul(mvp, p, m);
-	mvp = p * v * m;
+	//mvp = p * v * m;
 
 	// Choose which shader to use
 	//glUseProgram(program);

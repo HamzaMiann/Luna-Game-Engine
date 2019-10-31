@@ -162,6 +162,7 @@ bool Scene::SaveLayout()
 			case MESH: prop->value("MESH"); break;
 			case SPHERE: prop->value("SPHERE"); break;
 			case CUBE: prop->value("CUBE"); break;
+			case AABB: prop->value("AABB"); break;
 			default: prop->value("NONE"); break;
 			}
 			node->append_node(prop);

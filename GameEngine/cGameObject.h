@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp>
 #include <string>
+#include <vector>
 
 class Scene;
 
@@ -12,6 +13,7 @@ enum ColliderType
 	SPHERE,
 	CUBE,
 	MESH,
+	AABB,
 	NONE
 };
 

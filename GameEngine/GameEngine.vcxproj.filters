@@ -13,14 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{7c9cae8b-1453-4fc5-b0b1-fc3b21c534b5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ModelLoading">
       <UniqueIdentifier>{d26fe758-32e4-4fc5-9fde-31d38e3f3272}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\GLSL">
-      <UniqueIdentifier>{02dde2e9-2e21-4d3a-b295-98e0b8f9b639}</UniqueIdentifier>
     </Filter>
     <Filter Include="Math_Physics">
       <UniqueIdentifier>{6b6bae64-520f-44be-a760-2d81bbda3a59}</UniqueIdentifier>
@@ -52,16 +46,22 @@
     <Filter Include="InputHandler\Handlers">
       <UniqueIdentifier>{ff060f73-92b9-45d6-adb6-f69f134d3be6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ShadersRendering">
+      <UniqueIdentifier>{7c9cae8b-1453-4fc5-b0b1-fc3b21c534b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShadersRendering\GLSL">
+      <UniqueIdentifier>{02dde2e9-2e21-4d3a-b295-98e0b8f9b639}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">
-      <Filter>Shaders</Filter>
+      <Filter>ShadersRendering</Filter>
     </ClCompile>
     <ClCompile Include="cShaderManager.cpp">
-      <Filter>Shaders</Filter>
+      <Filter>ShadersRendering</Filter>
     </ClCompile>
     <ClCompile Include="cShaderHelper.cpp">
-      <Filter>Shaders</Filter>
+      <Filter>ShadersRendering</Filter>
     </ClCompile>
     <ClCompile Include="cVAOManager.cpp">
       <Filter>ModelLoading</Filter>
@@ -144,13 +144,19 @@
     <ClCompile Include="SoundGroup.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>ShadersRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="octree.cpp">
+      <Filter>Math_Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
-      <Filter>Shaders</Filter>
+      <Filter>ShadersRendering</Filter>
     </ClInclude>
     <ClInclude Include="cShaderHelper.h">
-      <Filter>Shaders</Filter>
+      <Filter>ShadersRendering</Filter>
     </ClInclude>
     <ClInclude Include="cVAOManager.h">
       <Filter>ModelLoading</Filter>
@@ -245,19 +251,25 @@
     <ClInclude Include="octree.h">
       <Filter>Math_Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>ShadersRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="cAABB.h">
+      <Filter>Math_Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\fragmentShader01.glsl">
-      <Filter>Shaders\GLSL</Filter>
+      <Filter>ShadersRendering\GLSL</Filter>
     </None>
     <None Include="assets\shaders\vertexShader01.glsl">
-      <Filter>Shaders\GLSL</Filter>
+      <Filter>ShadersRendering\GLSL</Filter>
     </None>
     <None Include="assets\shaders\fragmentShader02.glsl">
-      <Filter>Shaders\GLSL</Filter>
+      <Filter>ShadersRendering\GLSL</Filter>
     </None>
     <None Include="assets\shaders\vertexShader02.glsl">
-      <Filter>Shaders\GLSL</Filter>
+      <Filter>ShadersRendering\GLSL</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +277,9 @@
       <Filter>SceneFactory\Scenes</Filter>
     </Xml>
     <Xml Include="assets\scenes\physics.scene.xml">
+      <Filter>SceneFactory\Scenes</Filter>
+    </Xml>
+    <Xml Include="assets\scenes\media.scene.xml">
       <Filter>SceneFactory\Scenes</Filter>
     </Xml>
   </ItemGroup>
