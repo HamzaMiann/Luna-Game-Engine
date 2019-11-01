@@ -159,7 +159,7 @@ int main(void)
 	glfwSwapInterval(1);
 
 	// Load scene from file
-	scene = Scene::LoadFromXML("physics.scene.xml");
+	scene = Scene::LoadFromXML("water.scene.xml");
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -167,7 +167,7 @@ int main(void)
 	PhysicsEngine phys;
 	phys.GenerateAABB(scene);
 
-	pInputHandler = new cPhysicsInputHandler(*scene);
+	pInputHandler = new cLayoutController(*scene);
 
 
 
@@ -199,10 +199,10 @@ int main(void)
 	bounds->uniformColour = true;
 	//scene->vecGameObjects.push_back(bounds);
 
-	cGameObject* sphere = scene->vecGameObjects[1];
+	cGameObject* sphere = NULL;// scene->vecGameObjects[1];
 
-	octree* tree = new octree;
-	tree->generate_tree(min, glm::distance(min, max));
+	octree tree;
+	//tree.generate_tree(min, glm::distance(min, max));
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -242,6 +242,10 @@ int main(void)
 		// Clear both the colour buffer (what we see) and the 
 		//  depth (or z) buffer.
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+		glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
+		//glDisable( GL_BLEND );
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Update the objects' physics
 		phys.CheckCollisions(scene);
@@ -296,7 +300,7 @@ int main(void)
 		renderer->RenderDebugObjects(v, p, 0.01f);
 #endif
 
-		DrawOctree(sphere, tree->main_node, bounds, ratio, v, p);
+		//DrawOctree(sphere, tree.main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************

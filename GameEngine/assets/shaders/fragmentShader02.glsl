@@ -86,6 +86,8 @@ void main()
 	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetTimeColValue(gl_FragCoord.xy/iResolution.xy));
 	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), noise(fVertWorldLocation.xy));
 
+	//pixelColour.rgb = vec3(noise(fVertWorldLocation.xy + fiTime));
+
 	//pixelColour = 1 - pixelColour;
 
 	

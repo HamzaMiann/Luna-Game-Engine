@@ -271,6 +271,12 @@
     <None Include="assets\shaders\vertexShader02.glsl">
       <Filter>ShadersRendering\GLSL</Filter>
     </None>
+    <None Include="assets\shaders\water_vert.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\water_frag.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\scenes\scene1.scene.xml">
@@ -280,6 +286,9 @@
       <Filter>SceneFactory\Scenes</Filter>
     </Xml>
     <Xml Include="assets\scenes\media.scene.xml">
+      <Filter>SceneFactory\Scenes</Filter>
+    </Xml>
+    <Xml Include="assets\scenes\water.scene.xml">
       <Filter>SceneFactory\Scenes</Filter>
     </Xml>
   </ItemGroup>
