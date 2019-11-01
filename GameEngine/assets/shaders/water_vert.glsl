@@ -6,6 +6,7 @@ uniform mat4 matModelInverTrans;		// Model or World
 uniform mat4 matView; 					// View or camera
 uniform mat4 matProj;					// Projection transform
 uniform float iTime;
+uniform bool isWater;
 
 in vec4 vColour;				// Was vec3
 in vec4 vPosition;				// Was vec3
@@ -19,6 +20,7 @@ out vec4 fVertWorldLocation;
 out vec4 fNormal;
 out vec4 fUVx2;
 out float fiTime;
+out float fisWater;
 
 float rand(float s, float r) { return mod(mod(s, r + iTime) * 112341, 1); }
 float random (in vec2 st);
@@ -37,11 +39,21 @@ void main()
 
 	fVertWorldLocation = matModel * vec4(vertPosition.xyz, 1.0);
 
-	gl_Position.y += sin(fVertWorldLocation.x * -40.f + iTime * 2.f) / 10.f;
-	gl_Position.y += noise(fVertWorldLocation.xz * 20.f + iTime) / 1.f;
+	if (isWater)
+	{
+		float x = fVertWorldLocation.x * -0.5f + iTime * 5.f;
+		gl_Position.y += sin(x);
+		gl_Position.xy += (noise(fVertWorldLocation.xz * 20.f + iTime * 0.3f) - 0.5) * 1.f;
 
-	fVertWorldLocation.y += sin(fVertWorldLocation.x * -40.f + iTime * 2.f) / 10.f;
-	fVertWorldLocation.y += noise(fVertWorldLocation.xz * 20.f + iTime) / 1.f;
+		fVertWorldLocation.xy += sin(x);
+		fVertWorldLocation.xy += (noise(fVertWorldLocation.xz * 20.f + iTime * 0.3f) - 0.5) * 1.f;
+
+		fisWater = 1.f;
+	}
+	else
+	{
+		fisWater = 0.f;
+	}
 	
 	//mat4 matInv = inverse(transpose(matModel));
 

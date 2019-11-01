@@ -15,6 +15,7 @@ uniform bool isUniform;
 
 // Globals
 in float fiTime;
+in float fisWater;
 uniform vec2 iResolution;
 
 
@@ -91,6 +92,12 @@ void main()
 	//pixelColour.a = diffuseColour.a;
 
 	//pixelColour = 1 - pixelColour;
+
+	if (fisWater == 1.f)
+	{
+		float angle = dot(normalize(fVertWorldLocation - eyeLocation), normalize(fNormal));
+		//pixelColour.a = angle;
+	}
 
 	
 } // end main

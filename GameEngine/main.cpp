@@ -288,7 +288,16 @@ int main(void)
 		for (int index = 0; index != scene->vecGameObjects.size(); index++)
 		{
 			cGameObject* objPtr = scene->vecGameObjects[index];
-
+			if (objPtr->tag == "water")
+			{
+				glUniform1i(glGetUniformLocation(shaderProgID, "isWater"),
+							true);
+			}
+			else
+			{
+				glUniform1i(glGetUniformLocation(shaderProgID, "isWater"),
+							false);
+			}
 			DrawObject(objPtr, ratio, v, p);
 
 		}//for (int index...
