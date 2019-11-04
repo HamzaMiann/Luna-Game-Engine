@@ -34,7 +34,7 @@ void AudioEngine::Init()
 	status = system->createDSPByType(FMOD_DSP_TYPE_CHORUS, &DSPs["chorus"]);
 	exit_on_failure(status);
 
-	status = system->createDSPByType(FMOD_DSP_TYPE_DELAY, &DSPs["delay"]);
+	status = system->createDSPByType(FMOD_DSP_TYPE_FLANGE, &DSPs["flanger"]);
 	exit_on_failure(status);
 
 	status = system->createDSPByType(FMOD_DSP_TYPE_DISTORTION, &DSPs["distortion"]);
@@ -43,13 +43,10 @@ void AudioEngine::Init()
 	status = system->createDSPByType(FMOD_DSP_TYPE_TREMOLO, &DSPs["tremolo"]);
 	exit_on_failure(status);
 
-	status = system->createDSPByType(FMOD_DSP_TYPE_TREMOLO, &DSPs["tremolo"]);
+	status = system->createDSPByType(FMOD_DSP_TYPE_HIGHPASS, &DSPs["high_pass"]);
 	exit_on_failure(status);
 
-	status = system->createDSPByType(FMOD_DSP_TYPE_FADER, &DSPs["fader"]);
-	exit_on_failure(status);
-
-	status = system->createDSPByType(FMOD_DSP_TYPE_FADER, &DSPs["fader"]);
+	status = system->createDSPByType(FMOD_DSP_TYPE_LOWPASS, &DSPs["low_pass"]);
 	exit_on_failure(status);
 
 }

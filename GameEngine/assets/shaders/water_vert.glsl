@@ -39,21 +39,7 @@ void main()
 
 	fVertWorldLocation = matModel * vec4(vertPosition.xyz, 1.0);
 
-	if (isWater)
-	{
-		float x = fVertWorldLocation.x * -0.5f + iTime * 5.f;
-		gl_Position.y += sin(x);
-		gl_Position.xy += (noise(fVertWorldLocation.xz * 20.f + iTime * 0.3f) - 0.5) * 1.f;
-
-		fVertWorldLocation.xy += sin(x);
-		fVertWorldLocation.xy += (noise(fVertWorldLocation.xz * 20.f + iTime * 0.3f) - 0.5) * 1.f;
-
-		fisWater = 1.f;
-	}
-	else
-	{
-		fisWater = 0.f;
-	}
+	
 	
 	//mat4 matInv = inverse(transpose(matModel));
 
@@ -63,6 +49,31 @@ void main()
 	fUVx2 = vUVx2;
 
 	fiTime = iTime;
+
+	if (isWater)
+	{
+		float x = fVertWorldLocation.x * -0.5f + iTime * 5.f;
+		float n = (noise(fVertWorldLocation.xz * 20.f + iTime) - 0.5);
+
+		gl_Position.y += sin(x);
+		gl_Position.xy += n * 1.f;
+
+		fVertWorldLocation.y += sin(x);
+		fVertWorldLocation.xy += n * 1.f;
+
+		fNormal.x += sin(2*x) / 10.f;
+		fNormal.x += cos(x) / 10.f;
+		fNormal.xz += n / 10.f;
+		fNormal = normalize(fNormal);
+
+		fisWater = 1.f;
+	}
+	else
+	{
+		fisWater = 0.f;
+	}
+
+	//gl_Position = fVertWorldLocation;
 }
 
 

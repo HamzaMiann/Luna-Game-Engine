@@ -44,3 +44,16 @@ void AudioEngine::SoundGroup::apply_DSP(FMOD::DSP* dsp)
 		__exit_on_failure(channel->addDSP(0, dsp));
 	}
 }
+
+void AudioEngine::SoundGroup::remove_DSPs()
+{
+	if (channel)
+	{
+		FMOD::DSP* _dsp = 0;
+		__exit_on_failure(channel->getDSP(0, &_dsp));
+		if (_dsp)
+		{
+			__exit_on_failure(channel->removeDSP(_dsp));
+		}
+	}
+}

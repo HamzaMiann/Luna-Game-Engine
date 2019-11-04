@@ -79,15 +79,18 @@ void cAudioInputHandler::HandleInput(GLFWwindow* window)
 
 void cAudioInputHandler::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-
 	if (groups.size() > 0)
 	{
 		int max = groups.size();
 
 		if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
 		{
+			engine->GetGroup(groups[current_sound_id])->remove_DSPs();
+			dsp_it = engine->DSPs.begin();
+
 			current_sound_id++;
 			if (current_sound_id >= max) current_sound_id = 0;
+			
 		}
 
 		if (key == GLFW_KEY_N && action == GLFW_PRESS)

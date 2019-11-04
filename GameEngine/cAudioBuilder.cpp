@@ -60,22 +60,25 @@ void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
 			}
 			else continue;
 			AudioEngine::Sound* sound = scene.pAudioEngine->GetSound(id);
-			for (xml_attribute<>* attribute = sound_node->first_attribute();
-				 attribute; attribute = attribute->next_attribute())
+			if (sound)
 			{
-				std::string value = attribute->value();
-				std::string name = attribute->name();
-				if (name == "volume")
+				for (xml_attribute<>* attribute = sound_node->first_attribute();
+					 attribute; attribute = attribute->next_attribute())
 				{
-					sound->set_volume(strtof(value.c_str(), 0));
-				}
-				else if (name == "pitch")
-				{
-					sound->set_pitch(strtof(value.c_str(), 0));
-				}
-				else if (name == "pan")
-				{
-					sound->set_pan(strtof(value.c_str(), 0));
+					std::string value = attribute->value();
+					std::string name = attribute->name();
+					if (name == "volume")
+					{
+						sound->set_volume(strtof(value.c_str(), 0));
+					}
+					else if (name == "pitch")
+					{
+						sound->set_pitch(strtof(value.c_str(), 0));
+					}
+					else if (name == "pan")
+					{
+						sound->set_pan(strtof(value.c_str(), 0));
+					}
 				}
 			}
 		}

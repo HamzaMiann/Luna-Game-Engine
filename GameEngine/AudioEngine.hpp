@@ -83,6 +83,7 @@ public:
 		void toggle_pause();
 		bool is_paused();
 		void apply_DSP(FMOD::DSP* dsp);
+		void remove_DSPs();
 
 	private:
 		friend class AudioEngine;

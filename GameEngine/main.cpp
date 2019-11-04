@@ -70,17 +70,17 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	{
 		delete pInputHandler;
 		input_id++;
-		if (input_id % 3 == 1)
+		if (input_id % 2 == 0)
 		{
-			pInputHandler = new cLightController(*scene);
+			pInputHandler = new cAudioInputHandler();
 		}
-		else if (input_id % 3 == 2)
+		else if (input_id % 2 == 1)
 		{
-			pInputHandler = new cLayoutController(*scene);
+			pInputHandler = new cPhysicsInputHandler(*scene);
 		}
 		else
 		{
-			pInputHandler = new cPhysicsInputHandler(*scene);
+			//pInputHandler = new cPhysicsInputHandler(*scene);
 		}
 	}
 
@@ -167,7 +167,7 @@ int main(void)
 	PhysicsEngine phys;
 	phys.GenerateAABB(scene);
 
-	pInputHandler = new cLayoutController(*scene);
+	pInputHandler = new cAudioInputHandler();
 
 
 
@@ -183,7 +183,9 @@ int main(void)
 
 	std::vector<float> time_buffer;
 
-	//scene->pAudioEngine->PlaySound("rain");
+	scene->pAudioEngine->PlaySound("rain");
+	scene->pAudioEngine->PlaySound("smooth_sound");
+	scene->pAudioEngine->PlaySound("ship_sound");
 
 	glm::vec3 min = scene->pModelLoader->min;
 	glm::vec3 max = scene->pModelLoader->max;
@@ -203,6 +205,8 @@ int main(void)
 
 	octree tree;
 	//tree.generate_tree(min, glm::distance(min, max));
+
+	scene->cameraEye = glm::vec3(-39.f, 2.f, -63.f);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -242,6 +246,8 @@ int main(void)
 		// Clear both the colour buffer (what we see) and the 
 		//  depth (or z) buffer.
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+		glClearColor(0.7f, 0.85f, 1.f, 1.f);
 
 		glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
 		//glDisable( GL_BLEND );

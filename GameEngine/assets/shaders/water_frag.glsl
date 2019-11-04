@@ -95,8 +95,8 @@ void main()
 
 	if (fisWater == 1.f)
 	{
-		float angle = dot(normalize(fVertWorldLocation - eyeLocation), normalize(fNormal));
-		//pixelColour.a = angle;
+		float angle = dot(normalize(eyeLocation - fVertWorldLocation), normalize(fNormal));
+		pixelColour.a -= abs(angle) / 10.f;
 	}
 
 	
