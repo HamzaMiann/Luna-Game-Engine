@@ -52,6 +52,9 @@
     <Filter Include="ShadersRendering\GLSL">
       <UniqueIdentifier>{02dde2e9-2e21-4d3a-b295-98e0b8f9b639}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{213c6421-8265-4231-a622-ef4e67f10c7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">

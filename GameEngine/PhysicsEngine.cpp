@@ -4,6 +4,7 @@
 #include "PhysicsEngine.h"
 #include "cMesh.h"
 #include "cVAOManager.h"
+#include "cModelLoader.h"
 #include "cGameObject.h"
 #include <math.h>
 #include <algorithm>
@@ -155,49 +156,51 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 				switch (colliderObject->Collider)
 				{
 				case MESH:
-
-					FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, colliderObject, pObj);
-
 					if (pObj->Collider == SPHERE)
+					{
+						FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, colliderObject, pObj);
+
 						closestDistanceSoFar -= pObj->scale;
 
-					if (abs(closestDistanceSoFar) <= 0.08f)
-					{
-						if (glm::dot(glm::normalize(Gravity), normal) == 0)
+						if (abs(closestDistanceSoFar) <= 0.08f)
 						{
-							if (colliderObject->inverseMass != 0.0f)
+							if (glm::dot(glm::normalize(Gravity), normal) == 0)
 							{
-								pObj->velocity += colliderObject->velocity;
+								if (colliderObject->inverseMass != 0.0f)
+								{
+									pObj->velocity += colliderObject->velocity;
+								}
+							}
+
+
+							if (glm::dot(pObj->velocity, normal) > 0)
+								break;
+
+							if (closestDistanceSoFar < 0.f)
+								pObj->pos.y = pObj->previousPos.y;
+
+							pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
+							pObj->isCollided |= true;
+
+
+							if (renderer)
+							{
+								renderer->addLine(closestPoint,
+												  closestPoint + normal,
+												  glm::vec3(0.f, 1.f, 1.f),
+												  1.f);
+
+								renderer->addLine(closestPoint,
+												  closestPoint + glm::normalize(pObj->velocity),
+												  glm::vec3(0.f, 1.f, 0.f),
+												  1.f);
 							}
 						}
 
-
-						if (glm::dot(pObj->velocity, normal) > 0)
-							break;
-
-						if (closestDistanceSoFar < 0.f)
-							pObj->pos.y = pObj->previousPos.y;
-
-						pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
-						pObj->isCollided |= true;
-
-
-						if (renderer)
-						{
-							renderer->addLine(closestPoint,
-											  closestPoint + normal,
-											  glm::vec3(0.f, 1.f, 1.f),
-											  1.f);
-
-							renderer->addLine(closestPoint,
-											  closestPoint + glm::normalize(pObj->velocity),
-											  glm::vec3(0.f, 1.f, 0.f),
-											  1.f);
-						}
 					}
-
 					break;
 				case SPHERE:
+				{
 					if (pObj->Collider == SPHERE)
 					{
 						float distance = glm::distance(pObj->pos, colliderObject->pos);
@@ -205,6 +208,54 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 						if (distance <= 0.1f)
 						{
 							sphereCollisionResponse(pObj, colliderObject, this);
+						}
+					}
+				}
+					break;
+				case AABB:
+					if (pObj->Collider == SPHERE)
+					{
+						octree::octree_node* node = tree->find_node(pObj->pos);
+						if (node)
+						{
+							FindClosestPointToTriangles(node->triangles, closestDistanceSoFar, closestPoint, normal, pObj->pos);
+
+							closestDistanceSoFar -= pObj->scale;
+
+							if (abs(closestDistanceSoFar) <= 0.08f)
+							{
+								if (glm::dot(glm::normalize(Gravity), normal) == 0)
+								{
+									if (colliderObject->inverseMass != 0.0f)
+									{
+										pObj->velocity += colliderObject->velocity;
+									}
+								}
+
+
+								if (glm::dot(pObj->velocity, normal) > 0)
+									break;
+
+								if (closestDistanceSoFar < 0.f)
+									pObj->pos.y = pObj->previousPos.y;
+
+								pObj->velocity = glm::reflect(pObj->velocity, normal) /** friction*/;
+								pObj->isCollided |= true;
+
+
+								if (renderer)
+								{
+									renderer->addLine(closestPoint,
+													  closestPoint + normal,
+													  glm::vec3(0.f, 1.f, 1.f),
+													  1.f);
+
+									renderer->addLine(closestPoint,
+													  closestPoint + glm::normalize(pObj->velocity),
+													  glm::vec3(0.f, 1.f, 0.f),
+													  1.f);
+								}
+							}
 						}
 					}
 					break;
@@ -218,6 +269,28 @@ void PhysicsEngine::CheckCollisions(Scene* scene)
 		}
 	}
 
+}
+
+
+void PhysicsEngine::GenerateAABB(Scene* scene)
+{
+	glm::vec3 min = scene->pModelLoader->min;
+	glm::vec3 max = scene->pModelLoader->max;
+
+	tree = new octree;
+	tree->generate_tree(min, glm::distance(min, max));
+
+	for (size_t i = 0; i < scene->vecGameObjects.size(); ++i)
+	{
+		if (scene->vecGameObjects[i]->Collider == AABB)
+		{
+			cMesh* mesh = scene->pVAOManager->FindMeshByModelName(scene->vecGameObjects[i]->meshName);
+			if (mesh)
+			{
+				tree->attach_triangles(mesh->vecMeshTriangles);
+			}
+		}
+	}
 }
 
 
@@ -257,6 +330,33 @@ void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3
 			closestDistanceSoFar = distanceNow;
 			closestPoint = curClosetPoint;
 			normalVector = transform * glm::vec4(curTriangle.normal, 1.f);
+		}
+	}
+}
+
+void FindClosestPointToTriangles(std::vector<const sMeshTriangle*> const& triangles, float& closestDistanceSoFar, glm::vec3& closestPoint, glm::vec3& normalVector, glm::vec3 point)
+{
+
+	for (unsigned int i = 0; i < triangles.size(); ++i)
+	{
+		const sMeshTriangle* curTriangle = triangles[i];
+
+		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
+			point,
+			curTriangle->first,
+			curTriangle->second,
+			curTriangle->third
+		);
+
+		// Is this the closest so far?
+		float distanceNow = glm::distance(curClosetPoint, point);
+
+		// is this closer than the closest distance
+		if (distanceNow <= closestDistanceSoFar)
+		{
+			closestDistanceSoFar = distanceNow;
+			closestPoint = curClosetPoint;
+			normalVector = curTriangle->normal;
 		}
 	}
 }
@@ -392,4 +492,37 @@ int TestSphereTriangle(Sphere s, Point a, Point b, Point c, Point& p)
 	// center to point p is less than the (squared) sphere radius
 	Vector v = p - s.c;
 	return glm::dot(v, v) <= s.r * s.r;
+}
+
+float ScalarTriple(Vector a, Vector b, Vector c)
+{
+	return glm::dot(glm::cross(a, b), c);
+}
+
+//Given line pq and ccw triangle abc, return whether line pierces triangle. If
+//so, also return the barycentric coordinates (u,v,w) of the intersection point
+int IntersectLineTriangle(Point p, Point q, Point a, Point b, Point c, Point &r)//, float &u, float &v, float &w)
+{
+	float u = 0.f, v = 0.f, w = 0.f;
+	Vector pq = q - p; Vector pa = a - p;
+	Vector pb = b - p; Vector pc = c - p;
+	// Test if pq is inside the edges bc, ca and ab. Done by testing
+	// that the signed tetrahedral volumes, computed using scalar triple
+	// products, are all positive
+	u = ScalarTriple(pq, pc, pb);
+	if (u < 0.0f) return 0;
+	v = ScalarTriple(pq, pa, pc);
+	if (v < 0.0f) return 0;
+	w = ScalarTriple(pq, pb, pa);
+	if (w < 0.0f) return 0;
+	// Compute the barycentric coordinates (u, v, w) determining the
+	// intersection point r, r = u*a + v*b + w*c
+	float denom = 1.0f / (u + v + w);
+	u *= denom;
+	v *= denom;
+	w *= denom; // w = 1.0f - u - v;
+
+	r = Point(u, v, w);
+
+	return 1;
 }

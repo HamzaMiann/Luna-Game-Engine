@@ -138,12 +138,6 @@
 			<Collider>MESH</Collider>
 		</GameObject>
 	</Layout>
-	<Audio API="FMOD">
-		<Sound3D file="effect_rain.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="rain" attach="player"/>
-		<Sound file="music_hourglass.wav" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_game" group="eerie_music"/>
-		<Sound file="music_dream.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_hourglass" group="eerie_music"/>
-    <Sound file="music_game.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_game" group="dreamy_music"/>
-    <Sound file="music_heaven.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_hourglass" group="dreamy_music"/>
-	</Audio>
+  <Audio API="FMOD"/>
 </Scene>
 

@@ -7,8 +7,17 @@
 
 class cModelLoader
 {
-public:
+private:
 	cModelLoader();			// constructor
+
+public:
+
+	static cModelLoader* Instance()
+	{
+		static cModelLoader instance;
+		return &instance;
+	}
+
 	~cModelLoader();		// destructor
 
 	glm::vec3 min = glm::vec3(FLT_MAX);

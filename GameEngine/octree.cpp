@@ -59,8 +59,81 @@ void octree::generate_tree(glm::vec3 min, float length)
 
 void octree::attach_triangles(std::vector<sMeshTriangle> const& triangles)
 {
-	for (unsigned int i = 0; i < triangles.size(); ++i)
+	this->_attach(triangles, main_node);
+}
+
+int i = 0;
+bool octree::_attach(std::vector<sMeshTriangle> const& triangles, octree::octree_node* node)
+{
+	if (node->has_nodes)
 	{
-		
+		bool hasTriangles = false;
+		for (int i = 0; i < 8; ++i)
+		{
+			hasTriangles |= _attach(triangles, node->nodes[i]);
+		}
+		node->has_triangles = hasTriangles;
+		return hasTriangles;
 	}
+	else
+	{
+		printf("%d node\n", i++);
+		bool hasTriangles = false;
+		for (int i = 0; i < triangles.size(); ++i)
+		{
+			if (node->AABB->contains(triangles[i].first))
+			{
+				hasTriangles = true;
+				node->triangles.push_back(&triangles[i]);
+			}
+			else if (node->AABB->contains(triangles[i].second))
+			{
+				hasTriangles = true;
+				node->triangles.push_back(&triangles[i]);
+			}
+			else if (node->AABB->contains(triangles[i].third))
+			{
+				hasTriangles = true;
+				node->triangles.push_back(&triangles[i]);
+			}
+		}
+		node->has_triangles = hasTriangles;
+		return hasTriangles;
+	}
+}
+
+octree::octree_node::~octree_node()
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		if (this->nodes[i])
+		{
+			delete this->nodes[i];
+			this->nodes[i] = nullptr;
+			this->has_nodes = false;
+		}
+	}
+}
+
+
+octree::octree_node* octree::find_node(glm::vec3 const& point)
+{
+	return _find(point, main_node);
+}
+
+octree::octree_node* octree::_find(glm::vec3 const& point, octree_node* node)
+{
+	if (!node->has_nodes) return node;
+	if (node->AABB->contains(point))
+	{
+		for (int i = 0; i < 8; ++i)
+		{
+			if (node->nodes[i]->AABB->contains(point))
+			{
+				return _find(point, node->nodes[i]);
+			}
+		}
+		return node;
+	}
+	return nullptr;
 }

@@ -10,10 +10,6 @@ using namespace std;
 
 Scene::~Scene()
 {
-	if (this->pModelLoader)
-		delete pModelLoader;
-	if (this->pVAOManager)
-		delete pVAOManager;
 }
 
 Scene* Scene::LoadFromXML(std::string filename)

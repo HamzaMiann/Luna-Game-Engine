@@ -47,7 +47,10 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 
 	if (!node->AABB->contains(obj->pos)) return;
 
-	if (!node->has_nodes)
+	glUniform1i(glGetUniformLocation(scene->shaderProgID, "isWater"),
+				false);
+
+	//if (!node->has_nodes)
 	{
 		objPtr->pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
 		objPtr->scale = node->AABB->length / 2.f;
@@ -164,17 +167,17 @@ int main(void)
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
 
-	PhysicsEngine phys;
-	phys.GenerateAABB(scene);
+	PhysicsEngine* phys = PhysicsEngine::Instance();
+	phys->GenerateAABB(scene);
 
-	pInputHandler = new cAudioInputHandler();
+	pInputHandler = new cPhysicsInputHandler(*scene);
 
 
 
 #if _DEBUG
 	cDebugRenderer* renderer = cDebugRenderer::Instance();
 	renderer->initialize();
-	phys.renderer = renderer;
+	phys->renderer = renderer;
 #endif
 
 	float current_time = (float)glfwGetTime();
@@ -183,9 +186,6 @@ int main(void)
 
 	std::vector<float> time_buffer;
 
-	scene->pAudioEngine->PlaySound("rain");
-	scene->pAudioEngine->PlaySound("smooth_sound");
-	scene->pAudioEngine->PlaySound("ship_sound");
 
 	glm::vec3 min = scene->pModelLoader->min;
 	glm::vec3 max = scene->pModelLoader->max;
@@ -201,10 +201,9 @@ int main(void)
 	bounds->uniformColour = true;
 	//scene->vecGameObjects.push_back(bounds);
 
-	cGameObject* sphere = NULL;// scene->vecGameObjects[1];
+	cGameObject* sphere = scene->vecGameObjects[1];
 
-	octree tree;
-	//tree.generate_tree(min, glm::distance(min, max));
+	phys->GenerateAABB(scene);
 
 	scene->cameraEye = glm::vec3(-39.f, 2.f, -63.f);
 
@@ -254,8 +253,8 @@ int main(void)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Update the objects' physics
-		phys.CheckCollisions(scene);
-		phys.IntegrationStep(scene, /*delta_time*/delta_time);
+		phys->CheckCollisions(scene);
+		phys->IntegrationStep(scene, /*delta_time*/delta_time);
 
 
 		scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
@@ -315,7 +314,7 @@ int main(void)
 		renderer->RenderDebugObjects(v, p, 0.01f);
 #endif
 
-		//DrawOctree(sphere, tree.main_node, bounds, ratio, v, p);
+		DrawOctree(sphere, phys->tree->main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************

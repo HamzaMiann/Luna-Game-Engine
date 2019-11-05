@@ -50,6 +50,12 @@ class cVAOManager
 {
 public:
 
+	static cVAOManager* Instance()
+	{
+		static cVAOManager instance;
+		return &instance;
+	}
+
 	// Takes a cMesh object and copies it into the GPU (as a VOA)
 	bool LoadModelIntoVAO(std::string fileName, 
 						  cMesh &theMesh,				// NEW
@@ -65,6 +71,8 @@ public:
 	std::string getLastError(bool bAndClear = true);
 
 private:
+
+	cVAOManager() {}
 
 	std::map< std::string /*model name*/,
 		      sModelDrawInfo /* info needed to draw*/ >

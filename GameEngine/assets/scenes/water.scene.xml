@@ -56,7 +56,7 @@
 	</Lights>
 	<Layout>
 		<GameObject mesh="terrain" tag="">
-			<Position x="0.000000" y="-10.000000" z="0.000000"/>
+			<Position x="0.000000" y="0" z="0.000000"/>
 			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
 			<Colour x="0.700000" y="0.600000" z="0.500000" w="1.000000"/>
 			<SpecColour x="0.100000" y="0.100000" z="0.100000"/>
@@ -65,7 +65,7 @@
 			<Scale>1.000000</Scale>
 			<SpecIntensity>10.000000</SpecIntensity>
 			<IMass>0.000000</IMass>
-			<Collider>MESH</Collider>
+			<Collider>AABB</Collider>
 		</GameObject>
 		<GameObject mesh="sphere" tag="player">
 			<Position x="0.000000" y="10.000000" z="-10.000000"/>
@@ -77,7 +77,7 @@
 			<Scale>1.000000</Scale>
 			<SpecIntensity>10.000000</SpecIntensity>
 			<IMass>1.000000</IMass>
-			<Collider>NONE</Collider>
+			<Collider>SPHERE</Collider>
 		</GameObject>
 		<GameObject mesh="tree1" tag="">
 			<Position x="11.700008" y="6.099997" z="-3.499999"/>
@@ -200,7 +200,7 @@
 			<Collider>NONE</Collider>
 		</GameObject>
 		<GameObject mesh="plane_ground" tag="water">
-			<Position x="0.000000" y="0.000000" z="0.000000"/>
+			<Position x="0.000000" y="10.000000" z="0.000000"/>
 			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
 			<Colour x="0.300000" y="0.600000" z="0.900000" w="0.800000"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
@@ -212,19 +212,6 @@
 			<Collider>NONE</Collider>
 		</GameObject>
 	</Layout>
-	<Audio API="FMOD">
-		<Sound3D file="effect_rain.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="rain" attach="bush"/>
-		<Sound3D file="ambience_soft.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="smooth_sound" attach="player"/>
-    <Sound3D file="ambience_ship.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="ship_sound" attach="ship"/>
-		<Sound file="ambience_soft.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="soft_music" group="heaven"/>
-		<Sound file="ambience_birds.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="bird3" group="heaven"/>
-		<Sound file="music_heaven.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="heaven" group="heaven"/>
-		<Sound file="ambience_sea.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="sea" group="tropical_music"/>
-		<Sound file="music_tropical.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="topical" group="tropical_music"/>
-		<Sound file="ambience_birds.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="birds1" group="tropical_music"/>
-		<Sound file="ambience_birds.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="birds2" group="sad_waves"/>
-		<Sound file="music_hourglass.wav" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="music_hourglass" group="sad_waves"/>
-		<Sound file="effect_rain.mp3" volume="1.0" pitch="0.5" pan="0" streamed="true" friendlyName="effect_rain" group="sad_waves"/>
-	</Audio>
+  <Audio API="FMOD"/>
 </Scene>
 
