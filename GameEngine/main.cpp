@@ -50,7 +50,7 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 	glUniform1i(glGetUniformLocation(scene->shaderProgID, "isWater"),
 				false);
 
-	//if (!node->has_nodes)
+	if (!node->has_nodes)
 	{
 		objPtr->pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
 		objPtr->scale = node->AABB->length / 2.f;
@@ -116,11 +116,11 @@ static void HandleInput(GLFWwindow* window)
 	// Move the camera (Q & E for up and down, along the y axis)
 	if (glfwGetKey(window, GLFW_KEY_Q))
 	{
-		scene->cameraEye.y -= 0.1f;
+		scene->cameraEye.y -= glm::length(forwardVector) * 0.05f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_E))
 	{
-		scene->cameraEye.y += 0.1f;
+		scene->cameraEye.y += glm::length(forwardVector) * 0.05f;
 	}
 
 	// Move the camera (W & S for towards and away, along the z axis)
@@ -173,10 +173,10 @@ int main(void)
 	pInputHandler = new cPhysicsInputHandler(*scene);
 
 
-
-#if _DEBUG
 	cDebugRenderer* renderer = cDebugRenderer::Instance();
 	renderer->initialize();
+
+#if _DEBUG
 	phys->renderer = renderer;
 #endif
 
@@ -202,6 +202,23 @@ int main(void)
 	//scene->vecGameObjects.push_back(bounds);
 
 	cGameObject* sphere = scene->vecGameObjects[1];
+
+	/*for (int q = 0; q < 20; ++q)
+	{
+		cGameObject* c = new cGameObject;
+		c->meshName = sphere->meshName;
+		c->scale = sphere->scale;
+		c->colour = sphere->colour;
+		c->Collider = SPHERE;
+		c->inverseMass = sphere->inverseMass;
+		c->gravityScale = 1.f;
+		c->pos = glm::vec3(
+			Mathf::randInRange(-100.f, 100.f),
+			Mathf::randInRange(70.f, 100.f),
+			Mathf::randInRange(-100.f, 100.f)
+		);
+		scene->vecGameObjects.push_back(c);
+	}*/
 
 	phys->GenerateAABB(scene);
 
@@ -232,6 +249,8 @@ int main(void)
 
 		// Handle key inputs
 		HandleInput(window);
+
+		scene->cameraTarget = sphere->pos;
 
 		float ratio;
 		int width, height;
@@ -309,15 +328,13 @@ int main(void)
 		// **************************************************
 		// **************************************************
 
-#if _DEBUG
 
-		renderer->RenderDebugObjects(v, p, 0.01f);
-#endif
 
 		DrawOctree(sphere, phys->tree->main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************
+		renderer->RenderDebugObjects(v, p, 0.01f);
 
 
 

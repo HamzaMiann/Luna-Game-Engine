@@ -199,7 +199,7 @@
 			<IMass>0.000000</IMass>
 			<Collider>NONE</Collider>
 		</GameObject>
-		<GameObject mesh="plane_ground" tag="water">
+		<GameObject mesh="plane_groundd" tag="waterd">
 			<Position x="0.000000" y="10.000000" z="0.000000"/>
 			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
 			<Colour x="0.300000" y="0.600000" z="0.900000" w="0.800000"/>

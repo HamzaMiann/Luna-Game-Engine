@@ -341,6 +341,8 @@ void FindClosestPointToTriangles(std::vector<const sMeshTriangle*> const& triang
 	{
 		const sMeshTriangle* curTriangle = triangles[i];
 
+		cDebugRenderer::Instance()->addTriangle(curTriangle->first, curTriangle->second, curTriangle->third, glm::vec3(1.f, 1.f, 0.f), 0.1f);
+
 		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
 			point,
 			curTriangle->first,
