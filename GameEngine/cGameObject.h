@@ -20,7 +20,14 @@ enum ColliderType
 class cGameObject
 {
 public:
-	cGameObject() { }
+	cGameObject()
+	{
+		this->textureRatio[0] = 1.f;
+		this->textureRatio[1] = 0.f;
+		this->textureRatio[2] = 0.f;
+		this->textureRatio[3] = 0.f;
+		this->texture[0] = "pebbles-beach-textures.bmp";
+	}
 	virtual ~cGameObject() {}
 
 	std::string meshName = "";
@@ -44,6 +51,9 @@ public:
 
 	ColliderType Collider = ColliderType::NONE;
 	bool isCollided = false;
+
+	std::string texture[4];
+	float textureRatio[4];
 
 	std::vector<cGameObject*> children;
 

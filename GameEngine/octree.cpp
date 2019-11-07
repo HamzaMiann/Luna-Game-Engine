@@ -125,30 +125,6 @@ bool octree::_attach(std::vector<sMeshTriangle> const& triangles, octree::octree
 				hasTriangles = true;
 				node->triangles.push_back(&triangles[i]);
 			}
-			else
-			{
-				/*std::vector<glm::vec3> points;
-				points.push_back((triangles[i].first + triangles[i].second) / 2.f);
-				points.push_back((triangles[i].first + triangles[i].third) / 2.f);
-				points.push_back((triangles[i].second + triangles[i].third) / 2.f);
-				glm::vec3 middle(0.f);
-				for (unsigned int n = 0; n < points.size(); ++n)
-				{
-					if (node->AABB->contains(points[n]))
-					{
-						middle += points[n];
-						hasTriangles = true;
-						node->triangles.push_back(&triangles[i]);
-						break;
-					}
-				}
-				middle /= 3.f;
-				if (!hasTriangles && node->AABB->contains(middle))
-				{
-					hasTriangles = true;
-					node->triangles.push_back(&triangles[i]);
-				}*/
-			}
 		}
 		node->has_triangles = hasTriangles;
 		return hasTriangles;

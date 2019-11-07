@@ -77,6 +77,7 @@ bool cModelLoader::LoadPlyModel(
 
 		theFile >> tempVertex.x >> tempVertex.y >> tempVertex.z;
 		theFile >> tempVertex.nx >> tempVertex.ny >> tempVertex.nz;
+		theFile >> tempVertex.u >> tempVertex.v;
 
 		if (tempVertex.x < theMesh.min.x) theMesh.min.x = tempVertex.x;
 		if (tempVertex.y < theMesh.min.y) theMesh.min.y = tempVertex.y;

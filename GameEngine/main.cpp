@@ -29,6 +29,7 @@
 #include "AudioEngine.hpp"
 #include "cAudioInputHandler.h"
 #include "octree.h"
+#include "TextureManager/cBasicTextureManager.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -38,6 +39,8 @@ unsigned int input_id = 0;
 Scene* scene;
 GLFWwindow* window;
 iInputHandler* pInputHandler;
+
+cBasicTextureManager* textureManager;
 
 void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p);
 
@@ -220,9 +223,16 @@ int main(void)
 		scene->vecGameObjects.push_back(c);
 	}
 
-	phys->GenerateAABB(scene);
-
 	scene->cameraEye = glm::vec3(-39.f, 2.f, -63.f);
+
+	// Texture stuff
+	textureManager = new cBasicTextureManager();
+	textureManager->SetBasePath("assets/textures");
+
+	if (!textureManager->Create2DTextureFromBMPFile("pebbles-beach-textures.bmp", true))
+	{
+		std::cout << "Didn't load texture" << std::endl;
+	}
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -354,11 +364,65 @@ int main(void)
 }
 
 
+void SetUpTextureBindingsForObject(
+	cGameObject* pCurrentObject,
+	GLint shaderProgID)
+{
+
+	//// Tie the texture to the texture unit
+	//GLuint texSamp0_UL = ::g_pTextureManager->getTextureIDFromName("Pizza.bmp");
+	//glActiveTexture(GL_TEXTURE0);				// Texture Unit 0
+	//glBindTexture(GL_TEXTURE_2D, texSamp0_UL);	// Texture now assoc with texture unit 0
+
+	// Tie the texture to the texture unit
+	GLuint texSamp0_UL = textureManager->getTextureIDFromName(pCurrentObject->texture[0]);
+	glActiveTexture(GL_TEXTURE0);				// Texture Unit 0
+	glBindTexture(GL_TEXTURE_2D, texSamp0_UL);	// Texture now assoc with texture unit 0
+
+	GLuint texSamp1_UL = ::textureManager->getTextureIDFromName(pCurrentObject->texture[1]);
+	glActiveTexture(GL_TEXTURE1);				// Texture Unit 1
+	glBindTexture(GL_TEXTURE_2D, texSamp1_UL);	// Texture now assoc with texture unit 0
+
+	GLuint texSamp2_UL = ::textureManager->getTextureIDFromName(pCurrentObject->texture[2]);
+	glActiveTexture(GL_TEXTURE2);				// Texture Unit 2
+	glBindTexture(GL_TEXTURE_2D, texSamp2_UL);	// Texture now assoc with texture unit 0
+
+	GLuint texSamp3_UL = ::textureManager->getTextureIDFromName(pCurrentObject->texture[3]);
+	glActiveTexture(GL_TEXTURE3);				// Texture Unit 3
+	glBindTexture(GL_TEXTURE_2D, texSamp3_UL);	// Texture now assoc with texture unit 0
+
+	// Tie the texture units to the samplers in the shader
+	GLint textSamp00_UL = glGetUniformLocation(shaderProgID, "textSamp00");
+	glUniform1i(textSamp00_UL, 0);	// Texture unit 0
+
+	GLint textSamp01_UL = glGetUniformLocation(shaderProgID, "textSamp01");
+	glUniform1i(textSamp01_UL, 1);	// Texture unit 1
+
+	GLint textSamp02_UL = glGetUniformLocation(shaderProgID, "textSamp02");
+	glUniform1i(textSamp02_UL, 2);	// Texture unit 2
+
+	GLint textSamp03_UL = glGetUniformLocation(shaderProgID, "textSamp03");
+	glUniform1i(textSamp03_UL, 3);	// Texture unit 3
+
+
+	GLint tex0_ratio_UL = glGetUniformLocation(shaderProgID, "tex_0_3_ratio");
+	glUniform4f(tex0_ratio_UL,
+				pCurrentObject->textureRatio[0],		// 1.0
+				pCurrentObject->textureRatio[1],
+				pCurrentObject->textureRatio[2],
+				pCurrentObject->textureRatio[3]);
+
+
+
+	return;
+}
 
 
 void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
 {
 	GLint shaderProgID = scene->shaderProgID;
+
+	SetUpTextureBindingsForObject(objPtr, shaderProgID);
 
 	glm::mat4 m, mvp;
 

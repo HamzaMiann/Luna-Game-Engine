@@ -280,7 +280,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 								if (IntersectLineTriangle(pObj->pos, next_pos, tri->first, tri->second, tri->third, raycast_hit))
 								{
 									//cDebugRenderer::Instance()->addLine(pObj->pos, raycast_hit, glm::vec3(0.f, 0.f, 1.f), 10.f);
-									cDebugRenderer::Instance()->addTriangle(tri->first, tri->second, tri->third, glm::vec3(1.f, 1.f, 0.f), 1.f);
+									//cDebugRenderer::Instance()->addTriangle(tri->first, tri->second, tri->third, glm::vec3(1.f, 1.f, 0.f), 1.f);
 
 
 									if (glm::dot(glm::normalize(Gravity), normal) == 0)

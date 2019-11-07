@@ -5,16 +5,16 @@
 		<Fragment file="water_frag.glsl"/>
 	</Shader>
 	<Models>
-		<Model file="sphere_XYZ_N.ply" friendlyName="sphere"/>
-		<Model file="Plane_Large_XYZ_N.ply" friendlyName="plane_ground"/>
-		<Model file="cube_XYZ_N.ply" friendlyName="cube"/>
-		<Model file="rectangle_XYZ_N.ply" friendlyName="rectangle"/>
-		<Model file="Terrain_XYZ_N.ply" friendlyName="terrain"/>
-		<Model file="SM_Env_Mangrove_Tree_01_xyz_n.ply" friendlyName="mangrove_tree"/>
+		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere"/>
+		<!--<Model file="Plane_Large_XYZ_N.ply" friendlyName="plane_ground"/>-->
+		<Model file="cube_XYZ_N_UV.ply" friendlyName="cube"/>
+		<!--<Model file="rectangle_XYZ_N.ply" friendlyName="rectangle"/>-->
+		<Model file="Terrain_XYZ_N_UV.ply" friendlyName="terrain"/>
+		<!--<Model file="SM_Env_Mangrove_Tree_01_xyz_n.ply" friendlyName="mangrove_tree"/>
 		<Model file="SM_Env_PalmBush_03_xyz_n.ply" friendlyName="bush"/>
 		<Model file="SM_Env_PalmTree_01_xyz_n.ply" friendlyName="tree1"/>
 		<Model file="SM_Env_PalmTree_03_xyz_n.ply" friendlyName="tree2"/>
-		<Model file="Sky_Pirate_Combined_xyz_n.ply" friendlyName="ship"/>
+		<Model file="Sky_Pirate_Combined_xyz_n.ply" friendlyName="ship"/>-->
 	</Models>
 	<Lights>
 		<Light>
@@ -79,7 +79,7 @@
 			<IMass>1.000000</IMass>
 			<Collider>SPHERE</Collider>
 		</GameObject>
-		<GameObject mesh="tree1" tag="">
+		<!--<GameObject mesh="tree1" tag="">
 			<Position x="11.700008" y="6.099997" z="-3.499999"/>
 			<Rotation x="4.199998" y="0.000000" z="-0.500000"/>
 			<Colour x="0.300000" y="0.900000" z="0.300000" w="0.800000"/>
@@ -210,7 +210,7 @@
 			<SpecIntensity>1000.000000</SpecIntensity>
 			<IMass>0.000000</IMass>
 			<Collider>NONE</Collider>
-		</GameObject>
+		</GameObject>-->
 	</Layout>
   <Audio API="FMOD"/>
 </Scene>

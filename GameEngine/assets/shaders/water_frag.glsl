@@ -1,5 +1,6 @@
 #version 420
 
+// Vertex Shader Input
 in vec4 fColour;	
 in vec4 fVertWorldLocation;
 in vec4 fNormal;
@@ -9,8 +10,16 @@ in vec4 fUVx2;
 uniform vec4 diffuseColour;
 uniform vec4 specularColour;
 uniform vec4 eyeLocation;
+
 // Used to draw debug (or unlit) objects
 uniform bool isUniform;
+
+// Texture
+uniform sampler2D textSamp00;
+uniform sampler2D textSamp01;
+uniform sampler2D textSamp02;
+uniform sampler2D textSamp03;
+uniform vec4 tex_0_3_ratio;		// x = 0, y = 1, z = 2, w = 3
 
 
 // Globals
@@ -71,12 +80,24 @@ void main()
 		return;
 	}
 
+	vec3 tex0_RGB = texture( textSamp00, fUVx2.st ).rgb;
+	vec3 tex1_RGB = texture( textSamp01, fUVx2.st ).rgb;
+	vec3 tex2_RGB = texture( textSamp02, fUVx2.st ).rgb;
+	vec3 tex3_RGB = texture( textSamp03, fUVx2.st ).rgb;
+		
+	vec3 texRGB =   ( tex_0_3_ratio.x * tex0_RGB ) 
+				  + ( tex_0_3_ratio.y * tex1_RGB )
+				  + ( tex_0_3_ratio.z * tex2_RGB )
+				  + ( tex_0_3_ratio.w * tex3_RGB );
+
 	vec4 materialColour = diffuseColour;
 	vec4 specColour = specularColour;
 
-	vec4 outColour = calcualteLightContrib( materialColour.rgb, fNormal.xyz, 
-	                                        fVertWorldLocation.xyz, specColour );
+//	vec4 outColour = calcualteLightContrib( materialColour.rgb, fNormal.xyz, 
+//	                                        fVertWorldLocation.xyz, specColour );
 
+	vec4 outColour = calcualteLightContrib( texRGB.rgb, fNormal.xyz, 
+	                                        fVertWorldLocation.xyz, specColour );
 						
 	pixelColour = outColour;
 
