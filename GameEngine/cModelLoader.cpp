@@ -117,6 +117,11 @@ bool cModelLoader::LoadPlyModel(
 		tempMeshTriangle.normal.y = (first.ny + second.ny + third.ny) / 3.f;
 		tempMeshTriangle.normal.z = (first.nz + second.nz + third.nz) / 3.f;
 
+		tempMeshTriangle.m1 = (tempMeshTriangle.first + tempMeshTriangle.second) / 2.f;
+		tempMeshTriangle.m2 = (tempMeshTriangle.first + tempMeshTriangle.third) / 2.f;
+		tempMeshTriangle.m3 = (tempMeshTriangle.second + tempMeshTriangle.second) / 2.f;
+		tempMeshTriangle.m1 = (tempMeshTriangle.m1 + tempMeshTriangle.m2 + tempMeshTriangle.m3) / 3.f;
+
 		theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
 	}
 

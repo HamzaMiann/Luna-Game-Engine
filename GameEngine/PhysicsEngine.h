@@ -28,10 +28,25 @@ public:
 
 	octree* tree;
 
-	void IntegrationStep(Scene* scene, float deltaTime);
-	void CheckCollisions(Scene* scene);
+	void IntegrationStep(Scene* scene, float delta_time);
+	void CheckCollisions(Scene* scene, float delta_time);
 	void GenerateAABB(Scene* scene);
 };
 
-void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3& closestPoint, glm::vec3& normalVector, cGameObject* const meshObject, cGameObject* const pObj);
-void FindClosestPointToTriangles(std::vector<const sMeshTriangle*> const& triangles, float& closestDistanceSoFar, glm::vec3& closestPoint, glm::vec3& normalVector, glm::vec3 point);
+void FindClosestPointToMesh(
+	Scene& scene, float& closestDistanceSoFar,
+	glm::vec3& closestPoint,
+	glm::vec3& normalVector,
+	cGameObject* const meshObject,
+	cGameObject* const pObj);
+
+const sMeshTriangle* FindClosestPointToTriangles(
+	std::vector<const sMeshTriangle*> const& triangles,
+	float& closestDistanceSoFar,
+	glm::vec3& closestPoint,
+	glm::vec3& normalVector,
+	glm::vec3 point);
+
+
+
+int IntersectLineTriangle(glm::vec3 p, glm::vec3 q, glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3& r);

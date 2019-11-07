@@ -50,7 +50,7 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 	glUniform1i(glGetUniformLocation(scene->shaderProgID, "isWater"),
 				false);
 
-	if (!node->has_nodes)
+	//if (!node->has_nodes)
 	{
 		objPtr->pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
 		objPtr->scale = node->AABB->length / 2.f;
@@ -203,7 +203,7 @@ int main(void)
 
 	cGameObject* sphere = scene->vecGameObjects[1];
 
-	/*for (int q = 0; q < 20; ++q)
+	for (int q = 0; q < 20; ++q)
 	{
 		cGameObject* c = new cGameObject;
 		c->meshName = sphere->meshName;
@@ -214,11 +214,11 @@ int main(void)
 		c->gravityScale = 1.f;
 		c->pos = glm::vec3(
 			Mathf::randInRange(-100.f, 100.f),
-			Mathf::randInRange(70.f, 100.f),
+			Mathf::randInRange(25.f, 50.f),
 			Mathf::randInRange(-100.f, 100.f)
 		);
 		scene->vecGameObjects.push_back(c);
-	}*/
+	}
 
 	phys->GenerateAABB(scene);
 
@@ -272,8 +272,8 @@ int main(void)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Update the objects' physics
-		phys->CheckCollisions(scene);
-		phys->IntegrationStep(scene, /*delta_time*/delta_time);
+		phys->CheckCollisions(scene, delta_time);
+		phys->IntegrationStep(scene, delta_time);
 
 
 		scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);

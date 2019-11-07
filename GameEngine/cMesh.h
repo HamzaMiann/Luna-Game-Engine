@@ -25,6 +25,11 @@ struct sMeshTriangle
 	glm::vec3 second;
 	glm::vec3 third;
 	glm::vec3 normal;
+
+	glm::vec3 m1;	// Mid-Vertex 1
+	glm::vec3 m2;	// Mid-Vertex 2
+	glm::vec3 m3;	// Mid-Vertex 3
+	glm::vec3 m;	// Mid-Vertex Global
 };
 
 class cMesh
