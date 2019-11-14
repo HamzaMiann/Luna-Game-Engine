@@ -15,6 +15,7 @@ void cModelBuilder::Build(Scene& scene, xml_node<>* node)
 	{
 		xml_attribute<>* file = model_node->first_attribute("file");
 		xml_attribute<>* friendly = model_node->first_attribute("friendlyName");
+		xml_attribute<>* shader = model_node->first_attribute("shader");
 		if (file)
 		{
 			std::string fileName = file->value();
@@ -31,7 +32,7 @@ void cModelBuilder::Build(Scene& scene, xml_node<>* node)
 				scene.pVAOManager->LoadModelIntoVAO(friendlyName,
 													*pMesh,
 													*pDrawInfo,
-													scene.shaderProgID);
+													scene.Shaders[shader->value()]);
 			}
 			else
 			{

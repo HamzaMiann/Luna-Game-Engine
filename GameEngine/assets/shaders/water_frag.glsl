@@ -120,6 +120,11 @@ void main()
 		pixelColour.a -= abs(angle) / 10.f;
 	}
 
+//	if (abs(length(tex0_RGB.rgb) - length(texture(textSamp00, fUVx2.st - 0.002))) > 0.9)
+//	{
+//		pixelColour.rgb = vec3(0);
+//	}
+
 	
 } // end main
 
@@ -169,7 +174,8 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 			// (This is part of the reason directional lights are fast to calculate)
 
 
-			return finalObjectColour;		
+			//return finalObjectColour;	
+			continue;
 		}
 		
 		// Assume it's a point light 

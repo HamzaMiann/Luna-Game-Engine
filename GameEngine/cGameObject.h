@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <string>
 #include <vector>
 
@@ -13,28 +14,29 @@ enum ColliderType
 	SPHERE,
 	CUBE,
 	MESH,
+	POINT,
 	AABB,
 	NONE
 };
 
 class cGameObject
 {
+private:
+	glm::quat rotation;		// Orientation as a quaternion
+
 public:
-	cGameObject()
-	{
-		this->textureRatio[0] = 1.f;
-		this->textureRatio[1] = 0.f;
-		this->textureRatio[2] = 0.f;
-		this->textureRatio[3] = 0.f;
-		this->texture[0] = "pebbles-beach-textures.bmp";
-	}
-	virtual ~cGameObject() {}
+	cGameObject();
+	
+	virtual ~cGameObject();
 
 	std::string meshName = "";
 	std::string tag = "";
+
+	std::string shaderName = "basic";
+
 	glm::vec3  pos = glm::vec3(0.f, 0.f, 0.f);
 	glm::vec3  previousPos = glm::vec3(0.f, 0.f, 0.f);
-	glm::vec3  rotation = glm::vec3(0.f, 0.f, 0.f);
+	//glm::vec3  rotation = glm::vec3(0.f, 0.f, 0.f);
 	glm::vec4  colour = glm::vec4(1.f, 1.f, 1.f, 1.f);
 	float scale = 1.f;
 
@@ -50,6 +52,7 @@ public:
 	float inverseMass = 1.f;
 
 	ColliderType Collider = ColliderType::NONE;
+	std::vector<glm::vec3> CollidePoints;
 	bool isCollided = false;
 
 	std::string texture[4];
@@ -58,6 +61,22 @@ public:
 	std::vector<cGameObject*> children;
 
 	virtual void UpdateLogic(Scene* scene) {}
+
+	glm::mat4 ModelMatrix();
+	glm::mat4 TranslationMatrix();
+	glm::mat4 RotationMatrix();
+	glm::mat4 ScaleMatrix();
+
+	glm::quat getQOrientation(void);
+
+	// Overwrite the orientation
+	void setOrientation(glm::vec3 EulerAngleDegreesXYZ);
+	void setOrientation(glm::quat qAngle);
+	// Updates the existing angle
+	void updateOrientation(glm::vec3 EulerAngleDegreesXYZ);
+	void updateOrientation(glm::quat qAngle);
+	glm::vec3 getEulerAngle(void);
+
 };
 
 #endif

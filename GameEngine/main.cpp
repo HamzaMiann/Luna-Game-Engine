@@ -50,7 +50,7 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 
 	if (!node->AABB->contains(obj->pos)) return;
 
-	glUniform1i(glGetUniformLocation(scene->shaderProgID, "isWater"),
+	glUniform1i(glGetUniformLocation(scene->Shaders[obj->shaderName], "isWater"),
 				false);
 
 	//if (!node->has_nodes)
@@ -78,11 +78,11 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		input_id++;
 		if (input_id % 2 == 0)
 		{
-			pInputHandler = new cAudioInputHandler();
+			pInputHandler = new cLayoutController(*scene);
 		}
 		else if (input_id % 2 == 1)
 		{
-			pInputHandler = new cPhysicsInputHandler(*scene);
+			pInputHandler = new cLightController(*scene);
 		}
 		else
 		{
@@ -204,9 +204,10 @@ int main(void)
 	bounds->uniformColour = true;
 	//scene->vecGameObjects.push_back(bounds);
 
-	cGameObject* sphere = scene->vecGameObjects[1];
+	//cGameObject* sphere = scene->vecGameObjects[0];
 
-	for (int q = 0; q < 20; ++q)
+
+	/*for (int q = 0; q < 20; ++q)
 	{
 		cGameObject* c = new cGameObject;
 		c->meshName = sphere->meshName;
@@ -221,17 +222,28 @@ int main(void)
 			Mathf::randInRange(-100.f, 100.f)
 		);
 		scene->vecGameObjects.push_back(c);
-	}
+	}*/
 
 	scene->cameraEye = glm::vec3(-39.f, 2.f, -63.f);
 
 	// Texture stuff
-	textureManager = new cBasicTextureManager();
-	textureManager->SetBasePath("assets/textures");
+	textureManager = cBasicTextureManager::Instance();
+	/*textureManager->SetBasePath("assets/textures");
 
-	if (!textureManager->Create2DTextureFromBMPFile("pebbles-beach-textures.bmp", true))
+	if (!textureManager->Create2DTextureFromBMPFile("WhatTheWhat.bmp", true))
 	{
 		std::cout << "Didn't load texture" << std::endl;
+	}*/
+
+	cGameObject* ship = scene->vecGameObjects[1];
+
+	for (unsigned int i = 0; i < scene->vecGameObjects.size(); ++i)
+	{
+		cGameObject* ptr = scene->vecGameObjects[i];
+		if (ptr->meshName == "sphere")
+		{
+			ship->CollidePoints.push_back(ptr->pos);
+		}
 	}
 
 	while (!glfwWindowShouldClose(window))
@@ -260,7 +272,7 @@ int main(void)
 		// Handle key inputs
 		HandleInput(window);
 
-		scene->cameraTarget = sphere->pos;
+		//scene->cameraTarget = ship->pos;
 
 		float ratio;
 		int width, height;
@@ -305,23 +317,31 @@ int main(void)
 						scene->cameraTarget,
 						scene->upVector);
 
-		GLint shaderProgID = scene->shaderProgID;
-		glUseProgram(shaderProgID);
-
-		// set time
-		float time = glfwGetTime();
-		glUniform1f(glGetUniformLocation(shaderProgID, "iTime"),time);
-
-		// set resolution
-		glUniform2f(glGetUniformLocation(shaderProgID, "iResolution"),
-					width,
-					height);
-		
+		int lastShader = -1;
 		
 		// Loop to draw everything in the scene
 		for (int index = 0; index != scene->vecGameObjects.size(); index++)
 		{
 			cGameObject* objPtr = scene->vecGameObjects[index];
+
+			GLint shaderProgID = scene->Shaders[objPtr->shaderName];
+
+			// Only switch shaders if needed
+			if (lastShader != shaderProgID)
+			{
+				glUseProgram(shaderProgID);
+				lastShader = shaderProgID;
+			}
+
+			// set time
+			float time = glfwGetTime();
+			glUniform1f(glGetUniformLocation(shaderProgID, "iTime"), time);
+
+			// set resolution
+			glUniform2f(glGetUniformLocation(shaderProgID, "iResolution"),
+						width,
+						height);
+
 			if (objPtr->tag == "water")
 			{
 				glUniform1i(glGetUniformLocation(shaderProgID, "isWater"),
@@ -332,6 +352,18 @@ int main(void)
 				glUniform1i(glGetUniformLocation(shaderProgID, "isWater"),
 							false);
 			}
+
+			if (objPtr->Collider == POINT)
+			{
+				/*glm::mat4 model = objPtr->ModelMatrix();
+				for (int n = 0; n < objPtr->CollidePoints.size(); ++n)
+				{
+					renderer->addLine(objPtr->pos,
+									  glm::vec3(model * glm::vec4(objPtr->CollidePoints[n], 1.f)),
+									  glm::vec3(1.f, 0.f, 0.f), .1f);
+				}*/
+			}
+
 			DrawObject(objPtr, ratio, v, p);
 
 		}//for (int index...
@@ -340,7 +372,7 @@ int main(void)
 
 
 
-		DrawOctree(sphere, phys->tree->main_node, bounds, ratio, v, p);
+		DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************
@@ -420,7 +452,7 @@ void SetUpTextureBindingsForObject(
 
 void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
 {
-	GLint shaderProgID = scene->shaderProgID;
+	GLint shaderProgID = scene->Shaders[objPtr->shaderName];
 
 	SetUpTextureBindingsForObject(objPtr, shaderProgID);
 
@@ -443,48 +475,41 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 
 	// ******* ROTATION TRANSFORM *********
 	//mat4x4_rotate_Z(m, m, (float) glfwGetTime());
-	glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
-									objPtr->rotation.z,					// Angle
-									glm::vec3(0.0f, 0.0f, 1.0f));
-	m = m * rotateZ;
+	//glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
+	//								objPtr->rotation.z,					// Angle
+	//								glm::vec3(0.0f, 0.0f, 1.0f));
+	//m = m * rotateZ;
 
-	glm::mat4 rotateY = glm::rotate(glm::mat4(1.0f),
-									objPtr->rotation.y,	//(float)glfwGetTime(),					// Angle
-									glm::vec3(0.0f, 1.0f, 0.0f));
-	m = m * rotateY;
+	//glm::mat4 rotateY = glm::rotate(glm::mat4(1.0f),
+	//								objPtr->rotation.y,	//(float)glfwGetTime(),					// Angle
+	//								glm::vec3(0.0f, 1.0f, 0.0f));
+	//m = m * rotateY;
 
-	glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
-									objPtr->rotation.x,	// (float)glfwGetTime(),					// Angle
-									glm::vec3(1.0f, 0.0f, 0.0f));
-	m = m * rotateX;
+	//glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
+	//								objPtr->rotation.x,	// (float)glfwGetTime(),					// Angle
+	//								glm::vec3(1.0f, 0.0f, 0.0f));
+	m = m * glm::mat4(objPtr->getQOrientation());
 	// ******* ROTATION TRANSFORM *********
 
 	GLint matModelIT_UL = glGetUniformLocation(shaderProgID, "matModelInverTrans");
 	glm::mat4 matModelInverseTranspose = glm::inverse(glm::transpose(m));
 	glUniformMatrix4fv(matModelIT_UL, 1, GL_FALSE, glm::value_ptr(matModelInverseTranspose));
 
+
 	// ******* SCALE TRANSFORM *********
-	glm::mat4 scale = glm::scale(glm::mat4(1.0f),
+	/*glm::mat4 scale = glm::scale(glm::mat4(1.0f),
 								 glm::vec3(objPtr->scale,
 										   objPtr->scale,
 										   objPtr->scale));
-	m = m * scale;
+	m = m * scale;*/
 	// ******* SCALE TRANSFORM *********
-
-
-
-	//mat4x4_mul(mvp, p, m);
-	//mvp = p * v * m;
-
-	// Choose which shader to use
-	//glUseProgram(program);
 	
 
 	GLint matModel_UL = glGetUniformLocation(shaderProgID, "matModel");
 	GLint matView_UL = glGetUniformLocation(shaderProgID, "matView");
 	GLint matProj_UL = glGetUniformLocation(shaderProgID, "matProj");
 
-	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m));
+	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(objPtr->ModelMatrix()));
 	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
 	glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p));
 
@@ -520,8 +545,6 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 
 	scene->pLightManager->Set_Light_Data(shaderProgID);
 
-
-	
 
 
 	// This will change the fill mode to something 

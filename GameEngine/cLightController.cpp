@@ -59,11 +59,11 @@ void cLightController::HandleInput(GLFWwindow * window)
 		this->_scene.pLightManager->Lights[index]->position.x -= 0.1f;
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_PAGE_UP))
+	if (glfwGetKey(window, GLFW_KEY_U))
 	{
 		this->_scene.pLightManager->Lights[index]->position.y += 0.1f;
 	}
-	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN))
+	if (glfwGetKey(window, GLFW_KEY_O))
 	{
 		this->_scene.pLightManager->Lights[index]->position.y -= 0.1f;
 	}

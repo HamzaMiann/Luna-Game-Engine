@@ -168,6 +168,12 @@
     <ClCompile Include="TextureManager\C24BitBMPpixel.cpp">
       <Filter>TextureManager</Filter>
     </ClCompile>
+    <ClCompile Include="cGameObject.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cTextureBuilder.cpp">
+      <Filter>SceneFactory\SceneBuilders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -286,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="cParticle.h">
       <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="cTextureBuilder.h">
+      <Filter>SceneFactory\SceneBuilders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

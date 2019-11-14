@@ -6,5 +6,5 @@ class cShaderHelper
 {
 public:
 	cShaderHelper() = delete;
-	static unsigned int BuildShaderProgram(std::string vertexShaderFile, std::string fragShaderFile);
+	static unsigned int BuildShaderProgram(std::string name, std::string vertexShaderFile, std::string fragShaderFile);
 };

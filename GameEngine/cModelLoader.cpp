@@ -79,13 +79,16 @@ bool cModelLoader::LoadPlyModel(
 		theFile >> tempVertex.nx >> tempVertex.ny >> tempVertex.nz;
 		theFile >> tempVertex.u >> tempVertex.v;
 
-		if (tempVertex.x < theMesh.min.x) theMesh.min.x = tempVertex.x;
-		if (tempVertex.y < theMesh.min.y) theMesh.min.y = tempVertex.y;
-		if (tempVertex.z < theMesh.min.z) theMesh.min.z = tempVertex.z;
+		if (filename != "assets/models/13897_Sci-Fi_Fighter_Ship_v1_l1.ply")
+		{
+			if (tempVertex.x < theMesh.min.x) theMesh.min.x = tempVertex.x;
+			if (tempVertex.y < theMesh.min.y) theMesh.min.y = tempVertex.y;
+			if (tempVertex.z < theMesh.min.z) theMesh.min.z = tempVertex.z;
 
-		if (tempVertex.x > theMesh.max.x) theMesh.max.x = tempVertex.x;
-		if (tempVertex.y > theMesh.max.y) theMesh.max.y = tempVertex.y;
-		if (tempVertex.z > theMesh.max.z) theMesh.max.z = tempVertex.z;
+			if (tempVertex.x > theMesh.max.x) theMesh.max.x = tempVertex.x;
+			if (tempVertex.y > theMesh.max.y) theMesh.max.y = tempVertex.y;
+			if (tempVertex.z > theMesh.max.z) theMesh.max.z = tempVertex.z;
+		}
 
 		// Add this temp vertex to the vector of vertices
 		// (cMesh &theMesh)
@@ -126,13 +129,16 @@ bool cModelLoader::LoadPlyModel(
 		theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
 	}
 
-	if (theMesh.min.x < min.x) min.x = theMesh.min.x;
-	if (theMesh.min.y < min.y) min.y = theMesh.min.y;
-	if (theMesh.min.z < min.z) min.z = theMesh.min.z;
+	if (filename != "assets/models/13897_Sci-Fi_Fighter_Ship_v1_l1.ply")
+	{
+		if (theMesh.min.x < min.x) min.x = theMesh.min.x;
+		if (theMesh.min.y < min.y) min.y = theMesh.min.y;
+		if (theMesh.min.z < min.z) min.z = theMesh.min.z;
 
-	if (theMesh.max.x > max.x) max.x = theMesh.max.x;
-	if (theMesh.max.y > max.y) max.y = theMesh.max.y;
-	if (theMesh.max.z > max.z) max.z = theMesh.max.z;
+		if (theMesh.max.x > max.x) max.x = theMesh.max.x;
+		if (theMesh.max.y > max.y) max.y = theMesh.max.y;
+		if (theMesh.max.z > max.z) max.z = theMesh.max.z;
+	}
 
 	return true;
 }

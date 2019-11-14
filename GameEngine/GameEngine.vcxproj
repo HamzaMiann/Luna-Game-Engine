@@ -161,6 +161,7 @@
     <ClCompile Include="cDebugRenderer.cpp" />
     <ClCompile Include="cDebugRenderer_BuiltInShapes.cpp" />
     <ClCompile Include="CErrorLog.cpp" />
+    <ClCompile Include="cGameObject.cpp" />
     <ClCompile Include="cGLRenderStateHelper.cpp" />
     <ClCompile Include="cLayoutBuilder.cpp" />
     <ClCompile Include="cLayoutController.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="cShaderBuilder.cpp" />
     <ClCompile Include="cShaderHelper.cpp" />
     <ClCompile Include="cShaderManager.cpp" />
+    <ClCompile Include="cTextureBuilder.cpp" />
     <ClCompile Include="cVAOManager.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="octree.cpp" />
@@ -195,6 +197,7 @@
     <ClInclude Include="cAABB.h" />
     <ClInclude Include="AudioEngine.hpp" />
     <ClInclude Include="cParticle.h" />
+    <ClInclude Include="cTextureBuilder.h" />
     <ClInclude Include="fmod_helper.h" />
     <ClInclude Include="cAudioBuilder.h" />
     <ClInclude Include="cAudioInputHandler.h" />

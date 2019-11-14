@@ -2,9 +2,9 @@
 #include "cShaderManager.h"
 #include <iostream>
 
-unsigned int cShaderHelper::BuildShaderProgram(std::string vertexShaderFile, std::string fragShaderFile)
+unsigned int cShaderHelper::BuildShaderProgram(std::string name, std::string vertexShaderFile, std::string fragShaderFile)
 {
-	cShaderManager* pTheShaderManager = new cShaderManager();
+	cShaderManager* pTheShaderManager = cShaderManager::Instance();
 
 	cShaderManager::cShader vertexShad;
 	vertexShad.fileName = "assets/shaders/" + vertexShaderFile;
@@ -12,14 +12,12 @@ unsigned int cShaderHelper::BuildShaderProgram(std::string vertexShaderFile, std
 	cShaderManager::cShader fragShader;
 	fragShader.fileName = "assets/shaders/" + fragShaderFile;
 
-	if (!pTheShaderManager->createProgramFromFile("SimpleShader", vertexShad, fragShader))
+	if (!pTheShaderManager->createProgramFromFile(name, vertexShad, fragShader))
 	{
 		throw std::exception(("Shader could not be compiled - " + pTheShaderManager->getLastError()).c_str());
 	}
 
-	unsigned int toReturn = pTheShaderManager->getIDFromFriendlyName("SimpleShader");
-
-	delete pTheShaderManager;
+	unsigned int toReturn = pTheShaderManager->getIDFromFriendlyName(name);
 
 	return toReturn;
 }

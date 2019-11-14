@@ -1,20 +1,27 @@
 <?xml version="1.0"?>
-<Scene name="Media Fundamentals Project 1">
-	<Shader>
-		<Vertex file="water_vert.glsl"/>
-		<Fragment file="water_frag.glsl"/>
-	</Shader>
+<Scene name="Experimental">
+	<Shaders>
+		<Shader name="basic">
+			<Vertex file="water_vert.glsl"/>
+			<Fragment file="water_frag.glsl"/>
+		</Shader>
+		<Shader name="static">
+			<Vertex file="vertexShader02.glsl"/>
+			<Fragment file="fragmentShader02.glsl"/>
+		</Shader>
+	</Shaders>
+	<Textures>
+		<Texture name="Fighter_Ship_body_diffuse.bmp"/>
+		<Texture name="WhatTheWhat.bmp"/>
+		<Texture name="Fighter_Ship_wings_diffuse.bmp"/>
+		<Texture name="Ground_Dirt_007_basecolor.bmp"/>
+	</Textures>
 	<Models>
-		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere"/>
-		<!--<Model file="Plane_Large_XYZ_N.ply" friendlyName="plane_ground"/>-->
-		<Model file="cube_XYZ_N_UV.ply" friendlyName="cube"/>
-		<!--<Model file="rectangle_XYZ_N.ply" friendlyName="rectangle"/>-->
-		<Model file="Terrain_XYZ_N_UV.ply" friendlyName="terrain"/>
-		<!--<Model file="SM_Env_Mangrove_Tree_01_xyz_n.ply" friendlyName="mangrove_tree"/>
-		<Model file="SM_Env_PalmBush_03_xyz_n.ply" friendlyName="bush"/>
-		<Model file="SM_Env_PalmTree_01_xyz_n.ply" friendlyName="tree1"/>
-		<Model file="SM_Env_PalmTree_03_xyz_n.ply" friendlyName="tree2"/>
-		<Model file="Sky_Pirate_Combined_xyz_n.ply" friendlyName="ship"/>-->
+		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
+		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere_static" shader="static"/>
+		<Model file="cube_XYZ_N_UV.ply" friendlyName="cube" shader="basic"/>
+		<Model file="Terrain_XYZ_n_uv.ply" friendlyName="terrain" shader="basic"/>
+		<Model file="13897_Sci-Fi_Fighter_Ship_v1_l1.ply" friendlyName="ship" shader="basic"/>
 	</Models>
 	<Lights>
 		<Light>
@@ -27,7 +34,7 @@
 			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 		</Light>
 		<Light>
-			<Position x="8.000000" y="135.699097" z="0.000000" w="1.000000"/>
+			<Position x="8.000000" y="200.699097" z="0.000000" w="1.000000"/>
 			<Diffuse x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Atten x="0.800000" y="0.002255" z="0.000002" w="1000.000000"/>
@@ -51,167 +58,155 @@
 			<Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
 			<Direction x="0.861347" y="0.000041" z="0.747035" w="1.000000"/>
 			<Param1 x="2.000000" y="1.000000" z="1.000000" w="1.000000"/>
-			<Param2 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+		</Light>
+		<Light>
+			<Position x="0.000000" y="5.000000" z="-8.000000" w="1.000000"/>
+			<Diffuse x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+			<Direction x="-0.861347" y="-0.000041" z="-0.747035" w="1.000000"/>
+			<Param1 x="2.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 		</Light>
 	</Lights>
 	<Layout>
-		<GameObject mesh="terrain" tag="">
-			<Position x="0.000000" y="0" z="0.000000"/>
+		
+		<GameObject mesh="terrain" tag="terrain" shader="basic">
+			<Position x="0.000000" y="0.000000" z="-10.000000"/>
 			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
-			<Colour x="0.700000" y="0.600000" z="0.500000" w="1.000000"/>
-			<SpecColour x="0.100000" y="0.100000" z="0.100000"/>
+			<Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+			<SpecColour x="0.000000" y="0.000000" z="0.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
 			<Scale>1.000000</Scale>
-			<SpecIntensity>10.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
+			<SpecIntensity>1.000000</SpecIntensity>
+			<IMass>1.000000</IMass>
 			<Collider>AABB</Collider>
+			<Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
 		</GameObject>
-		<GameObject mesh="sphere" tag="player">
-			<Position x="0.000000" y="10.000000" z="-10.000000"/>
+    <GameObject mesh="ship" tag="player" shader="basic">
+      <Position x="-12.700012" y="7.199996" z="-48.599831"/>
+      <Rotation x="0.000000" y="0.000000" z="0.000000"/>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+      <Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+      <Scale>0.001731</Scale>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <IMass>1.000000</IMass>
+      <Collider>POINT</Collider>
+      <Texture ratio="1.000000">Fighter_Ship_wings_diffuse.bmp</Texture>
+      <Texture ratio="0.000000"/>
+      <Texture ratio="0.000000"/>
+      <Texture ratio="0.000000"/>
+      <CollidePoint x="-4.000000" y="9.100874" z="998.473511"/>
+      <CollidePoint x="497.998108" y="-201.204514" z="-154.295013"/>
+      <CollidePoint x="-495.397430" y="-197.503998" z="-147.994629"/>
+      <CollidePoint x="35.999989" y="238.295868" z="-223.195099"/>
+      <CollidePoint x="-38.499893" y="235.695465" z="-227.095093"/>
+      <CollidePoint x="1.100004" y="136.794693" z="351.006378"/>
+    </GameObject>
+		<GameObject mesh="sphere" tag="" shader="basic">
+			<Position x="-4.000000" y="9.100874" z="998.473511"/>
+			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
+			<Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+			<Scale>15.377609</Scale>
+			<SpecIntensity>10.000000</SpecIntensity>
+			<IMass>1.000000</IMass>
+			<Collider>NONE</Collider>
+			<Texture ratio="1.000000">WhatTheWhat.bmp</Texture>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+		</GameObject>
+		<GameObject mesh="sphere" tag="" shader="basic">
+			<Position x="497.998108" y="-201.204514" z="-154.295013"/>
+			<Rotation x="0.000000" y="1.400000" z="0.000000"/>
+			<Colour x="1.000000" y="0.900000" z="0.300000" w="0.800000"/>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+			<Scale>17.867300</Scale>
+			<SpecIntensity>10.000000</SpecIntensity>
+			<IMass>1.000000</IMass>
+			<Collider>NONE</Collider>
+			<Texture ratio="1.000000">WhatTheWhat.bmp</Texture>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+		</GameObject>
+		<GameObject mesh="sphere" tag="" shader="basic">
+			<Position x="-495.397430" y="-197.503998" z="-147.994629"/>
 			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
 			<Colour x="1.000000" y="0.900000" z="0.300000" w="0.800000"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>1.000000</Scale>
+			<Scale>10.000000</Scale>
 			<SpecIntensity>10.000000</SpecIntensity>
 			<IMass>1.000000</IMass>
-			<Collider>SPHERE</Collider>
-		</GameObject>
-		<!--<GameObject mesh="tree1" tag="">
-			<Position x="11.700008" y="6.099997" z="-3.499999"/>
-			<Rotation x="4.199998" y="0.000000" z="-0.500000"/>
-			<Colour x="0.300000" y="0.900000" z="0.300000" w="0.800000"/>
-			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>60.242016</Scale>
-			<SpecIntensity>1000.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
 			<Collider>NONE</Collider>
+			<Texture ratio="1.000000">WhatTheWhat.bmp</Texture>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
 		</GameObject>
-		<GameObject mesh="tree1" tag="">
-			<Position x="4.799998" y="6.199996" z="-2.799999"/>
-			<Rotation x="0.500000" y="1.600000" z="-4.199998"/>
-			<Colour x="0.300000" y="0.900000" z="0.300000" w="0.800000"/>
-			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>76.885757</Scale>
-			<SpecIntensity>100.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>NONE</Collider>
-		</GameObject>
-		<GameObject mesh="tree2" tag="">
-			<Position x="-6.899996" y="3.899999" z="-5.299997"/>
-			<Rotation x="1.500000" y="5.999997" z="-2.799999"/>
-			<Colour x="0.300000" y="0.900000" z="0.300000" w="0.800000"/>
-			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>89.004860</Scale>
-			<SpecIntensity>100.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>NONE</Collider>
-		</GameObject>
-		<GameObject mesh="tree2" tag="">
-			<Position x="-1.600000" y="4.599998" z="-10.300003"/>
-			<Rotation x="4.799998" y="0.400000" z="-0.300000"/>
-			<Colour x="0.300000" y="0.900000" z="0.300000" w="0.800000"/>
-			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>70.702858</Scale>
-			<SpecIntensity>100.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>NONE</Collider>
-		</GameObject>
-		<GameObject mesh="mangrove_tree" tag="">
-			<Position x="-3.799999" y="3.699999" z="-4.599998"/>
-			<Rotation x="4.799998" y="0.000000" z="-0.100000"/>
-			<Colour x="0.300000" y="0.900000" z="0.300000" w="0.800000"/>
-			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>198.460114</Scale>
-			<SpecIntensity>100.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>NONE</Collider>
-		</GameObject>
-		<GameObject mesh="bush" tag="">
-			<Position x="-7.899995" y="2.300000" z="-8.699997"/>
-			<Rotation x="4.599998" y="0.000000" z="0.000000"/>
-			<Colour x="0.300000" y="0.900000" z="0.300000" w="0.800000"/>
-			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>41.964066</Scale>
-			<SpecIntensity>100.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>NONE</Collider>
-		</GameObject>
-		<GameObject mesh="bush" tag="bush">
-			<Position x="-8.699997" y="1.400000" z="-13.300014"/>
-			<Rotation x="4.399998" y="2.700000" z="0.000000"/>
-			<Colour x="0.300000" y="0.900000" z="0.300000" w="0.800000"/>
-			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>45.234726</Scale>
-			<SpecIntensity>100.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>NONE</Collider>
-		</GameObject>
-		<GameObject mesh="bush" tag="">
-			<Position x="-2.800000" y="3.999999" z="-9.600000"/>
-			<Rotation x="4.499998" y="0.000000" z="0.000000"/>
-			<Colour x="0.300000" y="0.900000" z="0.300000" w="0.800000"/>
-			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>56.801754</Scale>
-			<SpecIntensity>100.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>NONE</Collider>
-		</GameObject>
-		<GameObject mesh="bush" tag="">
-			<Position x="-5.699997" y="6.299996" z="-2.600000"/>
-			<Rotation x="4.199998" y="0.000000" z="0.000000"/>
-			<Colour x="0.300000" y="0.900000" z="0.300000" w="0.800000"/>
-			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>49.561264</Scale>
-			<SpecIntensity>100.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>NONE</Collider>
-		</GameObject>
-		<GameObject mesh="ship" tag="ship">
-			<Position x="9.199999" y="0.200000" z="-43.999901"/>
-			<Rotation x="4.199998" y="4.699998" z="2.100000"/>
-			<Colour x="0.900000" y="0.700000" z="0.300000" w="1.000000"/>
-			<SpecColour x="0.800000" y="0.800000" z="1.000000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>1.000000</Scale>
-			<SpecIntensity>10.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>NONE</Collider>
-		</GameObject>
-		<GameObject mesh="plane_groundd" tag="waterd">
-			<Position x="0.000000" y="10.000000" z="0.000000"/>
+		<GameObject mesh="sphere" tag="" shader="basic">
+			<Position x="35.999989" y="238.295868" z="-223.195099"/>
 			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
-			<Colour x="0.300000" y="0.600000" z="0.900000" w="0.800000"/>
+			<Colour x="1.000000" y="0.900000" z="0.300000" w="0.800000"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>1.000000</Scale>
-			<SpecIntensity>1000.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
+			<Scale>11.780359</Scale>
+			<SpecIntensity>10.000000</SpecIntensity>
+			<IMass>1.000000</IMass>
 			<Collider>NONE</Collider>
-		</GameObject>-->
+			<Texture ratio="1.000000">WhatTheWhat.bmp</Texture>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+		</GameObject>
+		<GameObject mesh="sphere" tag="" shader="basic">
+			<Position x="-38.499893" y="235.695465" z="-227.095093"/>
+			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
+			<Colour x="1.000000" y="0.900000" z="0.300000" w="0.800000"/>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+			<Scale>10.000000</Scale>
+			<SpecIntensity>10.000000</SpecIntensity>
+			<IMass>1.000000</IMass>
+			<Collider>NONE</Collider>
+			<Texture ratio="1.000000">WhatTheWhat.bmp</Texture>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+		</GameObject>
+		<GameObject mesh="sphere" tag="" shader="basic">
+			<Position x="1.100004" y="136.794693" z="351.006378"/>
+			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
+			<Colour x="1.000000" y="0.900000" z="0.300000" w="0.800000"/>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+			<Scale>10.000000</Scale>
+			<SpecIntensity>10.000000</SpecIntensity>
+			<IMass>1.000000</IMass>
+			<Collider>NONE</Collider>
+			<Texture ratio="1.000000">WhatTheWhat.bmp</Texture>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+		</GameObject>
 	</Layout>
-  <Audio API="FMOD"/>
+	<Audio API="FMOD"/>
 </Scene>
 

@@ -48,29 +48,29 @@ void cLayoutController::HandleInput(GLFWwindow * window)
 
 	if (glfwGetKey(window, GLFW_KEY_I))
 	{
-		this->_scene.vecGameObjects[index]->rotation.z += 0.1f;
+		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(0.f, 0.f, 0.1f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_K))
 	{
-		this->_scene.vecGameObjects[index]->rotation.z -= 0.1f;
+		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(0.f, 0.f, -0.1f));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_J))
 	{
-		this->_scene.vecGameObjects[index]->rotation.x += 0.1f;
+		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(0.1f, 0.f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_L))
 	{
-		this->_scene.vecGameObjects[index]->rotation.x -= 0.1f;
+		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(-0.1f, 0.f, 0.f));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_U))
 	{
-		this->_scene.vecGameObjects[index]->rotation.y += 0.1f;
+		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(0.f, 0.1f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_O))
 	{
-		this->_scene.vecGameObjects[index]->rotation.y -= 0.1f;
+		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(0.f, -0.1f, 0.f));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_EQUAL))

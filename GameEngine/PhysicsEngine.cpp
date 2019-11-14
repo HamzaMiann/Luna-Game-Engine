@@ -349,7 +349,8 @@ void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3
 	if (!mesh) return;
 
 	glm::mat4 transform(1.f);
-	transform *= glm::rotate(glm::mat4(1.0f),
+	transform *= glm::mat4(meshObject->getQOrientation());
+	/*transform *= glm::rotate(glm::mat4(1.0f),
 							 meshObject->rotation.z,
 							 glm::vec3(0.0f, 0.0f, 1.0f));
 	transform *= glm::rotate(glm::mat4(1.0f),
@@ -357,7 +358,7 @@ void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3
 							 glm::vec3(0.0f, 1.0f, 0.0f));
 	transform *= glm::rotate(glm::mat4(1.0f),
 							 meshObject->rotation.x,
-							 glm::vec3(1.0f, 0.0f, 0.0f));
+							 glm::vec3(1.0f, 0.0f, 0.0f));*/
 
 	for (unsigned int i = 0; i < mesh->vecMeshTriangles.size(); ++i)
 	{
@@ -390,7 +391,7 @@ const sMeshTriangle* FindClosestPointToTriangles(std::vector<const sMeshTriangle
 	{
 		const sMeshTriangle* curTriangle = triangles[i];
 
-		//cDebugRenderer::Instance()->addTriangle(curTriangle->first, curTriangle->second, curTriangle->third, glm::vec3(1.f, 1.f, 0.f), 0.1f);
+		cDebugRenderer::Instance()->addTriangle(curTriangle->first, curTriangle->second, curTriangle->third, glm::vec3(1.f, 1.f, 0.f), 0.1f);
 
 		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
 			point,

@@ -5,6 +5,7 @@
 #include "cShaderBuilder.h"
 #include "cLayoutBuilder.h"
 #include "cLightBuilder.h"
+#include "cTextureBuilder.h"
 
 iSceneBuilder* cSceneFactory::GetBuilder(std::string builder_name)
 {
@@ -16,7 +17,7 @@ iSceneBuilder* cSceneFactory::GetBuilder(std::string builder_name)
 	{
 		return new cModelBuilder();
 	}
-	if (builder_name == "Shader")
+	if (builder_name == "Shaders")
 	{
 		return new cShaderBuilder();
 	}
@@ -27,6 +28,10 @@ iSceneBuilder* cSceneFactory::GetBuilder(std::string builder_name)
 	if (builder_name == "Lights")
 	{
 		return new cLightBuilder();
+	}
+	if (builder_name == "Textures")
+	{
+		return new cTextureBuilder();
 	}
 	return nullptr;
 }

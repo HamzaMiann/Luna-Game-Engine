@@ -4,6 +4,7 @@
 #include <string>
 #include "GLCommon.h"
 #include <glm/vec3.hpp>
+#include <map>
 
 class cGameObject;
 class cVAOManager;
@@ -24,7 +25,7 @@ public:
 
 	std::string		SceneName;
 
-	int				shaderProgID = -1;
+	std::map<std::string, unsigned int>	Shaders;
 
 	object_list		vecGameObjects;
 	cVAOManager*	pVAOManager;

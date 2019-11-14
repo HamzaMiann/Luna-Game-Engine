@@ -110,6 +110,12 @@ bool Scene::SaveLayout()
 			attr->value(valueBuffer);
 			node->append_attribute(attr);
 
+			attr = new xml_attribute<>();
+			attr->name("shader");
+			valueBuffer = layout_doc.allocate_string(obj->shaderName.c_str());
+			attr->value(valueBuffer);
+			node->append_attribute(attr);
+
 			xml_node<>* prop = new xml_node<>(node_type::node_element);
 			prop->name("Position");
 			_ApplyXYZ(prop, obj->pos);
@@ -117,7 +123,8 @@ bool Scene::SaveLayout()
 
 			prop = new xml_node<>(node_type::node_element);
 			prop->name("Rotation");
-			_ApplyXYZ(prop, obj->rotation);
+			glm::vec3 angle = obj->getEulerAngle();
+			_ApplyXYZ(prop, angle);
 			node->append_node(prop);
 
 			prop = new xml_node<>(node_type::node_element);
@@ -163,9 +170,30 @@ bool Scene::SaveLayout()
 			case SPHERE: prop->value("SPHERE"); break;
 			case CUBE: prop->value("CUBE"); break;
 			case AABB: prop->value("AABB"); break;
+			case POINT: prop->value("POINT"); break;
 			default: prop->value("NONE"); break;
 			}
 			node->append_node(prop);
+
+			for (int i = 0; i < 4; ++i)
+			{
+				prop = new xml_node<>(node_type::node_element);
+				prop->name("Texture");
+				attr = new xml_attribute<>();
+				attr->name("ratio");
+				attr->value(layout_doc.allocate_string(std::to_string(obj->textureRatio[i]).c_str()));
+				prop->append_attribute(attr);
+				prop->value(layout_doc.allocate_string(obj->texture[i].c_str()));
+				node->append_node(prop);
+			}
+
+			for (int n = 0; n < obj->CollidePoints.size(); ++n)
+			{
+				prop = new xml_node<>(node_type::node_element);
+				prop->name("CollidePoint");
+				_ApplyXYZ(prop, obj->CollidePoints[n]);
+				node->append_node(prop);
+			}
 
 			layout_node->append_node(node);
 

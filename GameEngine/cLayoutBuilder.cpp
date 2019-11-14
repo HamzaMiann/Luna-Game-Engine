@@ -28,11 +28,14 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 		std::string objectName = object_node->name();
 		xml_attribute<>* meshAttr = object_node->first_attribute("mesh");
 		xml_attribute<>* tagAttr = object_node->first_attribute("tag");
+		std::string shader = object_node->first_attribute("shader")->value();
 		if (objectName == "GameObject")
 		{
 			ptr = ptr = new cGameObject();
 			if (meshAttr) ptr->meshName = meshAttr->value();
 			if (tagAttr) ptr->tag = tagAttr->value();
+			ptr->shaderName = shader;
+			int texture_id = 0;
 			for (xml_node<>* property_node = object_node->first_node();
 				 property_node;
 				 property_node = property_node->next_sibling())
@@ -44,7 +47,9 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				}
 				else if (propName == "Rotation")
 				{
-					setXYZ(ptr->rotation, property_node);
+					glm::vec3 orientation;
+					setXYZ(orientation, property_node);
+					ptr->setOrientation(orientation);
 				}
 				else if (propName == "Colour")
 				{
@@ -89,10 +94,19 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 					{
 						ptr->Collider = AABB;
 					}
+					else if (collider == "POINT")
+					{
+						ptr->Collider = POINT;
+					}
 					else
 					{
 						ptr->Collider = NONE;
 					}
+				}
+				else if (propName == "Texture")
+				{
+					ptr->textureRatio[texture_id] = strtof(property_node->first_attribute("ratio")->value(), 0);
+					ptr->texture[texture_id++] = property_node->value();
 				}
 			}
 		}

@@ -7,6 +7,9 @@
 
 class cShaderManager
 {
+private:
+	cShaderManager();
+
 public:
 	class cShader  {
 	public:
@@ -46,7 +49,11 @@ public:
 
 	};
 
-	cShaderManager();
+	static cShaderManager* Instance()
+	{
+		static cShaderManager instance;
+		return &instance;
+	}
 	~cShaderManager();
 
 	bool useShaderProgram( unsigned int ID );

@@ -25,6 +25,14 @@ public:
 
 	void SetBasePath(std::string basepath);
 
+	static cBasicTextureManager* Instance()
+	{
+		static cBasicTextureManager instance;
+		return &instance;
+	}
+
+	~cBasicTextureManager() {}
+
 private:
 	std::string m_basePath;
 	std::string m_lastError;
@@ -33,7 +41,7 @@ private:
 
 	std::map< std::string, CTextureFromBMP* > m_map_TexNameToTexture;
 
-
+	cBasicTextureManager() {}
 };
 
 #endif
