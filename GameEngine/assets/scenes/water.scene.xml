@@ -15,12 +15,15 @@
 		<Texture name="WhatTheWhat.bmp"/>
 		<Texture name="Fighter_Ship_wings_diffuse.bmp"/>
 		<Texture name="Ground_Dirt_007_basecolor.bmp"/>
+		<Texture name="Halo_Roughtness.bmp"/>
+		<Texture name="13736_Halo_Albedo.bmp"/>
 	</Textures>
 	<Models>
 		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
 		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere_static" shader="static"/>
 		<Model file="cube_XYZ_N_UV.ply" friendlyName="cube" shader="basic"/>
 		<Model file="Terrain_XYZ_n_uv.ply" friendlyName="terrain" shader="basic"/>
+		<Model file="Halo_Ring_XYZ_N_UV.ply" friendlyName="halo_ring" shader="basic"/>
 		<Model file="13897_Sci-Fi_Fighter_Ship_v1_l1.ply" friendlyName="ship" shader="basic"/>
 	</Models>
 	<Lights>
@@ -71,10 +74,9 @@
 		</Light>
 	</Lights>
 	<Layout>
-		
 		<GameObject mesh="terrain" tag="terrain" shader="basic">
 			<Position x="0.000000" y="0.000000" z="-10.000000"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
+			<Rotation x="0.000000" y="-0.000000" z="0.000000"/>
 			<Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
 			<SpecColour x="0.000000" y="0.000000" z="0.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
@@ -88,31 +90,47 @@
 			<Texture ratio="0.000000"/>
 			<Texture ratio="0.000000"/>
 		</GameObject>
-    <GameObject mesh="ship" tag="player" shader="basic">
-      <Position x="-12.700012" y="7.199996" z="-48.599831"/>
-      <Rotation x="0.000000" y="0.000000" z="0.000000"/>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-      <Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-      <Scale>0.001731</Scale>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <IMass>1.000000</IMass>
-      <Collider>POINT</Collider>
-      <Texture ratio="1.000000">Fighter_Ship_wings_diffuse.bmp</Texture>
-      <Texture ratio="0.000000"/>
-      <Texture ratio="0.000000"/>
-      <Texture ratio="0.000000"/>
-      <CollidePoint x="-4.000000" y="9.100874" z="998.473511"/>
-      <CollidePoint x="497.998108" y="-201.204514" z="-154.295013"/>
-      <CollidePoint x="-495.397430" y="-197.503998" z="-147.994629"/>
-      <CollidePoint x="35.999989" y="238.295868" z="-223.195099"/>
-      <CollidePoint x="-38.499893" y="235.695465" z="-227.095093"/>
-      <CollidePoint x="1.100004" y="136.794693" z="351.006378"/>
-    </GameObject>
+		<GameObject mesh="ship" tag="player" shader="basic">
+			<Position x="-12.700012" y="7.199996" z="-48.599831"/>
+			<Rotation x="0.362948" y="-0.179704" z="0.071493"/>
+			<Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+			<Scale>0.001731</Scale>
+			<SpecIntensity>10.000000</SpecIntensity>
+			<IMass>1.000000</IMass>
+			<Collider>POINT</Collider>
+			<Texture ratio="1.000000">Fighter_Ship_wings_diffuse.bmp</Texture>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+			<CollidePoint x="-4.000000" y="9.100874" z="998.473511"/>
+			<CollidePoint x="497.998108" y="-201.204514" z="-154.295013"/>
+			<CollidePoint x="-495.397430" y="-197.503998" z="-147.994629"/>
+			<CollidePoint x="35.999989" y="238.295868" z="-223.195099"/>
+			<CollidePoint x="-38.499893" y="235.695465" z="-227.095093"/>
+			<CollidePoint x="1.100004" y="136.794693" z="351.006378"/>
+		</GameObject>
+		<GameObject mesh="halo_ring" tag="halo" shader="basic">
+			<Position x="0.000000" y="1200.296326" z="-10.000000"/>
+			<Rotation x="90.000000" y="0.000000" z="0.0"/>
+			<Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+			<SpecColour x="0.000000" y="0.000000" z="0.000000"/>
+			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+			<Scale>4.193538</Scale>
+			<SpecIntensity>1.000000</SpecIntensity>
+			<IMass>1.000000</IMass>
+			<Collider>NONE</Collider>
+			<Texture ratio="0.000000">Halo_Roughtness.bmp</Texture>
+      <Texture ratio="1.000000">13736_Halo_Albedo.bmp</Texture>
+			<Texture ratio="0.000000"/>
+			<Texture ratio="0.000000"/>
+		</GameObject>
 		<GameObject mesh="sphere" tag="" shader="basic">
 			<Position x="-4.000000" y="9.100874" z="998.473511"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
+			<Rotation x="0.000000" y="-0.000000" z="0.000000"/>
 			<Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
@@ -128,7 +146,7 @@
 		</GameObject>
 		<GameObject mesh="sphere" tag="" shader="basic">
 			<Position x="497.998108" y="-201.204514" z="-154.295013"/>
-			<Rotation x="0.000000" y="1.400000" z="0.000000"/>
+			<Rotation x="0.000000" y="0.024435" z="0.000000"/>
 			<Colour x="1.000000" y="0.900000" z="0.300000" w="0.800000"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
@@ -144,7 +162,7 @@
 		</GameObject>
 		<GameObject mesh="sphere" tag="" shader="basic">
 			<Position x="-495.397430" y="-197.503998" z="-147.994629"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
+			<Rotation x="0.000000" y="-0.000000" z="0.000000"/>
 			<Colour x="1.000000" y="0.900000" z="0.300000" w="0.800000"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
@@ -160,7 +178,7 @@
 		</GameObject>
 		<GameObject mesh="sphere" tag="" shader="basic">
 			<Position x="35.999989" y="238.295868" z="-223.195099"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
+			<Rotation x="0.000000" y="-0.000000" z="0.000000"/>
 			<Colour x="1.000000" y="0.900000" z="0.300000" w="0.800000"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
@@ -176,7 +194,7 @@
 		</GameObject>
 		<GameObject mesh="sphere" tag="" shader="basic">
 			<Position x="-38.499893" y="235.695465" z="-227.095093"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
+			<Rotation x="0.000000" y="-0.000000" z="0.000000"/>
 			<Colour x="1.000000" y="0.900000" z="0.300000" w="0.800000"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
@@ -192,7 +210,7 @@
 		</GameObject>
 		<GameObject mesh="sphere" tag="" shader="basic">
 			<Position x="1.100004" y="136.794693" z="351.006378"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
+			<Rotation x="0.000000" y="-0.000000" z="0.000000"/>
 			<Colour x="1.000000" y="0.900000" z="0.300000" w="0.800000"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>

@@ -79,7 +79,7 @@ bool cModelLoader::LoadPlyModel(
 		theFile >> tempVertex.nx >> tempVertex.ny >> tempVertex.nz;
 		theFile >> tempVertex.u >> tempVertex.v;
 
-		if (filename != "assets/models/13897_Sci-Fi_Fighter_Ship_v1_l1.ply")
+		if (filename == "assets/models/Terrain_XYZ_n_uv.ply")
 		{
 			if (tempVertex.x < theMesh.min.x) theMesh.min.x = tempVertex.x;
 			if (tempVertex.y < theMesh.min.y) theMesh.min.y = tempVertex.y;
@@ -129,7 +129,7 @@ bool cModelLoader::LoadPlyModel(
 		theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
 	}
 
-	if (filename != "assets/models/13897_Sci-Fi_Fighter_Ship_v1_l1.ply")
+	if (filename == "assets/models/Terrain_XYZ_n_uv.ply")
 	{
 		if (theMesh.min.x < min.x) min.x = theMesh.min.x;
 		if (theMesh.min.y < min.y) min.y = theMesh.min.y;

@@ -76,17 +76,17 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	{
 		delete pInputHandler;
 		input_id++;
-		if (input_id % 2 == 0)
+		if (input_id % 3 == 0)
 		{
 			pInputHandler = new cLayoutController(*scene);
 		}
-		else if (input_id % 2 == 1)
+		else if (input_id % 3 == 1)
 		{
 			pInputHandler = new cLightController(*scene);
 		}
 		else
 		{
-			//pInputHandler = new cPhysicsInputHandler(*scene);
+			pInputHandler = new cPhysicsInputHandler(*scene);
 		}
 	}
 
@@ -287,7 +287,8 @@ int main(void)
 		//  depth (or z) buffer.
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-		glClearColor(0.7f, 0.85f, 1.f, 1.f);
+		//glClearColor(0.7f, 0.85f, 1.f, 1.f);
+		//glClearColor(0.7f, 0.85f, 1.f, 1.f);
 
 		glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
 		//glDisable( GL_BLEND );
@@ -372,7 +373,7 @@ int main(void)
 
 
 
-		DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
+		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************

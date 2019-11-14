@@ -7,6 +7,7 @@ class Scene;
 class cPhysicsInputHandler : public iInputHandler
 {
 private:
+	double previousX = 0.0, previousY = 0.0;
 	Scene& _scene;
 public:
 	cPhysicsInputHandler() = delete;
