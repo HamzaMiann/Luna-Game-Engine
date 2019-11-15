@@ -120,10 +120,10 @@ void main()
 	}
 	else
 	{
-		pixelColour = vec4(texRGB.rgb - GetRandValue().xyz, 1.0);
+		pixelColour = vec4(texRGB.rgb - GetRandValue().xyz * 0.7, 1.0);
 	}
 
-
+	pixelColour.a = 0.6;
 
 
 

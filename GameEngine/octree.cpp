@@ -127,7 +127,7 @@ bool octree::_attach(std::vector<sMeshTriangle> const& triangles, octree::octree
 			}
 		}
 		node->has_triangles = hasTriangles;
-		return hasTriangles;
+		return hasTriangles || node->triangles.size() > 0;
 	}
 }
 

@@ -17,33 +17,35 @@ cLayoutController::~cLayoutController()
 
 void cLayoutController::HandleInput(GLFWwindow * window)
 {
+	float speed = 10.f;
+
 	if (this->_scene.vecGameObjects.size() == 0) return;
 
 	if (glfwGetKey(window, GLFW_KEY_UP))
 	{
-		this->_scene.vecGameObjects[index]->pos.z += 0.1f;
+		this->_scene.vecGameObjects[index]->pos.z += 0.1f * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN))
 	{
-		this->_scene.vecGameObjects[index]->pos.z -= 0.1f;
+		this->_scene.vecGameObjects[index]->pos.z -= 0.1f * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT))
 	{
-		this->_scene.vecGameObjects[index]->pos.x += 0.1f;
+		this->_scene.vecGameObjects[index]->pos.x += 0.1f * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT))
 	{
-		this->_scene.vecGameObjects[index]->pos.x -= 0.1f;
+		this->_scene.vecGameObjects[index]->pos.x -= 0.1f * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_T))
 	{
-		this->_scene.vecGameObjects[index]->pos.y += 0.1f;
+		this->_scene.vecGameObjects[index]->pos.y += 0.1f * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_Y))
 	{
-		this->_scene.vecGameObjects[index]->pos.y -= 0.1f;
+		this->_scene.vecGameObjects[index]->pos.y -= 0.1f * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_I))

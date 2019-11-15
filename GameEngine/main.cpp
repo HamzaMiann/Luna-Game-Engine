@@ -235,7 +235,7 @@ int main(void)
 		std::cout << "Didn't load texture" << std::endl;
 	}*/
 
-	cGameObject* ship = scene->vecGameObjects[1];
+	cGameObject* ship = scene->vecGameObjects[0];
 
 	for (unsigned int i = 0; i < scene->vecGameObjects.size(); ++i)
 	{
@@ -373,7 +373,7 @@ int main(void)
 
 
 
-		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
+		DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************

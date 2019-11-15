@@ -5,17 +5,16 @@
 #include "cGameObject.h"
 #include "cDebugRenderer.h"
 #include <glm/gtc/matrix_transform.hpp>
-
+#include "cLightManager.h"
 
 glm::vec3 originalBallPosition = glm::vec3(0.0f, 6.0f, 0.0f);
 
 
 void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 {
-	cGameObject* player = _scene.vecGameObjects[1];
+	cGameObject* player = _scene.vecGameObjects[0];
 
 	
-
 	glm::vec3 forwardVector = Mathf::get_direction_vector(_scene.cameraEye, _scene.cameraTarget);
 	glm::vec3 backwardsVector = Mathf::get_reverse_direction_vector(_scene.cameraEye, _scene.cameraTarget);
 	glm::vec3 rightVector = Mathf::get_rotated_vector(-90.f, glm::vec3(0.f), forwardVector);
@@ -77,13 +76,19 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 	//	player->updateOrientation(glm::vec3(-3.f, 0.f, 0.f));
 	//}
 
+	float speed = 1.f;
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
+	{
+		speed *= 3.f;
+	}
 
 	player->updateOrientation(glm::vec3(deltaY * -0.1f, 0.f, 0.f));
 	player->updateOrientation(glm::vec3(0.f, deltaX * 0.1f, 0.f));
 
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		player->velocity += forward * 0.3f;
+		player->velocity += forward * 0.3f * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S))
 	{
@@ -96,6 +101,14 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_D))
 	{
 		player->velocity += right * -0.3f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_Q))
+	{
+		player->updateOrientation(glm::vec3(0.f, 0.f, -3.f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_E))
+	{
+		player->updateOrientation(glm::vec3(0.f, 0.f, 3.f));
 	}
 	//if (glfwGetKey(window, GLFW_KEY_A))
 	//{
