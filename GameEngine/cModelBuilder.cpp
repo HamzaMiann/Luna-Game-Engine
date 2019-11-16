@@ -8,6 +8,8 @@ using namespace rapidxml;
 
 void cModelBuilder::Build(Scene& scene, xml_node<>* node)
 {
+	printf("Loading models...\n");
+
 	scene.pVAOManager = cVAOManager::Instance();
 	scene.pModelLoader = cModelLoader::Instance();
 

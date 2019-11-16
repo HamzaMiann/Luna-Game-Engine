@@ -54,11 +54,13 @@ octree::octree_node* octree::_generate(int depth, glm::vec3 min, float length)
 
 void octree::generate_tree(glm::vec3 min, float length)
 {
+	printf("Generating octree...\n");
 	main_node = _generate(1, min, length);
 }
 
 void octree::attach_triangles(std::vector<sMeshTriangle> const& triangles)
 {
+	printf("Calculating AABB meshes. This may take a while...\n");
 	this->_attach(triangles, main_node);
 }
 
@@ -86,7 +88,7 @@ bool octree::_attach(std::vector<sMeshTriangle> const& triangles, octree::octree
 	}
 	else
 	{
-		printf("%d node\n", i++);
+		//printf("%d node\n", i++);
 		bool hasTriangles = false;
 		for (int i = 0; i < triangles.size(); ++i)
 		{

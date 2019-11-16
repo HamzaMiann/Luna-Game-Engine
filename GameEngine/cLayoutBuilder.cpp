@@ -22,6 +22,8 @@ void setXYZW(glm::vec4& vec4, xml_node<>* node)
 
 void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 {
+	printf("Building Game Objects...\n");
+
 	for (xml_node<>* object_node = node->first_node(); object_node; object_node = object_node->next_sibling())
 	{
 		cGameObject* ptr = nullptr;

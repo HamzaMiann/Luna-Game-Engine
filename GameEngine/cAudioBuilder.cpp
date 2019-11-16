@@ -6,6 +6,8 @@ using namespace rapidxml;
 
 void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
 {
+	printf("Building Audio Engine...\n");
+
 	scene.pAudioEngine = AudioEngine::Instance();
 	scene.pAudioEngine->Init();
 

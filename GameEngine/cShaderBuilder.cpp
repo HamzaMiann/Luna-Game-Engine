@@ -6,6 +6,8 @@ using namespace rapidxml;
 
 void cShaderBuilder::Build(Scene& scene, xml_node<>* node)
 {
+	printf("Compiling Shaders...\n");
+
 	for (xml_node<>* shader_node = node->first_node("Shader"); shader_node; shader_node = shader_node->next_sibling("Shader"))
 	{
 		std::string vertShaderFile = shader_node->first_node("Vertex")->first_attribute("file")->value();

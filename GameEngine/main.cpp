@@ -28,8 +28,8 @@
 #include "cModelLoader.h"
 #include "AudioEngine.hpp"
 #include "cAudioInputHandler.h"
-#include "octree.h"
 #include "TextureManager/cBasicTextureManager.h"
+#include "cParticleEffect.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -43,28 +43,9 @@ iInputHandler* pInputHandler;
 cBasicTextureManager* textureManager;
 
 void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p);
+void DrawParticle(sParticle* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p);
 
-void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
-{
-	if (node == nullptr) return;
-
-	if (!node->AABB->contains(obj->pos)) return;
-
-	glUniform1i(glGetUniformLocation(scene->Shaders[obj->shaderName], "isWater"),
-				false);
-
-	//if (!node->has_nodes)
-	{
-		objPtr->pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
-		objPtr->scale = node->AABB->length / 2.f;
-
-		DrawObject(objPtr, ratio, v, p);
-	}
-
-	for (int i = 0; i < 8; ++i)
-		DrawOctree(obj, node->nodes[i], objPtr, ratio, v, p);
-
-}
+void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p);
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -236,6 +217,8 @@ int main(void)
 	}*/
 
 	cGameObject* ship = scene->vecGameObjects[0];
+	sLight* light1 = scene->pLightManager->Lights[0];
+	sLight* light2 = scene->pLightManager->Lights[1];
 
 	for (unsigned int i = 0; i < scene->vecGameObjects.size(); ++i)
 	{
@@ -246,6 +229,23 @@ int main(void)
 		}
 	}
 
+	cParticleEffect pEffect(30);
+	pEffect.min_time = .1f;
+	pEffect.max_time = 2.f;
+	pEffect.min_scale = 0.001f;
+	pEffect.max_scale = 0.02f;
+	pEffect.pos = glm::vec3(0.f, 20.f, 0.f);
+	pEffect.min_vel = glm::vec3(-.3f);
+	pEffect.max_vel = glm::vec3(.3f);
+	pEffect.Generate();
+
+	cGameObject* sphere = new cGameObject;
+	sphere->meshName = "sphere_particle";
+	sphere->shaderName = "particle";
+	sphere->inverseMass = 0.f;
+	sphere->texture[0] = ship->texture[0];
+	sphere->textureRatio[0] = 1.f;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		previous_time = current_time;
@@ -255,7 +255,7 @@ int main(void)
 		// Average out the delta time to avoid randoms
 		//-------------------------------------------------
 		time_buffer.push_back(delta_time);
-		if (time_buffer.size() > 10)
+		if (time_buffer.size() > 50)
 			time_buffer.erase(time_buffer.begin());
 
 		float average = 0.f;
@@ -298,7 +298,10 @@ int main(void)
 		phys->CheckCollisions(scene, delta_time);
 		phys->IntegrationStep(scene, delta_time);
 
-
+		// Update particles;
+		pEffect.Step(delta_time);
+		
+		// Update 3D audio engine
 		scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
 
 		// **************************************************
@@ -354,10 +357,13 @@ int main(void)
 							false);
 			}
 
-			if (objPtr->Collider == POINT)
+			if (objPtr->tag == "player")
 			{
-				/*glm::mat4 model = objPtr->ModelMatrix();
-				for (int n = 0; n < objPtr->CollidePoints.size(); ++n)
+				glm::mat4 model = objPtr->ModelMatrix();
+				light1->position = model * glm::vec4(ship->CollidePoints[0], 1.f);
+				light2->position = model * glm::vec4(ship->CollidePoints[1], 1.f);
+				pEffect.pos = ((light2->position - light1->position) / 2.f) + light1->position;
+				/*for (int n = 0; n < objPtr->CollidePoints.size(); ++n)
 				{
 					renderer->addLine(objPtr->pos,
 									  glm::vec3(model * glm::vec4(objPtr->CollidePoints[n], 1.f)),
@@ -372,8 +378,25 @@ int main(void)
 		// **************************************************
 
 
+		glUseProgram(scene->Shaders[sphere->shaderName]);
+		// set time
+		float time = glfwGetTime();
+		glUniform1f(glGetUniformLocation(scene->Shaders[sphere->shaderName], "iTime"), time);
 
-		DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
+		// set resolution
+		glUniform2f(glGetUniformLocation(scene->Shaders[sphere->shaderName], "iResolution"),
+					width,
+					height);
+		for (unsigned int n = 0; n < pEffect.particles.size(); ++n)
+		{
+			sParticle* particle = pEffect.particles[n];
+			sphere->pos = particle->pos;
+			sphere->scale = particle->scale;
+			DrawObject(sphere, ratio, v, p);
+		}
+
+
+		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************
@@ -572,4 +595,31 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 					   0);
 		glBindVertexArray(0);
 	}
+}
+
+void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
+{
+	if (node == nullptr) return;
+
+	if (!node->AABB->contains(obj->pos)) return;
+
+	glUniform1i(glGetUniformLocation(scene->Shaders[obj->shaderName], "isWater"),
+				false);
+
+	//if (!node->has_nodes)
+	{
+		objPtr->pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
+		objPtr->scale = node->AABB->length / 2.f;
+
+		DrawObject(objPtr, ratio, v, p);
+	}
+
+	for (int i = 0; i < 8; ++i)
+		DrawOctree(obj, node->nodes[i], objPtr, ratio, v, p);
+
+}
+
+void DrawParticle(sParticle* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
+{
+
 }

@@ -16,6 +16,8 @@ void _setXYZW(glm::vec4& vec4, xml_node<>* node)
 
 void cLightBuilder::Build(Scene& scene, xml_node<>* node)
 {
+	printf("Building Lights...\n");
+
 	scene.pLightManager = new cLightManager();
 	for (xml_node<>* light_node = node->first_node("Light"); light_node; light_node = light_node->next_sibling("Light"))
 	{

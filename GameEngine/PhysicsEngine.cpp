@@ -332,7 +332,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 
 								if (!tri) continue;
 
-								closestDistanceSoFar -= .5f;
+								closestDistanceSoFar -= .2f;
 
 								if (abs(closestDistanceSoFar) <= 0.05f)
 								{
@@ -342,7 +342,8 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 									pObj->velocity = glm::reflect(pObj->velocity * 0.2f, normal) /** friction*/;
 									pObj->isCollided |= true;
 
-									cDebugRenderer::Instance()->addLine(pObj->pos, point, glm::vec3(0.f, 0.f, 1.f), 2.f);
+									cDebugRenderer::Instance()->addLine(point, pObj->pos, glm::vec3(0.f, 0.f, 1.f), 2.f);
+									cDebugRenderer::Instance()->addTriangle(tri->first, tri->second, tri->third, glm::vec3(1.f, 1.f, 0.f), 2.0f);
 								}
 								else // check for raycast hits
 								{
@@ -383,8 +384,8 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 										pObj->velocity = glm::reflect(pObj->velocity * 0.2f, normal) /** friction*/;
 										pObj->isCollided |= true;
 
-										cDebugRenderer::Instance()->addLine(pObj->pos, point, glm::vec3(0.f, 0.f, 1.f), 2.f);
-
+										cDebugRenderer::Instance()->addLine(point, pObj->pos, glm::vec3(0.f, 0.f, 1.f), 2.f);
+										cDebugRenderer::Instance()->addTriangle(tri->first, tri->second, tri->third, glm::vec3(1.f, 1.f, 0.f), 2.0f);
 										//pObj->velocity *= 0.f;
 										//pObj->pos = raycast_hit;
 									}

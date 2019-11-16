@@ -174,6 +174,9 @@
     <ClCompile Include="cTextureBuilder.cpp">
       <Filter>SceneFactory\SceneBuilders</Filter>
     </ClCompile>
+    <ClCompile Include="cParticleEffect.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -290,20 +293,14 @@
     <ClInclude Include="TextureManager\CTextureFromBMP.h">
       <Filter>TextureManager</Filter>
     </ClInclude>
-    <ClInclude Include="cParticle.h">
-      <Filter>Particles</Filter>
-    </ClInclude>
     <ClInclude Include="cTextureBuilder.h">
       <Filter>SceneFactory\SceneBuilders</Filter>
     </ClInclude>
+    <ClInclude Include="cParticleEffect.h">
+      <Filter>Particles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\fragmentShader01.glsl">
-      <Filter>ShadersRendering\GLSL</Filter>
-    </None>
-    <None Include="assets\shaders\vertexShader01.glsl">
-      <Filter>ShadersRendering\GLSL</Filter>
-    </None>
     <None Include="assets\shaders\water_vert.glsl">
       <Filter>ShadersRendering\GLSL</Filter>
     </None>
@@ -314,6 +311,18 @@
       <Filter>ShadersRendering\GLSL</Filter>
     </None>
     <None Include="assets\shaders\holo_vert.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\specular_frag.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\specular_vert.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\particle_vert.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\particle_frag.glsl">
       <Filter>ShadersRendering\GLSL</Filter>
     </None>
   </ItemGroup>
