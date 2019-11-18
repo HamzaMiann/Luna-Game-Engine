@@ -180,6 +180,7 @@ int main(void)
 	bounds->colour = glm::vec4(1.f, 0.f, 0.f, 1.f);
 	bounds->meshName = "cube";
 	bounds->tag = "AABB";
+	bounds->shaderName = "basic";
 	bounds->isWireframe = true;
 	bounds->inverseMass = 0.f;
 	bounds->uniformColour = true;
@@ -250,11 +251,10 @@ int main(void)
 	{
 		previous_time = current_time;
 		current_time = (float)glfwGetTime();
-		delta_time = current_time - previous_time;
 
 		// Average out the delta time to avoid randoms
 		//-------------------------------------------------
-		time_buffer.push_back(delta_time);
+		time_buffer.push_back(current_time - previous_time);
 		if (time_buffer.size() > 50)
 			time_buffer.erase(time_buffer.begin());
 
@@ -320,6 +320,7 @@ int main(void)
 		v = glm::lookAt(scene->cameraEye,
 						scene->cameraTarget,
 						scene->upVector);
+
 
 		int lastShader = -1;
 		
@@ -396,7 +397,8 @@ int main(void)
 		}
 
 
-		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
+		
+		DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************
@@ -606,7 +608,7 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 	glUniform1i(glGetUniformLocation(scene->Shaders[obj->shaderName], "isWater"),
 				false);
 
-	//if (!node->has_nodes)
+	if (!node->has_nodes)
 	{
 		objPtr->pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
 		objPtr->scale = node->AABB->length / 2.f;

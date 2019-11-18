@@ -60,13 +60,6 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 
 void main()  
 {
-	
-	if (isUniform)
-	{
-		pixelColour.rgb = diffuseColour.rgb;
-		pixelColour.a = 1.0f;
-		return;
-	}
 
 	vec3 tex0_RGB = texture( textSamp00, fUVx2.st ).rgb;
 	vec3 tex1_RGB = texture( textSamp01, fUVx2.st ).rgb;
@@ -77,12 +70,12 @@ void main()
 	float specular = length((1 - tex1_RGB)) / length(vec3(1));	// specular texture value
 	vec3 tangent_normal = (tex2_RGB * 2.0) - 1.0;				// normal texture value
 	vec3 bitangent_normal = cross(tangent_normal, fNormal.xyz);
-	float ambient = length(normalize(tex3_RGB));				// ambient occlusion texture value
+	float ambient = length(normalize(tex1_RGB));				// ambient occlusion texture value
 
-	vec3 worldSpaceNormal = vec3(tangent_normal.r * tangent_normal.xyz + tangent_normal.b * fNormal.xyz + tangent_normal.g * bitangent_normal.xyz);
+	vec3 worldSpaceNormal = fNormal.xyz;//vec3(tangent_normal.r * tangent_normal.xyz + tangent_normal.b * fNormal.xyz + tangent_normal.g * bitangent_normal.xyz);
 
 	vec4 materialColour = diffuseColour;
-	vec4 specColour = vec4(vec3(1.0) * specular, 30.0);
+	vec4 specColour = vec4(vec3(0.0) * specular, 30.0);
 
 	vec4 outColour = calcualteLightContrib( texRGB.rgb, worldSpaceNormal.xyz, 
 	                                        fVertWorldLocation.xyz, specColour );

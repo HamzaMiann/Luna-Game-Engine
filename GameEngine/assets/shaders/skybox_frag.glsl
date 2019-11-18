@@ -15,15 +15,16 @@ uniform vec4 eyeLocation;
 uniform bool isUniform;
 
 // Texture
-uniform sampler2D textSamp00;	// Main Texture
-uniform sampler2D textSamp01;	// Specular Map
-uniform sampler2D textSamp02;	// Normal Map
-uniform sampler2D textSamp03;	// Ambient Occlusion map
+uniform sampler2D textSamp00;
+uniform sampler2D textSamp01;
+uniform sampler2D textSamp02;
+uniform sampler2D textSamp03;
 uniform vec4 tex_0_3_ratio;		// x = 0, y = 1, z = 2, w = 3
 
 
 // Globals
 in float fiTime;
+in float fisWater;
 uniform vec2 iResolution;
 
 
@@ -57,6 +58,16 @@ uniform sLight theLights[LIGHT_BUFFER];
 
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular );
+float getFogFactor(float d);
+float rand(float s, float r) { return mod(mod(s, r + fiTime) * 112341, 1); }
+
+float GetFogValue() { return getFogFactor(distance(eyeLocation, fVertWorldLocation)); }
+vec4 GetRandValue() { return vec4(rand(gl_FragCoord.x, fVertWorldLocation.x), rand(gl_FragCoord.y, fVertWorldLocation.y), rand(gl_FragCoord.z, fVertWorldLocation.z), 1); }
+vec4 GetSineColValue() { return vec4(sin(gl_FragCoord.x/iResolution.x), sin(gl_FragCoord.y/iResolution.y), cos(gl_FragCoord.z), 1); }
+vec4 GetTimeColValue(vec2 uv) { return vec4(0.5 + 0.5*cos(fiTime+uv.xyx+vec3(0,2,4)), 1.0); }
+
+float random (in vec2 st);
+float noise (in vec2 st);
 
 void main()  
 {
@@ -65,6 +76,7 @@ void main()
 	{
 		pixelColour.rgb = diffuseColour.rgb;
 		pixelColour.a = 1.0f;
+		//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetFogValue());
 		return;
 	}
 
@@ -73,23 +85,46 @@ void main()
 	vec3 tex2_RGB = texture( textSamp02, fUVx2.st ).rgb;
 	vec3 tex3_RGB = texture( textSamp03, fUVx2.st ).rgb;
 		
-	vec3 texRGB = tex0_RGB;
-	float specular = length((1 - tex1_RGB)) / length(vec3(1));	// specular texture value
-	vec3 tangent_normal = (tex2_RGB * 2.0) - 1.0;				// normal texture value
-	vec3 bitangent_normal = cross(tangent_normal, fNormal.xyz);
-	float ambient = length(normalize(tex3_RGB));				// ambient occlusion texture value
-
-	vec3 worldSpaceNormal = vec3(tangent_normal.r * tangent_normal.xyz + tangent_normal.b * fNormal.xyz + tangent_normal.g * bitangent_normal.xyz);
+	vec3 texRGB =   ( tex_0_3_ratio.x * tex0_RGB ) 
+				  + ( tex_0_3_ratio.y * tex1_RGB )
+				  + ( tex_0_3_ratio.z * tex2_RGB )
+				  + ( tex_0_3_ratio.w * tex3_RGB );
 
 	vec4 materialColour = diffuseColour;
-	vec4 specColour = vec4(vec3(1.0) * specular, 30.0);
+	vec4 specColour = specularColour;
 
-	vec4 outColour = calcualteLightContrib( texRGB.rgb, worldSpaceNormal.xyz, 
+//	vec4 outColour = calcualteLightContrib( materialColour.rgb, fNormal.xyz, 
+//	                                        fVertWorldLocation.xyz, specColour );
+
+	vec4 outColour = calcualteLightContrib( texRGB.rgb, fNormal.xyz, 
 	                                        fVertWorldLocation.xyz, specColour );
 						
-	pixelColour = outColour * ambient;
+	pixelColour = outColour;
 
+
+	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetFogValue());
+	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetRandValue());
+	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetSineColValue());
+	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetTimeColValue(gl_FragCoord.xy/iResolution.xy));
+	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), noise(fVertWorldLocation.xy));
+
+	//pixelColour.rgb = vec3(noise(fVertWorldLocation.xy * fiTime));
 	pixelColour.a = diffuseColour.a;
+	//pixelColour.a = diffuseColour.a;
+
+	//pixelColour = 1 - pixelColour;
+
+	if (fisWater == 1.f)
+	{
+		float angle = dot(normalize(eyeLocation - fVertWorldLocation), normalize(fNormal));
+		pixelColour.a -= abs(angle) / 10.f;
+	}
+
+//	if (abs(length(tex0_RGB.rgb) - length(texture(textSamp00, fUVx2.st - 0.002))) > 0.9)
+//	{
+//		pixelColour.rgb = vec3(0);
+//	}
+
 	
 } // end main
 
@@ -241,4 +276,44 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 	finalObjectColour.a = 1.0f;
 	
 	return finalObjectColour;
+}
+
+
+float getFogFactor(float d)
+{
+    const float FogMax = 80.0;
+    const float FogMin = 30.0;
+
+    if (d>=FogMax) return 1;
+    if (d<=FogMin) return 0;
+
+    return 1 - (FogMax - d) / (FogMax - FogMin);
+}
+
+float random (in vec2 st) {
+    return fract(sin(dot(st.xy,
+                         vec2(12.9898,78.233)))
+                 * 43758.5453123);
+}
+
+float noise (in vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    // Smooth Interpolation
+
+    // Cubic Hermine Curve.  Same as SmoothStep()
+    vec2 u = f*f*(3.0-2.0*f);
+    // u = smoothstep(0.,1.,f);
+
+    // Mix 4 coorners percentages
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
 }

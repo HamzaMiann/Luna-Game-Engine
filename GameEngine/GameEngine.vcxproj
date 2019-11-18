@@ -237,14 +237,18 @@
     <ClInclude Include="TextureManager\CTextureFromBMP.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\basic_frag.glsl" />
+    <None Include="assets\shaders\basic_vert.glsl" />
+    <None Include="assets\shaders\bump_frag.glsl" />
+    <None Include="assets\shaders\bump_vert.glsl" />
     <None Include="assets\shaders\holo_frag.glsl" />
     <None Include="assets\shaders\particle_frag.glsl" />
     <None Include="assets\shaders\particle_vert.glsl" />
+    <None Include="assets\shaders\skybox_frag.glsl" />
+    <None Include="assets\shaders\skybox_vert.glsl" />
     <None Include="assets\shaders\specular_frag.glsl" />
     <None Include="assets\shaders\specular_vert.glsl" />
     <None Include="assets\shaders\holo_vert.glsl" />
-    <None Include="assets\shaders\water_frag.glsl" />
-    <None Include="assets\shaders\water_vert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\scenes\water.scene.xml">

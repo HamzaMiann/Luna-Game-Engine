@@ -1,6 +1,17 @@
 
 
 #include "octree.h"
+#include <thread>
+#define DEPTH 5
+
+void _octree_attach_triangles(std::vector<sMeshTriangle>* triangles, octree* tree, unsigned int from, unsigned int to)
+{
+	for (from; from < to; ++from)
+	{
+		tree->attach_triangles_by_node(*triangles, tree->main_node->nodes[from]);
+	}
+	printf("Finished :D\n");
+}
 
 octree::octree_node* octree::_generate(int depth, glm::vec3 min, float length)
 {
@@ -58,16 +69,53 @@ void octree::generate_tree(glm::vec3 min, float length)
 	main_node = _generate(1, min, length);
 }
 
-void octree::attach_triangles(std::vector<sMeshTriangle> const& triangles)
+void octree::attach_triangles(std::vector<sMeshTriangle>* triangles)
 {
 	printf("Calculating AABB meshes. This may take a while...\n");
-	this->_attach(triangles, main_node);
+	//this->_attach(triangles, main_node);
+	std::thread thread1(_octree_attach_triangles, triangles, this, 0, 3);
+	std::thread thread2(_octree_attach_triangles, triangles, this, 3, 6);
+	std::thread thread3(_octree_attach_triangles, triangles, this, 6, 8);
+
+	printf("joining thread1...\n");
+	if (!thread1.joinable()) exit(1);
+	thread1.join();
+	printf("joining thread2...\n");
+	if (!thread2.joinable()) exit(1);
+	thread2.join();
+	printf("joining thread3...\n");
+	if (!thread3.joinable()) exit(1);
+	thread3.join();
+	printf("Done!...\n");
+
+	main_node->has_nodes = true;
+	main_node->has_triangles = true;
+
+	/*int i = 0;
+	for (; i < 8; ++i)
+	{
+		threads[i] = new std::thread(_octree_attach_triangles, triangles, this, main_node->nodes[i]);
+	}
+	i = 0;
+	for (; i < 8; ++i)
+	{
+		if (threads[i])
+			threads[i]->join();
+		main_node->has_triangles |= main_node->nodes[i]->has_triangles;
+		main_node->has_nodes |= main_node->nodes[i]->has_triangles;
+		delete threads[i];
+	}*/
+
 }
 
-int i = 0;
+bool octree::attach_triangles_by_node(std::vector<sMeshTriangle> const& triangles, octree::octree_node* node)
+{
+	return this->_attach(triangles, node);
+}
+
 bool octree::_attach(std::vector<sMeshTriangle> const& triangles, octree::octree_node* node)
 {
-	if (node->has_nodes)
+	if (node && node->has_nodes)
 	{
 		bool hasTriangles = false;
 		for (int i = 0; i < 8; ++i)
@@ -86,7 +134,7 @@ bool octree::_attach(std::vector<sMeshTriangle> const& triangles, octree::octree
 		}
 		return hasTriangles;
 	}
-	else
+	else if (node)
 	{
 		//printf("%d node\n", i++);
 		bool hasTriangles = false;
@@ -131,6 +179,7 @@ bool octree::_attach(std::vector<sMeshTriangle> const& triangles, octree::octree
 		node->has_triangles = hasTriangles;
 		return hasTriangles || node->triangles.size() > 0;
 	}
+	return false;
 }
 
 octree::octree_node::~octree_node()

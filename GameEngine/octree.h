@@ -6,8 +6,6 @@
 #include "cMesh.h"
 
 
-#define DEPTH 5
-
 class octree
 {
 public:
@@ -29,7 +27,9 @@ public:
 	~octree() {}
 
 	void generate_tree(glm::vec3 min, float length);
-	void attach_triangles(std::vector<sMeshTriangle> const& triangles);
+	void attach_triangles(std::vector<sMeshTriangle>* triangles);
+
+	bool attach_triangles_by_node(std::vector<sMeshTriangle> const& triangles, octree::octree_node* node);
 
 	octree_node* find_node(glm::vec3 const& point);
 

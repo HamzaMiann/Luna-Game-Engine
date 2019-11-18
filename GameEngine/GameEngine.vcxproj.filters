@@ -301,12 +301,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\water_vert.glsl">
-      <Filter>ShadersRendering\GLSL</Filter>
-    </None>
-    <None Include="assets\shaders\water_frag.glsl">
-      <Filter>ShadersRendering\GLSL</Filter>
-    </None>
     <None Include="assets\shaders\holo_frag.glsl">
       <Filter>ShadersRendering\GLSL</Filter>
     </None>
@@ -323,6 +317,24 @@
       <Filter>ShadersRendering\GLSL</Filter>
     </None>
     <None Include="assets\shaders\particle_frag.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\bump_frag.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\bump_vert.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\basic_frag.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\basic_vert.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\skybox_frag.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\skybox_vert.glsl">
       <Filter>ShadersRendering\GLSL</Filter>
     </None>
   </ItemGroup>

@@ -21,6 +21,7 @@ bool cModelLoader::LoadPlyModel(
 	std::string filename,
 	cMesh &theMesh)				// Note the "&"
 {
+	std::string AABB_file = "assets/models/Terrain_XYZ_n_uv.ply";
 
 	std::ifstream theFile( filename.c_str() );
 	if ( ! theFile.is_open() )
@@ -79,7 +80,7 @@ bool cModelLoader::LoadPlyModel(
 		theFile >> tempVertex.nx >> tempVertex.ny >> tempVertex.nz;
 		theFile >> tempVertex.u >> tempVertex.v;
 
-		if (filename == "assets/models/Terrain_XYZ_n_uv.ply")
+		if (filename == AABB_file)
 		{
 			if (tempVertex.x < theMesh.min.x) theMesh.min.x = tempVertex.x;
 			if (tempVertex.y < theMesh.min.y) theMesh.min.y = tempVertex.y;
@@ -129,7 +130,7 @@ bool cModelLoader::LoadPlyModel(
 		theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
 	}
 
-	if (filename == "assets/models/Terrain_XYZ_n_uv.ply")
+	if (filename == AABB_file)
 	{
 		if (theMesh.min.x < min.x) min.x = theMesh.min.x;
 		if (theMesh.min.y < min.y) min.y = theMesh.min.y;
