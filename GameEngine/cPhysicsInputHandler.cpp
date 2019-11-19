@@ -12,6 +12,14 @@ float lerp(float v0, float v1, float t)
 {
 	return (1 - t) * v0 + t * v1;
 }
+glm::vec3 lerp(glm::vec3 v0, glm::vec3 v1, float t)
+{
+	return glm::vec3(
+		lerp(v0.x, v1.x, t),
+		lerp(v0.y, v1.y, t),
+		lerp(v0.z, v1.z, t)
+	);
+}
 float clamp(float x, float lowerlimit, float upperlimit)
 {
 	if (x < lowerlimit)
@@ -32,17 +40,27 @@ float smoothstep(float edge0, float edge1, float x)
 
 float ychange = 0.f, xchange = 0.f, zchange = 0.f;
 
+cPhysicsInputHandler::cPhysicsInputHandler(Scene& scene, GLFWwindow* window) : _scene(scene)
+{
+	previousX = 0;
+	previousY = 0;
+	this->_window = window;
+	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	player = _scene.vecGameObjects[0];
+}
+
+cPhysicsInputHandler::~cPhysicsInputHandler()
+{
+	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
 void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 {
-	cGameObject* player = _scene.vecGameObjects[0];
-
 	
-	glm::vec3 forwardVector = Mathf::get_direction_vector(_scene.cameraEye, _scene.cameraTarget);
+	/*glm::vec3 forwardVector = Mathf::get_direction_vector(_scene.cameraEye, _scene.cameraTarget);
 	glm::vec3 backwardsVector = Mathf::get_reverse_direction_vector(_scene.cameraEye, _scene.cameraTarget);
 	glm::vec3 rightVector = Mathf::get_rotated_vector(-90.f, glm::vec3(0.f), forwardVector);
-	glm::vec3 leftVector = Mathf::get_rotated_vector(90.f, glm::vec3(0.f), forwardVector);
-
-	
+	glm::vec3 leftVector = Mathf::get_rotated_vector(90.f, glm::vec3(0.f), forwardVector);*/
 
 	//_scene.upVector = normalize(glm::cross(forwardVector, rightVector));
 
@@ -68,11 +86,10 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 	{
 		previousX = x;
 		previousY = y;
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		return;
 	}
 
-	printf("%f, %f\n", x, y);
+	//printf("%f, %f\n", x, y);
 
 	_scene.cameraTarget = player->pos + forward;
 	_scene.cameraEye = player->pos - forward * 0.7f;
@@ -124,8 +141,8 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 		zchange = lerp(zchange, 0.f, 0.1f);
 	}
 
-	player->updateOrientation(glm::vec3(-ychange * 0.5f, 0.f, 0.f));
-	player->updateOrientation(glm::vec3(0.f, xchange * 0.5f, 0.f));
+	player->updateOrientation(glm::vec3(-ychange * 0.05f, 0.f, 0.f));
+	player->updateOrientation(glm::vec3(0.f, xchange * 0.05f, 0.f));
 	player->updateOrientation(glm::vec3(0.f, 0.f, zchange));
 	//if (glfwGetKey(window, GLFW_KEY_A))
 	//{

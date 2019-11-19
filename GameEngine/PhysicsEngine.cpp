@@ -10,6 +10,8 @@
 #include <algorithm>
 using namespace std;
 
+#define PDEBUG
+//#define ADVANCED_DEBUG
 
 // Alias to a type "existing type" "new type name"
 typedef glm::vec3 Point;
@@ -351,10 +353,10 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 
 								if (!tri) continue;
 								if (glm::dot(pObj->velocity, normal) > 0) continue;
-
+#ifdef PDEBUG
 								cDebugRenderer::Instance()->addLine(point, closestPoint, glm::vec3(0.f, 1.f, 1.f), delta_time);
 								cDebugRenderer::Instance()->addTriangle(tri->first, tri->second, tri->third, glm::vec3(1.f, 1.f, 0.f), delta_time);
-
+#endif
 								//closestDistanceSoFar -= .2f;
 
 
@@ -363,9 +365,10 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 
 									pObj->velocity = glm::reflect(pObj->velocity * 0.2f, normal) /** friction*/;
 									pObj->isCollided |= true;
-
+#ifdef PDEBUG
 									cDebugRenderer::Instance()->addLine(point, closestPoint, glm::vec3(1.f, 0.f, 0.f), 2.f);
 									cDebugRenderer::Instance()->addTriangle(tri->first, tri->second, tri->third, glm::vec3(1.f, 0.f, 0.f), 2.0f);
+#endif
 								}
 								else // check for raycast hits
 								{
@@ -386,14 +389,16 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 									if (IntersectLineTriangle(point, next_pos, tri->first, tri->second, tri->third, raycast_hit))
 									{
 										glm::vec3 world_space_hit = barycentric_to_worldspace(tri, raycast_hit);
-										if (glm::distance(world_space_hit, point) <= 1.f)
+										if (glm::distance(world_space_hit, point) <= 0.3f)
 										{
 
 											pObj->velocity = glm::reflect(pObj->velocity * 0.2f, normal);
 											pObj->isCollided |= true;
 
+#ifdef PDEBUG
 											cDebugRenderer::Instance()->addLine(point, world_space_hit, glm::vec3(0.f, 0.f, 1.f), 2.f);
 											cDebugRenderer::Instance()->addTriangle(tri->first, tri->second, tri->third, glm::vec3(0.f, 0.f, 1.f), 2.0f);
+#endif
 										}
 									}
 								}
@@ -485,8 +490,9 @@ const sMeshTriangle* FindClosestPointToTriangles(std::vector<const sMeshTriangle
 	{
 		const sMeshTriangle* curTriangle = triangles[i];
 
-		//cDebugRenderer::Instance()->addTriangle(curTriangle->first, curTriangle->second, curTriangle->third, glm::vec3(1.f, 1.f, 0.f), 0.1f);
-
+#ifdef ADVANCED_DEBUG
+		cDebugRenderer::Instance()->addTriangle(curTriangle->first, curTriangle->second, curTriangle->third, glm::vec3(1.f, 1.f, 0.f), 0.1f);
+#endif
 		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
 			point,
 			curTriangle->first,

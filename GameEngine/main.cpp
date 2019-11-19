@@ -67,7 +67,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 		else
 		{
-			pInputHandler = new cPhysicsInputHandler(*scene);
+			pInputHandler = new cPhysicsInputHandler(*scene, window);
 		}
 	}
 
@@ -146,7 +146,36 @@ int main(void)
 	glfwSwapInterval(1);
 
 	// Load scene from file
-	scene = Scene::LoadFromXML("water.scene.xml");
+	cGameObject* pSkyBoxSphere = new cGameObject();
+
+	textureManager = cBasicTextureManager::Instance();
+	std::string errorString;
+	textureManager->SetBasePath("assets/textures/cubemaps/");
+	if (textureManager->CreateCubeTextureFromBMPFiles("space",
+													  "SpaceBox_right1_posX.bmp", "SpaceBox_left2_negX.bmp",
+													  "SpaceBox_top3_posY.bmp", "SpaceBox_bottom4_negY.bmp",
+													  "SpaceBox_front5_posZ.bmp", "SpaceBox_back6_negZ.bmp", true, errorString))
+	{
+		scene = Scene::LoadFromXML("water.scene.xml");
+
+		pSkyBoxSphere->pos = glm::vec3(0.f);
+		pSkyBoxSphere->meshName = "sphere";
+		pSkyBoxSphere->shaderName = "basic";
+		pSkyBoxSphere->tag = "skybox";
+		pSkyBoxSphere->pos = glm::vec3(0.0f, 0.f, 0.0f);
+		pSkyBoxSphere->scale = 7000.0f;
+		pSkyBoxSphere->texture[0] = "Pizza.bmp";
+		pSkyBoxSphere->textureRatio[0] = 1.0f;
+		pSkyBoxSphere->inverseMass = 0.0f;
+		pSkyBoxSphere->gravityScale = 0.f;
+		scene->vecGameObjects.push_back(pSkyBoxSphere);
+		std::cout << "Space skybox loaded" << std::endl;
+	}
+	else
+	{
+		std::cout << "OH NO! Error while loading cubemap :( " << errorString << std::endl;
+		exit(1);
+	}
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -154,7 +183,7 @@ int main(void)
 	PhysicsEngine* phys = PhysicsEngine::Instance();
 	phys->GenerateAABB(scene);
 
-	pInputHandler = new cPhysicsInputHandler(*scene);
+	pInputHandler = new cPhysicsInputHandler(*scene, window);
 
 
 	cDebugRenderer* renderer = cDebugRenderer::Instance();
@@ -208,29 +237,21 @@ int main(void)
 
 	scene->cameraEye = glm::vec3(-39.f, 2.f, -63.f);
 
-	// Texture stuff
-	textureManager = cBasicTextureManager::Instance();
-	/*textureManager->SetBasePath("assets/textures");
-
-	if (!textureManager->Create2DTextureFromBMPFile("WhatTheWhat.bmp", true))
-	{
-		std::cout << "Didn't load texture" << std::endl;
-	}*/
 
 	cGameObject* ship = scene->vecGameObjects[0];
 	sLight* light1 = scene->pLightManager->Lights[0];
 	sLight* light2 = scene->pLightManager->Lights[1];
 
-	for (unsigned int i = 0; i < scene->vecGameObjects.size(); ++i)
+	/*for (unsigned int i = 0; i < scene->vecGameObjects.size(); ++i)
 	{
 		cGameObject* ptr = scene->vecGameObjects[i];
 		if (ptr->meshName == "sphere")
 		{
 			ship->CollidePoints.push_back(ptr->pos);
 		}
-	}
+	}*/
 
-	cParticleEffect pEffect(30);
+	cParticleEffect pEffect(50);
 	pEffect.min_time = .1f;
 	pEffect.max_time = 2.f;
 	pEffect.min_scale = 0.001f;
@@ -246,6 +267,8 @@ int main(void)
 	sphere->inverseMass = 0.f;
 	sphere->texture[0] = ship->texture[0];
 	sphere->textureRatio[0] = 1.f;
+
+	
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -304,6 +327,7 @@ int main(void)
 		// Update 3D audio engine
 		scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
 
+		pSkyBoxSphere->pos = scene->cameraEye;
 		// **************************************************
 		// **************************************************
 		glm::mat4 p, v;
@@ -398,7 +422,7 @@ int main(void)
 
 
 		
-		DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
+		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************
@@ -480,7 +504,31 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 {
 	GLint shaderProgID = scene->Shaders[objPtr->shaderName];
 
-	SetUpTextureBindingsForObject(objPtr, shaderProgID);
+	GLint bIsSkyBox_UL = glGetUniformLocation(shaderProgID, "isSkybox");
+	if (objPtr->tag != "skybox")
+	{
+		glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
+		// Don't draw back facing triangles (default)
+		glCullFace(GL_BACK);
+		SetUpTextureBindingsForObject(objPtr, shaderProgID);
+	}
+	else
+	{
+		// Draw the back facing triangles. 
+		// Because we are inside the object, so it will force a draw on the "back" of the sphere 
+		glCullFace(GL_FRONT);
+		//glCullFace(GL_FRONT_AND_BACK);
+
+		glUniform1f(bIsSkyBox_UL, (float)GL_TRUE);
+
+		GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
+		glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+
+		// Tie the texture units to the samplers in the shader
+		GLint skyBoxSampler_UL = glGetUniformLocation(shaderProgID, "skyBox");
+		glUniform1i(skyBoxSampler_UL, 26);	// Texture unit 26
+	}
 
 	glm::mat4 m, mvp;
 

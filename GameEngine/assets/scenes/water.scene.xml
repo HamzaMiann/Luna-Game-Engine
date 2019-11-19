@@ -38,7 +38,7 @@
 		<Texture name="Mercury_Bump.bmp"/>
 	</Textures>
 	<Models>
-		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
+		<Model file="Sphere_Radius_1_XYZ_n_uv.ply" friendlyName="sphere" shader="basic"/>
 		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere_static" shader="hologram"/>
 		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere_particle" shader="particle"/>
 		<Model file="cube_XYZ_N_UV.ply" friendlyName="cube" shader="basic"/>

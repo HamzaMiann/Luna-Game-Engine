@@ -13,6 +13,7 @@ uniform vec4 eyeLocation;
 
 // Used to draw debug (or unlit) objects
 uniform bool isUniform;
+uniform bool isSkybox;
 
 // Texture
 uniform sampler2D textSamp00;
@@ -20,6 +21,7 @@ uniform sampler2D textSamp01;
 uniform sampler2D textSamp02;
 uniform sampler2D textSamp03;
 uniform vec4 tex_0_3_ratio;		// x = 0, y = 1, z = 2, w = 3
+uniform samplerCube skyBox;
 
 
 // Globals
@@ -76,7 +78,20 @@ void main()
 	{
 		pixelColour.rgb = diffuseColour.rgb;
 		pixelColour.a = 1.0f;
-		//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetFogValue());
+		return;
+	}
+
+	if ( isSkybox )
+	{
+		//pixelColour.rgba = vec4(1.f); return;
+		// I sample the skybox using the normal from the surface
+		vec3 skyColour = texture( skyBox, fNormal.xyz ).rgb;
+		pixelColour.rgb = skyColour.rgb;
+//		pixelColour.rgb *= 0.01f;
+//		pixelColour.rgb = fNormal.xyz;
+		pixelColour.a = 1.0f;				// NOT transparent
+		
+		pixelColour.rgb *= 1.5f;		// Make it a little brighter
 		return;
 	}
 

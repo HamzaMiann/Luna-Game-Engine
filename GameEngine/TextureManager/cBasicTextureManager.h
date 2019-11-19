@@ -7,6 +7,8 @@
 
 class cBasicTextureManager
 {
+private:
+	cBasicTextureManager() {}
 public:
 	bool Create2DTextureFromBMPFile( std::string textureFileName, bool bGenerateMIPMap );
 
@@ -31,8 +33,6 @@ public:
 		return &instance;
 	}
 
-	~cBasicTextureManager() {}
-
 private:
 	std::string m_basePath;
 	std::string m_lastError;
@@ -41,7 +41,7 @@ private:
 
 	std::map< std::string, CTextureFromBMP* > m_map_TexNameToTexture;
 
-	cBasicTextureManager() {}
+
 };
 
 #endif

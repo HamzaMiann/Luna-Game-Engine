@@ -81,6 +81,12 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				{
 					setXYZ(ptr->specColour, property_node);
 				}
+				else if (propName == "CollidePoint")
+				{
+					glm::vec3 point;
+					setXYZ(point, property_node);
+					ptr->CollidePoints.push_back(point);
+				}
 				else if (propName == "Collider")
 				{
 					std::string collider = property_node->value();
