@@ -43,7 +43,11 @@ AudioEngine::Sound::Sound(FMOD::Channel* _channel_init, FMOD::Sound* _sound_init
 
 	_details_3d._attached = attach_to;
 	_details_3d._pos = { _details_3d._attached->pos.x, _details_3d._attached->pos.y, _details_3d._attached->pos.z };
-	_details_3d._velocity = { _details_3d._attached->velocity.x, _details_3d._attached->velocity.y, _details_3d._attached->velocity.z };
+	_details_3d._velocity = {
+		_details_3d._attached->GetVelocity().x,
+		_details_3d._attached->GetVelocity().y,
+		_details_3d._attached->GetVelocity().z
+	};
 }
 
 AudioEngine::Sound::~Sound()
@@ -60,7 +64,10 @@ bool AudioEngine::Sound::update_3d()
 	if (_details_3d._attached)
 	{
 		_details_3d._pos = { -_details_3d._attached->pos.x, _details_3d._attached->pos.y, _details_3d._attached->pos.z };
-		_details_3d._velocity = { _details_3d._attached->velocity.x, _details_3d._attached->velocity.y, _details_3d._attached->velocity.z };
+		_details_3d._velocity = {
+			_details_3d._attached->GetVelocity().x,
+			_details_3d._attached->GetVelocity().y,
+			_details_3d._attached->GetVelocity().z };
 		if (_channelGroup)
 		{
 			FMOD_RESULT status = _channelGroup->set3DAttributes(&_details_3d._pos, &_details_3d._velocity);

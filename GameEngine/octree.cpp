@@ -71,7 +71,6 @@ void octree::generate_tree(glm::vec3 min, float length)
 
 void octree::attach_triangles(std::vector<sMeshTriangle>* triangles)
 {
-	printf("Calculating AABB meshes. This may take a while...\n");
 	//this->_attach(triangles, main_node);
 	std::thread thread1(_octree_attach_triangles, triangles, this, 0, 3);
 	std::thread thread2(_octree_attach_triangles, triangles, this, 3, 6);

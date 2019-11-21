@@ -13,6 +13,10 @@ cGameObject::cGameObject()
 	this->texture[1] = "";
 	this->texture[2] = "";
 	this->texture[3] = "";
+
+	this->force = glm::vec3(0.f);
+	this->acceleration = glm::vec3(0.f);
+	this->velocity = glm::vec3(0.f);
 }
 
 cGameObject::~cGameObject()
@@ -99,4 +103,33 @@ glm::vec3 cGameObject::getEulerAngle(void)
 	glm::vec3 EulerAngle = glm::eulerAngles(this->rotation);
 
 	return EulerAngle;
+}
+
+void cGameObject::AddForce(glm::vec3 newtons, float delta_time)
+{
+	force += newtons;
+	acceleration = force * inverseMass;
+	velocity += acceleration / delta_time;
+}
+
+void cGameObject::SetForce(glm::vec3 newtons, float delta_time)
+{
+	force = newtons;
+	acceleration = force * inverseMass;
+	velocity = acceleration / delta_time;
+}
+
+glm::vec3 cGameObject::GetForce()
+{
+	return force;
+}
+
+glm::vec3 cGameObject::GetVelocity()
+{
+	return velocity;
+}
+
+glm::vec3 cGameObject::GetAcceleration()
+{
+	return acceleration;
 }

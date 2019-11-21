@@ -168,6 +168,7 @@
     <ClCompile Include="cLightBuilder.cpp" />
     <ClCompile Include="cLightController.cpp" />
     <ClCompile Include="cLightManager.cpp" />
+    <ClCompile Include="cLowpassFilter.cpp" />
     <ClCompile Include="cModelBuilder.cpp" />
     <ClCompile Include="cModelLoader.cpp" />
     <ClCompile Include="COpenGLError.cpp" />
@@ -197,6 +198,7 @@
   <ItemGroup>
     <ClInclude Include="cAABB.h" />
     <ClInclude Include="AudioEngine.hpp" />
+    <ClInclude Include="cLowpassFilter.h" />
     <ClInclude Include="cParticleEffect.h" />
     <ClInclude Include="cTextureBuilder.h" />
     <ClInclude Include="fmod_helper.h" />

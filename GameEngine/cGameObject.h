@@ -23,8 +23,13 @@ class cGameObject
 {
 private:
 	glm::quat rotation;		// Orientation as a quaternion
+	
+	glm::vec3 force;
 
 public:
+	glm::vec3 velocity;
+	glm::vec3 acceleration;
+
 	cGameObject();
 	
 	virtual ~cGameObject();
@@ -36,18 +41,14 @@ public:
 
 	glm::vec3  pos = glm::vec3(0.f, 0.f, 0.f);
 	glm::vec3  previousPos = glm::vec3(0.f, 0.f, 0.f);
-	//glm::vec3  rotation = glm::vec3(0.f, 0.f, 0.f);
 	glm::vec4  colour = glm::vec4(1.f, 1.f, 1.f, 1.f);
 	float scale = 1.f;
 
 	glm::vec3 specColour = glm::vec3(.5f, .5f, .5f);
 	float specIntensity = 1.f;
-	bool customSpecularity = false;
 	bool uniformColour = false;
 	bool isWireframe = false;
 
-	glm::vec3 velocity = glm::vec3(0.f, 0.f, 0.f);
-	glm::vec3 acceleration = glm::vec3(0.f, 0.f, 0.f);
 	float gravityScale = 0.f;
 	float inverseMass = 1.f;
 
@@ -76,6 +77,13 @@ public:
 	void updateOrientation(glm::vec3 EulerAngleDegreesXYZ);
 	void updateOrientation(glm::quat qAngle);
 	glm::vec3 getEulerAngle(void);
+
+	void AddForce(glm::vec3 newtons, float delta_time);
+	void SetForce(glm::vec3 newtons, float delta_time);
+
+	glm::vec3 GetForce();
+	glm::vec3 GetVelocity();
+	glm::vec3 GetAcceleration();
 
 };
 

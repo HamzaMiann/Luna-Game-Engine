@@ -49,7 +49,7 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				}
 				else if (propName == "Rotation")
 				{
-					glm::vec3 orientation;
+					glm::vec3 orientation(0.f);
 					setXYZ(orientation, property_node);
 					ptr->setOrientation(orientation);
 				}
@@ -59,11 +59,15 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				}
 				else if (propName == "Velocity")
 				{
-					setXYZ(ptr->velocity, property_node);
+					glm::vec3 vel = ptr->GetVelocity();
+					setXYZ(vel, property_node);
+					ptr->velocity = vel;
 				}
 				else if (propName == "Acceleration")
 				{
-					setXYZ(ptr->acceleration, property_node);
+					glm::vec3 accel = ptr->GetAcceleration();
+					setXYZ(accel, property_node);
+					ptr->acceleration = accel;
 				}
 				else if (propName == "Scale")
 				{
@@ -83,7 +87,7 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				}
 				else if (propName == "CollidePoint")
 				{
-					glm::vec3 point;
+					glm::vec3 point(0.f);
 					setXYZ(point, property_node);
 					ptr->CollidePoints.push_back(point);
 				}

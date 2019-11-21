@@ -30,6 +30,7 @@
 #include "cAudioInputHandler.h"
 #include "TextureManager/cBasicTextureManager.h"
 #include "cParticleEffect.h"
+#include "cLowpassFilter.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -157,7 +158,6 @@ int main(void)
 													  "SpaceBox_front5_posZ.bmp", "SpaceBox_back6_negZ.bmp", true, errorString))
 	{
 		scene = Scene::LoadFromXML("water.scene.xml");
-
 		pSkyBoxSphere->pos = glm::vec3(0.f);
 		pSkyBoxSphere->meshName = "sphere";
 		pSkyBoxSphere->shaderName = "basic";
@@ -193,11 +193,7 @@ int main(void)
 	phys->renderer = renderer;
 #endif
 
-	float current_time = (float)glfwGetTime();
-	float previous_time = (float)glfwGetTime();
-	float delta_time = 0.f;
-
-	std::vector<float> time_buffer;
+	
 
 
 	glm::vec3 min = scene->pModelLoader->min;
@@ -214,48 +210,20 @@ int main(void)
 	bounds->inverseMass = 0.f;
 	bounds->uniformColour = true;
 	//scene->vecGameObjects.push_back(bounds);
-
-	//cGameObject* sphere = scene->vecGameObjects[0];
-
-
-	/*for (int q = 0; q < 20; ++q)
-	{
-		cGameObject* c = new cGameObject;
-		c->meshName = sphere->meshName;
-		c->scale = sphere->scale;
-		c->colour = sphere->colour;
-		c->Collider = SPHERE;
-		c->inverseMass = sphere->inverseMass;
-		c->gravityScale = 1.f;
-		c->pos = glm::vec3(
-			Mathf::randInRange(-100.f, 100.f),
-			Mathf::randInRange(25.f, 50.f),
-			Mathf::randInRange(-100.f, 100.f)
-		);
-		scene->vecGameObjects.push_back(c);
-	}*/
-
-	scene->cameraEye = glm::vec3(-39.f, 2.f, -63.f);
+	
+	
+	//scene->cameraEye = glm::vec3(-39.f, 2.f, -63.f);
 
 
 	cGameObject* ship = scene->vecGameObjects[0];
 	sLight* light1 = scene->pLightManager->Lights[0];
 	sLight* light2 = scene->pLightManager->Lights[1];
 
-	/*for (unsigned int i = 0; i < scene->vecGameObjects.size(); ++i)
-	{
-		cGameObject* ptr = scene->vecGameObjects[i];
-		if (ptr->meshName == "sphere")
-		{
-			ship->CollidePoints.push_back(ptr->pos);
-		}
-	}*/
-
-	cParticleEffect pEffect(50);
+	cParticleEffect pEffect(200);
 	pEffect.min_time = .1f;
-	pEffect.max_time = 2.f;
+	pEffect.max_time = 3.f;
 	pEffect.min_scale = 0.001f;
-	pEffect.max_scale = 0.02f;
+	pEffect.max_scale = 0.03f;
 	pEffect.pos = glm::vec3(0.f, 20.f, 0.f);
 	pEffect.min_vel = glm::vec3(-.3f);
 	pEffect.max_vel = glm::vec3(.3f);
@@ -268,16 +236,21 @@ int main(void)
 	sphere->texture[0] = ship->texture[0];
 	sphere->textureRatio[0] = 1.f;
 
-	
+	cLowpassFilter* filter = cLowpassFilter::Instance();
+	float current_time = (float)glfwGetTime();
+	float previous_time = (float)glfwGetTime();
+	float delta_time = 0.f;
 
 	while (!glfwWindowShouldClose(window))
 	{
 		previous_time = current_time;
 		current_time = (float)glfwGetTime();
 
+		delta_time = filter->add_time(current_time - previous_time);
+
 		// Average out the delta time to avoid randoms
 		//-------------------------------------------------
-		time_buffer.push_back(current_time - previous_time);
+		/*time_buffer.push_back(current_time - previous_time);
 		if (time_buffer.size() > 50)
 			time_buffer.erase(time_buffer.begin());
 
@@ -289,7 +262,7 @@ int main(void)
 		}
 		average /= (float)k;
 
-		delta_time = average;
+		delta_time = average;*/
 		//------------------------------------------------
 
 		// Handle key inputs
@@ -317,6 +290,7 @@ int main(void)
 		//glDisable( GL_BLEND );
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+
 		// Update the objects' physics
 		phys->CheckCollisions(scene, delta_time);
 		phys->IntegrationStep(scene, delta_time);
@@ -325,7 +299,7 @@ int main(void)
 		pEffect.Step(delta_time);
 		
 		// Update 3D audio engine
-		scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
+		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
 
 		pSkyBoxSphere->pos = scene->cameraEye;
 		// **************************************************
@@ -351,6 +325,21 @@ int main(void)
 		// Loop to draw everything in the scene
 		for (int index = 0; index != scene->vecGameObjects.size(); index++)
 		{
+			if (index < scene->vecGameObjects.size() - 1)
+			{
+				glm::vec3 ObjA = scene->vecGameObjects[index]->pos;
+				glm::vec3 ObjB = scene->vecGameObjects[index + 1]->pos;
+
+				//			if ( glm::distance( ObjA, ::g_pFlyCamera->eye ) < glm::distance( ObjB, ::g_pFlyCamera->eye ) )
+				if (glm::distance2(ObjA, scene->cameraEye) < glm::distance2(ObjB, scene->cameraEye))
+				{
+					// Out of order, so swap the positions...
+					cGameObject* pTemp = scene->vecGameObjects[index];
+					scene->vecGameObjects[index] = scene->vecGameObjects[index + 1];
+					scene->vecGameObjects[index + 1] = pTemp;
+				}
+			}
+
 			cGameObject* objPtr = scene->vecGameObjects[index];
 
 			GLint shaderProgID = scene->Shaders[objPtr->shaderName];

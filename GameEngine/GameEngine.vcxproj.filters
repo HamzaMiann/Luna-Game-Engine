@@ -61,6 +61,12 @@
     <Filter Include="Particles">
       <UniqueIdentifier>{2f3967a1-8a18-4c94-8fad-f6575f268d55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{fb9bda39-b92d-4c37-9bcc-5aa3415b2edf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LowpassFilter">
+      <UniqueIdentifier>{df56137b-7c65-442d-af5b-c025a514f384}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">
@@ -168,14 +174,17 @@
     <ClCompile Include="TextureManager\C24BitBMPpixel.cpp">
       <Filter>TextureManager</Filter>
     </ClCompile>
-    <ClCompile Include="cGameObject.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="cTextureBuilder.cpp">
       <Filter>SceneFactory\SceneBuilders</Filter>
     </ClCompile>
     <ClCompile Include="cParticleEffect.cpp">
       <Filter>Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="cGameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="cLowpassFilter.cpp">
+      <Filter>LowpassFilter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,9 +199,6 @@
     </ClInclude>
     <ClInclude Include="cModelLoader.h">
       <Filter>ModelLoading</Filter>
-    </ClInclude>
-    <ClInclude Include="cGameObject.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsEngine.h">
       <Filter>Math_Physics</Filter>
@@ -298,6 +304,12 @@
     </ClInclude>
     <ClInclude Include="cParticleEffect.h">
       <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="cGameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="cLowpassFilter.h">
+      <Filter>LowpassFilter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

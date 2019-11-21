@@ -5,6 +5,7 @@
 #include "cGameObject.h"
 #include "cDebugRenderer.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "cLowpassFilter.h"
 
 glm::vec3 originalBallPosition = glm::vec3(0.0f, 6.0f, 0.0f);
 
@@ -46,7 +47,15 @@ cPhysicsInputHandler::cPhysicsInputHandler(Scene& scene, GLFWwindow* window) : _
 	previousY = 0;
 	this->_window = window;
 	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	player = _scene.vecGameObjects[0];
+	player = nullptr;
+	for (int i = 0; i < scene.vecGameObjects.size(); ++i)
+	{
+		if (scene.vecGameObjects[i]->tag == "player")
+		{
+			player = _scene.vecGameObjects[i];
+			break;
+		}
+	}
 }
 
 cPhysicsInputHandler::~cPhysicsInputHandler()
@@ -110,23 +119,23 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 	xchange = lerp(xchange, deltaX, 0.2f);
 	ychange = lerp(ychange, deltaY, 0.2f);
 
-	
+	cLowpassFilter* filter = cLowpassFilter::Instance();
 
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		player->velocity += forward * 0.1f * speed;
+		player->AddForce(forward * 0.1f * speed, filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_S))
 	{
-		player->velocity += forward * -0.1f;
+		player->AddForce(forward * -0.1f * speed, filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_A))
 	{
-		player->velocity += right * 0.05f;
+		player->AddForce(right * 0.05f, filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_D))
 	{
-		player->velocity += right * -0.05f;
+		player->AddForce(right * -0.05f, filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q))
 	{
@@ -165,14 +174,14 @@ void cPhysicsInputHandler::key_callback(GLFWwindow* window, int key, int scancod
 {
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
-		_scene.vecGameObjects[1]->velocity += _scene.upVector * 2.f;
+		//_scene.vecGameObjects[1]->velocity += _scene.upVector * 2.f;
 		//_scene.pAudioEngine->PlaySound("bounce");
 	}
 
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
 		_scene.vecGameObjects[1]->pos = originalBallPosition;
-		_scene.vecGameObjects[1]->velocity = glm::vec3(0.f);
+		//_scene.vecGameObjects[1]->velocity = glm::vec3(0.f);
 		//_scene.pAudioEngine->PlaySound("respawn");
 	}
 }
