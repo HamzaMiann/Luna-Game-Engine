@@ -123,19 +123,19 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		player->AddForce(forward * 0.1f * speed, filter->delta_time());
+		player->AddForce(forward * 1.f * speed * filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_S))
 	{
-		player->AddForce(forward * -0.1f * speed, filter->delta_time());
+		player->AddForce(forward * -1.f * speed * filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_A))
 	{
-		player->AddForce(right * 0.05f, filter->delta_time());
+		player->AddForce(right * 0.5f * filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_D))
 	{
-		player->AddForce(right * -0.05f, filter->delta_time());
+		player->AddForce(right * -0.5f * filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q))
 	{

@@ -37,6 +37,8 @@
 
 unsigned int input_id = 0;
 
+bool is_paused = false;
+
 Scene* scene;
 GLFWwindow* window;
 iInputHandler* pInputHandler;
@@ -70,6 +72,11 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			pInputHandler = new cPhysicsInputHandler(*scene, window);
 		}
+	}
+
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		is_paused = !is_paused;
 	}
 
 	if (pInputHandler) pInputHandler->key_callback(window, key, scancode, action, mods);
@@ -246,7 +253,14 @@ int main(void)
 		previous_time = current_time;
 		current_time = (float)glfwGetTime();
 
-		delta_time = filter->add_time(current_time - previous_time);
+		if (!is_paused)
+		{
+			delta_time = filter->add_time(current_time - previous_time);
+		}
+		else
+		{
+			delta_time = 0.f;
+		}
 
 		// Average out the delta time to avoid randoms
 		//-------------------------------------------------

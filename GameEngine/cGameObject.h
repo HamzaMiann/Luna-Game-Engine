@@ -23,12 +23,11 @@ class cGameObject
 {
 private:
 	glm::quat rotation;		// Orientation as a quaternion
-	
+	glm::vec3 velocity;
+	glm::vec3 acceleration;
 	glm::vec3 force;
 
 public:
-	glm::vec3 velocity;
-	glm::vec3 acceleration;
 
 	cGameObject();
 	
@@ -78,12 +77,15 @@ public:
 	void updateOrientation(glm::quat qAngle);
 	glm::vec3 getEulerAngle(void);
 
-	void AddForce(glm::vec3 newtons, float delta_time);
-	void SetForce(glm::vec3 newtons, float delta_time);
-
+	void AddForce(glm::vec3 newtons);
+	void SetForce(glm::vec3 newtons);
 	glm::vec3 GetForce();
+
 	glm::vec3 GetVelocity();
+	void SetVelocity(glm::vec3 vel);
+	
 	glm::vec3 GetAcceleration();
+	void SetAcceleration(glm::vec3 accel);
 
 };
 

@@ -21,7 +21,7 @@ public:
 	~PhysicsEngine() {}
 
 	const glm::vec3 Gravity = glm::vec3(0.f, -9.8f, 0.f);
-	const float drag = 0.95f;
+	const float drag = 0.7f;
 	const float friction = 0.7f;
 
 	cDebugRenderer* renderer;

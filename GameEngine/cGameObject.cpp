@@ -105,18 +105,14 @@ glm::vec3 cGameObject::getEulerAngle(void)
 	return EulerAngle;
 }
 
-void cGameObject::AddForce(glm::vec3 newtons, float delta_time)
+void cGameObject::AddForce(glm::vec3 newtons)
 {
-	force += newtons;
-	acceleration = force * inverseMass;
-	velocity += acceleration / delta_time;
+	this->force += newtons;
 }
 
-void cGameObject::SetForce(glm::vec3 newtons, float delta_time)
+void cGameObject::SetForce(glm::vec3 newtons)
 {
-	force = newtons;
-	acceleration = force * inverseMass;
-	velocity = acceleration / delta_time;
+	this->force = newtons;
 }
 
 glm::vec3 cGameObject::GetForce()
@@ -129,7 +125,17 @@ glm::vec3 cGameObject::GetVelocity()
 	return velocity;
 }
 
+void cGameObject::SetVelocity(glm::vec3 vel)
+{
+	velocity = vel;
+}
+
 glm::vec3 cGameObject::GetAcceleration()
 {
 	return acceleration;
+}
+
+void cGameObject::SetAcceleration(glm::vec3 accel)
+{
+	acceleration = accel;
 }

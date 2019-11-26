@@ -13,7 +13,7 @@ using namespace rapidxml;
 
 xml_document<> layout_doc;
 
-void _ApplyXYZW(xml_node<>* node, glm::vec4& vec)
+void _ApplyXYZW(xml_node<>* node, glm::vec4 vec)
 {
 	xml_attribute<>* attr = new xml_attribute<>();
 	char* valueBuffer;
@@ -42,7 +42,7 @@ void _ApplyXYZW(xml_node<>* node, glm::vec4& vec)
 	node->append_attribute(attr);
 }
 
-void _ApplyXYZ(xml_node<>* node, glm::vec3& vec)
+void _ApplyXYZ(xml_node<>* node, glm::vec3 vec)
 {
 	xml_attribute<>* attr = new xml_attribute<>();
 	char* valueBuffer;
@@ -139,12 +139,12 @@ bool Scene::SaveLayout()
 
 			prop = new xml_node<>(node_type::node_element);
 			prop->name("Velocity");
-			_ApplyXYZ(prop, obj->velocity);
+			_ApplyXYZ(prop, obj->GetVelocity());
 			node->append_node(prop);
 
 			prop = new xml_node<>(node_type::node_element);
 			prop->name("Acceleration");
-			_ApplyXYZ(prop, obj->acceleration);
+			_ApplyXYZ(prop, obj->GetAcceleration());
 			node->append_node(prop);
 
 			prop = new xml_node<>(node_type::node_element);

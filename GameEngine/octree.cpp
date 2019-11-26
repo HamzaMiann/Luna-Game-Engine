@@ -2,7 +2,7 @@
 
 #include "octree.h"
 #include <thread>
-#define DEPTH 5
+#define DEPTH 6
 
 void _octree_attach_triangles(std::vector<sMeshTriangle>* triangles, octree* tree, unsigned int from, unsigned int to)
 {

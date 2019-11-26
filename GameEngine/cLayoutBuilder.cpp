@@ -61,13 +61,13 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				{
 					glm::vec3 vel = ptr->GetVelocity();
 					setXYZ(vel, property_node);
-					ptr->velocity = vel;
+					ptr->SetVelocity(vel);
 				}
 				else if (propName == "Acceleration")
 				{
 					glm::vec3 accel = ptr->GetAcceleration();
 					setXYZ(accel, property_node);
-					ptr->acceleration = accel;
+					ptr->SetAcceleration(accel);
 				}
 				else if (propName == "Scale")
 				{
