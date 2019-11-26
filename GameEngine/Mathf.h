@@ -49,9 +49,36 @@ namespace Mathf
 		return (from - to);
 	}
 
+	static float lerp(float v0, float v1, float t)
+	{
+		return (1 - t) * v0 + t * v1;
+	}
+	static glm::vec3 lerp(glm::vec3 v0, glm::vec3 v1, float t)
+	{
+		return glm::vec3(
+			lerp(v0.x, v1.x, t),
+			lerp(v0.y, v1.y, t),
+			lerp(v0.z, v1.z, t)
+		);
+	}
+	static float clamp(float x, float lowerlimit, float upperlimit)
+	{
+		if (x < lowerlimit)
+			x = lowerlimit;
+		if (x > upperlimit)
+			x = upperlimit;
+		return x;
+	}
+	static float smoothstep(float edge0, float edge1, float x)
+	{
+		// Scale, bias and saturate x to 0..1 range
+		x = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+		// Evaluate polynomial
+		return x * x * (3 - 2 * x);
+	}
 
 	template <class T>
-	T randInRange(T min, T max)
+	static T randInRange(T min, T max)
 	{
 		double value =
 			min + static_cast <double> (rand())

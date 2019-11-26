@@ -9,33 +9,7 @@
 
 glm::vec3 originalBallPosition = glm::vec3(0.0f, 6.0f, 0.0f);
 
-float lerp(float v0, float v1, float t)
-{
-	return (1 - t) * v0 + t * v1;
-}
-glm::vec3 lerp(glm::vec3 v0, glm::vec3 v1, float t)
-{
-	return glm::vec3(
-		lerp(v0.x, v1.x, t),
-		lerp(v0.y, v1.y, t),
-		lerp(v0.z, v1.z, t)
-	);
-}
-float clamp(float x, float lowerlimit, float upperlimit)
-{
-	if (x < lowerlimit)
-		x = lowerlimit;
-	if (x > upperlimit)
-		x = upperlimit;
-	return x;
-}
-float smoothstep(float edge0, float edge1, float x)
-{
-	// Scale, bias and saturate x to 0..1 range
-	x = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
-	// Evaluate polynomial
-	return x * x * (3 - 2 * x);
-}
+
 
 
 
@@ -116,8 +90,8 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 		speed *= 3.f;
 	}
 
-	xchange = lerp(xchange, deltaX, 0.2f);
-	ychange = lerp(ychange, deltaY, 0.2f);
+	xchange = Mathf::lerp(xchange, deltaX, 0.2f);
+	ychange = Mathf::lerp(ychange, deltaY, 0.2f);
 
 	cLowpassFilter* filter = cLowpassFilter::Instance();
 
@@ -139,15 +113,15 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q))
 	{
-		zchange = lerp(zchange, -3.f, 0.1f);
+		zchange = Mathf::lerp(zchange, -3.f, 0.1f);
 	}
 	else if (glfwGetKey(window, GLFW_KEY_E))
 	{
-		zchange = lerp(zchange, 3.f, 0.1f);
+		zchange = Mathf::lerp(zchange, 3.f, 0.1f);
 	}
 	else
 	{
-		zchange = lerp(zchange, 0.f, 0.1f);
+		zchange = Mathf::lerp(zchange, 0.f, 0.1f);
 	}
 
 	player->updateOrientation(glm::vec3(-ychange * 0.05f, 0.f, 0.f));

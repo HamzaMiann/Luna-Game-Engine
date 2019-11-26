@@ -182,6 +182,7 @@
     <ClCompile Include="cTextureBuilder.cpp" />
     <ClCompile Include="cVAOManager.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Mathf.cpp" />
     <ClCompile Include="octree.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="main.cpp" />
