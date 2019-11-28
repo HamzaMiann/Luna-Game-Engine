@@ -37,8 +37,8 @@ void main()
 
 	vec3 tex1_RGB = texture( textSamp01, vUVx2.st + iTime / 20.f).rgb;
 	vec3 tex2_RGB = texture( textSamp01, vec2(vUVx2.t + (-iTime / 40.f), vUVx2.s)).rgb;
-	vertPosition.y += length(tex1_RGB) * 2.f;
-	vertPosition.y += length(tex2_RGB) * 2.f;
+	vertPosition.y += length(tex1_RGB) * 1.5f;
+	vertPosition.y += length(tex2_RGB) * 1.5f;
 //	vertPosition.y += noise(vec2(vertPosition.x + iTime, vertPosition.z + iTime));
 
 	gl_Position = matMVP * vec4(vertPosition.xyz, 1.0);

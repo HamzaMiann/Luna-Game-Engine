@@ -67,6 +67,9 @@
     <Filter Include="LowpassFilter">
       <UniqueIdentifier>{df56137b-7c65-442d-af5b-c025a514f384}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua">
+      <UniqueIdentifier>{7f97ad17-9237-4c88-a4c6-1ead897a4b31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">
@@ -188,6 +191,9 @@
     </ClCompile>
     <ClCompile Include="Mathf.cpp">
       <Filter>Math_Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="cLuaBrain.cpp">
+      <Filter>Lua</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +319,9 @@
     </ClInclude>
     <ClInclude Include="cLowpassFilter.h">
       <Filter>LowpassFilter</Filter>
+    </ClInclude>
+    <ClInclude Include="cLuaBrain.h">
+      <Filter>Lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

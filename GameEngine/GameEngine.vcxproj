@@ -110,7 +110,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>glfw3.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;fmod_vc.lib;lua5.3.5-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y "$(ProjectDir)lib\$(Configuration)64\fmod.dll" "$(OutDir)"</Command>
@@ -148,7 +148,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glfw3.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;fmod_vc.lib;lua5.3.5-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y "$(ProjectDir)lib\$(Configuration)64\fmod.dll" "$(OutDir)"</Command>
@@ -169,6 +169,7 @@
     <ClCompile Include="cLightController.cpp" />
     <ClCompile Include="cLightManager.cpp" />
     <ClCompile Include="cLowpassFilter.cpp" />
+    <ClCompile Include="cLuaBrain.cpp" />
     <ClCompile Include="cModelBuilder.cpp" />
     <ClCompile Include="cModelLoader.cpp" />
     <ClCompile Include="COpenGLError.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="cAABB.h" />
     <ClInclude Include="AudioEngine.hpp" />
     <ClInclude Include="cLowpassFilter.h" />
+    <ClInclude Include="cLuaBrain.h" />
     <ClInclude Include="cParticleEffect.h" />
     <ClInclude Include="cTextureBuilder.h" />
     <ClInclude Include="fmod_helper.h" />

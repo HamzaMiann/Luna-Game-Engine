@@ -1,9 +1,17 @@
 
 #include "cLayoutBuilder.h"
 #include "cGameObject.h"
+#include "cLuaBrain.h"
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 using namespace rapidxml;
+
+std::string trim(std::string& str)
+{
+	size_t first = str.find_first_not_of(' ');
+	size_t last = str.find_last_not_of(' ');
+	return str.substr(first, (last - first + 1));
+}
 
 void setXYZ(glm::vec3& vec3, xml_node<>* node)
 {
@@ -84,6 +92,13 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				else if (propName == "SpecColour")
 				{
 					setXYZ(ptr->specColour, property_node);
+				}
+				else if (propName == "Lua")
+				{
+					ptr->lua_script = std::string(property_node->value());
+					ptr->lua_script = trim(ptr->lua_script);
+					ptr->brain->LoadScript(std::string(property_node->first_attribute("name")->value()),
+										   ptr->lua_script);
 				}
 				else if (propName == "CollidePoint")
 				{

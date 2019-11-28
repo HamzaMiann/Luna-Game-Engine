@@ -76,7 +76,7 @@ void main()
 	vec3 tex3i_RGB = texture( textSamp03, vec2(fUVx2.t + (-fiTime / 40.f), fUVx2.s) ).rgb;
 		
 	vec3 texRGB = mix(tex0_RGB, tex1_RGB, 0.5);
-	texRGB = mix(texRGB, vec3(0.f), 0.1);
+	texRGB = mix(texRGB, vec3(0.f), 0.2);
 	float specular = length((1 - tex3_RGB)) / length(vec3(1));	// specular texture value
 	vec3 tangent_normal = (tex2_RGB * 2.0) - 1.0;				// normal texture value
 	vec3 bitangent_normal = cross(tangent_normal, fNormal.xyz);

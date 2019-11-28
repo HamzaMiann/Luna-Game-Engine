@@ -92,6 +92,11 @@ void main()
 				  + ( tex_0_3_ratio.z * tex2_RGB )
 				  + ( tex_0_3_ratio.w * tex3_RGB );
 
+	if (length(texRGB) < 0.5f)
+	{
+		discard;
+	}
+
 	vec4 materialColour = diffuseColour;
 	vec4 specColour = specularColour;
 
@@ -114,14 +119,16 @@ void main()
 
 	//pixelColour = vec4(GetRandValue());
 
-	if (length(tex0_RGB.rgb) - length(texture(textSamp00, fUVx2.st - 0.002).rgb) > 0.1)
-	{
-		pixelColour = vec4(0, 0, 0, 1);
-	}
-	else
-	{
-		pixelColour = vec4(texRGB.rgb - GetRandValue().xyz * 0.7, 1.0);
-	}
+	pixelColour.xyz = mix(pixelColour.xyz, GetRandValue().xyz, 0.4);
+
+//	if (length(tex0_RGB.rgb) - length(texture(textSamp00, fUVx2.st - 0.002).rgb) > 0.1)
+//	{
+//		pixelColour = vec4(0, 0, 0, 1);
+//	}
+//	else
+//	{
+//		pixelColour = vec4(texRGB.rgb - GetRandValue().xyz * 0.7, 1.0);
+//	}
 
 	pixelColour.a = 0.6;
 

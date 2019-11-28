@@ -32,8 +32,6 @@ void main()
     mat4 matMVP = matProj * matView * matModel;
 
 	gl_Position = matMVP * vec4(vertPosition.xyz, 1.0);
-	//gl_Position.y += 0.01 / sin(iTime * 50.f);
-	//gl_Position.xy += noise(vertPosition.xy + iTime);
 	
 	// Vertex location in "world space"
 

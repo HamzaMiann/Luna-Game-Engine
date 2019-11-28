@@ -28,6 +28,7 @@
 #include "TextureManager/cBasicTextureManager.h"
 #include "cParticleEffect.h"
 #include "cLowpassFilter.h"
+#include "cLuaBrain.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -279,6 +280,7 @@ int main(void)
 
 		//glClearColor(0.7f, 0.85f, 1.f, 1.f);
 		//glClearColor(0.7f, 0.85f, 1.f, 1.f);
+		glClearColor(0.f, 0.f, 0.f, 1.f);
 
 		glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
 		//glDisable( GL_BLEND );
@@ -335,6 +337,8 @@ int main(void)
 			}
 
 			cGameObject* objPtr = scene->vecGameObjects[index];
+
+			objPtr->brain->Update(delta_time);
 
 			GLint shaderProgID = scene->Shaders[objPtr->shaderName];
 

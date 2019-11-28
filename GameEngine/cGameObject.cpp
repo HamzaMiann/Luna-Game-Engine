@@ -1,10 +1,15 @@
 
 #include "cGameObject.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "cLuaBrain.h"
 
+static unsigned int next_id = 0;
 
 cGameObject::cGameObject()
 {
+	id = next_id++;
+	brain = new cLuaBrain(this);
+
 	this->textureRatio[0] = 1.f;
 	this->textureRatio[1] = 0.f;
 	this->textureRatio[2] = 0.f;
@@ -21,6 +26,7 @@ cGameObject::cGameObject()
 
 cGameObject::~cGameObject()
 {
+	delete brain;
 }
 
 glm::mat4 cGameObject::ModelMatrix()

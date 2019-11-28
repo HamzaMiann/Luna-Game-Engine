@@ -8,6 +8,7 @@
 #include <vector>
 
 class Scene;
+class cLuaBrain;
 
 enum ColliderType
 {
@@ -32,6 +33,10 @@ public:
 	cGameObject();
 	
 	virtual ~cGameObject();
+
+	unsigned int id;
+	cLuaBrain* brain;
+	std::string lua_script;
 
 	std::string meshName = "";
 	std::string tag = "";
