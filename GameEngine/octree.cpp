@@ -10,7 +10,6 @@ void _octree_attach_triangles(std::vector<sMeshTriangle>* triangles, octree* tre
 	{
 		tree->attach_triangles_by_node(*triangles, tree->main_node->nodes[from]);
 	}
-	printf("Finished :D\n");
 }
 
 octree::octree_node* octree::_generate(int depth, glm::vec3 min, float length)
@@ -72,20 +71,19 @@ void octree::generate_tree(glm::vec3 min, float length)
 void octree::attach_triangles(std::vector<sMeshTriangle>* triangles)
 {
 	//this->_attach(triangles, main_node);
-	std::thread thread1(_octree_attach_triangles, triangles, this, 0, 3);
-	std::thread thread2(_octree_attach_triangles, triangles, this, 3, 6);
-	std::thread thread3(_octree_attach_triangles, triangles, this, 6, 8);
+	std::thread thread1(_octree_attach_triangles, triangles, this, 0, 2);
+	std::thread thread2(_octree_attach_triangles, triangles, this, 2, 4);
+	std::thread thread3(_octree_attach_triangles, triangles, this, 4, 6);
+	std::thread thread4(_octree_attach_triangles, triangles, this, 6, 8);
 
-	printf("joining thread1...\n");
 	if (!thread1.joinable()) exit(1);
 	thread1.join();
-	printf("joining thread2...\n");
 	if (!thread2.joinable()) exit(1);
 	thread2.join();
-	printf("joining thread3...\n");
 	if (!thread3.joinable()) exit(1);
 	thread3.join();
-	printf("Done!...\n");
+	if (!thread4.joinable()) exit(1);
+	thread4.join();
 
 	main_node->has_nodes = true;
 	main_node->has_triangles = true;

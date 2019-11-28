@@ -7,9 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <stdlib.h>		// c libs
-#include <stdio.h>		// c libs
-
 #include <iostream>
 #include <string>
 
@@ -62,7 +59,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		input_id++;
 		if (input_id % 3 == 0)
 		{
-			pInputHandler = new cLayoutController(*scene);
+			pInputHandler = new cPhysicsInputHandler(*scene, window);
 		}
 		else if (input_id % 3 == 1)
 		{
@@ -70,7 +67,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 		else
 		{
-			pInputHandler = new cPhysicsInputHandler(*scene, window);
+			pInputHandler = new cLayoutController(*scene);
 		}
 	}
 
@@ -262,23 +259,6 @@ int main(void)
 			delta_time = 0.f;
 		}
 
-		// Average out the delta time to avoid randoms
-		//-------------------------------------------------
-		/*time_buffer.push_back(current_time - previous_time);
-		if (time_buffer.size() > 50)
-			time_buffer.erase(time_buffer.begin());
-
-		float average = 0.f;
-		unsigned int k = 0;
-		for (; k < time_buffer.size(); ++k)
-		{
-			average += time_buffer[k];
-		}
-		average /= (float)k;
-
-		delta_time = average;*/
-		//------------------------------------------------
-
 		// Handle key inputs
 		HandleInput(window);
 
@@ -425,7 +405,7 @@ int main(void)
 
 
 		
-		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
+		DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 
 		 // **************************************************
 		// **************************************************

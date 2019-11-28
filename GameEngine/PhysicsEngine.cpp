@@ -11,7 +11,6 @@
 using namespace std;
 
 #define RK4
-
 //#define PDEBUG
 //#define ADVANCED_DEBUG
 
@@ -77,51 +76,42 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float delta_time)
 
 #else
 
-
-
-#ifdef PDEBUG
-		if (pObj->meshName == "ship")
-		{
-			pObj->AddForce(Gravity * pObj->gravityScale);
-			//pObj->AddForce(drag * (-pObj->GetForce()));
-		}
-		else
-		{
-			pObj->AddForce(Gravity * pObj->gravityScale);
-			//pObj->AddForce(drag * (-pObj->GetForce()));
-		}
-#else
+		// Gravity
 		pObj->AddForce(Gravity * delta_time * pObj->gravityScale);
-		pObj->AddForce(drag * (delta_time * -pObj->GetForce()));
-#endif
 
+		// Drag
+		pObj->AddForce(drag * (delta_time * -pObj->GetForce()));
+
+		// Set acceleration based on force
 		pObj->SetAcceleration(pObj->GetForce() * pObj->inverseMass);
 		
-		glm::vec3 vk1 = pObj->GetAcceleration() * delta_time;// (pObj->GetAcceleration() * (delta_time / 1.f) + pObj->GetVelocity());
-		//glm::vec3 vk2 = vk1 + vk1 * (delta_time / 2.f);
-		//glm::vec3 vk3 = (pObj->GetAcceleration() * (delta_time / 4.f) + pObj->GetVelocity());
-		//glm::vec3 vk4 = (pObj->GetAcceleration() * (delta_time / 2.f) + pObj->GetVelocity());
+		glm::vec3 vk1 = 0.f + pObj->GetAcceleration() * delta_time;
+		glm::vec3 pk1 = 0.f + pObj->GetVelocity() * delta_time;
+
+		glm::vec3 vk2 = 0.f + vk1 * (delta_time / 2.f);
+		glm::vec3 pk2 = 0.f + pk1 * (delta_time / 2.f);
+
+		glm::vec3 vk3 = 0.f + vk2 * (delta_time / 2.f);
+		glm::vec3 pk3 = 0.f + pk2 * (delta_time / 2.f);
+
+		glm::vec3 vk4 = 0.f + vk3 * (delta_time / 1.f);
+		glm::vec3 pk4 = 0.f + pk3 * (delta_time / 1.f);
+
 
 		pObj->SetVelocity(
 			pObj->GetVelocity() + 
 			(1.f * vk1 +
-			2.f * vk1 +
-			2.f * vk1 +
-			1.f * vk1) / 6.f
+			2.f * vk2 +
+			2.f * vk3 +
+			1.f * vk4) / 6.f
 		);
-
-		glm::vec3 pk1 = pObj->GetVelocity();// (pObj->GetVelocity() * (delta_time / 1.f) + pObj->pos);
-		//glm::vec3 pk2 = (pObj->GetVelocity() * (delta_time / -2.f) + pObj->pos);
-		//glm::vec3 pk3 = (pObj->GetVelocity() * (delta_time / 4.f) + pObj->pos);
-		//glm::vec3 pk4 = (pObj->GetVelocity() * (delta_time / 2.f) + pObj->pos);
 
 		pObj->pos = pObj->pos +
 			(1.f * pk1 +
-			 2.f * pk1 +
-			 2.f * pk1 +
-			 1.f * pk1) / 6.f;
+			 2.f * pk2 +
+			 2.f * pk3 +
+			 1.f * pk4) / 6.f;
 
-		//pObj->pos += pObj->GetVelocity() * delta_time;
 
 
 

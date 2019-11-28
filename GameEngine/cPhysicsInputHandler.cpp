@@ -83,11 +83,11 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 	float deltaX = previousX - x;
 	float deltaY = previousY - y;
 
-	float speed = .5f;
+	float speed = 1.f;
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
 	{
-		speed *= 3.f;
+		speed *= 3.5f;
 	}
 
 	xchange = Mathf::lerp(xchange, deltaX, 0.2f);
@@ -97,19 +97,19 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		player->AddForce(forward * 1.f * speed * filter->delta_time());
+		player->AddForce(forward * 1.f * speed);// *filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_S))
 	{
-		player->AddForce(forward * -1.f * speed * filter->delta_time());
+		player->AddForce(forward * -1.f * speed);// * filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_A))
 	{
-		player->AddForce(right * 0.5f * filter->delta_time());
+		player->AddForce(right * 0.5f);// * filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_D))
 	{
-		player->AddForce(right * -0.5f * filter->delta_time());
+		player->AddForce(right * -0.5f);// * filter->delta_time());
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q))
 	{

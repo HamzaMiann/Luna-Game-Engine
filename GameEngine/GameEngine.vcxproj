@@ -252,6 +252,8 @@
     <None Include="assets\shaders\specular_frag.glsl" />
     <None Include="assets\shaders\specular_vert.glsl" />
     <None Include="assets\shaders\holo_vert.glsl" />
+    <None Include="assets\shaders\water_frag.glsl" />
+    <None Include="assets\shaders\water_vert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\scenes\water.scene.xml">

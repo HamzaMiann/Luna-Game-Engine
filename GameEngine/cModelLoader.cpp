@@ -22,6 +22,7 @@ bool cModelLoader::LoadPlyModel(
 	cMesh &theMesh)				// Note the "&"
 {
 	std::string AABB_file = "assets/models/Terrain_XYZ_n_uv.ply";
+	//std::string AABB_file = "assets/models/Halo_Ring2_XYZ_N_UV.ply";
 
 	std::ifstream theFile( filename.c_str() );
 	if ( ! theFile.is_open() )
