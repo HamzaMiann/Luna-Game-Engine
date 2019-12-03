@@ -1,4 +1,4 @@
-#include "GLCommon.h"
+#include "Window.h"
 
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp> // glm::vec3
@@ -38,7 +38,7 @@ unsigned int input_id = 0;
 bool is_paused = false;
 
 Scene* scene;
-GLFWwindow* window;
+GLFWwindow* global::window = 0;
 iInputHandler* pInputHandler;
 
 cBasicTextureManager* textureManager;
@@ -139,7 +139,9 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "GLEngine", NULL, NULL);
+	global::window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "GLEngine", NULL, NULL);
+	GLFWwindow* window = global::window;
+
 	if (!window)
 	{
 		glfwTerminate();

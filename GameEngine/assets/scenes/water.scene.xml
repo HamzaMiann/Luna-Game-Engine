@@ -139,9 +139,6 @@
 			<IMass>1.0</IMass>
 			<Collider>POINT</Collider>
 			<Texture ratio="1.000000">Fighter_Ship_wings_diffuse.bmp</Texture>
-			<Texture ratio="0.000000"/>
-			<Texture ratio="0.000000"/>
-			<Texture ratio="0.000000"/>
 			<CollidePoint x="149.000000" y="9.100874" z="-945.526489"/>
 			<CollidePoint x="-167.000000" y="4.100874" z="-931.526489"/>
 			<CollidePoint x="-4.000000" y="9.100874" z="998.473511"/>
@@ -151,9 +148,16 @@
 			<CollidePoint x="-38.499893" y="235.695465" z="-227.095093"/>
 			<CollidePoint x="1.100004" y="136.794693" z="351.006378"/>
       <Lua name="first">
-        r, x, y, z = getPosition()
-        y = y + delta_time * 5.0
-        setPosition(x, y, z)
+        x, y, z = getForward()
+        speed = 1.0
+        if getKey("shift") == true then
+          speed = 3.5
+        end
+        if getKey("w") == true then
+          addForce(x * speed, y * speed, z * speed)
+        elseif getKey("s") == true then
+          addForce(-x, -y, -z)
+        end
       </Lua>
 		</GameObject>
     
@@ -247,8 +251,6 @@
 			<Collider>MESH</Collider>
 			<Texture ratio="0.000000">Halo_Roughtness.bmp</Texture>
 			<Texture ratio="1.000000">13736_Halo_Albedo.bmp</Texture>
-			<Texture ratio="0.000000"/>
-			<Texture ratio="0.000000"/>
 		</GameObject>
     
 		<GameObject mesh="sphere_static" tag="" shader="hologram">

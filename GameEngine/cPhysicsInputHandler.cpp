@@ -95,22 +95,23 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 
 	cLowpassFilter* filter = cLowpassFilter::Instance();
 
-	if (glfwGetKey(window, GLFW_KEY_W))
+	/*if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		player->AddForce(forward * 1.f * speed);// *filter->delta_time());
+		player->AddForce(forward * 1.f * speed);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S))
 	{
-		player->AddForce(forward * -1.f * speed);// * filter->delta_time());
-	}
+		player->AddForce(forward * -1.f * speed);
+	}*/
 	if (glfwGetKey(window, GLFW_KEY_A))
 	{
-		player->AddForce(right * 0.5f);// * filter->delta_time());
+		player->AddForce(right * 0.5f);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D))
 	{
-		player->AddForce(right * -0.5f);// * filter->delta_time());
+		player->AddForce(right * -0.5f);
 	}
+
 	if (glfwGetKey(window, GLFW_KEY_Q))
 	{
 		zchange = Mathf::lerp(zchange, -3.f, 0.1f);
@@ -127,16 +128,6 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 	player->updateOrientation(glm::vec3(-ychange * 0.05f, 0.f, 0.f));
 	player->updateOrientation(glm::vec3(0.f, xchange * 0.05f, 0.f));
 	player->updateOrientation(glm::vec3(0.f, 0.f, zchange));
-	//if (glfwGetKey(window, GLFW_KEY_A))
-	//{
-	//	//_scene.vecGameObjects[1]->velocity += rightVector * 0.01f;
-	//	player->updateOrientation(glm::vec3(0.f, 3.f, 0.f));
-	//}
-	//if (glfwGetKey(window, GLFW_KEY_D))
-	//{
-	//	player->updateOrientation(glm::vec3(0.f, -3.f, 0.f));
-	//	//_scene.vecGameObjects[1]->velocity += leftVector * 0.01f;
-	//}
 
 	previousX = x;
 	previousY = y;

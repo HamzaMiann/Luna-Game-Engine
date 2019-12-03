@@ -323,6 +323,9 @@
     <ClInclude Include="cLuaBrain.h">
       <Filter>Lua</Filter>
     </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>ShadersRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">

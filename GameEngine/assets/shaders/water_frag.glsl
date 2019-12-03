@@ -95,7 +95,8 @@ void main()
 	specular = normalize(mix(specular, length((1 - tex3i_RGB)) / length(vec3(1)), 0.5));
 
 	vec4 materialColour = diffuseColour;
-	vec4 specColour = vec4(vec3(1.0) * specular, 100.0);
+	vec4 specColour = vec4(vec3(1.0), 100.0);
+//	vec4 specColour = vec4(vec3(1.0) * specular, 100.0);
 
 	vec4 outColour = calcualteLightContrib( texRGB.rgb, worldSpaceNormal.xyz, 
 	                                        fVertWorldLocation.xyz, specColour );

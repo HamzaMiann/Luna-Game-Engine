@@ -9,15 +9,18 @@ extern "C" {
 
 #include <string>
 #include <vector>
-//#include "cGameObject.h"
 #include <map>
 
 // Forward declaration for cyclical reference
 class cGameObject;
+struct GLFWwindow;
 
 class cLuaBrain
 {
 public:
+	static cGameObject* current_GO;
+	static GLFWwindow* window;
+
 	cGameObject* gameObject;
 
 	// Init Lua and set callback functions
@@ -46,13 +49,15 @@ public:
 	// called "getObjectState" in lua
 	static int l_GetObjectState(lua_State* L);
 
+	static int l_GetKey(lua_State* L);
+
 	static int l_AddForce(lua_State* L);
 	static int l_GetForce(lua_State* L);
 
+	static int l_GetForward(lua_State* L);
+
 	static int l_GetVelocity(lua_State* L);
 	static int l_SetVelocity(lua_State* L);
-
-	static int l_GetKey(lua_State* L);
 
 	// Commands
 	static int l_MoveTo(lua_State* L);

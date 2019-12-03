@@ -1,11 +1,13 @@
 #include "cLuaBrain.h"
 
 #include <iostream>
-
+#include <locale>
 #include "cGameObject.h"
+#include "Window.h"
 
 
-static cGameObject* gameObject = 0;
+cGameObject* cLuaBrain::current_GO = 0;
+GLFWwindow* cLuaBrain::window = 0;
 
 cLuaBrain::cLuaBrain(cGameObject* obj)
 {
@@ -24,6 +26,24 @@ cLuaBrain::cLuaBrain(cGameObject* obj)
 
 	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_GetObjectState);
 	lua_setglobal(this->m_pLuaState, "getPosition");
+
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_GetKey);
+	lua_setglobal(this->m_pLuaState, "getKey");
+
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_AddForce);
+	lua_setglobal(this->m_pLuaState, "addForce");
+
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_GetForce);
+	lua_setglobal(this->m_pLuaState, "getForce");
+
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_GetForward);
+	lua_setglobal(this->m_pLuaState, "getForward");
+
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_GetVelocity);
+	lua_setglobal(this->m_pLuaState, "getVelocity");
+
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_SetVelocity);
+	lua_setglobal(this->m_pLuaState, "setVelocity");
 
 	return;
 }
@@ -68,7 +88,7 @@ void cLuaBrain::Update(float deltaTime)
 
 
 
-	::gameObject = this->gameObject;
+	current_GO = this->gameObject;
 	//	std::cout << "cLuaBrain::Update() called" << std::endl;
 	for (std::map< std::string /*name*/, std::string /*source*/>::iterator itScript =
 		 this->m_mapScripts.begin(); itScript != this->m_mapScripts.end(); itScript++)
@@ -128,7 +148,7 @@ void cLuaBrain::Update(float deltaTime)
 // Runs a script, but doesn't save it (originally used to set the ObjectID)
 void cLuaBrain::RunScriptImmediately(std::string script)
 {
-	::gameObject = this->gameObject;
+	current_GO = this->gameObject;
 	int error = luaL_loadstring(this->m_pLuaState,
 								script.c_str());
 
@@ -182,7 +202,7 @@ void cLuaBrain::RunScriptImmediately(std::string script)
 	//int objectID = (int)lua_tonumber(L, 1);	/* get argument */
 
 	// Exist? 
-	cGameObject* pGO = ::gameObject;// cLuaBrain::m_findObjectByID(objectID);
+	cGameObject* pGO = current_GO;// cLuaBrain::m_findObjectByID(objectID);
 
 	if (pGO == nullptr)
 	{	// No, it's invalid
@@ -191,16 +211,10 @@ void cLuaBrain::RunScriptImmediately(std::string script)
 		return 1;
 	}
 
-	// Object ID is valid
 	// Get the values that lua pushed and update object
 	pGO->pos.x = (float)lua_tonumber(L, 1);	/* get argument */
 	pGO->pos.y = (float)lua_tonumber(L, 2);	/* get argument */
 	pGO->pos.z = (float)lua_tonumber(L, 3);	/* get argument */
-	/*pGO->SetVelocity(glm::vec3(
-		(float)lua_tonumber(L, 5),
-		(float)lua_tonumber(L, 6),
-		(float)lua_tonumber(L, 7)
-	));*/
 
 	lua_pushboolean(L, true);	// index is OK
 
@@ -218,7 +232,7 @@ void cLuaBrain::RunScriptImmediately(std::string script)
 	//int objectID = (int)lua_tonumber(L, 1);	/* get argument */
 
 	// Exist? 
-	cGameObject* pGO = ::gameObject;// cLuaBrain::m_findObjectByID(objectID);
+	cGameObject* pGO = current_GO;// cLuaBrain::m_findObjectByID(objectID);
 
 	if (pGO == nullptr)
 	{	// No, it's invalid
@@ -228,15 +242,115 @@ void cLuaBrain::RunScriptImmediately(std::string script)
 	}
 
 	// Object ID is valid
-	lua_pushboolean(L, true);	// index is OK
+	//lua_pushboolean(L, true);	// index is OK
 	lua_pushnumber(L, pGO->pos.x);
 	lua_pushnumber(L, pGO->pos.y);
 	lua_pushnumber(L, pGO->pos.z);
-	/*lua_pushnumber(L, pGO->GetVelocity().x);
-	lua_pushnumber(L, pGO->GetVelocity().y);
-	lua_pushnumber(L, pGO->GetVelocity().z);*/
 
-	return 4;		// There were 7 things on the stack
+	return 3;		// There were 7 things on the stack
+}
+
+int cLuaBrain::l_GetKey(lua_State * L)
+{
+	
+	std::string key = std::string(lua_tostring(L, 1));
+
+	if (key == "w" && glfwGetKey(global::window, GLFW_KEY_W))
+	{
+		lua_pushboolean(L, true);
+		return 1;
+	}
+	if (key == "a" && glfwGetKey(global::window, GLFW_KEY_A))
+	{
+		lua_pushboolean(L, true);
+		return 1;
+	}
+	if (key == "s" && glfwGetKey(global::window, GLFW_KEY_S))
+	{
+		lua_pushboolean(L, true);
+		return 1;
+	}
+	if (key == "d" && glfwGetKey(global::window, GLFW_KEY_D))
+	{
+		lua_pushboolean(L, true);
+		return 1;
+	}
+	if (key == "q" && glfwGetKey(global::window, GLFW_KEY_Q))
+	{
+		lua_pushboolean(L, true);
+		return 1;
+	}
+	if (key == "e" && glfwGetKey(global::window, GLFW_KEY_E))
+	{
+		lua_pushboolean(L, true);
+		return 1;
+	}
+	if (key == "shift" && glfwGetKey(global::window, GLFW_KEY_LEFT_SHIFT))
+	{
+		lua_pushboolean(L, true);
+		return 1;
+	}
+	
+
+	lua_pushboolean(L, false);
+
+	return 1;
+}
+
+int cLuaBrain::l_AddForce(lua_State * L)
+{
+	cGameObject* pGO = current_GO;
+	pGO->AddForce(
+		glm::vec3(
+			(float)lua_tonumber(L, 1),
+			(float)lua_tonumber(L, 2),
+			(float)lua_tonumber(L, 3)
+		)
+	);
+	return 0;
+}
+
+int cLuaBrain::l_GetForce(lua_State * L)
+{
+	cGameObject* pGO = current_GO;
+	glm::vec3 force = pGO->GetForce();
+	lua_pushnumber(L, force.x);
+	lua_pushnumber(L, force.y);
+	lua_pushnumber(L, force.z);
+	return 3;
+}
+
+int cLuaBrain::l_GetForward(lua_State * L)
+{
+	cGameObject* pGO = current_GO;
+	glm::vec3 forward = (pGO->getQOrientation() * glm::vec4(0.f, 0.f, 1.f, 1.f)) * 5.f;
+	lua_pushnumber(L, forward.x);
+	lua_pushnumber(L, forward.y);
+	lua_pushnumber(L, forward.z);
+	return 3;
+}
+
+int cLuaBrain::l_GetVelocity(lua_State * L)
+{
+	cGameObject* pGO = current_GO;
+	glm::vec3 vel = pGO->GetVelocity();
+	lua_pushnumber(L, vel.x);
+	lua_pushnumber(L, vel.y);
+	lua_pushnumber(L, vel.z);
+	return 3;
+}
+
+int cLuaBrain::l_SetVelocity(lua_State * L)
+{
+	cGameObject* pGO = current_GO;
+	pGO->SetVelocity(
+		glm::vec3(
+			(float)lua_tonumber(L, 1),
+			(float)lua_tonumber(L, 2),
+			(float)lua_tonumber(L, 3)
+		)
+	);
+	return 0;
 }
 
 /*static*/
