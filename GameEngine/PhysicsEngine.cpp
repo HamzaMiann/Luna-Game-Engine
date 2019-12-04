@@ -331,7 +331,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 													1.f);
 
 								cDebugRenderer::Instance()->addLine(closestPoint,
-													closestPoint + glm::normalize(pObj->velocity),
+													closestPoint + glm::normalize(pObj->GetVelocity()),
 													glm::vec3(0.f, 1.f, 0.f),
 													1.f);
 								

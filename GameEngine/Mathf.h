@@ -69,12 +69,31 @@ namespace Mathf
 			x = upperlimit;
 		return x;
 	}
+	static glm::vec3 smoothstep(glm::vec3 edge0, glm::vec3 edge1, float x)
+	{
+		// Scale, bias and saturate x to 0..1 range
+		float xx = clamp((x - edge0.x) / (edge1.x - edge0.x), 0.0, 1.0);
+		float xy = clamp((x - edge0.y) / (edge1.y - edge0.y), 0.0, 1.0);
+		float xz = clamp((x - edge0.z) / (edge1.z - edge0.z), 0.0, 1.0);
+		// Evaluate polynomial
+		return glm::vec3(
+			xx * xx * (3 - 2 * xx),
+			xy * xy * (3 - 2 * xy),
+			xz * xz * (3 - 2 * xz)
+		);
+	}
 	static float smoothstep(float edge0, float edge1, float x)
 	{
 		// Scale, bias and saturate x to 0..1 range
 		x = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
 		// Evaluate polynomial
 		return x * x * (3 - 2 * x);
+	}
+	
+	static glm::vec3 autosmooth(glm::vec3 from, glm::vec3 to, float ratio)
+	{
+		float y = smoothstep(0.f, 1.f, ratio);
+		return (to - from) * y;
 	}
 
 	template <class T>

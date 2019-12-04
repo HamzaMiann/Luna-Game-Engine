@@ -22,6 +22,8 @@ cGameObject::cGameObject()
 	this->force = glm::vec3(0.f);
 	this->acceleration = glm::vec3(0.f);
 	this->velocity = glm::vec3(0.f);
+
+	cmd_group = new cCommandGroup;
 }
 
 cGameObject::~cGameObject()

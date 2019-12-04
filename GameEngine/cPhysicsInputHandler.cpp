@@ -95,14 +95,14 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 
 	cLowpassFilter* filter = cLowpassFilter::Instance();
 
-	/*if (glfwGetKey(window, GLFW_KEY_W))
+	if (glfwGetKey(window, GLFW_KEY_W))
 	{
 		player->AddForce(forward * 1.f * speed);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S))
 	{
 		player->AddForce(forward * -1.f * speed);
-	}*/
+	}
 	if (glfwGetKey(window, GLFW_KEY_A))
 	{
 		player->AddForce(right * 0.5f);
@@ -145,7 +145,7 @@ void cPhysicsInputHandler::key_callback(GLFWwindow* window, int key, int scancod
 
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
-		_scene.vecGameObjects[1]->pos = originalBallPosition;
+		//_scene.vecGameObjects[1]->pos = originalBallPosition;
 		//_scene.vecGameObjects[1]->velocity = glm::vec3(0.f);
 		//_scene.pAudioEngine->PlaySound("respawn");
 	}

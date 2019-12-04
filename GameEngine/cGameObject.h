@@ -6,6 +6,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <string>
 #include <vector>
+#include "cCommandGroup.h"
 
 class Scene;
 class cLuaBrain;
@@ -91,6 +92,8 @@ public:
 	
 	glm::vec3 GetAcceleration();
 	void SetAcceleration(glm::vec3 accel);
+
+	cCommandGroup* cmd_group;
 
 };
 

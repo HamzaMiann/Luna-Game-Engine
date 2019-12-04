@@ -29,6 +29,8 @@
 #include "cParticleEffect.h"
 #include "cLowpassFilter.h"
 #include "cLuaBrain.h"
+#include "cMoveTo.h"
+#include "cRotateTo.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -243,6 +245,18 @@ int main(void)
 	sphere->texture[0] = ship->texture[0];
 	sphere->textureRatio[0] = 1.f;
 
+	for (int index = 0; index != scene->vecGameObjects.size(); index++)
+	{
+		cGameObject* objPtr = scene->vecGameObjects[index];
+		if (objPtr->lua_script != "")
+		{
+			objPtr->brain->RunScriptImmediately(objPtr->lua_script);
+		}
+	}
+
+	ship->cmd_group->AddParallel(new cMoveTo(ship, glm::vec3(0.f, 100.f, 0.f), 5.f));
+	ship->cmd_group->AddParallel(new cRotateTo(ship, glm::vec3(90.f, 0.f, 0.f), 5.f));
+
 	cLowpassFilter* filter = cLowpassFilter::Instance();
 	float current_time = (float)glfwGetTime();
 	float previous_time = (float)glfwGetTime();
@@ -340,6 +354,7 @@ int main(void)
 
 			cGameObject* objPtr = scene->vecGameObjects[index];
 
+			objPtr->cmd_group->Update(delta_time);
 			objPtr->brain->Update(delta_time);
 
 			GLint shaderProgID = scene->Shaders[objPtr->shaderName];

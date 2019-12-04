@@ -70,6 +70,9 @@
     <Filter Include="Lua">
       <UniqueIdentifier>{7f97ad17-9237-4c88-a4c6-1ead897a4b31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Commands">
+      <UniqueIdentifier>{cef13a72-72bf-459e-96dc-6fc6fae04e53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">
@@ -194,6 +197,15 @@
     </ClCompile>
     <ClCompile Include="cLuaBrain.cpp">
       <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="cCommandGroup.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="cMoveTo.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="cRotateTo.cpp">
+      <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -325,6 +337,18 @@
     </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>ShadersRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="iCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cCommandGroup.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cMoveTo.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cRotateTo.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

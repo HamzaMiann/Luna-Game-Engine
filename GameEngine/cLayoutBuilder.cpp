@@ -93,12 +93,17 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				{
 					setXYZ(ptr->specColour, property_node);
 				}
-				else if (propName == "Lua")
+				else if (propName == "LuaUpdate")
+				{
+					std::string script = std::string(property_node->value());
+					script = trim(script);
+					ptr->brain->LoadScript(std::string(property_node->first_attribute("name")->value()),
+										   script);
+				}
+				else if (propName == "LuaInit")
 				{
 					ptr->lua_script = std::string(property_node->value());
 					ptr->lua_script = trim(ptr->lua_script);
-					ptr->brain->LoadScript(std::string(property_node->first_attribute("name")->value()),
-										   ptr->lua_script);
 				}
 				else if (propName == "CollidePoint")
 				{

@@ -88,21 +88,6 @@ void octree::attach_triangles(std::vector<sMeshTriangle>* triangles)
 	main_node->has_nodes = true;
 	main_node->has_triangles = true;
 
-	/*int i = 0;
-	for (; i < 8; ++i)
-	{
-		threads[i] = new std::thread(_octree_attach_triangles, triangles, this, main_node->nodes[i]);
-	}
-	i = 0;
-	for (; i < 8; ++i)
-	{
-		if (threads[i])
-			threads[i]->join();
-		main_node->has_triangles |= main_node->nodes[i]->has_triangles;
-		main_node->has_nodes |= main_node->nodes[i]->has_triangles;
-		delete threads[i];
-	}*/
-
 }
 
 bool octree::attach_triangles_by_node(std::vector<sMeshTriangle> const& triangles, octree::octree_node* node)

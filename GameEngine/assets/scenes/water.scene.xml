@@ -147,18 +147,12 @@
 			<CollidePoint x="35.999989" y="238.295868" z="-223.195099"/>
 			<CollidePoint x="-38.499893" y="235.695465" z="-227.095093"/>
 			<CollidePoint x="1.100004" y="136.794693" z="351.006378"/>
-      <Lua name="first">
-        x, y, z = getForward()
-        speed = 1.0
-        if getKey("shift") == true then
-          speed = 3.5
-        end
-        if getKey("w") == true then
-          addForce(x * speed, y * speed, z * speed)
-        elseif getKey("s") == true then
-          addForce(-x, -y, -z)
-        end
-      </Lua>
+      <LuaInit>
+        x, y, z = getPosition()
+      </LuaInit>
+      <LuaUpdate name="first">
+        x, y, z = getPosition()
+      </LuaUpdate>
 		</GameObject>
     
 		<GameObject mesh="terrain" tag="terrain" shader="specular">
