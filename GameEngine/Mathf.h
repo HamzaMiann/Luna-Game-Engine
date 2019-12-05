@@ -93,7 +93,7 @@ namespace Mathf
 	static glm::vec3 autosmooth(glm::vec3 from, glm::vec3 to, float ratio)
 	{
 		float y = smoothstep(0.f, 1.f, ratio);
-		return (to - from) * y;
+		return (to - from) * y + from;
 	}
 
 	template <class T>

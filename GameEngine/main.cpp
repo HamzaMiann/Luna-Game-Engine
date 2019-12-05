@@ -31,9 +31,11 @@
 #include "cLuaBrain.h"
 #include "cMoveTo.h"
 #include "cRotateTo.h"
+#include "cFollowCurve.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
+//#define CAMERA_CONTROL
 
 unsigned int input_id = 0;
 
@@ -89,8 +91,9 @@ static void error_callback(int error, const char* description)
 
 static void HandleInput(GLFWwindow* window)
 {
-	glm::vec3 forwardVector = Mathf::get_direction_vector(scene->cameraEye, scene->cameraTarget);
-	glm::vec3 backwardsVector = Mathf::get_reverse_direction_vector(scene->cameraEye, scene->cameraTarget);
+#ifdef CAMERA_CONTROL
+	glm::vec3 forwardVector = Mathf::get_direction_vector(scene->camera.Eye, scene->camera.Target);
+	glm::vec3 backwardsVector = Mathf::get_reverse_direction_vector(scene->camera.Eye, scene->camera.Target);
 	glm::vec3 rightVector = Mathf::get_rotated_vector(-90.f, glm::vec3(0.f), forwardVector);
 	glm::vec3 leftVector = Mathf::get_rotated_vector(90.f, glm::vec3(0.f), forwardVector);
 
@@ -98,32 +101,33 @@ static void HandleInput(GLFWwindow* window)
 	// Move the camera (A & D for left and right, along the x axis)
 	if (glfwGetKey(window, GLFW_KEY_A))
 	{
-		Mathf::rotate_vector(-5.f, scene->cameraTarget, scene->cameraEye);
+		Mathf::rotate_vector(-5.f, scene->camera.Target, scene->camera.Eye);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D))
 	{
-		Mathf::rotate_vector(5.f, scene->cameraTarget, scene->cameraEye);
+		Mathf::rotate_vector(5.f, scene->camera.Target, scene->camera.Eye);
 	}
 
 	// Move the camera (Q & E for up and down, along the y axis)
 	if (glfwGetKey(window, GLFW_KEY_Q))
 	{
-		scene->cameraEye.y -= glm::length(forwardVector) * 0.05f;
+		scene->camera.Eye.y -= glm::length(forwardVector) * 0.05f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_E))
 	{
-		scene->cameraEye.y += glm::length(forwardVector) * 0.05f;
+		scene->camera.Eye.y += glm::length(forwardVector) * 0.05f;
 	}
 
 	// Move the camera (W & S for towards and away, along the z axis)
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		scene->cameraEye += forwardVector * 0.1f;
+		scene->camera.Eye += forwardVector * 0.1f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S))
 	{
-		scene->cameraEye += backwardsVector * 0.1f;
+		scene->camera.Eye += backwardsVector * 0.1f;
 	}
+#endif
 
 	if (pInputHandler) pInputHandler->HandleInput(window);
 	
@@ -245,6 +249,9 @@ int main(void)
 	sphere->texture[0] = ship->texture[0];
 	sphere->textureRatio[0] = 1.f;
 
+	cLuaBrain::SetObjectVector(&scene->vecGameObjects);
+	cLuaBrain::SetCamera(&scene->camera);
+
 	for (int index = 0; index != scene->vecGameObjects.size(); index++)
 	{
 		cGameObject* objPtr = scene->vecGameObjects[index];
@@ -254,8 +261,9 @@ int main(void)
 		}
 	}
 
-	ship->cmd_group->AddParallel(new cMoveTo(ship, glm::vec3(0.f, 100.f, 0.f), 5.f));
-	ship->cmd_group->AddParallel(new cRotateTo(ship, glm::vec3(90.f, 0.f, 0.f), 5.f));
+	//ship->cmd_group->AddSerial(new cMoveTo(ship, glm::vec3(0.f, 100.f, 0.f), 5.f, 2.f));
+	//ship->cmd_group->AddSerial(new cFollowCurve(ship, glm::vec3(0.f, 50.f, 50.f), glm::vec3(100.f, 100.f, 0.f), 7.f));
+	//ship->cmd_group->AddSerial(new cRotateTo(ship, glm::vec3(90.f, 0.f, 0.f), 5.f));
 
 	cLowpassFilter* filter = cLowpassFilter::Instance();
 	float current_time = (float)glfwGetTime();
@@ -313,7 +321,7 @@ int main(void)
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
 
-		pSkyBoxSphere->pos = scene->cameraEye;
+		pSkyBoxSphere->pos = scene->camera.Eye;
 		// **************************************************
 		// **************************************************
 		glm::mat4 p, v;
@@ -327,9 +335,9 @@ int main(void)
 		// View matrix
 		v = glm::mat4(1.0f);
 
-		v = glm::lookAt(scene->cameraEye,
-						scene->cameraTarget,
-						scene->upVector);
+		v = glm::lookAt(scene->camera.Eye,
+						scene->camera.Target,
+						scene->camera.Up);
 
 
 		int lastShader = -1;
@@ -343,7 +351,7 @@ int main(void)
 				glm::vec3 ObjB = scene->vecGameObjects[index + 1]->pos;
 
 				//			if ( glm::distance( ObjA, ::g_pFlyCamera->eye ) < glm::distance( ObjB, ::g_pFlyCamera->eye ) )
-				if (glm::distance2(ObjA, scene->cameraEye) < glm::distance2(ObjB, scene->cameraEye))
+				if (glm::distance2(ObjA, scene->camera.Eye) < glm::distance2(ObjB, scene->camera.Eye))
 				{
 					// Out of order, so swap the positions...
 					cGameObject* pTemp = scene->vecGameObjects[index];
@@ -595,9 +603,9 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 
 	GLint eye_loc = glGetUniformLocation(shaderProgID, "eyeLocation");
 	glUniform4f(eye_loc,
-				scene->cameraEye.x,
-				scene->cameraEye.y,
-				scene->cameraEye.z,
+				scene->camera.Eye.x,
+				scene->camera.Eye.y,
+				scene->camera.Eye.z,
 				1.0f
 	);
 

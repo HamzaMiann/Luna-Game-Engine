@@ -162,6 +162,8 @@
     <ClCompile Include="cDebugRenderer.cpp" />
     <ClCompile Include="cDebugRenderer_BuiltInShapes.cpp" />
     <ClCompile Include="CErrorLog.cpp" />
+    <ClCompile Include="cFollowCamera.cpp" />
+    <ClCompile Include="cFollowCurve.cpp" />
     <ClCompile Include="cGameObject.cpp" />
     <ClCompile Include="cGLRenderStateHelper.cpp" />
     <ClCompile Include="cLayoutBuilder.cpp" />
@@ -203,7 +205,10 @@
   <ItemGroup>
     <ClInclude Include="cAABB.h" />
     <ClInclude Include="AudioEngine.hpp" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="cCommandGroup.h" />
+    <ClInclude Include="cFollowCamera.h" />
+    <ClInclude Include="cFollowCurve.h" />
     <ClInclude Include="cLowpassFilter.h" />
     <ClInclude Include="cLuaBrain.h" />
     <ClInclude Include="cMoveTo.h" />

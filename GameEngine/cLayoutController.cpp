@@ -7,12 +7,12 @@ glm::vec3 original_target_position;
 
 cLayoutController::cLayoutController(Scene& scene) : _scene(scene)
 {
-	original_target_position = _scene.cameraTarget;
+	original_target_position = _scene.camera.Target;
 }
 
 cLayoutController::~cLayoutController()
 {
-	_scene.cameraTarget = original_target_position;
+	_scene.camera.Target = original_target_position;
 }
 
 void cLayoutController::HandleInput(GLFWwindow * window)
@@ -84,7 +84,7 @@ void cLayoutController::HandleInput(GLFWwindow * window)
 		this->_scene.vecGameObjects[index]->scale *= 0.95f;
 	}
 
-	_scene.cameraTarget = _scene.vecGameObjects[index]->pos;
+	_scene.camera.Target = _scene.vecGameObjects[index]->pos;
 
 
 }

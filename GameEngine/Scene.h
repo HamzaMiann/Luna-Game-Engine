@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include "GLCommon.h"
-#include <glm/vec3.hpp>
+#include "Camera.h"
 #include <map>
 
 class cGameObject;
@@ -33,9 +33,7 @@ public:
 	AudioEngine*	pAudioEngine;
 	cLightManager*	pLightManager;
 
-	vec3			cameraEye =		vec3(0.0f, 0.0f, -10.0);
-	vec3			cameraTarget =	vec3(0.0f, 0.0f, 0.0f);
-	vec3			upVector =		vec3(0.0f, 1.0f, 0.0f);
+	Camera camera;
 
 
 	bool SaveToFile();

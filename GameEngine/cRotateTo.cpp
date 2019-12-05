@@ -2,6 +2,7 @@
 #include "cGameObject.h"
 #include "Mathf.h"
 
+
 cRotateTo::cRotateTo(cGameObject* instance, glm::vec3 angle, float time)
 {
 	subject = instance;

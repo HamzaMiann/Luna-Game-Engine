@@ -4,7 +4,18 @@
 #include <locale>
 #include "cGameObject.h"
 #include "Window.h"
+#include "cFollowCurve.h"
+#include "cRotateTo.h"
+#include "cMoveTo.h"
+#include "cFollowCamera.h"
 
+enum COMMAND_TYPE
+{
+	MOVE,
+	ROTATE,
+	CURVE,
+	FOLLOW
+};
 
 cGameObject* cLuaBrain::current_GO = 0;
 GLFWwindow* cLuaBrain::window = 0;
@@ -45,6 +56,23 @@ cLuaBrain::cLuaBrain(cGameObject* obj)
 	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_SetVelocity);
 	lua_setglobal(this->m_pLuaState, "setVelocity");
 
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_MoveTo);
+	lua_setglobal(this->m_pLuaState, "Move");
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_RotateTo);
+	lua_setglobal(this->m_pLuaState, "Rotate");
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_FollowCurve);
+	lua_setglobal(this->m_pLuaState, "Curve");
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_FollowCamera);
+	lua_setglobal(this->m_pLuaState, "Follow");
+
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_AddSerial);
+	lua_setglobal(this->m_pLuaState, "AddSerial");
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_AddParallel);
+	lua_setglobal(this->m_pLuaState, "AddParallel");
+
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_IsCommandDone);
+	lua_setglobal(this->m_pLuaState, "isDone");
+
 	return;
 }
 
@@ -74,8 +102,14 @@ void cLuaBrain::DeleteScript(std::string scriptName)
 // Passes a pointer to the game object vector
 void cLuaBrain::SetObjectVector(std::vector< cGameObject* >* p_vecGOs)
 {
-	this->m_p_vecGOs = p_vecGOs;
+	m_p_vecGOs = p_vecGOs;
 	return;
+}
+
+Camera* cLuaBrain::camera = 0;
+void cLuaBrain::SetCamera(Camera* cam)
+{
+	camera = cam;
 }
 
 // Call all the active scripts that are loaded
@@ -351,6 +385,131 @@ int cLuaBrain::l_SetVelocity(lua_State * L)
 		)
 	);
 	return 0;
+}
+
+int cLuaBrain::l_MoveTo(lua_State* L)
+{
+	lua_pushnumber(L, (int)COMMAND_TYPE::MOVE);
+	return 1;
+}
+
+int cLuaBrain::l_RotateTo(lua_State* L)
+{
+	lua_pushnumber(L, (int)COMMAND_TYPE::ROTATE);
+	return 1;
+}
+
+int cLuaBrain::l_FollowCurve(lua_State* L)
+{
+	lua_pushnumber(L, (int)COMMAND_TYPE::CURVE);
+	return 1;
+}
+
+int cLuaBrain::l_FollowCamera(lua_State* L)
+{
+	lua_pushnumber(L, (int)COMMAND_TYPE::FOLLOW);
+	return 1;
+}
+
+iCommand* get_command(COMMAND_TYPE type, lua_State* L)
+{
+	iCommand* cmd = nullptr;
+	switch (type)
+	{
+	case MOVE:
+		glm::vec3 target = glm::vec3(
+			(float)lua_tonumber(L, 2),
+			(float)lua_tonumber(L, 3),
+			(float)lua_tonumber(L, 4)
+		);
+		cmd = new cMoveTo(cLuaBrain::current_GO, target, (float)lua_tonumber(L, 5), (float)lua_tonumber(L, 6));
+		break;
+	case ROTATE:
+	{
+		glm::vec3 target_angle = glm::vec3(
+			(float)lua_tonumber(L, 2),
+			(float)lua_tonumber(L, 3),
+			(float)lua_tonumber(L, 4)
+		);
+		cmd = new cRotateTo(cLuaBrain::current_GO, target_angle, (float)lua_tonumber(L, 5));
+	}
+		break;
+	case CURVE:
+	{
+		glm::vec3 target = glm::vec3(
+			(float)lua_tonumber(L, 2),
+			(float)lua_tonumber(L, 3),
+			(float)lua_tonumber(L, 4)
+		);
+		glm::vec3 offset = glm::vec3(
+			(float)lua_tonumber(L, 5),
+			(float)lua_tonumber(L, 6),
+			(float)lua_tonumber(L, 7)
+		);
+		cmd = new cFollowCurve(cLuaBrain::current_GO, target, offset, (float)lua_tonumber(L, 8));
+	}
+		break;
+	case FOLLOW:
+	{
+		float min = (float)lua_tonumber(L, 2);
+		glm::vec3 offset = glm::vec3(
+			(float)lua_tonumber(L, 3),
+			(float)lua_tonumber(L, 4),
+			(float)lua_tonumber(L, 5)
+		);
+		cmd = new cFollowCamera(cLuaBrain::current_GO, min, offset, cLuaBrain::camera);
+	}
+		break;
+	}
+	return cmd;
+}
+
+int cLuaBrain::l_AddSerial(lua_State* L)
+{
+	cGameObject* pGO = current_GO;
+	COMMAND_TYPE type = (COMMAND_TYPE)((int)lua_tonumber(L, 1));
+	iCommand* cmd = get_command(type, L);
+	if (cmd)
+	{
+		pGO->cmd_group->AddSerial(cmd);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int cLuaBrain::l_AddParallel(lua_State* L)
+{
+	cGameObject* pGO = current_GO;
+	COMMAND_TYPE type = (COMMAND_TYPE)((int)lua_tonumber(L, 1));
+	iCommand* cmd = get_command(type, L);
+	if (cmd)
+	{
+		pGO->cmd_group->AddParallel(cmd);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int cLuaBrain::l_IsCommandDone(lua_State* L)
+{
+	cGameObject* pGO = current_GO;
+	if (pGO->cmd_group->Is_Done())
+	{
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		lua_pushboolean(L, false);
+	}
+	return 1;
 }
 
 /*static*/

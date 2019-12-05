@@ -207,6 +207,12 @@
     <ClCompile Include="cRotateTo.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="cFollowCurve.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="cFollowCamera.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -349,6 +355,15 @@
     </ClInclude>
     <ClInclude Include="cRotateTo.h">
       <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cFollowCurve.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cFollowCamera.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>SceneFactory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

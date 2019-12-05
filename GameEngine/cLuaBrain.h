@@ -10,6 +10,7 @@ extern "C" {
 #include <string>
 #include <vector>
 #include <map>
+#include "Camera.h"
 
 // Forward declaration for cyclical reference
 class cGameObject;
@@ -20,6 +21,7 @@ class cLuaBrain
 public:
 	static cGameObject* current_GO;
 	static GLFWwindow* window;
+	static Camera* camera;
 
 	cGameObject* gameObject;
 
@@ -30,7 +32,8 @@ public:
 					std::string scriptSource);
 	void DeleteScript(std::string scriptName);
 	// Passes a pointer to the game object vector
-	void SetObjectVector(std::vector< cGameObject* >* p_vecGOs);
+	static void SetObjectVector(std::vector< cGameObject* >* p_vecGOs);
+	static void SetCamera(Camera* cam);
 	// Call all the active scripts that are loaded
 	void Update(float deltaTime);
 
@@ -62,7 +65,13 @@ public:
 	// Commands
 	static int l_MoveTo(lua_State* L);
 	static int l_RotateTo(lua_State* L);
-	static int l_FollowTag(lua_State* L);
+	static int l_FollowCurve(lua_State* L);
+	static int l_FollowCamera(lua_State* L);
+
+	static int l_AddSerial(lua_State* L);
+	static int l_AddParallel(lua_State* L);
+
+	static int l_IsCommandDone(lua_State* L);
 
 private:
 	std::map< std::string /*scriptName*/,

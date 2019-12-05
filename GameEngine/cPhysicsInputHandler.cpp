@@ -74,11 +74,11 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 
 	//printf("%f, %f\n", x, y);
 
-	_scene.cameraTarget = player->pos + forward;
-	_scene.cameraEye = player->pos - forward * 0.7f;
-	_scene.upVector = up;
+	/*_scene.camera.Target = player->pos + forward;
+	_scene.camera.Eye = player->pos - forward * 0.7f;
+	_scene.camera.Up = up;
 
-	_scene.cameraEye += up * 1.f;
+	_scene.camera.Up += up * 1.f;*/
 
 	float deltaX = previousX - x;
 	float deltaY = previousY - y;
