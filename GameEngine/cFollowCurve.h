@@ -16,9 +16,10 @@ class cFollowCurve : public iCommand
 
 	float max_time;
 	float time_passed;
+	float ease_time;
 
 public:
-	cFollowCurve(cGameObject* instance, glm::vec3 target, glm::vec3 offset, float time);
+	cFollowCurve(cGameObject* instance, glm::vec3 target, glm::vec3 offset, float time, float ease_time);
 	virtual ~cFollowCurve() {}
 	virtual void Update(float delta_time);
 	virtual bool Is_Done();

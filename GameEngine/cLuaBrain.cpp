@@ -8,13 +8,15 @@
 #include "cRotateTo.h"
 #include "cMoveTo.h"
 #include "cFollowCamera.h"
+#include "cTrigger.h"
 
 enum COMMAND_TYPE
 {
 	MOVE,
 	ROTATE,
 	CURVE,
-	FOLLOW
+	FOLLOW,
+	TRIGGER
 };
 
 cGameObject* cLuaBrain::current_GO = 0;
@@ -64,6 +66,8 @@ cLuaBrain::cLuaBrain(cGameObject* obj)
 	lua_setglobal(this->m_pLuaState, "Curve");
 	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_FollowCamera);
 	lua_setglobal(this->m_pLuaState, "Follow");
+	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_Trigger);
+	lua_setglobal(this->m_pLuaState, "Trigger");
 
 	lua_pushcfunction(this->m_pLuaState, cLuaBrain::l_AddSerial);
 	lua_setglobal(this->m_pLuaState, "AddSerial");
@@ -284,48 +288,28 @@ void cLuaBrain::RunScriptImmediately(std::string script)
 	return 3;		// There were 7 things on the stack
 }
 
+#define LUA_TRUE { lua_pushboolean(L, true); return 1; }
 int cLuaBrain::l_GetKey(lua_State * L)
 {
-	
 	std::string key = std::string(lua_tostring(L, 1));
 
-	if (key == "w" && glfwGetKey(global::window, GLFW_KEY_W))
-	{
-		lua_pushboolean(L, true);
-		return 1;
-	}
-	if (key == "a" && glfwGetKey(global::window, GLFW_KEY_A))
-	{
-		lua_pushboolean(L, true);
-		return 1;
-	}
-	if (key == "s" && glfwGetKey(global::window, GLFW_KEY_S))
-	{
-		lua_pushboolean(L, true);
-		return 1;
-	}
-	if (key == "d" && glfwGetKey(global::window, GLFW_KEY_D))
-	{
-		lua_pushboolean(L, true);
-		return 1;
-	}
-	if (key == "q" && glfwGetKey(global::window, GLFW_KEY_Q))
-	{
-		lua_pushboolean(L, true);
-		return 1;
-	}
-	if (key == "e" && glfwGetKey(global::window, GLFW_KEY_E))
-	{
-		lua_pushboolean(L, true);
-		return 1;
-	}
-	if (key == "shift" && glfwGetKey(global::window, GLFW_KEY_LEFT_SHIFT))
-	{
-		lua_pushboolean(L, true);
-		return 1;
-	}
+	if (key == "w" && glfwGetKey(global::window, GLFW_KEY_W)) LUA_TRUE;
+	if (key == "a" && glfwGetKey(global::window, GLFW_KEY_A)) LUA_TRUE;
+	if (key == "s" && glfwGetKey(global::window, GLFW_KEY_S)) LUA_TRUE;
+	if (key == "d" && glfwGetKey(global::window, GLFW_KEY_D)) LUA_TRUE;
+	if (key == "q" && glfwGetKey(global::window, GLFW_KEY_Q)) LUA_TRUE;
+	if (key == "e" && glfwGetKey(global::window, GLFW_KEY_E)) LUA_TRUE;
+	if (key == "shift" && glfwGetKey(global::window, GLFW_KEY_LEFT_SHIFT)) LUA_TRUE;
+	if (key == "1" && glfwGetKey(global::window, GLFW_KEY_1)) LUA_TRUE;
+	if (key == "2" && glfwGetKey(global::window, GLFW_KEY_2)) LUA_TRUE;
+	if (key == "3" && glfwGetKey(global::window, GLFW_KEY_3)) LUA_TRUE;
+	if (key == "4" && glfwGetKey(global::window, GLFW_KEY_4)) LUA_TRUE;
+	if (key == "5" && glfwGetKey(global::window, GLFW_KEY_5)) LUA_TRUE;
+	if (key == "6" && glfwGetKey(global::window, GLFW_KEY_6)) LUA_TRUE;
+	if (key == "7" && glfwGetKey(global::window, GLFW_KEY_7)) LUA_TRUE;
+	if (key == "8" && glfwGetKey(global::window, GLFW_KEY_8)) LUA_TRUE;
+	if (key == "9" && glfwGetKey(global::window, GLFW_KEY_9)) LUA_TRUE;
 	
-
 	lua_pushboolean(L, false);
 
 	return 1;
@@ -411,6 +395,12 @@ int cLuaBrain::l_FollowCamera(lua_State* L)
 	return 1;
 }
 
+int cLuaBrain::l_Trigger(lua_State * L)
+{
+	lua_pushnumber(L, (int)COMMAND_TYPE::TRIGGER);
+	return 1;
+}
+
 iCommand* get_command(COMMAND_TYPE type, lua_State* L)
 {
 	iCommand* cmd = nullptr;
@@ -431,7 +421,7 @@ iCommand* get_command(COMMAND_TYPE type, lua_State* L)
 			(float)lua_tonumber(L, 3),
 			(float)lua_tonumber(L, 4)
 		);
-		cmd = new cRotateTo(cLuaBrain::current_GO, target_angle, (float)lua_tonumber(L, 5));
+		cmd = new cRotateTo(cLuaBrain::current_GO, target_angle, (float)lua_tonumber(L, 5), (float)lua_tonumber(L, 6));
 	}
 		break;
 	case CURVE:
@@ -446,7 +436,7 @@ iCommand* get_command(COMMAND_TYPE type, lua_State* L)
 			(float)lua_tonumber(L, 6),
 			(float)lua_tonumber(L, 7)
 		);
-		cmd = new cFollowCurve(cLuaBrain::current_GO, target, offset, (float)lua_tonumber(L, 8));
+		cmd = new cFollowCurve(cLuaBrain::current_GO, target, offset, (float)lua_tonumber(L, 8), (float)lua_tonumber(L, 9));
 	}
 		break;
 	case FOLLOW:
@@ -457,9 +447,21 @@ iCommand* get_command(COMMAND_TYPE type, lua_State* L)
 			(float)lua_tonumber(L, 4),
 			(float)lua_tonumber(L, 5)
 		);
-		cmd = new cFollowCamera(cLuaBrain::current_GO, min, offset, cLuaBrain::camera);
+		float time = (float)lua_tonumber(L, 6);
+		cmd = new cFollowCamera(cLuaBrain::current_GO, min, offset, time, cLuaBrain::camera);
 	}
 		break;
+	case TRIGGER:
+	{
+		glm::vec3 location = glm::vec3(
+			(float)lua_tonumber(L, 2),
+			(float)lua_tonumber(L, 3),
+			(float)lua_tonumber(L, 4)
+		);
+		float dist = (float)lua_tonumber(L, 5);
+		cmd = new cTrigger(cLuaBrain::current_GO, location, dist);
+	}
+	break;
 	}
 	return cmd;
 }

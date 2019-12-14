@@ -13,8 +13,11 @@ class cFollowCamera : public iCommand
 	glm::vec3 offset;
 	Camera* cam;
 
+	float max_time;
+	float elapsed_time;
+
 public:
-	cFollowCamera(cGameObject* instance, float min_dist, glm::vec3 offset, Camera* camera);
+	cFollowCamera(cGameObject* instance, float min_dist, glm::vec3 offset, float time, Camera* camera);
 	virtual ~cFollowCamera() {}
 	virtual void Update(float delta_time);
 	virtual bool Is_Done();

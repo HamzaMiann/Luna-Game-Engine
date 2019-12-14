@@ -67,6 +67,7 @@ public:
 	static int l_RotateTo(lua_State* L);
 	static int l_FollowCurve(lua_State* L);
 	static int l_FollowCamera(lua_State* L);
+	static int l_Trigger(lua_State* L);
 
 	static int l_AddSerial(lua_State* L);
 	static int l_AddParallel(lua_State* L);

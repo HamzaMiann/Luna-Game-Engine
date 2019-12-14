@@ -213,6 +213,9 @@
     <ClCompile Include="cFollowCamera.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="cTrigger.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -364,6 +367,9 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>SceneFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="cTrigger.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

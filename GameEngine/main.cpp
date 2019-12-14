@@ -35,7 +35,7 @@
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
-//#define CAMERA_CONTROL
+#define CAMERA_CONTROL
 
 unsigned int input_id = 0;
 
@@ -64,15 +64,15 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		input_id++;
 		if (input_id % 3 == 0)
 		{
-			pInputHandler = new cPhysicsInputHandler(*scene, window);
+			pInputHandler = 0;// new cPhysicsInputHandler(*scene, window);
 		}
 		else if (input_id % 3 == 1)
 		{
-			pInputHandler = new cLightController(*scene);
+			pInputHandler = 0;// new cLightController(*scene);
 		}
 		else
 		{
-			pInputHandler = new cLayoutController(*scene);
+			pInputHandler = 0;// new cLayoutController(*scene);
 		}
 	}
 
@@ -196,7 +196,7 @@ int main(void)
 	PhysicsEngine* phys = PhysicsEngine::Instance();
 	phys->GenerateAABB(scene);
 
-	pInputHandler = new cPhysicsInputHandler(*scene, window);
+	pInputHandler = 0;// new cPhysicsInputHandler(*scene, window);
 
 
 	cDebugRenderer* renderer = cDebugRenderer::Instance();
@@ -269,6 +269,8 @@ int main(void)
 	float current_time = (float)glfwGetTime();
 	float previous_time = (float)glfwGetTime();
 	float delta_time = 0.f;
+
+	scene->camera.Eye = glm::vec3(0.f, 100.f, -200.f);
 
 	while (!glfwWindowShouldClose(window))
 	{

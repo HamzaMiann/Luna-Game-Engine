@@ -13,9 +13,10 @@ class cRotateTo : public iCommand
 	glm::quat end;
 	float max_time;
 	float time_passed;
+	float ease_time;
 
 public:
-	cRotateTo(cGameObject* instance, glm::vec3 angle, float time);
+	cRotateTo(cGameObject* instance, glm::vec3 angle, float time, float ease_time);
 	virtual ~cRotateTo() {}
 	virtual void Update(float delta_time);
 	virtual bool Is_Done();

@@ -89,10 +89,23 @@ namespace Mathf
 		// Evaluate polynomial
 		return x * x * (3 - 2 * x);
 	}
+	static float smootherstep(float edge0, float edge1, float x)
+	{
+		// Scale, and clamp x to 0..1 range
+		x = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+		// Evaluate polynomial
+		return x * x * x * (x * (x * 6 - 15) + 10);
+	}
 	
 	static glm::vec3 autosmooth(glm::vec3 from, glm::vec3 to, float ratio)
 	{
 		float y = smoothstep(0.f, 1.f, ratio);
+		return (to - from) * y + from;
+	}
+
+	static glm::vec3 autosmoother(glm::vec3 from, glm::vec3 to, float ratio)
+	{
+		float y = smootherstep(0.f, 1.f, ratio);
 		return (to - from) * y + from;
 	}
 

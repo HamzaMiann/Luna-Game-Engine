@@ -128,13 +128,13 @@
 	<Layout>
     
 		<GameObject mesh="ship" tag="player" shader="basic">
-			<Position x="-12.700012" y="7.199996" z="-48.599831"/>
+			<Position x="-12.700012" y="20" z="-48.599831"/>
 			<Rotation x="0.000111" y="-0.000055" z="0.000022"/>
 			<Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>0.000731</Scale>
+			<Scale>0.00431</Scale>
 			<SpecIntensity>10.000000</SpecIntensity>
 			<IMass>1.0</IMass>
 			<Collider>POINT</Collider>
@@ -147,29 +147,38 @@
 			<CollidePoint x="35.999989" y="238.295868" z="-223.195099"/>
 			<CollidePoint x="-38.499893" y="235.695465" z="-227.095093"/>
 			<CollidePoint x="1.100004" y="136.794693" z="351.006378"/>
+
       <LuaInit>
-        state = "none"
-        AddParallel(Follow(), 10.0, 0, 0, 0)
+        state = "zero"
       </LuaInit>
       <LuaUpdate name="first">
-        if isDone() == true then
-          if state == "zero" then
-            AddParallel(Curve(), 0, 50, 50, 100, 100, 0, 5.0)
-            AddParallel(Rotate(), 0, 180, 0, 5.0)
-            state = "next"
-          elseif state == "next" then
-            AddParallel(Curve(), 0, 50, -50, -100, 100, 0, 5.0)
-            AddParallel(Rotate(), 0, 180, 0, 5.0)
-            state = "zero"
+        if isDone() then
+          if getKey("1") then
+            x, y, z = getPosition()
+            AddParallel(Move(), x + 50, y, z, 5, 1)
+            AddParallel(Follow(), 10, 0, 0, 0, 7)
+            AddSerial(Trigger(), x + 50, y, z, 20)
+            AddSerial(Rotate(), 0, 90, 0, 3.0, 0.5)
+          elseif getKey("2") then
+            x, y, z = getPosition()
+            AddParallel(Move(), x - 50, y, z, 5, 1)
+            AddParallel(Follow(), 10, 0, 0, 0, 7)
+            AddSerial(Trigger(), x - 50, y, z, 20)
+            AddSerial(Rotate(), 0, 90, 0, 3.0, 0.5)
+          elseif getKey("3") then
+            x, y, z = getPosition()
+            AddParallel(Curve(), x - 50, y, z, x, y + 100, z, 5, 1)
+            AddSerial(Trigger(), x - 50, y, z, 20)
+            AddSerial(Rotate(), 0, 90, 0, 3.0, 0.5)
+          elseif getKey("4") then
+            x, y, z = getPosition()
+            AddParallel(Curve(), x + 50, y, z, x, y + 100, z, 5, 1)
+            AddSerial(Trigger(), x + 50, y, z, 20)
+            AddSerial(Rotate(), 0, 90, 0, 3.0, 0.5)
           end
         end
-        if getKey("w") == true then
-          state = "none"
-        end
-        if getKey("s") == true then
-          --state = "zero"
-        end
       </LuaUpdate>
+      
 		</GameObject>
     
 		<GameObject mesh="terrain" tag="terrain" shader="specular">
@@ -182,11 +191,16 @@
 			<Scale>1.000000</Scale>
 			<SpecIntensity>10.000000</SpecIntensity>
 			<IMass>1.000000</IMass>
-			<Collider>AABB</Collider>
+			<Collider>NONE</Collider>
 			<Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
       <Texture ratio="1.000000">Ground_Dirt_007_roughness.bmp</Texture>
       <Texture ratio="1.000000">Ground_Dirt_007_normal.bmp</Texture>
       <Texture ratio="1.000000">Ground_Dirt_007_ambientOcclusion.bmp</Texture>
+      <LuaUpdate name="first">
+        if getKey("9") then
+          AddSerial(Follow(), 10, 0, 0, 0, 0)
+        end
+      </LuaUpdate>
 		</GameObject>
     
     <GameObject mesh="sphere_plane" tag="water_mesh" shader="water">
@@ -216,7 +230,7 @@
 			<Scale>1.000000</Scale>
 			<SpecIntensity>1.000000</SpecIntensity>
 			<IMass>1.000000</IMass>
-			<Collider>AABB</Collider>
+			<Collider>NONE</Collider>
 			<Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
 		</GameObject>
     
@@ -230,7 +244,7 @@
       <Scale>1.000000</Scale>
       <SpecIntensity>1.000000</SpecIntensity>
       <IMass>1.000000</IMass>
-      <Collider>AABB</Collider>
+      <Collider>NONE</Collider>
       <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
     </GameObject>
     
@@ -247,6 +261,20 @@
       <Collider>NONE</Collider>
       <Texture ratio="1.000000">Mercury_Diffuse.bmp</Texture>
       <Texture ratio="1.000000">Mercury_Bump.bmp</Texture>
+      <LuaInit>
+        state = "zero"
+      </LuaInit>
+      <LuaUpdate name="first">
+        if isDone() == true then
+          if state == "zero" then
+            AddSerial(Rotate(), 0, 180, 0, 40.0, 0.0)
+            state = "next"
+          elseif state == "next" then
+            AddSerial(Rotate(), 0, 180, 0, 40.0, 0.0)
+            state = "zero"
+          end
+        end
+      </LuaUpdate>
     </GameObject>
 
     <GameObject mesh="mercury" tag="planet2" shader="bump">
@@ -268,12 +296,17 @@
       <LuaUpdate name="first">
         if isDone() == true then
           if state == "zero" then
-            AddSerial(Rotate(), 0, 180, 0, 5.0)
+            AddParallel(Rotate(), 0, 180, 0, 4.0, 1.0)
+            AddParallel(Move(), 0, 110, 0, 4.0, 1.0)
             state = "next"
           elseif state == "next" then
-            AddSerial(Rotate(), 0, 180, 0, 5.0)
+            AddParallel(Rotate(), 0, 180, 0, 4.0, 1.0)
+            AddParallel(Move(), 0, 90, 0, 4.0, 1.0)
             state = "zero"
           end
+        end
+        if getKey("7") then
+          AddParallel(Follow(), 10, 0, 0, 0, 0)
         end
       </LuaUpdate>
     </GameObject>
@@ -305,9 +338,22 @@
 			<IMass>1.000000</IMass>
 			<Collider>NONE</Collider>
 			<Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
-			<Texture ratio="0.000000"/>
-			<Texture ratio="0.000000"/>
-			<Texture ratio="0.000000"/>
+			<LuaInit>
+        state = "zero"
+      </LuaInit>
+      <LuaUpdate name="first">
+        if isDone() == true then
+          if state == "zero" then
+            AddParallel(Curve(), 0, 100, 50, 100, 100, 0, 4.0, 1.0)
+            AddParallel(Rotate(), 0, 180, 0, 5.0, 0.0)
+            state = "next"
+          elseif state == "next" then
+            AddParallel(Curve(), 0, 100, -50, -100, 100, 0, 4.0, 1.0)
+            AddParallel(Rotate(), 0, 180, 0, 5.0, 0.0)
+            state = "zero"
+          end
+        end
+      </LuaUpdate>
 		</GameObject>
     
 		<GameObject mesh="sphere_static" tag="" shader="hologram">
