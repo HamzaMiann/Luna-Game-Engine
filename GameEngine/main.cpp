@@ -32,14 +32,18 @@
 #include "cMoveTo.h"
 #include "cRotateTo.h"
 #include "cFollowCurve.h"
+#include "FBO/cFBO.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 #define CAMERA_CONTROL
 
+cFBO* pTheFBO = NULL;
+
 unsigned int input_id = 0;
 
 bool is_paused = false;
+int pass_id;
 
 Scene* scene;
 GLFWwindow* global::window = 0;
@@ -159,6 +163,7 @@ int main(void)
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	glfwSwapInterval(1);
 
+
 	// Load scene from file
 	cGameObject* pSkyBoxSphere = new cGameObject();
 
@@ -272,8 +277,34 @@ int main(void)
 
 	scene->camera.Eye = glm::vec3(0.f, 100.f, -200.f);
 
+
+
+	// Set up frame buffer
+	cFBO* fbo = new cFBO;
+	std::string fbo_error;
+	if (fbo->init(1024, 1024, fbo_error))
+	{
+		printf("Frame buffer is OK\n");
+	}
+	else
+	{
+		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
+		exit(1);
+	}
+
+
+
+
+
 	while (!glfwWindowShouldClose(window))
 	{
+		// Draw to the frame buffer
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo->ID);
+
+		fbo->clearBuffers(true, true);
+		pass_id = 1;
+
+
 		previous_time = current_time;
 		current_time = (float)glfwGetTime();
 
@@ -306,7 +337,7 @@ int main(void)
 
 		//glClearColor(0.7f, 0.85f, 1.f, 1.f);
 		//glClearColor(0.7f, 0.85f, 1.f, 1.f);
-		glClearColor(0.f, 0.f, 0.f, 1.f);
+		//glClearColor(0.f, 0.f, 0.f, 1.f);
 
 		glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
 		//glDisable( GL_BLEND );
@@ -347,6 +378,7 @@ int main(void)
 		// Loop to draw everything in the scene
 		for (int index = 0; index != scene->vecGameObjects.size(); index++)
 		{
+#ifdef TRANSPARENCY_SORT
 			if (index < scene->vecGameObjects.size() - 1)
 			{
 				glm::vec3 ObjA = scene->vecGameObjects[index]->pos;
@@ -361,11 +393,17 @@ int main(void)
 					scene->vecGameObjects[index + 1] = pTemp;
 				}
 			}
+#endif
 
 			cGameObject* objPtr = scene->vecGameObjects[index];
 
+			if (objPtr->shaderName == "post")
+				continue;
+
 			objPtr->cmd_group->Update(delta_time);
 			objPtr->brain->Update(delta_time);
+
+			
 
 			GLint shaderProgID = scene->Shaders[objPtr->shaderName];
 
@@ -443,6 +481,25 @@ int main(void)
 		renderer->RenderDebugObjects(v, p, 0.01f);
 
 
+		// 1. Disable the FBO
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// 2. Clear the ACTUAL screen buffer
+		glViewport(0, 0, width, height);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// 3. Use the FBO colour texture as the texture on that quad
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fbo->colourTexture_0_ID);
+		pass_id = 2;
+
+		// 4. Draw a single object (a triangle or quad)
+		cGameObject* pQuad = scene->vecGameObjects[3];
+		//pQuad->pos = scene->camera.Eye + glm::normalize(scene->camera.Target) * 2.f;
+		//glm::mat4 ortho = glm::ortho(0, width, height, 0, 0, 1000);
+		GLint shaderProgID = scene->Shaders[pQuad->shaderName];
+		glUseProgram(shaderProgID);
+		DrawObject(pQuad, ratio, v, p);
 
 
 		glfwSwapBuffers(window);
@@ -464,7 +521,7 @@ void SetUpTextureBindingsForObject(
 	cGameObject* pCurrentObject,
 	GLint shaderProgID)
 {
-
+	if (pass_id != 1) return;
 	//// Tie the texture to the texture unit
 	//GLuint texSamp0_UL = ::g_pTextureManager->getTextureIDFromName("Pizza.bmp");
 	//glActiveTexture(GL_TEXTURE0);				// Texture Unit 0

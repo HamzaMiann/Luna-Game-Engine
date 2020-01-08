@@ -73,6 +73,9 @@
     <Filter Include="Commands">
       <UniqueIdentifier>{cef13a72-72bf-459e-96dc-6fc6fae04e53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FBO">
+      <UniqueIdentifier>{813b7f75-df64-4e59-b267-e7f5a0bb2925}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cShader.cpp">
@@ -215,6 +218,9 @@
     </ClCompile>
     <ClCompile Include="cTrigger.cpp">
       <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="FBO\cFBO.cpp">
+      <Filter>FBO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -371,6 +377,9 @@
     <ClInclude Include="cTrigger.h">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="FBO\cFBO.h">
+      <Filter>FBO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">
@@ -413,6 +422,12 @@
       <Filter>ShadersRendering\GLSL</Filter>
     </None>
     <None Include="assets\shaders\water_vert.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\postprocessing_vert.glsl">
+      <Filter>ShadersRendering\GLSL</Filter>
+    </None>
+    <None Include="assets\shaders\postprocessing_frag.glsl">
       <Filter>ShadersRendering\GLSL</Filter>
     </None>
   </ItemGroup>

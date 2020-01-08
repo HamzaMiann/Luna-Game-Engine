@@ -25,6 +25,10 @@
       <Vertex file="water_vert.glsl"/>
       <Fragment file="water_frag.glsl"/>
     </Shader>
+    <Shader name="post">
+      <Vertex file="postprocessing_vert.glsl"/>
+      <Fragment file="postprocessing_frag.glsl"/>
+    </Shader>
 	</Shaders>
   
 	<Textures>
@@ -47,6 +51,7 @@
 		<Texture name="WATER_BUMP.bmp"/>
 	</Textures>
 	<Models>
+		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="quad" shader="post"/>
 		<Model file="Sphere_Radius_1_XYZ_n_uv.ply" friendlyName="sphere" shader="basic"/>
 		<Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="sphere_plane" shader="water"/>
 		<Model file="Sphere_Radius_1_XYZ_n_uv.ply" friendlyName="sphere_water" shader="water"/>
@@ -156,7 +161,6 @@
           if getKey("1") then
             x, y, z = getPosition()
             AddParallel(Move(), x + 50, y, z, 5, 1)
-            AddParallel(Follow(), 10, 0, 0, 0, 7)
             AddSerial(Trigger(), x + 50, y, z, 20)
             AddSerial(Rotate(), 0, 90, 0, 3.0, 0.5)
           elseif getKey("2") then
@@ -179,6 +183,19 @@
         end
       </LuaUpdate>
       
+		</GameObject>
+    
+    <GameObject mesh="quad" tag="quad" shader="post">
+			<Position x="0.000000" y="0.000000" z="0.000000"/>
+			<Rotation x="0.000000" y="-0.000000" z="0.000000"/>
+			<Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+			<SpecColour x="0.000000" y="0.000000" z="0.000000"/>
+			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+			<Scale>1.000000</Scale>
+			<SpecIntensity>10.000000</SpecIntensity>
+			<IMass>1.000000</IMass>
+			<Collider>NONE</Collider>
 		</GameObject>
     
 		<GameObject mesh="terrain" tag="terrain" shader="specular">
