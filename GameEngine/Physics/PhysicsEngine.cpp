@@ -2,7 +2,8 @@
 
 #include <Scene/Scene.h>
 #include <Physics/PhysicsEngine.h>
-#include <Mesh/cMesh.h>
+#include <Components/cMesh.h>
+#include <Components/cRigidBody.h>
 #include <Mesh/cVAOManager.h>
 #include <Mesh/cModelLoader.h>
 #include <cGameObject.h>
@@ -28,7 +29,6 @@ struct Sphere
 Point ClosestPtPointTriangle(Point p, Point a, Point b, Point c);
 int TestSphereTriangle(Sphere s, Point a, Point b, Point c, Point& p);
 void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3& closestPoint, glm::vec3& normalVector, cGameObject* const meshObject, cGameObject* const pObj);
-void sphereCollisionResponse(cGameObject* a, cGameObject* b, PhysicsEngine* phys);
 Point barycentric_to_worldspace(sMeshTriangle const* triangle, Point const& coordinates);
 
 void PhysicsEngine::IntegrationStep(Scene* scene, float delta_time)
@@ -37,12 +37,13 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float delta_time)
 	for (size_t i = 0; i < scene->vecGameObjects.size(); ++i)
 	{
 		// Forward Explicit Euler Integration
-		cGameObject* pObj = (scene->vecGameObjects[i]);
+		//cGameObject* pObj = (scene->vecGameObjects[i]);
+		cRigidBody* pObj = (scene->vecGameObjects[i]->GetComponent<cRigidBody>());
 
-		pObj->previousPos = pObj->pos;
+		// if infinite mass or non-existent, don't run physics
+		if (pObj == nullptr || pObj->inverseMass == 0.f) continue;
 
-		// if infinite mass, don't run physics
-		if (pObj->inverseMass == 0.f) continue;
+		pObj->previousPos = pObj->transform.pos;
 
 #ifndef RK4
 		// add acceleration
@@ -106,7 +107,7 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float delta_time)
 			1.f * vk4) / 6.f
 		);
 
-		pObj->pos = pObj->pos +
+		pObj->transform.pos = pObj->transform.pos +
 			(1.f * pk1 +
 			 2.f * pk2 +
 			 2.f * pk3 +
@@ -174,10 +175,12 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 	{
 		// object to check collisions on
 		cGameObject* pObj = (scene->vecGameObjects[i]);
+		cRigidBody* pObjBody = pObj->GetComponent<cRigidBody>();
+		if (pObjBody == nullptr) continue;
 
 		
 		// if infinite mass, don't run physics
-		if (pObj->inverseMass == 0.f) continue;
+		if (pObjBody->inverseMass == 0.f) continue;
 
 		for (int k = 0; k < scene->vecGameObjects.size(); ++k)
 		{
@@ -204,6 +207,9 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 					collisionHistory.push_back(cPair(i, k));
 
 				cGameObject* colliderObject = scene->vecGameObjects[k];
+				cRigidBody* colliderObjectBody = colliderObject->GetComponent<cRigidBody>();
+				if (colliderObjectBody == nullptr) continue;
+
 				float closestDistanceSoFar = FLT_MAX;
 				glm::vec3 closestPoint = glm::vec3(0.0f, 0.0f, 0.0f);
 				glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -214,27 +220,27 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 					{
 						FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, colliderObject, pObj);
 
-						closestDistanceSoFar -= pObj->scale;
+						closestDistanceSoFar -= glm::length(pObj->transform.scale);
 
 						if (abs(closestDistanceSoFar) <= 0.08f)
 						{
 							if (glm::dot(glm::normalize(Gravity), normal) == 0)
 							{
-								if (colliderObject->inverseMass != 0.0f)
+								if (colliderObjectBody->inverseMass != 0.0f)
 								{
-									pObj->SetVelocity(colliderObject->GetVelocity());
+									pObjBody->SetVelocity(colliderObjectBody->velocity);
 								}
 							}
 
 
-							if (glm::dot(pObj->GetVelocity(), normal) > 0)
+							if (glm::dot(pObjBody->velocity, normal) > 0)
 								break;
 
 							if (closestDistanceSoFar < 0.f)
-								pObj->pos.y = pObj->previousPos.y;
+								pObj->transform.pos.y = pObjBody->previousPos.y;
 
-							pObj->SetVelocity(glm::reflect(pObj->GetVelocity(), normal)) /** friction*/;
-							pObj->SetForce(glm::reflect(pObj->GetForce(), normal)) /** friction*/;
+							pObjBody->SetVelocity(glm::reflect(pObjBody->velocity, normal)) /** friction*/;
+							pObjBody->SetForce(glm::reflect(pObjBody->GetForce(), normal)) /** friction*/;
 							pObj->isCollided |= true;
 
 
@@ -246,7 +252,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 												  1.f);
 
 								renderer->addLine(closestPoint,
-												  closestPoint + glm::normalize(pObj->GetVelocity()),
+												  closestPoint + glm::normalize(pObjBody->velocity),
 												  glm::vec3(0.f, 1.f, 0.f),
 												  1.f);
 							}
@@ -261,13 +267,13 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 							glm::vec3 point = model * glm::vec4(pObj->CollidePoints[n], 1.f);
 							FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, colliderObject, pObj);
 
-							if (glm::dot(pObj->GetVelocity(), normal) > 0) continue;
+							if (glm::dot(pObjBody->velocity, normal) > 0) continue;
 
 
 							if (closestDistanceSoFar <= 0.1f)
 							{
-								pObj->SetVelocity(glm::reflect(pObj->GetVelocity() * 0.2f, normal)) /** friction*/;
-								pObj->SetForce(glm::reflect(pObj->GetForce() * 0.2f, normal)) /** friction*/;
+								pObjBody->SetVelocity(glm::reflect(pObjBody->velocity * 0.2f, normal)) /** friction*/;
+								pObjBody->SetForce(glm::reflect(pObjBody->force * 0.2f, normal)) /** friction*/;
 								pObj->isCollided |= true;
 							}
 						}
@@ -277,11 +283,11 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 				{
 					if (pObj->Collider == SPHERE)
 					{
-						float distance = glm::distance(pObj->pos, colliderObject->pos);
-						distance -= (pObj->scale + colliderObject->scale);// / 2.f;
+						float distance = glm::distance(pObjBody->transform.pos, colliderObjectBody->transform.pos);
+						distance -= (pObj->transform.scale.x + colliderObject->transform.scale.x);// / 2.f;
 						if (distance <= 0.1f)
 						{
-							sphereCollisionResponse(pObj, colliderObject, this);
+							sphereCollisionResponse(*pObjBody, *colliderObjectBody, this);
 						}
 					}
 				}
@@ -289,38 +295,38 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 				case AABB:
 					if (pObj->Collider == SPHERE)
 					{
-						octree::octree_node* node = tree->find_node(pObj->pos);
+						octree::octree_node* node = tree->find_node(pObjBody->transform.pos);
 						if (node)
 						{
 							const sMeshTriangle* tri =FindClosestPointToTriangles(node->triangles,
 																				  closestDistanceSoFar,
 																				  closestPoint,
 																				  normal,
-																				  pObj->pos);
+																				  pObjBody->transform.pos);
 
 							if (!tri) break;
 
-							closestDistanceSoFar -= pObj->scale;
+							closestDistanceSoFar -= pObjBody->transform.scale.x;
 
 							if (abs(closestDistanceSoFar) <= 0.08f)
 							{
 								if (glm::dot(glm::normalize(Gravity), normal) == 0)
 								{
-									if (colliderObject->inverseMass != 0.0f)
+									if (colliderObjectBody->inverseMass != 0.0f)
 									{
-										pObj->SetVelocity(pObj->GetVelocity() + colliderObject->GetVelocity());
+										pObjBody->SetVelocity(pObjBody->velocity + colliderObjectBody->velocity);
 									}
 								}
 
 
-								if (glm::dot(pObj->GetVelocity(), normal) > 0)
+								if (glm::dot(pObjBody->velocity, normal) > 0)
 									break;
 
 								if (closestDistanceSoFar < 0.f)
-									pObj->pos.y = pObj->previousPos.y;
+									pObjBody->transform.pos.y = pObjBody->previousPos.y;
 
-								pObj->SetVelocity(glm::reflect(pObj->GetVelocity() * 0.2f, normal)) /** friction*/;
-								pObj->SetForce(glm::reflect(pObj->GetForce() * 0.2f, normal)) /** friction*/;
+								pObjBody->SetVelocity(glm::reflect(pObjBody->velocity * 0.2f, normal)) /** friction*/;
+								pObjBody->SetForce(glm::reflect(pObjBody->velocity * 0.2f, normal)) /** friction*/;
 								pObj->isCollided |= true;
 
 
@@ -339,20 +345,20 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 							}
 							else
 							{
-								glm::vec3 next_velocity = pObj->GetVelocity();
+								glm::vec3 next_velocity = pObjBody->velocity;
 
 								// add acceleration
-								next_velocity += (pObj->GetAcceleration() * delta_time);
+								next_velocity += (pObjBody->acceleration * delta_time);
 
 								// add external forces
-								next_velocity += (Gravity * delta_time * pObj->gravityScale);
+								next_velocity += (Gravity * delta_time * pObjBody->gravityScale);
 								next_velocity *= 1.f - (drag * delta_time);
 
-								glm::vec3 next_pos = pObj->pos + (next_velocity * delta_time);
+								glm::vec3 next_pos = pObjBody->transform.pos + (next_velocity * delta_time);
 
 								glm::vec3 raycast_hit(0.f);
 
-								if (IntersectLineTriangle(pObj->pos, next_pos, tri->first, tri->second, tri->third, raycast_hit))
+								if (IntersectLineTriangle(pObjBody->transform.pos, next_pos, tri->first, tri->second, tri->third, raycast_hit))
 								{
 									//cDebugRenderer::Instance()->addLine(pObj->pos, raycast_hit, glm::vec3(0.f, 0.f, 1.f), 10.f);
 									//cDebugRenderer::Instance()->addTriangle(tri->first, tri->second, tri->third, glm::vec3(1.f, 1.f, 0.f), 1.f);
@@ -360,21 +366,21 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 
 									if (glm::dot(glm::normalize(Gravity), normal) == 0)
 									{
-										if (colliderObject->inverseMass != 0.0f)
+										if (colliderObjectBody->inverseMass != 0.0f)
 										{
-											pObj->SetVelocity(pObj->GetVelocity() + colliderObject->GetVelocity());
+											pObjBody->SetVelocity(pObjBody->velocity + colliderObjectBody->velocity);
 										}
 									}
 
 
-									if (glm::dot(pObj->GetVelocity(), normal) > 0)
+									if (glm::dot(pObjBody->velocity, normal) > 0)
 										break;
 
 									if (closestDistanceSoFar < 0.f)
-										pObj->pos.y = pObj->previousPos.y;
+										pObjBody->transform.pos.y = pObjBody->previousPos.y;
 
-									pObj->SetVelocity(glm::reflect(pObj->GetVelocity(), normal));
-									pObj->SetForce(glm::reflect(pObj->GetForce(), normal));
+									pObjBody->SetVelocity(glm::reflect(pObjBody->velocity, normal));
+									pObjBody->SetForce(glm::reflect(pObjBody->force, normal));
 									pObj->isCollided |= true;
 
 									//pObj->velocity *= 0.f;
@@ -385,7 +391,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 					}
 					else if (pObj->Collider == POINT)
 					{
-						octree::octree_node* node = tree->find_node(pObj->pos);
+						octree::octree_node* node = tree->find_node(pObjBody->transform.pos);
 						if (node)
 						{
 							glm::mat4 model = pObj->ModelMatrix();
@@ -399,7 +405,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 																					   point);
 
 								if (!tri) continue;
-								if (glm::dot(pObj->GetVelocity(), normal) > 0) continue;
+								if (glm::dot(pObjBody->velocity, normal) > 0) continue;
 #ifdef PDEBUG
 								cDebugRenderer::Instance()->addLine(point, closestPoint, glm::vec3(0.f, 1.f, 1.f), delta_time);
 								cDebugRenderer::Instance()->addTriangle(tri->first, tri->second, tri->third, glm::vec3(1.f, 1.f, 0.f), delta_time);
@@ -410,8 +416,8 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 								if (closestDistanceSoFar <= 0.1f)
 								{
 
-									pObj->SetVelocity(glm::reflect(pObj->GetVelocity() * 0.2f, normal)) /** friction*/;
-									pObj->SetForce(glm::reflect(pObj->GetForce() * 0.2f, normal)) /** friction*/;
+									pObjBody->SetVelocity(glm::reflect(pObjBody->velocity * 0.2f, normal)) /** friction*/;
+									pObjBody->SetForce(glm::reflect(pObjBody->force * 0.2f, normal)) /** friction*/;
 									pObj->isCollided |= true;
 #ifdef PDEBUG
 									cDebugRenderer::Instance()->addLine(point, closestPoint, glm::vec3(1.f, 0.f, 0.f), 2.f);
@@ -421,13 +427,13 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 								else // check for raycast hits
 								{
 									//continue;
-									glm::vec3 next_velocity = pObj->GetVelocity();
+									glm::vec3 next_velocity = pObjBody->velocity;
 
 									// add acceleration
-									next_velocity += (pObj->GetAcceleration() * delta_time);
+									next_velocity += (pObjBody->acceleration * delta_time);
 
 									// add external forces
-									next_velocity += (Gravity * delta_time * pObj->gravityScale);
+									next_velocity += (Gravity * delta_time * pObjBody->gravityScale);
 									next_velocity *= 1.f - (drag * delta_time);
 
 									glm::vec3 next_pos = point + (next_velocity * delta_time);
@@ -440,8 +446,8 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 										if (glm::distance(world_space_hit, point) <= 0.3f)
 										{
 
-											pObj->SetVelocity(glm::reflect(pObj->GetVelocity() * 0.2f, normal));
-											pObj->SetForce(glm::reflect(pObj->GetForce() * 0.2f, normal));
+											pObjBody->SetVelocity(glm::reflect(pObjBody->velocity * 0.2f, normal));
+											pObjBody->SetForce(glm::reflect(pObjBody->force* 0.2f, normal));
 											pObj->isCollided |= true;
 
 #ifdef PDEBUG
@@ -499,7 +505,7 @@ void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3
 	if (!mesh) return;
 
 	glm::mat4 transform(1.f);
-	transform *= glm::mat4(meshObject->getQOrientation());
+	transform *= glm::mat4(meshObject->transform.rotation);
 	/*transform *= glm::rotate(glm::mat4(1.0f),
 							 meshObject->rotation.z,
 							 glm::vec3(0.0f, 0.0f, 1.0f));
@@ -515,14 +521,14 @@ void FindClosestPointToMesh(Scene& scene, float& closestDistanceSoFar, glm::vec3
 		sMeshTriangle curTriangle = mesh->vecMeshTriangles[i];
 
 		glm::vec3 curClosetPoint = ClosestPtPointTriangle(
-			pObj->pos,
-			glm::vec3(transform * glm::vec4(curTriangle.first, 1.f)) * meshObject->scale + meshObject->pos,
-			glm::vec3(transform * glm::vec4(curTriangle.second, 1.f)) * meshObject->scale + meshObject->pos,
-			glm::vec3(transform * glm::vec4(curTriangle.third, 1.f)) * meshObject->scale + meshObject->pos
+			pObj->transform.pos,
+			glm::vec3(transform * glm::vec4(curTriangle.first, 1.f)) * meshObject->transform.scale.x + meshObject->transform.pos,
+			glm::vec3(transform * glm::vec4(curTriangle.second, 1.f)) * meshObject->transform.scale.x + meshObject->transform.pos,
+			glm::vec3(transform * glm::vec4(curTriangle.third, 1.f)) * meshObject->transform.scale.x + meshObject->transform.pos
 		);
 
 		// Is this the closest so far?
-		float distanceNow = glm::distance(curClosetPoint, pObj->pos);
+		float distanceNow = glm::distance(curClosetPoint, pObj->transform.pos);
 
 		// is this closer than the closest distance
 		if (distanceNow <= closestDistanceSoFar)
@@ -568,26 +574,26 @@ const sMeshTriangle* FindClosestPointToTriangles(std::vector<const sMeshTriangle
 
 
 // code for collision response between spheres
-void sphereCollisionResponse(cGameObject* a, cGameObject* b, PhysicsEngine* phys)
+void PhysicsEngine::sphereCollisionResponse(cRigidBody& a, cRigidBody& b, PhysicsEngine* phys)
 {
 	glm::vec3 U1x, U1y, U2x, U2y, V1x, V1y, V2x, V2y;
 
 	float m1, m2, x1, x2;
-	glm::vec3 v1temp, v1, v2, v1x, v2x, v1y, v2y, x(a->pos - b->pos);
+	glm::vec3 v1temp, v1, v2, v1x, v2x, v1y, v2y, x(a.transform.pos - b.transform.pos);
 
 	glm::normalize(x);
-	v1 = a->GetVelocity();
+	v1 = a.velocity;
 	x1 = dot(x, v1);
 	v1x = x * x1;
 	v1y = v1 - v1x;
-	m1 = 1.0f; //mass of 1
+	m1 = 1.f / a.inverseMass;// 1.0f; //mass of 1
 
 	x = x * -1.0f;
-	v2 = b->GetVelocity();
+	v2 = b.velocity;
 	x2 = dot(x, v2);
 	v2x = x * x2;
 	v2y = v2 - v2x;
-	m2 = 1.0f; //mass of 1
+	m2 = 1.f / b.inverseMass;//1.0f; //mass of 1
 
 
 	/*a->velocity = glm::vec3(v1x * (m1 - m2) / (m1 + m2) + v2x * (2 * m2) / (m1 + m2) + v1y) / 4.0f;
@@ -600,18 +606,18 @@ void sphereCollisionResponse(cGameObject* a, cGameObject* b, PhysicsEngine* phys
 
 
 	//set the position of the spheres to their previous non contact positions to unstick them.
-	a->pos = a->previousPos;
-	b->pos = b->previousPos;
+	a.transform.pos = a.previousPos;
+	b.transform.pos = b.previousPos;
 
 	if (phys->renderer)
 	{
-		phys->renderer->addLine(a->pos,
-								a->pos + a->GetVelocity(),
+		phys->renderer->addLine(a.transform.pos,
+								a.transform.pos + a.velocity,
 								glm::vec3(.5f, .9f, .5f),
 								.1f);
 
-		phys->renderer->addLine(b->pos,
-								b->pos + b->GetVelocity(),
+		phys->renderer->addLine(b.transform.pos,
+								b.transform.pos + b.velocity,
 								glm::vec3(.5f, .9f, .5f),
 								.1f);
 	}

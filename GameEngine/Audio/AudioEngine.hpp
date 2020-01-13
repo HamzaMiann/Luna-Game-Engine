@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <Components/iComponent.h>
 
 #define AUDIO_ID int
 
@@ -25,6 +26,7 @@ public:
 		struct Audio3d
 		{
 			cGameObject* _attached;
+			cRigidBody* _body;
 			FMOD_VECTOR _pos;
 			FMOD_VECTOR _velocity;
 

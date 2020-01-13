@@ -17,7 +17,7 @@ void cFollowCamera::Update(float delta_time)
 {
 	elapsed_time += delta_time;
 
-	cam->Target = subject->pos + offset;
+	cam->Target = subject->transform.pos + offset;
 	if (glm::distance(cam->Eye, cam->Target) > min_distance)
 	{
 		vec3 direction = cam->Target - cam->Eye;

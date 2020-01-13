@@ -4,6 +4,7 @@
 #include <Lua/cLuaBrain.h>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <Components/cRigidBody.h>
 using namespace rapidxml;
 
 std::string trim(std::string& str)
@@ -41,7 +42,9 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 		std::string shader = object_node->first_attribute("shader")->value();
 		if (objectName == "GameObject")
 		{
-			ptr = ptr = new cGameObject();
+			ptr = new cGameObject();
+			cRigidBody* body = ptr->AddComponent<cRigidBody>();
+
 			if (meshAttr) ptr->meshName = meshAttr->value();
 			if (tagAttr) ptr->tag = tagAttr->value();
 			ptr->shaderName = shader;
@@ -53,13 +56,13 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				std::string propName = property_node->name();
 				if (propName == "Position")
 				{
-					setXYZ(ptr->pos, property_node);
+					setXYZ(ptr->transform.pos, property_node);
 				}
 				else if (propName == "Rotation")
 				{
 					glm::vec3 orientation(0.f);
 					setXYZ(orientation, property_node);
-					ptr->setOrientation(orientation);
+					ptr->transform.SetEulerRotation(orientation);
 				}
 				else if (propName == "Colour")
 				{
@@ -67,23 +70,23 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				}
 				else if (propName == "Velocity")
 				{
-					glm::vec3 vel = ptr->GetVelocity();
+					glm::vec3 vel = body->GetVelocity();
 					setXYZ(vel, property_node);
-					ptr->SetVelocity(vel);
+					body->SetVelocity(vel);
 				}
 				else if (propName == "Acceleration")
 				{
-					glm::vec3 accel = ptr->GetAcceleration();
+					glm::vec3 accel = body->GetAcceleration();
 					setXYZ(accel, property_node);
-					ptr->SetAcceleration(accel);
+					body->SetAcceleration(accel);
 				}
 				else if (propName == "Scale")
 				{
-					ptr->scale = strtof(property_node->value(),0);
+					body->transform.scale = glm::vec3(strtof(property_node->value(),0));
 				}
 				else if (propName == "IMass")
 				{
-					ptr->inverseMass = strtof(property_node->value(), 0);
+					body->inverseMass = strtof(property_node->value(), 0);
 				}
 				else if (propName == "SpecIntensity")
 				{

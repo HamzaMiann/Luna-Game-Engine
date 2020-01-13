@@ -1,11 +1,12 @@
 #ifndef _cMesh_HG_
 #define _cMesh_HG_
 
-#include <vector>		// "smart array"
+#include <vector>
 #include <glm/vec3.hpp>
+#include <iObject.h>
 
-// This structure matches the file, so that our life is
-//   simpler and happier, and we all get along.
+
+// structure of loaded data
 struct sPlyVertexXYZ
 {
 	float x, y, z;
@@ -33,21 +34,18 @@ struct sMeshTriangle
 	glm::vec3 m;	// Mid-Vertex Global
 };
 
-class cMesh
+class cMesh : public iComponent
 {
 public:
-	cMesh() {};			// Empty c'tor
-	~cMesh() {};		// Empty d'tor
+	cMesh() { mesh = this; };
+	cMesh(iObject* obj) { mesh = this; };
+	virtual ~cMesh() {};
 
 	glm::vec3 min = glm::vec3(FLT_MAX);
 	glm::vec3 max = glm::vec3(FLT_MIN);
 
-	// Store the vertices
 	std::vector<sPlyVertexXYZ> vecVertices;
-
-	// Store the triangles
 	std::vector<sPlyTriangle> vecTriangles;
-
 	std::vector<sMeshTriangle> vecMeshTriangles;
 
 };

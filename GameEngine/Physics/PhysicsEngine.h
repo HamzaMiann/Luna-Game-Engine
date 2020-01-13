@@ -31,6 +31,8 @@ public:
 	void IntegrationStep(Scene* scene, float delta_time);
 	void CheckCollisions(Scene* scene, float delta_time);
 	void GenerateAABB(Scene* scene);
+
+	void sphereCollisionResponse(cRigidBody& a, cRigidBody& b, PhysicsEngine* phys);
 };
 
 void FindClosestPointToMesh(
@@ -46,7 +48,6 @@ const sMeshTriangle* FindClosestPointToTriangles(
 	glm::vec3& closestPoint,
 	glm::vec3& normalVector,
 	glm::vec3 point);
-
 
 
 int IntersectLineTriangle(glm::vec3 p, glm::vec3 q, glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3& r);

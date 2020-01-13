@@ -81,9 +81,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>ShadersRendering</Filter>
-    </ClCompile>
     <ClCompile Include="TextureManager\cBasicTextureManager.cpp">
       <Filter>TextureManager</Filter>
     </ClCompile>
@@ -219,11 +216,11 @@
     <ClCompile Include="_GL\glad.c">
       <Filter>GL</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\RenderingEngine.cpp">
+      <Filter>ShadersRendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Renderer.h">
-      <Filter>ShadersRendering</Filter>
-    </ClInclude>
     <ClInclude Include="TextureManager\C24BitBMPpixel.h">
       <Filter>TextureManager</Filter>
     </ClInclude>
@@ -344,9 +341,6 @@
     <ClInclude Include="Physics\PhysicsEngine.h">
       <Filter>Math_Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh\cMesh.h">
-      <Filter>ModelLoading</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh\cModelLoader.h">
       <Filter>ModelLoading</Filter>
     </ClInclude>
@@ -379,6 +373,24 @@
     </ClInclude>
     <ClInclude Include="_GL\Window.h">
       <Filter>ShadersRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="iObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\cMesh.h">
+      <Filter>ModelLoading</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RenderingEngine.h">
+      <Filter>ShadersRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\cRigidBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Colliders\iCollider.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

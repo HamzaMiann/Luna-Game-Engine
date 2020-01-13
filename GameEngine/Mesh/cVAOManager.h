@@ -8,7 +8,7 @@
 
 #include <string>
 #include <map>
-#include <Mesh/cMesh.h>				// File as loaded from the file
+#include <Components/cMesh.h>				// File as loaded from the file
 
 // The vertex structure 
 //	that's ON THE GPU (eventually) 

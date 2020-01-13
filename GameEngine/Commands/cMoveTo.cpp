@@ -6,7 +6,7 @@ cMoveTo::cMoveTo(cGameObject* instance, glm::vec3 position, float time, float ea
 {
 	subject = instance;
 
-	original_pos = subject->pos;
+	original_pos = subject->transform.pos;
 	target_pos = position;
 
 	max_time = time + ease_time * 2.f;
@@ -22,13 +22,13 @@ cMoveTo::cMoveTo(cGameObject* instance, glm::vec3 position, float time, float ea
 
 void cMoveTo::Update(float delta_time)
 {
-	if (time_passed == 0.f) original_pos = subject->pos;
+	if (time_passed == 0.f) original_pos = subject->transform.pos;
 	time_passed += delta_time;
 	if (time_passed > max_time) time_passed = max_time;
 
 	float ratio = (time_passed / max_time);
 	if (ease_begin_time != 0.f) ratio = Mathf::smootherstep(0.f, 1.f, ratio);
-	subject->pos = Mathf::lerp(original_pos, target_pos, ratio);
+	subject->transform.pos = Mathf::lerp(original_pos, target_pos, ratio);
 }
 
 bool cMoveTo::Is_Done()

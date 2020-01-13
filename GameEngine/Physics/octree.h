@@ -3,7 +3,7 @@
 #include <glm/vec3.hpp>
 #include <vector>
 #include <Physics/cAABB.h>
-#include <Mesh/cMesh.h>
+#include <Components/cMesh.h>
 
 
 class octree

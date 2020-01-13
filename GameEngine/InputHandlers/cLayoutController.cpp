@@ -23,68 +23,68 @@ void cLayoutController::HandleInput(GLFWwindow * window)
 
 	if (glfwGetKey(window, GLFW_KEY_UP))
 	{
-		this->_scene.vecGameObjects[index]->pos.z += 0.1f * speed;
+		this->_scene.vecGameObjects[index]->transform.pos.z += 0.1f * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN))
 	{
-		this->_scene.vecGameObjects[index]->pos.z -= 0.1f * speed;
+		this->_scene.vecGameObjects[index]->transform.pos.z -= 0.1f * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT))
 	{
-		this->_scene.vecGameObjects[index]->pos.x += 0.1f * speed;
+		this->_scene.vecGameObjects[index]->transform.pos.x += 0.1f * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT))
 	{
-		this->_scene.vecGameObjects[index]->pos.x -= 0.1f * speed;
+		this->_scene.vecGameObjects[index]->transform.pos.x -= 0.1f * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_T))
 	{
-		this->_scene.vecGameObjects[index]->pos.y += 0.1f * speed;
+		this->_scene.vecGameObjects[index]->transform.pos.y += 0.1f * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_Y))
 	{
-		this->_scene.vecGameObjects[index]->pos.y -= 0.1f * speed;
+		this->_scene.vecGameObjects[index]->transform.pos.y -= 0.1f * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_I))
 	{
-		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(0.f, 0.f, 0.1f));
+		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, 0.f, 0.1f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_K))
 	{
-		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(0.f, 0.f, -0.1f));
+		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, 0.f, -0.1f));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_J))
 	{
-		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(0.1f, 0.f, 0.f));
+		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(0.1f, 0.f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_L))
 	{
-		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(-0.1f, 0.f, 0.f));
+		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(-0.1f, 0.f, 0.f));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_U))
 	{
-		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(0.f, 0.1f, 0.f));
+		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, 0.1f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_O))
 	{
-		this->_scene.vecGameObjects[index]->updateOrientation(glm::vec3(0.f, -0.1f, 0.f));
+		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, -0.1f, 0.f));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_EQUAL))
 	{
-		this->_scene.vecGameObjects[index]->scale *= 1.05f;
+		this->_scene.vecGameObjects[index]->transform.scale *= 1.05f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_MINUS))
 	{
-		this->_scene.vecGameObjects[index]->scale *= 0.95f;
+		this->_scene.vecGameObjects[index]->transform.scale *= 0.95f;
 	}
 
-	_scene.camera.Target = _scene.vecGameObjects[index]->pos;
+	_scene.camera.Target = _scene.vecGameObjects[index]->transform.pos;
 
 
 }

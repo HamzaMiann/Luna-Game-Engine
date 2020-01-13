@@ -13,7 +13,7 @@ cFollowCurve::cFollowCurve(cGameObject* instance, glm::vec3 target, glm::vec3 of
 	subject = instance;
 
 	target_pos = target;
-	original_pos = subject->pos;
+	original_pos = subject->transform.pos;
 
 	this->offset = offset;
 
@@ -29,7 +29,7 @@ void cFollowCurve::Update(float delta_time)
 {
 	if (time_passed == 0.f)
 	{
-		original_pos = subject->pos;
+		original_pos = subject->transform.pos;
 #ifdef PDEBUG
 		vec3 last_pos = original_pos;
 		for (float i = 0.f; i < max_time; i += 0.1f)
@@ -62,7 +62,7 @@ void cFollowCurve::Update(float delta_time)
 	vec3 line = pointB - pointA;
 	vec3 pos = (line * ratio) + pointA;
 
-	subject->pos = pos;
+	subject->transform.pos = pos;
 }
 
 bool cFollowCurve::Is_Done()

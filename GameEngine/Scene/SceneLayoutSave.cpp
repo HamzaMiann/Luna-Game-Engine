@@ -1,12 +1,13 @@
 
 
-#include "Scene.h"
-#include "cGameObject.h"
+#include <Scene/Scene.h>
+#include <cGameObject.h>
 #include <fstream>
 #include "rapid_definitions.h"
 #include <rapidxml/rapidxml_print.hpp>
 #include <vector>
 #include <iostream>
+#include <Components/cRigidBody.h>
 using namespace rapidxml;
 using namespace std;
 using namespace rapidxml;
@@ -118,12 +119,12 @@ bool Scene::SaveLayout()
 
 			xml_node<>* prop = new xml_node<>(node_type::node_element);
 			prop->name("Position");
-			_ApplyXYZ(prop, obj->pos);
+			_ApplyXYZ(prop, obj->transform.pos);
 			node->append_node(prop);
 
 			prop = new xml_node<>(node_type::node_element);
 			prop->name("Rotation");
-			glm::vec3 angle = obj->getEulerAngle();
+			glm::vec3 angle = obj->transform.EulerAngles();
 			_ApplyXYZ(prop, angle);
 			node->append_node(prop);
 
@@ -137,19 +138,29 @@ bool Scene::SaveLayout()
 			_ApplyXYZ(prop, obj->specColour);
 			node->append_node(prop);
 
-			prop = new xml_node<>(node_type::node_element);
-			prop->name("Velocity");
-			_ApplyXYZ(prop, obj->GetVelocity());
-			node->append_node(prop);
+			cRigidBody* body = obj->GetComponent<cRigidBody>();
+			if (body != nullptr)
+			{
+				prop = new xml_node<>(node_type::node_element);
+				prop->name("Velocity");
+				_ApplyXYZ(prop, body->GetVelocity());
+				node->append_node(prop);
 
-			prop = new xml_node<>(node_type::node_element);
-			prop->name("Acceleration");
-			_ApplyXYZ(prop, obj->GetAcceleration());
-			node->append_node(prop);
+				prop = new xml_node<>(node_type::node_element);
+				prop->name("Acceleration");
+				_ApplyXYZ(prop, body->GetAcceleration());
+				node->append_node(prop);
+
+				prop = new xml_node<>(node_type::node_element);
+				prop->name("IMass");
+				prop->value(layout_doc.allocate_string(std::to_string(body->inverseMass).c_str()));
+				node->append_node(prop);
+
+			}
 
 			prop = new xml_node<>(node_type::node_element);
 			prop->name("Scale");
-			prop->value(layout_doc.allocate_string(std::to_string(obj->scale).c_str()));
+			prop->value(layout_doc.allocate_string(std::to_string(obj->transform.scale.x).c_str()));
 			node->append_node(prop);
 
 			prop = new xml_node<>(node_type::node_element);
@@ -157,10 +168,6 @@ bool Scene::SaveLayout()
 			prop->value(layout_doc.allocate_string(std::to_string(obj->specIntensity).c_str()));
 			node->append_node(prop);
 
-			prop = new xml_node<>(node_type::node_element);
-			prop->name("IMass");
-			prop->value(layout_doc.allocate_string(std::to_string(obj->inverseMass).c_str()));
-			node->append_node(prop);
 
 			prop = new xml_node<>(node_type::node_element);
 			prop->name("Collider");

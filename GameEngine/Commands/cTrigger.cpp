@@ -14,5 +14,5 @@ void cTrigger::Update(float delta_time)
 
 bool cTrigger::Is_Done()
 {
-	return glm::distance(subject->pos, target_pos) < distance;
+	return glm::distance(subject->transform.pos, target_pos) < distance;
 }

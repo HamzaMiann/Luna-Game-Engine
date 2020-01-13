@@ -6,13 +6,9 @@
 #include <DebugRenderer/cDebugRenderer.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Misc/cLowpassFilter.h>
+#include <Components/cRigidBody.h>
 
 glm::vec3 originalBallPosition = glm::vec3(0.0f, 6.0f, 0.0f);
-
-
-
-
-
 float ychange = 0.f, xchange = 0.f, zchange = 0.f;
 
 cPhysicsInputHandler::cPhysicsInputHandler(Scene& scene, GLFWwindow* window) : _scene(scene)
@@ -49,8 +45,8 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 
 	//_scene.cameraEye.y += _scene.upVector.y * 3.f;
 
-	glm::vec3 forward = (player->getQOrientation() * glm::vec4(0.f, 0.f, 1.f, 1.f)) * 5.f;
-	glm::vec3 right = glm::normalize((player->getQOrientation() * glm::quat(glm::vec3(0.f, glm::radians(90.f), 0.f))) * glm::vec4(0.f, 0.f, 1.f, 1.f)) * 5.f;
+	glm::vec3 forward = (player->transform.rotation * glm::vec4(0.f, 0.f, 1.f, 1.f)) * 5.f;
+	glm::vec3 right = glm::normalize((player->transform.rotation * glm::quat(glm::vec3(0.f, glm::radians(90.f), 0.f))) * glm::vec4(0.f, 0.f, 1.f, 1.f)) * 5.f;
 	glm::vec3 up = glm::normalize(glm::cross(forward, right));
 
 	/*cDebugRenderer::Instance()->addLine(player->pos,
@@ -95,39 +91,44 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 
 	cLowpassFilter* filter = cLowpassFilter::Instance();
 
-	if (glfwGetKey(window, GLFW_KEY_W))
+	cRigidBody* body = player->GetComponent<cRigidBody>();
+	if (body != nullptr)
 	{
-		player->AddForce(forward * 1.f * speed);
-	}
-	if (glfwGetKey(window, GLFW_KEY_S))
-	{
-		player->AddForce(forward * -1.f * speed);
-	}
-	if (glfwGetKey(window, GLFW_KEY_A))
-	{
-		player->AddForce(right * 0.5f);
-	}
-	if (glfwGetKey(window, GLFW_KEY_D))
-	{
-		player->AddForce(right * -0.5f);
-	}
 
-	if (glfwGetKey(window, GLFW_KEY_Q))
-	{
-		zchange = Mathf::lerp(zchange, -3.f, 0.1f);
-	}
-	else if (glfwGetKey(window, GLFW_KEY_E))
-	{
-		zchange = Mathf::lerp(zchange, 3.f, 0.1f);
-	}
-	else
-	{
-		zchange = Mathf::lerp(zchange, 0.f, 0.1f);
-	}
+		if (glfwGetKey(window, GLFW_KEY_W))
+		{
+			body->AddForce(forward * 1.f * speed);
+		}
+		if (glfwGetKey(window, GLFW_KEY_S))
+		{
+			body->AddForce(forward * -1.f * speed);
+		}
+		if (glfwGetKey(window, GLFW_KEY_A))
+		{
+			body->AddForce(right * 0.5f);
+		}
+		if (glfwGetKey(window, GLFW_KEY_D))
+		{
+			body->AddForce(right * -0.5f);
+		}
 
-	player->updateOrientation(glm::vec3(-ychange * 0.05f, 0.f, 0.f));
-	player->updateOrientation(glm::vec3(0.f, xchange * 0.05f, 0.f));
-	player->updateOrientation(glm::vec3(0.f, 0.f, zchange));
+		if (glfwGetKey(window, GLFW_KEY_Q))
+		{
+			zchange = Mathf::lerp(zchange, -3.f, 0.1f);
+		}
+		else if (glfwGetKey(window, GLFW_KEY_E))
+		{
+			zchange = Mathf::lerp(zchange, 3.f, 0.1f);
+		}
+		else
+		{
+			zchange = Mathf::lerp(zchange, 0.f, 0.1f);
+		}
+
+		player->transform.UpdateEulerRotation(glm::vec3(-ychange * 0.05f, 0.f, 0.f));
+		player->transform.UpdateEulerRotation(glm::vec3(0.f, xchange * 0.05f, 0.f));
+		player->transform.UpdateEulerRotation(glm::vec3(0.f, 0.f, zchange));
+	}
 
 	previousX = x;
 	previousY = y;

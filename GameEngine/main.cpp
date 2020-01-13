@@ -161,6 +161,7 @@ int main(void)
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	glfwSwapInterval(1);
 
+	typedef glm::vec3 vec3;
 
 	// Load scene from file
 	cGameObject* pSkyBoxSphere = new cGameObject();
@@ -174,16 +175,16 @@ int main(void)
 													  "SpaceBox_front5_posZ.bmp", "SpaceBox_back6_negZ.bmp", true, errorString))
 	{
 		scene = Scene::LoadFromXML("water.scene.xml");
-		pSkyBoxSphere->pos = glm::vec3(0.f);
+		pSkyBoxSphere->transform.pos = glm::vec3(0.f);
 		pSkyBoxSphere->meshName = "sphere";
 		pSkyBoxSphere->shaderName = "basic";
 		pSkyBoxSphere->tag = "skybox";
-		pSkyBoxSphere->pos = glm::vec3(0.0f, 0.f, 0.0f);
-		pSkyBoxSphere->scale = 7000.0f;
+		pSkyBoxSphere->transform.pos = glm::vec3(0.0f, 0.f, 0.0f);
+		pSkyBoxSphere->transform.scale = vec3(7000.0f);
 		pSkyBoxSphere->texture[0] = "Pizza.bmp";
 		pSkyBoxSphere->textureRatio[0] = 1.0f;
-		pSkyBoxSphere->inverseMass = 0.0f;
-		pSkyBoxSphere->gravityScale = 0.f;
+		//pSkyBoxSphere->inverseMass = 0.0f;
+		//pSkyBoxSphere->gravityScale = 0.f;
 		scene->vecGameObjects.push_back(pSkyBoxSphere);
 		std::cout << "Space skybox loaded" << std::endl;
 	}
@@ -216,14 +217,14 @@ int main(void)
 	glm::vec3 max = scene->pModelLoader->max;
 
 	cGameObject* bounds = new cGameObject;
-	bounds->pos = (max + min) / 2.f;
-	bounds->scale = glm::distance(max, min) / 2.f;
+	bounds->transform.pos = (max + min) / 2.f;
+	bounds->transform.scale = vec3(glm::distance(max, min) / 2.f);
 	bounds->colour = glm::vec4(1.f, 0.f, 0.f, 1.f);
 	bounds->meshName = "cube";
 	bounds->tag = "AABB";
 	bounds->shaderName = "basic";
 	bounds->isWireframe = true;
-	bounds->inverseMass = 0.f;
+	//bounds->inverseMass = 0.f;
 	bounds->uniformColour = true;
 	//scene->vecGameObjects.push_back(bounds);
 	
@@ -248,7 +249,7 @@ int main(void)
 	cGameObject* sphere = new cGameObject;
 	sphere->meshName = "sphere_particle";
 	sphere->shaderName = "particle";
-	sphere->inverseMass = 0.f;
+	//sphere->inverseMass = 0.f;
 	sphere->texture[0] = ship->texture[0];
 	sphere->textureRatio[0] = 1.f;
 
@@ -352,7 +353,7 @@ int main(void)
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
 
-		pSkyBoxSphere->pos = scene->camera.Eye;
+		pSkyBoxSphere->transform.pos = scene->camera.Eye;
 		// **************************************************
 		// **************************************************
 		glm::mat4 p, v;
@@ -465,8 +466,8 @@ int main(void)
 		for (unsigned int n = 0; n < pEffect.particles.size(); ++n)
 		{
 			sParticle* particle = pEffect.particles[n];
-			sphere->pos = particle->pos;
-			sphere->scale = particle->scale;
+			sphere->transform.pos = particle->pos;
+			sphere->transform.scale = vec3(particle->scale);
 			DrawObject(sphere, ratio, v, p);
 		}
 
@@ -608,9 +609,9 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 	// ******* TRANSLATION TRANSFORM *********
 	glm::mat4 matTrans
 		= glm::translate(glm::mat4(1.0f),
-						 glm::vec3(objPtr->pos.x,
-								   objPtr->pos.y,
-								   objPtr->pos.z));
+						 glm::vec3(objPtr->transform.pos.x,
+								   objPtr->transform.pos.y,
+								   objPtr->transform.pos.z));
 	m = m * matTrans;
 	// ******* TRANSLATION TRANSFORM *********
 
@@ -631,7 +632,7 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 	//glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
 	//								objPtr->rotation.x,	// (float)glfwGetTime(),					// Angle
 	//								glm::vec3(1.0f, 0.0f, 0.0f));
-	m = m * glm::mat4(objPtr->getQOrientation());
+	m = m * glm::mat4(objPtr->transform.rotation);
 	// ******* ROTATION TRANSFORM *********
 
 	GLint matModelIT_UL = glGetUniformLocation(shaderProgID, "matModelInverTrans");
@@ -720,15 +721,15 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 {
 	if (node == nullptr) return;
 
-	if (!node->AABB->contains(obj->pos)) return;
+	if (!node->AABB->contains(obj->transform.pos)) return;
 
 	glUniform1i(glGetUniformLocation(scene->Shaders[obj->shaderName], "isWater"),
 				false);
 
 	if (!node->has_nodes)
 	{
-		objPtr->pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
-		objPtr->scale = node->AABB->length / 2.f;
+		objPtr->transform.pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
+		objPtr->transform.scale = glm::vec3(node->AABB->length / 2.f);
 
 		DrawObject(objPtr, ratio, v, p);
 	}

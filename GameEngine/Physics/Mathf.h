@@ -3,7 +3,7 @@
 #include <stdlib.h>			// For rand()
 #include <math.h>
 #include <glm/vec3.hpp>
-#define PI 3.14159265
+#define PI 3.14159265f
 
 namespace Mathf
 {

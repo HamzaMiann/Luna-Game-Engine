@@ -193,7 +193,7 @@
     <ClCompile Include="Physics\octree.cpp" />
     <ClCompile Include="Physics\PhysicsEngine.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Rendering\RenderingEngine.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneLayoutSave.cpp" />
     <ClCompile Include="Scene\SceneLightSave.cpp" />
@@ -204,6 +204,10 @@
     <ClCompile Include="TextureManager\CTextureFromBMP.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Components\Colliders\iCollider.h" />
+    <ClInclude Include="Components\cRigidBody.h" />
+    <ClInclude Include="sTransform.h" />
+    <ClInclude Include="iObject.h" />
     <ClInclude Include="Physics\cAABB.h" />
     <ClInclude Include="Audio\AudioEngine.hpp" />
     <ClInclude Include="Camera.h" />
@@ -228,7 +232,7 @@
     <ClInclude Include="InputHandlers\cLayoutController.h" />
     <ClInclude Include="Scene\Builders\cLightBuilder.h" />
     <ClInclude Include="InputHandlers\cLightController.h" />
-    <ClInclude Include="Mesh\cMesh.h" />
+    <ClInclude Include="Components\cMesh.h" />
     <ClInclude Include="Scene\Builders\cModelBuilder.h" />
     <ClInclude Include="Mesh\cModelLoader.h" />
     <ClInclude Include="DebugRenderer\COpenGLError.h" />
@@ -249,7 +253,7 @@
     <ClInclude Include="Physics\octree.h" />
     <ClInclude Include="Physics\PhysicsEngine.h" />
     <ClInclude Include="Scene\rapid_definitions.h" />
-    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Rendering\RenderingEngine.h" />
     <ClInclude Include="Commands\cRotateTo.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Lighting\sLight.h" />

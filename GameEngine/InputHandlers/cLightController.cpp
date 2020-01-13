@@ -4,6 +4,7 @@
 #include <cGameObject.h>
 #include <iostream>
 #include <sstream>
+#include <Components/cRigidBody.h>
 
 cGameObject* dbg_object;
 
@@ -14,8 +15,9 @@ cLightController::cLightController(Scene& scene) : _scene(scene)
 		dbg_object = new cGameObject();
 		dbg_object->isWireframe = true;
 		dbg_object->meshName = "sphere";
-		dbg_object->scale = 0.2f;
-		dbg_object->inverseMass = 0.f;
+		dbg_object->transform.scale = glm::vec3(0.2f);
+		cRigidBody* body = dbg_object->AddComponent<cRigidBody>();
+		body->inverseMass = 0.f;
 		dbg_object->uniformColour = true;
 		_scene.vecGameObjects.push_back(dbg_object);
 	}
@@ -119,7 +121,7 @@ void cLightController::HandleInput(GLFWwindow * window)
 	glfwSetWindowTitle(window, oss.str().c_str());
 
 	if (dbg_object)
-		dbg_object->pos = this->_scene.pLightManager->Lights[index]->position;
+		dbg_object->transform.pos = this->_scene.pLightManager->Lights[index]->position;
 }
 
 void cLightController::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)

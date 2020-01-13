@@ -9,6 +9,7 @@
 #include <Commands/cMoveTo.h>
 #include <Commands/cFollowCamera.h>
 #include <Commands/cTrigger.h>
+#include <Components/cRigidBody.h>
 
 enum COMMAND_TYPE
 {
@@ -250,9 +251,9 @@ void cLuaBrain::RunScriptImmediately(std::string script)
 	}
 
 	// Get the values that lua pushed and update object
-	pGO->pos.x = (float)lua_tonumber(L, 1);	/* get argument */
-	pGO->pos.y = (float)lua_tonumber(L, 2);	/* get argument */
-	pGO->pos.z = (float)lua_tonumber(L, 3);	/* get argument */
+	pGO->transform.pos.x = (float)lua_tonumber(L, 1);	/* get argument */
+	pGO->transform.pos.y = (float)lua_tonumber(L, 2);	/* get argument */
+	pGO->transform.pos.z = (float)lua_tonumber(L, 3);	/* get argument */
 
 	lua_pushboolean(L, true);	// index is OK
 
@@ -281,9 +282,9 @@ void cLuaBrain::RunScriptImmediately(std::string script)
 
 	// Object ID is valid
 	//lua_pushboolean(L, true);	// index is OK
-	lua_pushnumber(L, pGO->pos.x);
-	lua_pushnumber(L, pGO->pos.y);
-	lua_pushnumber(L, pGO->pos.z);
+	lua_pushnumber(L, pGO->transform.pos.x);
+	lua_pushnumber(L, pGO->transform.pos.y);
+	lua_pushnumber(L, pGO->transform.pos.z);
 
 	return 3;		// There were 7 things on the stack
 }
@@ -318,30 +319,39 @@ int cLuaBrain::l_GetKey(lua_State * L)
 int cLuaBrain::l_AddForce(lua_State * L)
 {
 	cGameObject* pGO = current_GO;
-	pGO->AddForce(
-		glm::vec3(
-			(float)lua_tonumber(L, 1),
-			(float)lua_tonumber(L, 2),
-			(float)lua_tonumber(L, 3)
-		)
-	);
+	cRigidBody* body = pGO->GetComponent<cRigidBody>();
+	if (body != nullptr)
+	{
+		body->AddForce(
+			glm::vec3(
+				(float)lua_tonumber(L, 1),
+				(float)lua_tonumber(L, 2),
+				(float)lua_tonumber(L, 3)
+			)
+		);
+	}
 	return 0;
 }
 
 int cLuaBrain::l_GetForce(lua_State * L)
 {
 	cGameObject* pGO = current_GO;
-	glm::vec3 force = pGO->GetForce();
-	lua_pushnumber(L, force.x);
-	lua_pushnumber(L, force.y);
-	lua_pushnumber(L, force.z);
+	cRigidBody* body = pGO->GetComponent<cRigidBody>();
+	if (body != nullptr)
+	{
+		glm::vec3 force = body->GetForce();
+		lua_pushnumber(L, force.x);
+		lua_pushnumber(L, force.y);
+		lua_pushnumber(L, force.z);
+	}
+	else return 0;
 	return 3;
 }
 
 int cLuaBrain::l_GetForward(lua_State * L)
 {
 	cGameObject* pGO = current_GO;
-	glm::vec3 forward = (pGO->getQOrientation() * glm::vec4(0.f, 0.f, 1.f, 1.f)) * 5.f;
+	glm::vec3 forward = (pGO->transform.rotation * glm::vec4(0.f, 0.f, 1.f, 1.f)) * 5.f;
 	lua_pushnumber(L, forward.x);
 	lua_pushnumber(L, forward.y);
 	lua_pushnumber(L, forward.z);
@@ -351,23 +361,32 @@ int cLuaBrain::l_GetForward(lua_State * L)
 int cLuaBrain::l_GetVelocity(lua_State * L)
 {
 	cGameObject* pGO = current_GO;
-	glm::vec3 vel = pGO->GetVelocity();
-	lua_pushnumber(L, vel.x);
-	lua_pushnumber(L, vel.y);
-	lua_pushnumber(L, vel.z);
+	cRigidBody* body = pGO->GetComponent<cRigidBody>();
+	if (body != nullptr)
+	{
+		glm::vec3 vel = body->GetVelocity();
+		lua_pushnumber(L, vel.x);
+		lua_pushnumber(L, vel.y);
+		lua_pushnumber(L, vel.z);
+	}
+	else return 0;
 	return 3;
 }
 
 int cLuaBrain::l_SetVelocity(lua_State * L)
 {
 	cGameObject* pGO = current_GO;
-	pGO->SetVelocity(
-		glm::vec3(
-			(float)lua_tonumber(L, 1),
-			(float)lua_tonumber(L, 2),
-			(float)lua_tonumber(L, 3)
-		)
-	);
+	cRigidBody* body = pGO->GetComponent<cRigidBody>();
+	if (body != nullptr)
+	{
+		body->SetVelocity(
+			glm::vec3(
+				(float)lua_tonumber(L, 1),
+				(float)lua_tonumber(L, 2),
+				(float)lua_tonumber(L, 3)
+			)
+		);
+	}
 	return 0;
 }
 
