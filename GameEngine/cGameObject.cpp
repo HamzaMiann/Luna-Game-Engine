@@ -1,7 +1,7 @@
 
-#include "cGameObject.h"
+#include <cGameObject.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include "cLuaBrain.h"
+#include <Lua/cLuaBrain.h>
 
 static unsigned int next_id = 0;
 

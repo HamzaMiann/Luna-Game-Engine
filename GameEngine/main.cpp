@@ -1,4 +1,4 @@
-#include "Window.h"
+#include <_GL/Window.h>
 
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp> // glm::vec3
@@ -10,29 +10,27 @@
 #include <iostream>
 #include <string>
 
-#include "Mathf.h"
-#include "PhysicsEngine.h"
-#include "Scene.h"
-#include "cLightManager.h"
-#include "cDebugRenderer.h"
-#include "cGameObject.h"
-#include "cVAOManager.h"
+#include <Physics/Mathf.h>
+#include <Physics/PhysicsEngine.h>
+#include <Scene/Scene.h>
+#include <Lighting/cLightManager.h>
+#include <DebugRenderer/cDebugRenderer.h>
+#include <cGameObject.h>
+#include <Mesh/cVAOManager.h>
 
-#include "iInputHandler.h"
-#include "cPhysicsInputHandler.h"
-#include "cLightController.h"
-#include "cLayoutController.h"
-#include "cModelLoader.h"
-#include "AudioEngine.hpp"
-#include "cAudioInputHandler.h"
-#include "TextureManager/cBasicTextureManager.h"
-#include "cParticleEffect.h"
-#include "cLowpassFilter.h"
-#include "cLuaBrain.h"
-#include "cMoveTo.h"
-#include "cRotateTo.h"
-#include "cFollowCurve.h"
-#include "FBO/cFBO.h"
+#include <InputHandlers/cPhysicsInputHandler.h>
+#include <InputHandlers/cLayoutController.h>
+#include <InputHandlers/cLightController.h>
+#include <Mesh/cModelLoader.h>
+#include <Audio/AudioEngine.hpp>
+#include <TextureManager/cBasicTextureManager.h>
+#include <Particles/cParticleEffect.h>
+#include <Misc/cLowpassFilter.h>
+#include <Lua/cLuaBrain.h>
+#include <Commands/cMoveTo.h>
+#include <Commands/cRotateTo.h>
+#include <Commands/cFollowCurve.h>
+#include <FBO/cFBO.h>
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800

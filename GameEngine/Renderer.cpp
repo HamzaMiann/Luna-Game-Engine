@@ -1,7 +1,7 @@
 
-#include "Renderer.h"
-#include "cGameObject.h"
-#include "cAABB.h"
+#include <Renderer.h>
+#include <cGameObject.h>
+#include <Physics/cAABB.h>
 
 void Renderer::SetFloat(std::string name, float value)
 {

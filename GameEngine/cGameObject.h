@@ -6,7 +6,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <string>
 #include <vector>
-#include "cCommandGroup.h"
+#include <Commands/cCommandGroup.h>
 
 class Scene;
 class cLuaBrain;

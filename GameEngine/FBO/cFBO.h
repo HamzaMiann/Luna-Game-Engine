@@ -2,7 +2,7 @@
 #define _FBO_HG_
 
 #include <string>
-#include "../GLCommon.h"
+#include <_GL/GLCommon.h>
 
 class cFBO
 {
