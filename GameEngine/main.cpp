@@ -174,7 +174,7 @@ int main(void)
 													  "SpaceBox_top3_posY.bmp", "SpaceBox_bottom4_negY.bmp",
 													  "SpaceBox_front5_posZ.bmp", "SpaceBox_back6_negZ.bmp", true, errorString))
 	{
-		scene = Scene::LoadFromXML("water.scene.xml");
+		scene = Scene::LoadFromXML("ship.scene.xml");
 		pSkyBoxSphere->transform.pos = glm::vec3(0.f);
 		pSkyBoxSphere->meshName = "sphere";
 		pSkyBoxSphere->shaderName = "basic";
@@ -200,7 +200,7 @@ int main(void)
 	PhysicsEngine* phys = PhysicsEngine::Instance();
 	phys->GenerateAABB(scene);
 
-	pInputHandler = 0;// new cPhysicsInputHandler(*scene, window);
+	pInputHandler = new cPhysicsInputHandler(*scene, window);
 
 
 	cDebugRenderer* renderer = cDebugRenderer::Instance();
@@ -279,7 +279,7 @@ int main(void)
 
 
 	// Set up frame buffer
-	cFBO* fbo = new cFBO;
+	/*cFBO* fbo = new cFBO;
 	std::string fbo_error;
 	if (fbo->init(1024, 1024, fbo_error))
 	{
@@ -289,7 +289,7 @@ int main(void)
 	{
 		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
 		exit(1);
-	}
+	}*/
 
 
 
@@ -298,9 +298,9 @@ int main(void)
 	while (!glfwWindowShouldClose(window))
 	{
 		// Draw to the frame buffer
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo->ID);
+		//glBindFramebuffer(GL_FRAMEBUFFER, fbo->ID);
 
-		fbo->clearBuffers(true, true);
+		//fbo->clearBuffers(true, true);
 		pass_id = 1;
 
 
@@ -480,6 +480,7 @@ int main(void)
 		renderer->RenderDebugObjects(v, p, 0.01f);
 
 
+		/*
 		// 1. Disable the FBO
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -499,7 +500,7 @@ int main(void)
 		GLint shaderProgID = scene->Shaders[pQuad->shaderName];
 		glUseProgram(shaderProgID);
 		DrawObject(pQuad, ratio, v, p);
-
+		*/
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -281,6 +281,7 @@
     <None Include="assets\shaders\water_vert.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="assets\scenes\ship.scene.xml" />
     <Xml Include="assets\scenes\water.scene.xml">
       <SubType>Designer</SubType>
     </Xml>

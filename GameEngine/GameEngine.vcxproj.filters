@@ -456,5 +456,6 @@
     <Xml Include="assets\scenes\water.scene.xml">
       <Filter>SceneFactory\Scenes</Filter>
     </Xml>
+    <Xml Include="assets\scenes\ship.scene.xml" />
   </ItemGroup>
 </Project>
