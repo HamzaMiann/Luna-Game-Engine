@@ -51,6 +51,8 @@
 		<Texture name="WATER_BUMP.bmp"/>
 	</Textures>
 	<Models>
+    <Model file="RetroTV.edited.bodyonly.ply" friendlyName="tv_body" shader="basic"/>
+    <Model file="RetroTV.edited.screenonly.ply" friendlyName="tv_screen" shader="basic"/>
 		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="quad" shader="post"/>
 		<Model file="Sphere_Radius_1_XYZ_n_uv.ply" friendlyName="sphere" shader="basic"/>
 		<Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="sphere_plane" shader="water"/>
@@ -154,6 +156,33 @@
 			<CollidePoint x="1.100004" y="136.794693" z="351.006378"/>
       
 		</GameObject>
+
+    <GameObject mesh="tv_body" tag="tv_body" shader="basic">
+      <Position x="0.000000" y="20.000000" z="0.000000"/>
+      <Rotation x="-90.000000" y="-0.000000" z="0.000000"/>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.000000" y="0.000000" z="0.000000"/>
+      <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+      <Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+      <Scale>1.000000</Scale>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <IMass>1.000000</IMass>
+      <Collider>NONE</Collider>
+      <Texture ratio="1.000000">Fighter_Ship_wings_diffuse.bmp</Texture>
+    </GameObject>
+    <GameObject mesh="tv_screen" tag="tv_screen" shader="basic">
+      <Position x="0.000000" y="20.000000" z="0.000000"/>
+      <Rotation x="-90.000000" y="-0.000000" z="0.000000"/>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.000000" y="0.000000" z="0.000000"/>
+      <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+      <Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+      <Scale>1.000000</Scale>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <IMass>1.000000</IMass>
+      <Collider>NONE</Collider>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+    </GameObject>
     
     <GameObject mesh="quad" tag="quad" shader="post">
 			<Position x="0.000000" y="0.000000" z="0.000000"/>
@@ -178,7 +207,7 @@
 			<Scale>1.000000</Scale>
 			<SpecIntensity>10.000000</SpecIntensity>
 			<IMass>1.000000</IMass>
-			<Collider>AABB</Collider>
+			<Collider>NONE</Collider>
 			<Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
       <Texture ratio="1.000000">Ground_Dirt_007_roughness.bmp</Texture>
       <Texture ratio="1.000000">Ground_Dirt_007_normal.bmp</Texture>

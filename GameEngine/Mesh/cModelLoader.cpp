@@ -2,6 +2,9 @@
 
 #include <iostream>			// cin cout
 #include <fstream>		    // ifstream ofstream
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
 
 cModelLoader::cModelLoader()			// constructor
 {
@@ -21,6 +24,93 @@ bool cModelLoader::LoadPlyModel(
 	std::string filename,
 	cMesh &theMesh)				// Note the "&"
 {
+
+	Assimp::Importer importer;
+	// And have it read the given file with some example postprocessing
+	// Usually - if speed is not the most important aspect for you - you'll 
+	// propably to request more postprocessing than we do in this example.
+	const aiScene* scene = importer.ReadFile(filename,
+											 aiProcess_Triangulate |
+											 aiProcess_OptimizeMeshes |
+											 aiProcess_OptimizeGraph |
+											 aiProcess_JoinIdenticalVertices |
+											 aiProcess_SortByPType);
+
+	if (!scene)
+	{
+		std::cout << "Error while loading model... " << importer.GetErrorString() << std::endl;
+		return false;
+	}
+
+	if (scene->HasMeshes())
+	{
+		aiMesh& mesh = *scene->mMeshes[0];
+		for (unsigned int i = 0; i < mesh.mNumVertices; ++i)
+		{
+			aiVector3D vec = mesh.mVertices[i];
+			aiVector3D normal = mesh.mNormals[i];
+
+			sPlyVertexXYZ tempVertex;
+
+			tempVertex.x = vec.x;
+			tempVertex.y = vec.y;
+			tempVertex.z = vec.z;
+			tempVertex.nx = normal.x;
+			tempVertex.ny = normal.y;
+			tempVertex.nz = normal.z;
+
+			aiVector3D uv = mesh.mTextureCoords[0][i];
+			tempVertex.u = uv.x;
+			tempVertex.v = uv.y;
+
+			theMesh.vecVertices.push_back(tempVertex);
+		}
+
+		for (unsigned int i = 0; i < mesh.mNumFaces; ++i)
+		{
+			sPlyTriangle tempTriangle;
+			sMeshTriangle tempMeshTriangle;
+
+			aiFace face = mesh.mFaces[i];
+
+			tempTriangle.vert_index_1 = face.mIndices[0];
+			tempTriangle.vert_index_2 = face.mIndices[1];
+			tempTriangle.vert_index_3 = face.mIndices[2];
+
+			tempMeshTriangle.first.x = theMesh.vecVertices[tempTriangle.vert_index_1].x;
+			tempMeshTriangle.first.y = theMesh.vecVertices[tempTriangle.vert_index_1].y;
+			tempMeshTriangle.first.z = theMesh.vecVertices[tempTriangle.vert_index_1].z;
+
+			tempMeshTriangle.second.x = theMesh.vecVertices[tempTriangle.vert_index_2].x;
+			tempMeshTriangle.second.y = theMesh.vecVertices[tempTriangle.vert_index_2].y;
+			tempMeshTriangle.second.z = theMesh.vecVertices[tempTriangle.vert_index_2].z;
+
+			tempMeshTriangle.third.x = theMesh.vecVertices[tempTriangle.vert_index_3].x;
+			tempMeshTriangle.third.y = theMesh.vecVertices[tempTriangle.vert_index_3].y;
+			tempMeshTriangle.third.z = theMesh.vecVertices[tempTriangle.vert_index_3].z;
+
+			tempMeshTriangle.normal.x = theMesh.vecVertices[tempTriangle.vert_index_1].nx;
+			tempMeshTriangle.normal.y = theMesh.vecVertices[tempTriangle.vert_index_1].ny;
+			tempMeshTriangle.normal.z = theMesh.vecVertices[tempTriangle.vert_index_1].nz;
+
+			tempMeshTriangle.normal = glm::normalize(tempMeshTriangle.normal);
+
+			theMesh.vecTriangles.push_back(tempTriangle);
+
+			theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
+		}
+
+		return true;
+
+	}
+
+	return false;
+
+
+
+
+
+
 	std::string AABB_file = "assets/models/Terrain_XYZ_n_uv.ply";
 	//std::string AABB_file = "assets/models/Halo_Ring2_XYZ_N_UV.ply";
 

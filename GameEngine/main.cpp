@@ -200,7 +200,7 @@ int main(void)
 	PhysicsEngine* phys = PhysicsEngine::Instance();
 	phys->GenerateAABB(scene);
 
-	pInputHandler = new cPhysicsInputHandler(*scene, window);
+	pInputHandler = 0;// new cPhysicsInputHandler(*scene, window);
 
 
 	cDebugRenderer* renderer = cDebugRenderer::Instance();
