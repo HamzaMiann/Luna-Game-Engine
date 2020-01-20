@@ -4,8 +4,9 @@ class Scene;
 class cGameObject;
 #include <DebugRenderer/cDebugRenderer.h>
 #include <Physics/octree.h>
+#include <iEngine.h>
 
-class PhysicsEngine
+class PhysicsEngine : public iEngine
 {
 private:
 	PhysicsEngine() {}
@@ -24,9 +25,9 @@ public:
 	const float drag = 0.7f;
 	const float friction = 0.7f;
 
-	cDebugRenderer* renderer;
+	cDebugRenderer* renderer = 0;
 
-	octree* tree;
+	octree* tree = 0;
 
 	void IntegrationStep(Scene* scene, float delta_time);
 	void CheckCollisions(Scene* scene, float delta_time);
@@ -51,3 +52,4 @@ const sMeshTriangle* FindClosestPointToTriangles(
 
 
 int IntersectLineTriangle(glm::vec3 p, glm::vec3 q, glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3& r);
+int IntersectLineTriangle(glm::vec3 p, glm::vec3 q, sMeshTriangle* tri, glm::vec3& r);

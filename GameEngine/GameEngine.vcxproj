@@ -158,6 +158,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio\AudioEngine.cpp" />
+    <ClCompile Include="Components\cRigidBody.cpp" />
     <ClCompile Include="Scene\Builders\cAudioBuilder.cpp" />
     <ClCompile Include="InputHandlers\cAudioInputHandler.cpp" />
     <ClCompile Include="Commands\cCommandGroup.cpp" />
@@ -208,6 +209,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
   <ItemGroup>
     <ClInclude Include="Components\Colliders\iCollider.h" />
     <ClInclude Include="Components\cRigidBody.h" />
+    <ClInclude Include="iEngine.h" />
     <ClInclude Include="sTransform.h" />
     <ClInclude Include="iObject.h" />
     <ClInclude Include="Physics\cAABB.h" />

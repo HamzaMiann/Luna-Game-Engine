@@ -34,7 +34,8 @@ bool cModelLoader::LoadPlyModel(
 											 aiProcess_OptimizeMeshes |
 											 aiProcess_OptimizeGraph |
 											 aiProcess_JoinIdenticalVertices |
-											 aiProcess_SortByPType);
+											 aiProcess_GenNormals |
+											 aiProcess_CalcTangentSpace );
 
 	if (!scene)
 	{
@@ -47,17 +48,18 @@ bool cModelLoader::LoadPlyModel(
 		aiMesh& mesh = *scene->mMeshes[0];
 		for (unsigned int i = 0; i < mesh.mNumVertices; ++i)
 		{
-			aiVector3D vec = mesh.mVertices[i];
-			aiVector3D normal = mesh.mNormals[i];
-
 			sPlyVertexXYZ tempVertex;
 
+			aiVector3D vec = mesh.mVertices[i];
 			tempVertex.x = vec.x;
 			tempVertex.y = vec.y;
 			tempVertex.z = vec.z;
+
+			aiVector3D normal = mesh.mNormals[i];
 			tempVertex.nx = normal.x;
 			tempVertex.ny = normal.y;
 			tempVertex.nz = normal.z;
+
 
 			aiVector3D uv = mesh.mTextureCoords[0][i];
 			tempVertex.u = uv.x;
@@ -77,23 +79,20 @@ bool cModelLoader::LoadPlyModel(
 			tempTriangle.vert_index_2 = face.mIndices[1];
 			tempTriangle.vert_index_3 = face.mIndices[2];
 
-			tempMeshTriangle.first.x = theMesh.vecVertices[tempTriangle.vert_index_1].x;
-			tempMeshTriangle.first.y = theMesh.vecVertices[tempTriangle.vert_index_1].y;
-			tempMeshTriangle.first.z = theMesh.vecVertices[tempTriangle.vert_index_1].z;
+			sPlyVertexXYZ first = theMesh.vecVertices[tempTriangle.vert_index_1];
+			sPlyVertexXYZ second = theMesh.vecVertices[tempTriangle.vert_index_2];
+			sPlyVertexXYZ third = theMesh.vecVertices[tempTriangle.vert_index_3];
+			tempMeshTriangle.first = glm::vec3(first.x, first.y, first.z);
+			tempMeshTriangle.second = glm::vec3(second.x, second.y, second.z);
+			tempMeshTriangle.third = glm::vec3(third.x, third.y, third.z);
+			tempMeshTriangle.normal.x = (first.nx + second.nx + third.nx) / 3.f;
+			tempMeshTriangle.normal.y = (first.ny + second.ny + third.ny) / 3.f;
+			tempMeshTriangle.normal.z = (first.nz + second.nz + third.nz) / 3.f;
 
-			tempMeshTriangle.second.x = theMesh.vecVertices[tempTriangle.vert_index_2].x;
-			tempMeshTriangle.second.y = theMesh.vecVertices[tempTriangle.vert_index_2].y;
-			tempMeshTriangle.second.z = theMesh.vecVertices[tempTriangle.vert_index_2].z;
-
-			tempMeshTriangle.third.x = theMesh.vecVertices[tempTriangle.vert_index_3].x;
-			tempMeshTriangle.third.y = theMesh.vecVertices[tempTriangle.vert_index_3].y;
-			tempMeshTriangle.third.z = theMesh.vecVertices[tempTriangle.vert_index_3].z;
-
-			tempMeshTriangle.normal.x = theMesh.vecVertices[tempTriangle.vert_index_1].nx;
-			tempMeshTriangle.normal.y = theMesh.vecVertices[tempTriangle.vert_index_1].ny;
-			tempMeshTriangle.normal.z = theMesh.vecVertices[tempTriangle.vert_index_1].nz;
-
-			tempMeshTriangle.normal = glm::normalize(tempMeshTriangle.normal);
+			tempMeshTriangle.m1 = (tempMeshTriangle.first + tempMeshTriangle.second) / 2.f;
+			tempMeshTriangle.m2 = (tempMeshTriangle.first + tempMeshTriangle.third) / 2.f;
+			tempMeshTriangle.m3 = (tempMeshTriangle.second + tempMeshTriangle.second) / 2.f;
+			tempMeshTriangle.m1 = (tempMeshTriangle.m1 + tempMeshTriangle.m2 + tempMeshTriangle.m3) / 3.f;
 
 			theMesh.vecTriangles.push_back(tempTriangle);
 

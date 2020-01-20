@@ -35,6 +35,7 @@
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 #define CAMERA_CONTROL
+#define DEFERRED_RENDERING
 
 cFBO* pTheFBO = NULL;
 
@@ -201,6 +202,7 @@ int main(void)
 	phys->GenerateAABB(scene);
 
 	pInputHandler = 0;// new cPhysicsInputHandler(*scene, window);
+	pInputHandler = new cLayoutController(*scene);
 
 
 	cDebugRenderer* renderer = cDebugRenderer::Instance();
@@ -275,11 +277,12 @@ int main(void)
 	float delta_time = 0.f;
 
 	scene->camera.Eye = glm::vec3(0.f, 100.f, -200.f);
+	scene->camera.Eye = glm::vec3(0, 0, -3);
 
 
-
+#ifdef DEFERRED_RENDERING
 	// Set up frame buffer
-	/*cFBO* fbo = new cFBO;
+	cFBO* fbo = new cFBO;
 	std::string fbo_error;
 	if (fbo->init(1024, 1024, fbo_error))
 	{
@@ -289,7 +292,8 @@ int main(void)
 	{
 		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
 		exit(1);
-	}*/
+	}
+#endif
 
 
 
@@ -297,10 +301,12 @@ int main(void)
 
 	while (!glfwWindowShouldClose(window))
 	{
+#ifdef DEFERRED_RENDERING
 		// Draw to the frame buffer
-		//glBindFramebuffer(GL_FRAMEBUFFER, fbo->ID);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo->ID);
 
-		//fbo->clearBuffers(true, true);
+		fbo->clearBuffers(true, true);
+#endif
 		pass_id = 1;
 
 
@@ -396,8 +402,8 @@ int main(void)
 
 			cGameObject* objPtr = scene->vecGameObjects[index];
 
-			if (objPtr->shaderName == "post")
-				continue;
+			//if (objPtr->shaderName == "post")
+				//continue;
 
 			objPtr->cmd_group->Update(delta_time);
 			objPtr->brain->Update(delta_time);
@@ -473,14 +479,14 @@ int main(void)
 
 
 		
-		DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
+		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 
-		 // **************************************************
+		// **************************************************
 		// **************************************************
 		renderer->RenderDebugObjects(v, p, 0.01f);
 
 
-		/*
+#ifdef DEFERRED_RENDERING
 		// 1. Disable the FBO
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -489,18 +495,32 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// 3. Use the FBO colour texture as the texture on that quad
+		cGameObject* pQuad = scene->vecGameObjects[2];
+		GLint shaderProgID = scene->Shaders[pQuad->shaderName];
+		glUseProgram(shaderProgID);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fbo->colourTexture_0_ID);
 		pass_id = 2;
 
 		// 4. Draw a single object (a triangle or quad)
-		cGameObject* pQuad = scene->vecGameObjects[3];
-		//pQuad->pos = scene->camera.Eye + glm::normalize(scene->camera.Target) * 2.f;
-		//glm::mat4 ortho = glm::ortho(0, width, height, 0, 0, 1000);
-		GLint shaderProgID = scene->Shaders[pQuad->shaderName];
-		glUseProgram(shaderProgID);
+		GLint textSamp00_UL = glGetUniformLocation(shaderProgID, "textSamp00");
+		glUniform1i(textSamp00_UL, 0);	// Texture unit 0
+
+		v = glm::lookAt(glm::vec3(0, 100, -200),
+						glm::vec3(0, 50, 0),
+						glm::vec3(0, 1, 0));
+
 		DrawObject(pQuad, ratio, v, p);
-		*/
+
+
+		pQuad = scene->vecGameObjects[1];
+		shaderProgID = scene->Shaders[pQuad->shaderName];
+		glUseProgram(shaderProgID);
+		pass_id = 1;
+		DrawObject(pQuad, ratio, v, p);
+		
+#endif
+		
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -219,6 +219,9 @@
     <ClCompile Include="Rendering\RenderingEngine.cpp">
       <Filter>ShadersRendering</Filter>
     </ClCompile>
+    <ClCompile Include="Components\cRigidBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextureManager\C24BitBMPpixel.h">
@@ -390,6 +393,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Components\Colliders\iCollider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

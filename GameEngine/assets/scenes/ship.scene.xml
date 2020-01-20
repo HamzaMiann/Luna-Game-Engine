@@ -52,7 +52,7 @@
 	</Textures>
 	<Models>
     <Model file="RetroTV.edited.bodyonly.ply" friendlyName="tv_body" shader="basic"/>
-    <Model file="RetroTV.edited.screenonly.ply" friendlyName="tv_screen" shader="basic"/>
+    <Model file="RetroTV.edited.screenonly.ply" friendlyName="tv_screen" shader="post"/>
 		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="quad" shader="post"/>
 		<Model file="Sphere_Radius_1_XYZ_n_uv.ply" friendlyName="sphere" shader="basic"/>
 		<Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="sphere_plane" shader="water"/>
@@ -159,7 +159,7 @@
 
     <GameObject mesh="tv_body" tag="tv_body" shader="basic">
       <Position x="0.000000" y="20.000000" z="0.000000"/>
-      <Rotation x="-90.000000" y="-0.000000" z="0.000000"/>
+      <Rotation x="-90.000000" y="180.000000" z="0.000000"/>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.000000" y="0.000000" z="0.000000"/>
       <Velocity x="0.000000" y="0.000000" z="0.000000"/>
@@ -170,9 +170,9 @@
       <Collider>NONE</Collider>
       <Texture ratio="1.000000">Fighter_Ship_wings_diffuse.bmp</Texture>
     </GameObject>
-    <GameObject mesh="tv_screen" tag="tv_screen" shader="basic">
+    <GameObject mesh="tv_screen" tag="tv_screen" shader="post">
       <Position x="0.000000" y="20.000000" z="0.000000"/>
-      <Rotation x="-90.000000" y="-0.000000" z="0.000000"/>
+      <Rotation x="-90.000000" y="180.000000" z="0.000000"/>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.000000" y="0.000000" z="0.000000"/>
       <Velocity x="0.000000" y="0.000000" z="0.000000"/>

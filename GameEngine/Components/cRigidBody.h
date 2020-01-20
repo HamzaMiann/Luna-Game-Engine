@@ -21,19 +21,9 @@ public:
 	float		gravityScale;
 	float		inverseMass;
 
-	cRigidBody(iObject* obj)
-		: transform(obj->transform)
-	{
-		rigidBody		= this;
-		velocity		= vec3(0.f);
-		acceleration	= vec3(0.f);
-		force			= vec3(0.f);
-		previousPos		= transform.pos;
-		gravityScale	= 0.f;
-		inverseMass		= 1.f;
-	}
+	cRigidBody(iObject* obj);
 
-	virtual ~cRigidBody() {}
+	virtual ~cRigidBody();
 
 	void	AddForce(vec3 newtons) { force += newtons; }
 	void	SetForce(vec3 newtons) { force = newtons; }
