@@ -18,7 +18,7 @@ void cLightBuilder::Build(Scene& scene, xml_node<>* node)
 {
 	printf("Building Lights...\n");
 
-	scene.pLightManager = new cLightManager();
+	scene.pLightManager = cLightManager::Instance();
 	for (xml_node<>* light_node = node->first_node("Light"); light_node; light_node = light_node->next_sibling("Light"))
 	{
 		sLight* light = new sLight();

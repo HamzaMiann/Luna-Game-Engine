@@ -43,4 +43,5 @@ public:
 	}
 
 	vec3 EulerAngles(void) { return glm::eulerAngles(rotation); }
+
 };

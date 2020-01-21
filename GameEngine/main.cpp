@@ -31,11 +31,12 @@
 #include <Commands/cRotateTo.h>
 #include <Commands/cFollowCurve.h>
 #include <FBO/cFBO.h>
+#include <Components/cMaterial.h>
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 #define CAMERA_CONTROL
-#define DEFERRED_RENDERING
+//#define DEFERRED_RENDERING
 
 cFBO* pTheFBO = NULL;
 
@@ -202,7 +203,8 @@ int main(void)
 	phys->GenerateAABB(scene);
 
 	pInputHandler = 0;// new cPhysicsInputHandler(*scene, window);
-	pInputHandler = new cLayoutController(*scene);
+	pInputHandler = new cPhysicsInputHandler(*scene, window);
+	//pInputHandler = new cLayoutController(*scene);
 
 
 	cDebugRenderer* renderer = cDebugRenderer::Instance();
@@ -402,6 +404,12 @@ int main(void)
 
 			cGameObject* objPtr = scene->vecGameObjects[index];
 
+			cMaterial* material = objPtr->GetComponent<cMaterial>();
+			if (material != nullptr)
+			{
+
+			}
+
 			//if (objPtr->shaderName == "post")
 				//continue;
 
@@ -417,16 +425,17 @@ int main(void)
 			{
 				glUseProgram(shaderProgID);
 				lastShader = shaderProgID;
+
+				// set time
+				float time = glfwGetTime();
+				glUniform1f(glGetUniformLocation(shaderProgID, "iTime"), time);
+
+				// set resolution
+				glUniform2f(glGetUniformLocation(shaderProgID, "iResolution"),
+							width,
+							height);
 			}
-
-			// set time
-			float time = glfwGetTime();
-			glUniform1f(glGetUniformLocation(shaderProgID, "iTime"), time);
-
-			// set resolution
-			glUniform2f(glGetUniformLocation(shaderProgID, "iResolution"),
-						width,
-						height);
+			
 
 			if (objPtr->tag == "water")
 			{

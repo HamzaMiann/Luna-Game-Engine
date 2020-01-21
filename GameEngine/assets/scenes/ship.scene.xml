@@ -158,7 +158,7 @@
 		</GameObject>
 
     <GameObject mesh="tv_body" tag="tv_body" shader="basic">
-      <Position x="0.000000" y="20.000000" z="0.000000"/>
+      <Position x="0.000000" y="0.000000" z="0.000000"/>
       <Rotation x="-90.000000" y="180.000000" z="0.000000"/>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.000000" y="0.000000" z="0.000000"/>
@@ -171,7 +171,7 @@
       <Texture ratio="1.000000">Fighter_Ship_wings_diffuse.bmp</Texture>
     </GameObject>
     <GameObject mesh="tv_screen" tag="tv_screen" shader="post">
-      <Position x="0.000000" y="20.000000" z="0.000000"/>
+      <Position x="0.000000" y="0.000000" z="0.000000"/>
       <Rotation x="-90.000000" y="180.000000" z="0.000000"/>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.000000" y="0.000000" z="0.000000"/>

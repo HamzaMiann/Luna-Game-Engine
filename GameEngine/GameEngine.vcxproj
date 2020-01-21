@@ -207,6 +207,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="TextureManager\CTextureFromBMP.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Components\cMaterial.h" />
     <ClInclude Include="Components\Colliders\iCollider.h" />
     <ClInclude Include="Components\cRigidBody.h" />
     <ClInclude Include="iEngine.h" />

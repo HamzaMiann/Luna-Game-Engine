@@ -56,6 +56,8 @@ public:
 	}
 	~cShaderManager();
 
+	int last_used_shader_id = -1;
+
 	bool useShaderProgram( unsigned int ID );
 	bool useShaderProgram( std::string friendlyName );
 	bool createProgramFromFile( std::string friendlyName, 
