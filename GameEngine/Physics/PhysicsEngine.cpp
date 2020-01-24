@@ -11,7 +11,7 @@
 #include <algorithm>
 using namespace std;
 
-#define RK4
+//#define RK4
 //#define PDEBUG
 //#define ADVANCED_DEBUG
 
@@ -55,7 +55,7 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float delta_time)
 
 		float speed = abs(pObj->velocity.y);
 
-		if (pObj->isCollided)
+		/*if (pObj->isCollided)
 		{
 			if (speed <= 0.5f)
 			{
@@ -71,9 +71,9 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float delta_time)
 			{
 				pObj->velocity.y = 0.f;
 			}
-		}
-		pObj->pos += (pObj->velocity * delta_time);
-		pObj->isCollided = false;
+		}*/
+		pObj->transform.pos += (pObj->velocity * delta_time);
+		//pObj->isCollided = false;
 
 #else
 
@@ -81,7 +81,7 @@ void PhysicsEngine::IntegrationStep(Scene* scene, float delta_time)
 		pObj->AddForce(Gravity * delta_time * pObj->gravityScale);
 
 		// Drag
-		pObj->AddForce(drag * (delta_time * -pObj->GetForce()));
+		//pObj->AddForce(drag * (delta_time * -pObj->GetForce()));
 
 		// Set acceleration based on force
 		pObj->SetAcceleration(pObj->GetForce() * pObj->inverseMass);
@@ -220,7 +220,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 					{
 						FindClosestPointToMesh(*scene, closestDistanceSoFar, closestPoint, normal, colliderObject, pObj);
 
-						closestDistanceSoFar -= glm::length(pObj->transform.scale);
+						closestDistanceSoFar -= pObj->transform.scale.x;
 
 						if (abs(closestDistanceSoFar) <= 0.08f)
 						{

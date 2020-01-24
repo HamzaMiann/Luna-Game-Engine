@@ -66,7 +66,6 @@ bool Scene::SaveLights()
 	{
 		light_node->remove_all_nodes();
 
-
 		for (unsigned int i = 0; i < this->pLightManager->Lights.size(); ++i)
 		{
 			sLight* light = pLightManager->Lights[i];
@@ -108,7 +107,6 @@ bool Scene::SaveLights()
 			prop->name("Param2");
 			ApplyXYZW(prop, light->param2);
 			node->append_node(prop);
-			
 
 			light_node->append_node(node);
 

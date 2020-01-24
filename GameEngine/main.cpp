@@ -32,10 +32,13 @@
 #include <Commands/cFollowCurve.h>
 #include <FBO/cFBO.h>
 #include <Components/cMaterial.h>
+#include <Components/cRigidBody.h>
+#include <Behaviour/cBehaviourManager.h>
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 #define CAMERA_CONTROL
+#define _DEBUG
 //#define DEFERRED_RENDERING
 
 cFBO* pTheFBO = NULL;
@@ -176,7 +179,7 @@ int main(void)
 													  "SpaceBox_top3_posY.bmp", "SpaceBox_bottom4_negY.bmp",
 													  "SpaceBox_front5_posZ.bmp", "SpaceBox_back6_negZ.bmp", true, errorString))
 	{
-		scene = Scene::LoadFromXML("ship.scene.xml");
+		scene = Scene::LoadFromXML("sandbox.scene.xml");
 		pSkyBoxSphere->transform.pos = glm::vec3(0.f);
 		pSkyBoxSphere->meshName = "sphere";
 		pSkyBoxSphere->shaderName = "basic";
@@ -203,14 +206,14 @@ int main(void)
 	phys->GenerateAABB(scene);
 
 	pInputHandler = 0;// new cPhysicsInputHandler(*scene, window);
-	pInputHandler = new cPhysicsInputHandler(*scene, window);
+	//pInputHandler = new cPhysicsInputHandler(*scene, window);
 	//pInputHandler = new cLayoutController(*scene);
 
 
 	cDebugRenderer* renderer = cDebugRenderer::Instance();
 	renderer->initialize();
 
-#if _DEBUG
+#ifdef _DEBUG
 	phys->renderer = renderer;
 #endif
 
@@ -237,6 +240,7 @@ int main(void)
 
 
 	cGameObject* ship = scene->vecGameObjects[0];
+	ship->GetComponent<cRigidBody>()->gravityScale = 1.f;
 	sLight* light1 = scene->pLightManager->Lights[0];
 	sLight* light2 = scene->pLightManager->Lights[1];
 
@@ -269,10 +273,6 @@ int main(void)
 		}
 	}
 
-	//ship->cmd_group->AddSerial(new cMoveTo(ship, glm::vec3(0.f, 100.f, 0.f), 5.f, 2.f));
-	//ship->cmd_group->AddSerial(new cFollowCurve(ship, glm::vec3(0.f, 50.f, 50.f), glm::vec3(100.f, 100.f, 0.f), 7.f));
-	//ship->cmd_group->AddSerial(new cRotateTo(ship, glm::vec3(90.f, 0.f, 0.f), 5.f));
-
 	cLowpassFilter* filter = cLowpassFilter::Instance();
 	float current_time = (float)glfwGetTime();
 	float previous_time = (float)glfwGetTime();
@@ -298,7 +298,7 @@ int main(void)
 #endif
 
 
-
+	cBehaviourManager::Instance()->start();
 
 
 	while (!glfwWindowShouldClose(window))
@@ -357,6 +357,8 @@ int main(void)
 
 		// Update particles;
 		pEffect.Step(delta_time);
+
+		cBehaviourManager::Instance()->update();
 		
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);

@@ -1,20 +1,32 @@
 #pragma once
 
-#include <map>
-class iComponent;
+#include <vector>
 
+template<typename T>
 class iEngine
 {
 protected:
-	std::map<iComponent*, iComponent*> components;
+	std::vector<T*> Components;
 public:
 	virtual ~iEngine() {}
-	void Register(iComponent* component)
+	bool Register(T* component)
 	{
-		components[component] = component;
+		auto it = std::find(Components.begin(), Components.end(), component);
+		if (it == Components.end())
+		{
+			Components.push_back(component);
+			return true;
+		}
+		return false;
 	}
-	void Unregister(iComponent* component)
+	bool Unregister(T* component)
 	{
-		components[component] = 0;
+		auto it = std::find(Components.begin(), Components.end(), component);
+		if (it != Components.end())
+		{
+			Components.erase(it);
+			return true;
+		}
+		return false;
 	}
 };

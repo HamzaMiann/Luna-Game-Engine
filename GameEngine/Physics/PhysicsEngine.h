@@ -6,7 +6,7 @@ class cGameObject;
 #include <Physics/octree.h>
 #include <iEngine.h>
 
-class PhysicsEngine : public iEngine
+class PhysicsEngine : public iEngine<cRigidBody>
 {
 private:
 	PhysicsEngine() {}
