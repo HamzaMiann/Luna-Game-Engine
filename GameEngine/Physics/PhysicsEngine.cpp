@@ -34,11 +34,13 @@ Point barycentric_to_worldspace(sMeshTriangle const* triangle, Point const& coor
 void PhysicsEngine::IntegrationStep(Scene* scene, float delta_time)
 {
 
-	for (size_t i = 0; i < scene->vecGameObjects.size(); ++i)
+	//for (size_t i = 0; i < scene->vecGameObjects.size(); ++i)
+	for (size_t i = 0; i < Components.size(); ++i)
 	{
 		// Forward Explicit Euler Integration
 		//cGameObject* pObj = (scene->vecGameObjects[i]);
-		cRigidBody* pObj = (scene->vecGameObjects[i]->GetComponent<cRigidBody>());
+		//cRigidBody* pObj = (scene->vecGameObjects[i]->GetComponent<cRigidBody>());
+		cRigidBody* pObj = Components[i];
 
 		// if infinite mass or non-existent, don't run physics
 		if (pObj == nullptr || pObj->inverseMass == 0.f) continue;
@@ -171,6 +173,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 {
 	std::vector<cPair> collisionHistory;
 
+	//for (size_t i = 0; i < scene->vecGameObjects.size(); ++i)
 	for (size_t i = 0; i < scene->vecGameObjects.size(); ++i)
 	{
 		// object to check collisions on
