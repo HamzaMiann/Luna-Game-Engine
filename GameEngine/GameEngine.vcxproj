@@ -160,9 +160,13 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Audio\AudioEngine.cpp" />
     <ClCompile Include="Behaviour\cBehaviourManager.cpp" />
     <ClCompile Include="Behaviour\iBehaviour.cpp" />
+    <ClCompile Include="Components\ComponentFactory.cpp" />
     <ClCompile Include="Components\cRigidBody.cpp" />
+    <ClCompile Include="COMPONENTS\XML_HELPER.CPP" />
+    <ClCompile Include="xml_helper.cpp" />
     <ClCompile Include="EntityManager\cEntityManager.cpp" />
     <ClCompile Include="InputHandlers\cCameraInputHandler.cpp" />
+    <ClCompile Include="iObject.cpp" />
     <ClCompile Include="Scene\Builders\cAudioBuilder.cpp" />
     <ClCompile Include="InputHandlers\cAudioInputHandler.cpp" />
     <ClCompile Include="Commands\cCommandGroup.cpp" />
@@ -213,11 +217,13 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
   <ItemGroup>
     <ClInclude Include="Behaviour\cBehaviourManager.h" />
     <ClInclude Include="Behaviour\iBehaviour.h" />
+    <ClInclude Include="Components\ComponentFactory.h" />
     <ClInclude Include="Components\cMaterial.h" />
     <ClInclude Include="Components\Colliders\iCollider.h" />
     <ClInclude Include="Components\cRigidBody.h" />
+    <ClInclude Include="xml_helper.h" />
     <ClInclude Include="EntityManager\cEntityManager.h" />
-    <ClInclude Include="EntityManager\iSerializable.h" />
+    <ClInclude Include="iSerializable.h" />
     <ClInclude Include="iEngine.h" />
     <ClInclude Include="InputHandlers\cCameraInputHandler.h" />
     <ClInclude Include="sTransform.h" />

@@ -61,6 +61,10 @@ public:
 
 	cCommandGroup* cmd_group;
 
+
+	// Inherited via iObject
+	virtual std::string ObjectName() override;
+
 };
 
 #endif

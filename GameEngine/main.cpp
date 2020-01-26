@@ -358,7 +358,7 @@ int main(void)
 		// Update particles;
 		pEffect.Step(delta_time);
 
-		cBehaviourManager::Instance()->update();
+		cBehaviourManager::Instance()->update(delta_time);
 		
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
@@ -375,7 +375,7 @@ int main(void)
 							 100'000.f);		// Far clipping plane
 
 		// View matrix
-		v = glm::mat4(1.0f);
+		//v = glm::mat4(1.0f);
 
 		v = glm::lookAt(scene->camera.Eye,
 						scene->camera.Target,
@@ -409,7 +409,7 @@ int main(void)
 			cMaterial* material = objPtr->GetComponent<cMaterial>();
 			if (material != nullptr)
 			{
-
+				// TODO
 			}
 
 			//if (objPtr->shaderName == "post")

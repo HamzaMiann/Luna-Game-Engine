@@ -16,10 +16,10 @@ void cBehaviourManager::start()
 	}
 }
 
-void cBehaviourManager::update()
+void cBehaviourManager::update(float dt)
 {
 	for (size_t i = 0; i < Components.size(); ++i)
 	{
-		Components[i]->update();
+		Components[i]->update(dt);
 	}
 }

@@ -1,10 +1,12 @@
 #pragma once
 
+#include <iSerializable.h>
+
 class cRigidBody;
 class cMeshRenderer;
 class cMesh;
 
-class iComponent
+class iComponent : public iSerializable
 {
 public:
 	
@@ -15,6 +17,9 @@ public:
 		meshRenderer	= 0;
 	}
 	virtual ~iComponent() {}
+
+	virtual bool serialize(rapidxml::xml_node<>* root_node) = 0;
+	virtual bool deserialize(rapidxml::xml_node<>* root_node) = 0;
 	
 	cRigidBody*		rigidBody;
 	cMesh*			mesh;

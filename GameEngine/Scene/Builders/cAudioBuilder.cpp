@@ -1,7 +1,7 @@
 
 #include "cAudioBuilder.h"
-#include "Audio/AudioEngine.hpp"
-#include "cGameObject.h"
+#include <Audio/AudioEngine.hpp>
+#include <cGameObject.h>
 using namespace rapidxml;
 
 void cAudioBuilder::Build(Scene& scene, xml_node<>* node)

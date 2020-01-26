@@ -8,5 +8,5 @@ public:
 	iBehaviour();
 	virtual ~iBehaviour();
 	virtual void start() = 0;
-	virtual void update() = 0;
+	virtual void update(float dt) = 0;
 };

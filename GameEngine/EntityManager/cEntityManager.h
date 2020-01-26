@@ -27,4 +27,6 @@ public:
 
 	bool RemoveEntity(iObject* entity);
 
+	void Update(float dt);
+
 };

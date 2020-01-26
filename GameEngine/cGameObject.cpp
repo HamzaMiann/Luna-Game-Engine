@@ -56,3 +56,8 @@ glm::mat4 cGameObject::ScaleMatrix()
 								transform.scale.z)
 	);
 }
+
+std::string cGameObject::ObjectName()
+{
+	return "cGameObject";
+}

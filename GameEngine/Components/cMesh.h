@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <glm/vec3.hpp>
-#include <iObject.h>
 
 
 // structure of loaded data
@@ -38,11 +37,10 @@ struct sMeshTriangle
 	glm::vec3 m;	// Mid-Vertex Global
 };
 
-class cMesh : public iComponent
+class cMesh
 {
 public:
-	cMesh() { mesh = this; };
-	cMesh(iObject* obj) { mesh = this; };
+	cMesh() {};
 	virtual ~cMesh() {};
 
 	glm::vec3 min = glm::vec3(FLT_MAX);

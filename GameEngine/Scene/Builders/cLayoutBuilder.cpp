@@ -4,7 +4,7 @@
 #include <Lua/cLuaBrain.h>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
-#include <Components/cRigidBody.h>
+#include <Components/ComponentFactory.h>
 using namespace rapidxml;
 
 std::string trim(std::string& str)
@@ -43,7 +43,7 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 		if (objectName == "GameObject")
 		{
 			ptr = new cGameObject();
-			cRigidBody* body = ptr->AddComponent<cRigidBody>();
+			//cRigidBody* body = ptr->AddComponent<cRigidBody>();
 
 			if (meshAttr) ptr->meshName = meshAttr->value();
 			if (tagAttr) ptr->tag = tagAttr->value();
@@ -68,7 +68,7 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				{
 					setXYZW(ptr->colour, property_node);
 				}
-				else if (propName == "Velocity")
+				/*else if (propName == "Velocity")
 				{
 					glm::vec3 vel = body->GetVelocity();
 					setXYZ(vel, property_node);
@@ -79,15 +79,20 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 					glm::vec3 accel = body->GetAcceleration();
 					setXYZ(accel, property_node);
 					body->SetAcceleration(accel);
+				}*/
+				else if (propName == "cRigidBody")
+				{
+					iComponent* comp = ComponentFactory::GetComponent(propName, ptr);
+					comp->deserialize(property_node);
 				}
 				else if (propName == "Scale")
 				{
-					body->transform.scale = glm::vec3(strtof(property_node->value(),0));
+					ptr->transform.scale = glm::vec3(strtof(property_node->value(),0));
 				}
-				else if (propName == "IMass")
+				/*else if (propName == "IMass")
 				{
 					body->inverseMass = strtof(property_node->value(), 0);
-				}
+				}*/
 				else if (propName == "SpecIntensity")
 				{
 					ptr->specIntensity = strtof(property_node->value(), 0);

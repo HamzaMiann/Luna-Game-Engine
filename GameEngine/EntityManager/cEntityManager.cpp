@@ -1,4 +1,10 @@
 #include "cEntityManager.h"
+#include <queue>
+
+namespace EntityManager
+{
+	std::queue<iObject*> remove_queue;
+}
 
 cEntityManager::cEntityManager()
 {
@@ -29,8 +35,23 @@ bool cEntityManager::RemoveEntity(iObject* entity)
 	auto it = std::find(Entities.begin(), Entities.end(), entity);
 	if (it != Entities.end())
 	{
-		Entities.erase(it);
+		EntityManager::remove_queue.push(entity);
 		return true;
 	}
 	return false;
+}
+
+void cEntityManager::Update(float dt)
+{
+	while (!EntityManager::remove_queue.empty())
+	{
+		iObject* obj = EntityManager::remove_queue.front();
+		auto it = std::find(Entities.begin(), Entities.end(), obj);
+		if (it != Entities.end())
+		{
+			Entities.erase(it);
+			delete obj;
+		}
+		EntityManager::remove_queue.pop();
+	}
 }

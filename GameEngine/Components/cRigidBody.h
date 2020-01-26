@@ -35,4 +35,7 @@ public:
 	vec3	GetAcceleration() { return acceleration; }
 	void	SetAcceleration(vec3 accel) { acceleration = accel; }
 
+	virtual bool serialize(rapidxml::xml_node<>* root_node) override;
+	virtual bool deserialize(rapidxml::xml_node<>* root_node) override;
+
 };

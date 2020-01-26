@@ -4,6 +4,7 @@ class Scene;
 class cGameObject;
 #include <DebugRenderer/cDebugRenderer.h>
 #include <Physics/octree.h>
+#include <Components/cRigidBody.h>
 #include <iEngine.h>
 
 class PhysicsEngine : public iEngine<cRigidBody>

@@ -18,6 +18,6 @@ public:
 	}
 
 	virtual void start();
-	virtual void update();
+	virtual void update(float dt);
 
 };
