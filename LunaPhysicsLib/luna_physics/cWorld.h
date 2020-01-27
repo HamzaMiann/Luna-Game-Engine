@@ -3,6 +3,7 @@
 #include "cRigidBody.h"
 #include "shapes.h"
 #include <vector>
+#include <glm/vec3.hpp>
 
 namespace phys
 {

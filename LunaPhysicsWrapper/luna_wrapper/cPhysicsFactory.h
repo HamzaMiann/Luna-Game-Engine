@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iPhysicsFactory.h>
+#include <interfaces/physics/iPhysicsFactory.h>
 
 namespace nPhysics
 {
@@ -8,7 +8,8 @@ namespace nPhysics
 	{
 	public:
 		virtual ~cPhysicsFactory() {}
-		virtual iBallComponent* CreateBall(sBallDef& definition) {}
-		virtual iPhysicsWorld* CreateWorld() {}
+		virtual iSphereComponent* CreateBall(sSphereDef& definition);
+		virtual iPlaneComponent* CreateBall(sPlaneDef& definition);
+		virtual iPhysicsWorld* CreateWorld();
 	};
 }

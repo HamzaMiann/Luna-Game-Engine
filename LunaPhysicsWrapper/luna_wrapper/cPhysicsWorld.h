@@ -1,8 +1,12 @@
 #pragma once
 
 
-#include <iPhysicsWorld.h>
-#include <cWorld.h>
+#include <interfaces/physics/iPhysicsWorld.h>
+
+namespace phys
+{
+	class cWorld;
+}
 
 namespace nPhysics
 {
@@ -12,8 +16,8 @@ namespace nPhysics
 		cPhysicsWorld();
 		virtual ~cPhysicsWorld();
 		virtual void Update(float dt);
-		virtual void AddObject(/* todo physics object */);
-		virtual void RemoveObject(/* todo physics object */);
+		virtual bool AddComponent(iPhysicsComponent* component) override;
+		virtual bool RemoveComponent(iPhysicsComponent* component) override;
 
 	private:
 		phys::cWorld* mWorld;
