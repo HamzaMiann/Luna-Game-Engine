@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <Components/iComponent.h>
+#include <interfaces/iComponent.h>
 class iObject;
 
 class ComponentFactory

@@ -2,6 +2,7 @@
 
 #include <glm/vec3.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 struct sTransform
 {
@@ -43,5 +44,33 @@ public:
 	}
 
 	vec3 EulerAngles(void) { return glm::eulerAngles(rotation); }
+
+	inline glm::mat4 ModelMatrix()
+	{
+		return ((glm::mat4(1.f) * TranslationMatrix()) * RotationMatrix()) * ScaleMatrix();
+	}
+
+	inline glm::mat4 TranslationMatrix()
+	{
+		return glm::translate(glm::mat4(1.0f),
+							  glm::vec3(pos.x,
+										pos.y,
+										pos.z)
+		);
+	}
+
+	inline glm::mat4 RotationMatrix()
+	{
+		return glm::mat4(1.f) * glm::mat4(rotation);
+	}
+
+	inline glm::mat4 ScaleMatrix()
+	{
+		return glm::scale(glm::mat4(1.0f),
+						  glm::vec3(scale.x,
+									scale.y,
+									scale.z)
+		);
+	}
 
 };

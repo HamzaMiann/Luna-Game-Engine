@@ -243,9 +243,6 @@
     <ClCompile Include="xml_helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="COMPONENTS\XML_HELPER.CPP">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextureManager\C24BitBMPpixel.h">
@@ -271,9 +268,6 @@
     </ClInclude>
     <ClInclude Include="Audio\fmod_helper.h">
       <Filter>Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\iComponent.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DebugRenderer\cDebugRenderer.h">
       <Filter>DebugRenderer</Filter>
@@ -401,12 +395,6 @@
     <ClInclude Include="_GL\Window.h">
       <Filter>ShadersRendering</Filter>
     </ClInclude>
-    <ClInclude Include="iObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sTransform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Components\cMesh.h">
       <Filter>ModelLoading</Filter>
     </ClInclude>
@@ -438,9 +426,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Components\ComponentFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="iSerializable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="xml_helper.h">

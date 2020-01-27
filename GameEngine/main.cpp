@@ -452,7 +452,7 @@ int main(void)
 
 			if (objPtr->tag == "player")
 			{
-				glm::mat4 model = objPtr->ModelMatrix();
+				glm::mat4 model = objPtr->transform.ModelMatrix();
 				light1->position = model * glm::vec4(ship->CollidePoints[0], 1.f);
 				light2->position = model * glm::vec4(ship->CollidePoints[1], 1.f);
 				pEffect.pos = ((light2->position - light1->position) / 2.f) + light1->position;
@@ -685,7 +685,7 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 	GLint matView_UL = glGetUniformLocation(shaderProgID, "matView");
 	GLint matProj_UL = glGetUniformLocation(shaderProgID, "matProj");
 
-	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(objPtr->ModelMatrix()));
+	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(objPtr->transform.ModelMatrix()));
 	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
 	glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p));
 

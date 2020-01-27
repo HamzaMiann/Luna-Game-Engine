@@ -5,12 +5,13 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <Components/iComponent.h>
+
 
 #define AUDIO_ID int
 
 
 class cGameObject;
+class cRigidBody;
 
 static class AudioEngine
 {

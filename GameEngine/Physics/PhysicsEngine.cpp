@@ -264,7 +264,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 					}
 					else if (pObj->Collider == POINT)
 					{
-						glm::mat4 model = pObj->ModelMatrix();
+						glm::mat4 model = pObj->transform.ModelMatrix();
 						for (unsigned int n = 0; n < pObj->CollidePoints.size(); ++n)
 						{
 							glm::vec3 point = model * glm::vec4(pObj->CollidePoints[n], 1.f);
@@ -397,7 +397,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 						octree::octree_node* node = tree->find_node(pObjBody->transform.pos);
 						if (node)
 						{
-							glm::mat4 model = pObj->ModelMatrix();
+							glm::mat4 model = pObj->transform.ModelMatrix();
 							for (unsigned int n = 0; n < pObj->CollidePoints.size(); ++n)
 							{
 								glm::vec3 point = model * glm::vec4(pObj->CollidePoints[n], 1.f);

@@ -5,7 +5,6 @@
 cRigidBody::cRigidBody(iObject* obj)
 	: transform(obj->transform)
 {
-	rigidBody = this;
 	velocity = vec3(0.f);
 	acceleration = vec3(0.f);
 	force = vec3(0.f);

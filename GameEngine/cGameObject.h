@@ -54,10 +54,10 @@ public:
 
 	std::vector<cGameObject*> children;
 
-	glm::mat4 ModelMatrix();
+	/*glm::mat4 ModelMatrix();
 	glm::mat4 TranslationMatrix();
 	glm::mat4 RotationMatrix();
-	glm::mat4 ScaleMatrix();
+	glm::mat4 ScaleMatrix();*/
 
 	cCommandGroup* cmd_group;
 

@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Interfaces;$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib/Debug64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Interfaces;$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib\Release64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -162,7 +162,6 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Behaviour\iBehaviour.cpp" />
     <ClCompile Include="Components\ComponentFactory.cpp" />
     <ClCompile Include="Components\cRigidBody.cpp" />
-    <ClCompile Include="COMPONENTS\XML_HELPER.CPP" />
     <ClCompile Include="xml_helper.cpp" />
     <ClCompile Include="EntityManager\cEntityManager.cpp" />
     <ClCompile Include="InputHandlers\cCameraInputHandler.cpp" />
@@ -223,11 +222,8 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Components\cRigidBody.h" />
     <ClInclude Include="xml_helper.h" />
     <ClInclude Include="EntityManager\cEntityManager.h" />
-    <ClInclude Include="iSerializable.h" />
     <ClInclude Include="iEngine.h" />
     <ClInclude Include="InputHandlers\cCameraInputHandler.h" />
-    <ClInclude Include="sTransform.h" />
-    <ClInclude Include="iObject.h" />
     <ClInclude Include="Physics\cAABB.h" />
     <ClInclude Include="Audio\AudioEngine.hpp" />
     <ClInclude Include="Camera.h" />
@@ -264,7 +260,6 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Mesh\cVAOManager.h" />
     <ClInclude Include="_GL\GLCommon.h" />
     <ClInclude Include="Commands\iCommand.h" />
-    <ClInclude Include="Components\iComponent.h" />
     <ClInclude Include="DebugRenderer\iDebugRenderer.h" />
     <ClInclude Include="InputHandlers\iInputHandler.h" />
     <ClInclude Include="Scene\Builders\iSceneBuilder.h" />

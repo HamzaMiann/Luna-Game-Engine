@@ -52,12 +52,14 @@
       <SpecIntensity>10.000000</SpecIntensity>
 			<Collider>SPHERE</Collider>
 			<Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
-      <cRigidBody>
-        <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-        <Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-        <Mass>1.0</Mass>
-        <Gravity>1.0</Gravity>
-      </cRigidBody>
+      <Components>
+        <cRigidBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <Gravity>1.0</Gravity>
+        </cRigidBody>
+      </Components>
 		</GameObject>
 
     <GameObject mesh="cube" tag="cube" shader="basic">
@@ -69,12 +71,14 @@
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>MESH</Collider>
       <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
-      <cRigidBody>
-        <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-        <Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-        <Mass>1.0</Mass>
-        <Gravity>0.0</Gravity>
-      </cRigidBody>
+      <Components>
+				<cRigidBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>1.0</Mass>
+					<Gravity>0.0</Gravity>
+				</cRigidBody>
+      </Components>
     </GameObject>
     
 	</Layout>

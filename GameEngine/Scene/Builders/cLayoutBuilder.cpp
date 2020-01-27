@@ -80,10 +80,14 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 					setXYZ(accel, property_node);
 					body->SetAcceleration(accel);
 				}*/
-				else if (propName == "cRigidBody")
+				else if (propName == "Components")
 				{
-					iComponent* comp = ComponentFactory::GetComponent(propName, ptr);
-					comp->deserialize(property_node);
+					for (xml_node<>* component_node = property_node->first_node(); component_node; component_node = component_node->next_sibling())
+					{
+						std::string n = component_node->name();
+						iComponent* comp = ComponentFactory::GetComponent(n, ptr);
+						if (comp) comp->deserialize(component_node);
+					}
 				}
 				else if (propName == "Scale")
 				{

@@ -27,35 +27,35 @@ cGameObject::~cGameObject()
 	delete brain;
 }
 
-glm::mat4 cGameObject::ModelMatrix()
-{
-	return ((glm::mat4(1.f) * TranslationMatrix()) * RotationMatrix()) * ScaleMatrix();
-}
-
-glm::mat4 cGameObject::TranslationMatrix()
-{
-	return glm::translate(glm::mat4(1.0f),
-						  glm::vec3(transform.pos.x,
-									transform.pos.y,
-									transform.pos.z)
-	);
-}
-
-glm::mat4 cGameObject::RotationMatrix()
-{
-	glm::mat4 m(1.f);
-	m *= glm::mat4(transform.rotation);
-	return m;
-}
-
-glm::mat4 cGameObject::ScaleMatrix()
-{
-	return glm::scale(glm::mat4(1.0f),
-					  glm::vec3(transform.scale.x,
-								transform.scale.y,
-								transform.scale.z)
-	);
-}
+//glm::mat4 cGameObject::ModelMatrix()
+//{
+//	return ((glm::mat4(1.f) * TranslationMatrix()) * RotationMatrix()) * ScaleMatrix();
+//}
+//
+//glm::mat4 cGameObject::TranslationMatrix()
+//{
+//	return glm::translate(glm::mat4(1.0f),
+//						  glm::vec3(transform.pos.x,
+//									transform.pos.y,
+//									transform.pos.z)
+//	);
+//}
+//
+//glm::mat4 cGameObject::RotationMatrix()
+//{
+//	glm::mat4 m(1.f);
+//	m *= glm::mat4(transform.rotation);
+//	return m;
+//}
+//
+//glm::mat4 cGameObject::ScaleMatrix()
+//{
+//	return glm::scale(glm::mat4(1.0f),
+//					  glm::vec3(transform.scale.x,
+//								transform.scale.y,
+//								transform.scale.z)
+//	);
+//}
 
 std::string cGameObject::ObjectName()
 {

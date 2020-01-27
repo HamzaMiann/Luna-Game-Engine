@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Components/iComponent.h>
+#include <interfaces/iComponent.h>
 
 class iBehaviour : public iComponent
 {
