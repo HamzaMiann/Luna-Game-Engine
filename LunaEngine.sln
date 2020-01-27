@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameEngine", "GameEngine\GameEngine.vcxproj", "{AC89A0D6-36A9-4B42-948D-5A55BA436D9A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LunaEngine", "LunaEngine\LunaEngine.vcxproj", "{AC89A0D6-36A9-4B42-948D-5A55BA436D9A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Interfaces", "Interfaces\Interfaces.vcxproj", "{A19E203E-03CE-4E29-A214-767B8AC96031}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LunaPhysicsLib", "LunaPhysicsLib\LunaPhysicsLib.vcxproj", "{3643FD7F-8D68-44C3-B82A-6B968E3256CB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LunaPhysicsWrapper", "LunaPhysicsWrapper\LunaPhysicsWrapper.vcxproj", "{B64B8F1C-5692-4694-8616-2B5572D892D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +35,22 @@ Global
 		{A19E203E-03CE-4E29-A214-767B8AC96031}.Release|x64.Build.0 = Release|x64
 		{A19E203E-03CE-4E29-A214-767B8AC96031}.Release|x86.ActiveCfg = Release|Win32
 		{A19E203E-03CE-4E29-A214-767B8AC96031}.Release|x86.Build.0 = Release|Win32
+		{3643FD7F-8D68-44C3-B82A-6B968E3256CB}.Debug|x64.ActiveCfg = Debug|x64
+		{3643FD7F-8D68-44C3-B82A-6B968E3256CB}.Debug|x64.Build.0 = Debug|x64
+		{3643FD7F-8D68-44C3-B82A-6B968E3256CB}.Debug|x86.ActiveCfg = Debug|Win32
+		{3643FD7F-8D68-44C3-B82A-6B968E3256CB}.Debug|x86.Build.0 = Debug|Win32
+		{3643FD7F-8D68-44C3-B82A-6B968E3256CB}.Release|x64.ActiveCfg = Release|x64
+		{3643FD7F-8D68-44C3-B82A-6B968E3256CB}.Release|x64.Build.0 = Release|x64
+		{3643FD7F-8D68-44C3-B82A-6B968E3256CB}.Release|x86.ActiveCfg = Release|Win32
+		{3643FD7F-8D68-44C3-B82A-6B968E3256CB}.Release|x86.Build.0 = Release|Win32
+		{B64B8F1C-5692-4694-8616-2B5572D892D9}.Debug|x64.ActiveCfg = Debug|x64
+		{B64B8F1C-5692-4694-8616-2B5572D892D9}.Debug|x64.Build.0 = Debug|x64
+		{B64B8F1C-5692-4694-8616-2B5572D892D9}.Debug|x86.ActiveCfg = Debug|Win32
+		{B64B8F1C-5692-4694-8616-2B5572D892D9}.Debug|x86.Build.0 = Debug|Win32
+		{B64B8F1C-5692-4694-8616-2B5572D892D9}.Release|x64.ActiveCfg = Release|x64
+		{B64B8F1C-5692-4694-8616-2B5572D892D9}.Release|x64.Build.0 = Release|x64
+		{B64B8F1C-5692-4694-8616-2B5572D892D9}.Release|x86.ActiveCfg = Release|Win32
+		{B64B8F1C-5692-4694-8616-2B5572D892D9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
