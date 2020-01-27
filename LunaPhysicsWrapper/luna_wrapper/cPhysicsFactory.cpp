@@ -3,13 +3,14 @@
 
 namespace nPhysics
 {
-	iSphereComponent* cPhysicsFactory::CreateBall(sSphereDef& definition)
+	iSphereComponent* cPhysicsFactory::CreateBall(sSphereDef& definition, iObject* attach_to)
 	{
-		//cSphereComponent* comp = new cSphereComponent;
-		return nullptr;
+		cSphereComponent* comp = new cSphereComponent(attach_to, definition);
+		attach_to->AddComponent((iComponent*)comp);
+		return comp;
 	}
 
-	iPlaneComponent* cPhysicsFactory::CreateBall(sPlaneDef& definition)
+	iPlaneComponent* cPhysicsFactory::CreateBall(sPlaneDef& definition, iObject* attach_to)
 	{
 		return nullptr;
 	}

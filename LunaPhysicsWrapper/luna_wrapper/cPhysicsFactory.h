@@ -8,8 +8,8 @@ namespace nPhysics
 	{
 	public:
 		virtual ~cPhysicsFactory() {}
-		virtual iSphereComponent* CreateBall(sSphereDef& definition);
-		virtual iPlaneComponent* CreateBall(sPlaneDef& definition);
+		virtual iSphereComponent* CreateBall(sSphereDef& definition, iObject* attach_to);
+		virtual iPlaneComponent* CreateBall(sPlaneDef& definition, iObject* attach_to);
 		virtual iPhysicsWorld* CreateWorld();
 	};
 }

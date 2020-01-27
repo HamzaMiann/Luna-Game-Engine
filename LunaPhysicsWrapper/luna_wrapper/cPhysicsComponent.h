@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iObject.h>
 #include <interfaces/physics/iSphereComponent.h>
 #include <interfaces/physics/iPlaneComponent.h>
 #include <luna_physics/cRigidBody.h>
@@ -8,17 +9,31 @@
 class cSphereComponent : public nPhysics::iSphereComponent, public phys::cRigidBody
 {
 public:
+	cSphereComponent(iObject* parent, const nPhysics::sSphereDef& definition);
+	virtual ~cSphereComponent() {}
+
+
 	// Inherited via iSphereComponent
 	virtual void GetTransform(glm::mat4& transformOut) override;
+
 	virtual bool serialize(rapidxml::xml_node<>* root_node) override;
+
 	virtual bool deserialize(rapidxml::xml_node<>* root_node) override;
+
 };
 
 class cPlaneComponent : public nPhysics::iPlaneComponent, public phys::cRigidBody
 {
 public:
+	cPlaneComponent(iObject* parent, const nPhysics::sPlaneDef& definition);
+	virtual ~cPlaneComponent() {}
+
+
 	// Inherited via iPlaneComponent
 	virtual void GetTransform(glm::mat4& transformOut) override;
+
 	virtual bool serialize(rapidxml::xml_node<>* root_node) override;
+
 	virtual bool deserialize(rapidxml::xml_node<>* root_node) override;
+
 };
