@@ -9,7 +9,7 @@ namespace nPhysics
 	{
 	public:
 		virtual ~iPhysicsFactory() {}
-		virtual iPhysicsWorld* CreateWorld() = 0;
+		virtual iPhysicsWorld* GetWorld() = 0;
 
 		// components
 		virtual iSphereComponent* CreateSphere(const sSphereDef& def, iObject* attach_to) = 0;

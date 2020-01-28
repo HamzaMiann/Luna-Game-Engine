@@ -16,7 +16,7 @@ void phys::cWorld::Update(float dt)
 	// Step 1: Integrate
 	for (size_t c = 0; c < numBodies; c++)
 	{
-		//Integrate(mBodies[c]);	// Todo: Make this
+		Integrate(mBodies[c]);	// Todo: Make this
 	}
 
 	// Step 2: Handle Collisions
@@ -63,8 +63,8 @@ bool phys::cWorld::Collide(cRigidBody* bodyA, cRigidBody* bodyB)
 		}
 		if (shapeB == eShapeType::sphere)
 		{
-			return CollideSpherePlane(bodyB, dynamic_cast<const cSphere*>(bodyB->GetShape()),
-									  bodyA, dynamic_cast<const cPlane*>(bodyA->GetShape()));
+			return CollideSpherePlane(bodyB, dynamic_cast<const cSphereBody*>(bodyB->GetShape()),
+									  bodyA, dynamic_cast<const cPlaneBody*>(bodyA->GetShape()));
 		}
 	}
 	if (shapeA == eShapeType::sphere)
@@ -72,21 +72,21 @@ bool phys::cWorld::Collide(cRigidBody* bodyA, cRigidBody* bodyB)
 		if (shapeB == eShapeType::sphere)
 		{
 			// sphere-sphere collision
-			return CollideSphereSphere(bodyA, dynamic_cast<const cSphere*>(bodyA->GetShape()),
-									   bodyB, dynamic_cast<const cSphere*>(bodyB->GetShape()));
+			return CollideSphereSphere(bodyA, dynamic_cast<const cSphereBody*>(bodyA->GetShape()),
+									   bodyB, dynamic_cast<const cSphereBody*>(bodyB->GetShape()));
 		}
 		if (shapeB == eShapeType::plane)
 		{
-			return CollideSpherePlane(bodyA, dynamic_cast<const cSphere*>(bodyA->GetShape()),
-									  bodyB, dynamic_cast<const cPlane*>(bodyB->GetShape()));
+			return CollideSpherePlane(bodyA, dynamic_cast<const cSphereBody*>(bodyA->GetShape()),
+									  bodyB, dynamic_cast<const cPlaneBody*>(bodyB->GetShape()));
 		}
 	}
 
 	return false;
 }
 
-bool phys::cWorld::CollideSpherePlane(cRigidBody* sphereBody, const cSphere* sphereShape,
-									  cRigidBody* planeBody, const cPlane* planeShape)
+bool phys::cWorld::CollideSpherePlane(cRigidBody* sphereBody, const cSphereBody* sphereShape,
+									  cRigidBody* planeBody, const cPlaneBody* planeShape)
 {
 	// TODO: take a look at chapter 5.5
 	//		make your own version of IntersectMovingSpherePlane
@@ -96,7 +96,13 @@ bool phys::cWorld::CollideSpherePlane(cRigidBody* sphereBody, const cSphere* sph
 	return false;
 }
 
-bool phys::cWorld::CollideSphereSphere(cRigidBody* sphereBodyA, const cSphere* sphereShapeA, cRigidBody* sphereBodyB, const cSphere* sphereShapeB)
+bool phys::cWorld::CollideSphereSphere(cRigidBody* sphereBodyA, const cSphereBody* sphereShapeA, cRigidBody* sphereBodyB, const cSphereBody* sphereShapeB)
 {
 	return false;
+}
+
+void phys::cWorld::Integrate(cRigidBody* body)
+{
+	body->mVelocity += body->mAcceleration * last_dt;
+	body->mPosition += body->mVelocity * last_dt;
 }

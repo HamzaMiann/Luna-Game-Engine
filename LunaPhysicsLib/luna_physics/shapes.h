@@ -1,24 +1,28 @@
 #pragma once
 
-#include "iShape.h"
+#include "iShape.h" 
+#include "cRigidBody.h"
 #include <glm/vec3.hpp>
 
 namespace phys
 {
-	class cPlane : public iShape
+	class cPlaneBody : public iShape, public cRigidBody
 	{
 	public:
-		virtual ~cPlane() {}
+		virtual ~cPlaneBody() {}
 
-		cPlane(const glm::vec3& normal, float constant)
-		: iShape(eShapeType::plane),
+		cPlaneBody(const sRigidBodyDef& def, const glm::vec3& normal, float constant)
+			: iShape(eShapeType::plane),
 			mNormal(normal),
-			mConstant(constant)
+			mConstant(constant),
+			cRigidBody(def)
 		{
 		}
 
 		inline const glm::vec3& GetNormal() { return mNormal; }
 		inline float GetConstant() { return mConstant; }
+
+		virtual inline const eShapeType& GetShape() override { return GetShapeType(); }
 
 	private:
 		glm::vec3 mNormal;
@@ -26,22 +30,25 @@ namespace phys
 
 		// private, so as to not be used. like, ever.
 
-		cPlane() = delete;
-		cPlane(const cPlane& other) = delete;
-		cPlane& operator=(const cPlane& other) = delete;
+		cPlaneBody() = delete;
+		cPlaneBody(const cPlaneBody& other) = delete;
+		cPlaneBody& operator=(const cPlaneBody& other) = delete;
 	};
 
-	class cSphere : public iShape
+	class cSphereBody : public iShape, public cRigidBody
 	{
 	public:
-		virtual ~cSphere() {}
+		virtual ~cSphereBody() {}
 
-		cSphere(const glm::vec3& position, float radius)
+		cSphereBody(const sRigidBodyDef& def, const glm::vec3& position, float radius)
 			: iShape(eShapeType::sphere),
 			mPos(position),
-			mRadius(radius)
+			mRadius(radius),
+			cRigidBody(def)
 		{
 		}
+
+		virtual inline const eShapeType& GetShape() override { return GetShapeType(); }
 
 	private:
 		glm::vec3 mPos;

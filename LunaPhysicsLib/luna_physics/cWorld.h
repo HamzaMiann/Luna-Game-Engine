@@ -22,10 +22,12 @@ namespace phys
 		bool RemoveRigidBody(cRigidBody* rigidBody);
 	protected:
 		bool Collide(cRigidBody* bodyA, cRigidBody* bodyB);
-		bool CollideSpherePlane(cRigidBody* sphereBody, const cSphere* sphereShape,
-								cRigidBody* planeBody, const cPlane* planeShape);
-		bool CollideSphereSphere(cRigidBody* sphereBodyA, const cSphere* sphereShapeA,
-								 cRigidBody* sphereBodyB, const cSphere* sphereShapeB);
+		bool CollideSpherePlane(cRigidBody* sphereBody, const cSphereBody* sphereShape,
+								cRigidBody* planeBody, const cPlaneBody* planeShape);
+		bool CollideSphereSphere(cRigidBody* sphereBodyA, const cSphereBody* sphereShapeA,
+								 cRigidBody* sphereBodyB, const cSphereBody* sphereShapeB);
+		
+		void Integrate(cRigidBody* body);
 
 	private:
 		glm::vec3 mGravity;

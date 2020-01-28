@@ -1,22 +1,24 @@
 #include "cPhysicsFactory.h"
 #include "cPhysicsComponent.h"
+#include "cPhysicsWorld.h"
 
 namespace nPhysics
 {
-	iSphereComponent* cPhysicsFactory::CreateBall(sSphereDef& definition, iObject* attach_to)
+	iSphereComponent* cPhysicsFactory::CreateSphere(const sSphereDef& def, iObject* attach_to)
 	{
 		cSphereComponent* comp = new cSphereComponent(attach_to, definition);
 		attach_to->AddComponent((iComponent*)comp);
 		return comp;
 	}
 
-	iPlaneComponent* cPhysicsFactory::CreateBall(sPlaneDef& definition, iObject* attach_to)
+	iPlaneComponent* cPhysicsFactory::CreatePlane(const sPlaneDef& def, iObject* attach_to)
 	{
 		return nullptr;
 	}
 
-	iPhysicsWorld* cPhysicsFactory::CreateWorld()
+	iPhysicsWorld* cPhysicsFactory::GetWorld()
 	{
-		return nullptr;
+		static cPhysicsWorld world_instance;
+		return &world_instance;
 	}
 }

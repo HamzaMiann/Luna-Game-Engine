@@ -11,9 +11,17 @@ namespace nPhysics
 		virtual ~iPhysicsComponent() {}
 		inline const eComponentType& GetComponentType() { return mComponentType; }
 
-		virtual void GetTransform(glm::mat4& transformOut) = 0;
+		virtual const glm::vec3& GetPosition() = 0;
+		virtual void SetPosition(const glm::vec3& pos) = 0;
 
-		// Inherited via iComponent
+		virtual const glm::vec3& GetVelocity() = 0;
+		virtual void SetVelocity(const glm::vec3& vel) = 0;
+
+		virtual void UpdateTransform() = 0;
+
+		virtual void AddForce(const glm::vec3& force) = 0;
+
+
 		virtual bool serialize(rapidxml::xml_node<>* root_node) = 0;
 		virtual bool deserialize(rapidxml::xml_node<>* root_node) = 0;
 
@@ -22,9 +30,11 @@ namespace nPhysics
 			: mComponentType(componentType)
 			, transform(parent->transform)
 		{}
+
+		sTransform& transform;
+
 	private:
 		eComponentType mComponentType;
-		sTransform& transform;
 
 		// get rid of these!
 		iPhysicsComponent() = delete;
