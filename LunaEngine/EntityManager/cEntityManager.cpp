@@ -1,9 +1,10 @@
 #include "cEntityManager.h"
+#include <cGameObject.h>
 #include <queue>
 
 namespace EntityManager
 {
-	std::queue<iObject*> remove_queue;
+	std::queue<cGameObject*> remove_queue;
 }
 
 cEntityManager::cEntityManager()
@@ -19,7 +20,7 @@ cEntityManager::~cEntityManager()
 	Entities.clear();
 }
 
-bool cEntityManager::AddEntity(iObject* entity)
+bool cEntityManager::AddEntity(cGameObject* entity)
 {
 	auto it = std::find(Entities.begin(), Entities.end(), entity);
 	if (it == Entities.end())
@@ -30,7 +31,7 @@ bool cEntityManager::AddEntity(iObject* entity)
 	return false;
 }
 
-bool cEntityManager::RemoveEntity(iObject* entity)
+bool cEntityManager::RemoveEntity(cGameObject* entity)
 {
 	auto it = std::find(Entities.begin(), Entities.end(), entity);
 	if (it != Entities.end())
@@ -39,6 +40,15 @@ bool cEntityManager::RemoveEntity(iObject* entity)
 		return true;
 	}
 	return false;
+}
+
+cGameObject* cEntityManager::GetObjectByTag(std::string tag)
+{
+	for (unsigned int i = 0; i < Entities.size(); ++i)
+	{
+		if (Entities[i]->tag == tag) return Entities[i];
+	}
+	return nullptr;
 }
 
 void cEntityManager::Update(float dt)

@@ -154,6 +154,7 @@
     <ClInclude Include="interfaces\physics\iPlaneComponent.h" />
     <ClInclude Include="iObject.h" />
     <ClInclude Include="sTransform.h" />
+    <ClInclude Include="xml_helper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

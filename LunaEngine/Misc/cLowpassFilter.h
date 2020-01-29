@@ -22,5 +22,7 @@ public:
 
 	float add_time(float delta_time);
 
+	float total_time = 0.f;
+
 	~cLowpassFilter() {}
 };

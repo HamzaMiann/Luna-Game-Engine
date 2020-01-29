@@ -9,7 +9,8 @@
 class cSphereComponent : public nPhysics::iSphereComponent, public phys::cSphereBody
 {
 public:
-	cSphereComponent(iObject* parent, const nPhysics::sSphereDef& definition);
+	cSphereComponent(iObject* parent, const phys::sRigidBodyDef& definition);
+	cSphereComponent(iObject* parent, const phys::sRigidBodyDef& bodyDef, const nPhysics::sSphereDef& sphereDef);
 	virtual ~cSphereComponent() {}
 
 

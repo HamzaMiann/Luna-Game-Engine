@@ -1,5 +1,18 @@
-#include "cPhysicsComponent.h"
+#include "cSphereComponent.h"
 #include <luna_physics/shapes.h>
+#include <xml_helper.h>
+
+cSphereComponent::cSphereComponent(iObject* parent, const phys::sRigidBodyDef& definition)
+	: cSphereBody(definition)
+	, iSphereComponent(parent)
+{
+}
+
+cSphereComponent::cSphereComponent(iObject* parent, const phys::sRigidBodyDef& bodyDef, const nPhysics::sSphereDef& sphereDef)
+	: cSphereBody(bodyDef, sphereDef.Position, sphereDef.Radius)
+	, iSphereComponent(parent)
+{
+}
 
 const glm::vec3& cSphereComponent::GetPosition()
 {
@@ -39,5 +52,7 @@ bool cSphereComponent::serialize(rapidxml::xml_node<>* root_node)
 
 bool cSphereComponent::deserialize(rapidxml::xml_node<>* root_node)
 {
+	this->mPos = XML_Helper::AsVec3(root_node->first_node("Position"));
+	this->mRadius = XML_Helper::AsFloat(root_node->first_node("Radius"));
 	return false;
 }

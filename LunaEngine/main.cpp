@@ -34,6 +34,8 @@
 #include <Components/cMaterial.h>
 #include <Components/cRigidBody.h>
 #include <Behaviour/cBehaviourManager.h>
+#include <EntityManager/cEntityManager.h>
+#include <Behaviour/Controls/cSphereBehaviour.h>
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -297,6 +299,7 @@ int main(void)
 	}
 #endif
 
+	scene->vecGameObjects[0]->AddComponent<cSphereBehaviour>();
 
 	cBehaviourManager::Instance()->start();
 
@@ -359,6 +362,7 @@ int main(void)
 		pEffect.Step(delta_time);
 
 		cBehaviourManager::Instance()->update(delta_time);
+		cEntityManager::Instance()->Update(delta_time);
 		
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);

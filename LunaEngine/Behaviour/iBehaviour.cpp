@@ -1,7 +1,9 @@
 #include "iBehaviour.h"
 #include <Behaviour/cBehaviourManager.h>
 
-iBehaviour::iBehaviour()
+iBehaviour::iBehaviour(iObject* root)
+	: parent(*root)
+	, transform(root->transform)
 {
 	cBehaviourManager::Instance()->Register(this);
 }

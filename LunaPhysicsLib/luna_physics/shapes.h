@@ -19,15 +19,24 @@ namespace phys
 		{
 		}
 
+		cPlaneBody(const sRigidBodyDef& def)
+			: iShape(eShapeType::plane),
+			mNormal(glm::vec3(0.f, 1.f, 0.1)),
+			mConstant(0.f),
+			cRigidBody(def)
+		{
+		}
+
 		inline const glm::vec3& GetNormal() { return mNormal; }
 		inline float GetConstant() { return mConstant; }
 
 		virtual inline const eShapeType& GetShape() override { return GetShapeType(); }
 
-	private:
+	protected:
 		glm::vec3 mNormal;
 		float mConstant;
 
+	private:
 		// private, so as to not be used. like, ever.
 
 		cPlaneBody() = delete;
@@ -48,10 +57,24 @@ namespace phys
 		{
 		}
 
+		cSphereBody(const sRigidBodyDef& def)
+			: iShape(eShapeType::sphere),
+			mPos(glm::vec3(0.f)),
+			mRadius(1.f),
+			cRigidBody(def)
+		{
+		}
+
 		virtual inline const eShapeType& GetShape() override { return GetShapeType(); }
 
-	private:
+	protected:
 		glm::vec3 mPos;
 		float mRadius;
+
+	private:
+
+		cSphereBody() = delete;
+		cSphereBody(const cSphereBody& other) = delete;
+		cSphereBody& operator=(const cSphereBody& other) = delete;
 	};
 }

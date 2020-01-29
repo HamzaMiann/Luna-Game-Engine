@@ -1,12 +1,13 @@
 #pragma once
 
 #include <vector>
-#include <iObject.h>
+#include <string>
+class cGameObject;
 
 class cEntityManager
 {
 private:
-	std::vector<iObject*> Entities;
+	std::vector<cGameObject*> Entities;
 	cEntityManager();
 public:
 
@@ -18,14 +19,16 @@ public:
 		return &instance;
 	}
 
-	inline const std::vector<iObject*>& GetEntities()
+	inline const std::vector<cGameObject*> GetEntities()
 	{
 		return Entities;
 	}
 
-	bool AddEntity(iObject* entity);
+	bool AddEntity(cGameObject* entity);
 
-	bool RemoveEntity(iObject* entity);
+	bool RemoveEntity(cGameObject* entity);
+
+	cGameObject* GetObjectByTag(std::string tag);
 
 	void Update(float dt);
 

@@ -5,6 +5,8 @@
 
 float cLowpassFilter::add_time(float delta_time)
 {
+	total_time += delta_time;
+
 	time_buffer.push_back(delta_time);
 	if (time_buffer.size() > MAX_BUFFER_LEN)
 		time_buffer.erase(time_buffer.begin());

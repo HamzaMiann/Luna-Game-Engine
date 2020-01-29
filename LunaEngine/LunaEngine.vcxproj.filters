@@ -240,7 +240,10 @@
     <ClCompile Include="iObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="xml_helper.cpp">
+    <ClCompile Include="Behaviour\Controls\cSphereBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -428,7 +431,7 @@
     <ClInclude Include="Components\ComponentFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="xml_helper.h">
+    <ClInclude Include="Behaviour\Controls\cSphereBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -21,7 +21,7 @@
     <ClInclude Include="luna_wrapper\cPhysicsFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="luna_wrapper\cPhysicsComponent.h">
+    <ClInclude Include="luna_wrapper\cSphereComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,10 +29,10 @@
     <ClCompile Include="luna_wrapper\cPhysicsWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="luna_wrapper\cPhysicsComponent.cpp">
+    <ClCompile Include="luna_wrapper\cPhysicsFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="luna_wrapper\cPhysicsFactory.cpp">
+    <ClCompile Include="luna_wrapper\cSphereComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

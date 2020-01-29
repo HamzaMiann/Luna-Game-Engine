@@ -51,5 +51,8 @@
     <ClInclude Include="iObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="xml_helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

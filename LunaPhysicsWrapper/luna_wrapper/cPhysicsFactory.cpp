@@ -1,12 +1,16 @@
 #include "cPhysicsFactory.h"
-#include "cPhysicsComponent.h"
+#include "cSphereComponent.h"
 #include "cPhysicsWorld.h"
 
 namespace nPhysics
 {
 	iSphereComponent* cPhysicsFactory::CreateSphere(const sSphereDef& def, iObject* attach_to)
 	{
-		cSphereComponent* comp = new cSphereComponent(attach_to, definition);
+		phys::sRigidBodyDef bodyDef;
+		bodyDef.Mass = def.Mass;
+		bodyDef.Position = attach_to->transform.pos;
+		bodyDef.Velocity = glm::vec3(0.f);
+		cSphereComponent* comp = new cSphereComponent(attach_to, bodyDef, def);
 		attach_to->AddComponent((iComponent*)comp);
 		return comp;
 	}
