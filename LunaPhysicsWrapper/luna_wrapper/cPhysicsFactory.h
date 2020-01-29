@@ -8,8 +8,11 @@ namespace nPhysics
 	{
 	public:
 		virtual ~cPhysicsFactory() {}
-		virtual iSphereComponent* CreateSphere(const sSphereDef& def, iObject* attach_to) override;
-		virtual iPlaneComponent* CreatePlane(const sPlaneDef& def, iObject* attach_to) override;
-		virtual iPhysicsWorld* GetWorld() override;
+
+		virtual iPhysicsWorld* CreateWorld() = 0;
+
+		// components
+		virtual iSphereComponent* CreateSphere(iObject* parent, const sSphereDef& def) override;
+		virtual iPlaneComponent* CreatePlane(iObject* parent, const sPlaneDef& def) override;
 	};
 }

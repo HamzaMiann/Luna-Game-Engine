@@ -2,11 +2,9 @@
 
 
 #include <interfaces/physics/iPhysicsWorld.h>
+#include <luna_physics/cWorld.h>
 
-namespace phys
-{
-	class cWorld;
-}
+#pragma comment (lib, "LunaPhysicsLib.lib")
 
 namespace nPhysics
 {
@@ -15,11 +13,14 @@ namespace nPhysics
 	public:
 		cPhysicsWorld();
 		virtual ~cPhysicsWorld();
+
 		virtual void Update(float dt);
-		virtual bool AddComponent(iPhysicsComponent* component) override;
-		virtual bool RemoveComponent(iPhysicsComponent* component) override;
+
+		virtual bool AddComponent(iPhysicsComponent* component);
+		virtual bool RemoveComponent(iPhysicsComponent* component);
 
 	private:
 		phys::cWorld* mWorld;
+		std::vector<iPhysicsComponent*> components;
 	};
 }

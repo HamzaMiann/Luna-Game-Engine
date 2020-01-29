@@ -11,8 +11,8 @@ struct sPlyVertexXYZ
 	float x, y, z;
 	float nx, ny, nz;
 	float u, v;
-	float bi_x, bi_y, bi_z;
-	float tan_x, tan_y, tan_z;
+	float tx, ty, tz, tw;	// tangents
+	float bx, by, bz, bw;	// bi-tangents
 	float boneID[4];		// which bone impacts this vertex
 	float boneWeights[4];	// weights for bones
 };

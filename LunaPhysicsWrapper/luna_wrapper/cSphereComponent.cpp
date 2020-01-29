@@ -1,58 +1,46 @@
 #include "cSphereComponent.h"
-#include <luna_physics/shapes.h>
-#include <xml_helper.h>
 
-cSphereComponent::cSphereComponent(iObject* parent, const phys::sRigidBodyDef& definition)
-	: cSphereBody(definition)
-	, iSphereComponent(parent)
+namespace nPhysics
 {
-}
+	cSphereComponent::cSphereComponent(iObject* parent, const phys::sRigidBodyDef& def, phys::iShape* shape)
+		: cRigidBody(def, shape)
+		, iSphereComponent(parent)
+	{
+	}
 
-cSphereComponent::cSphereComponent(iObject* parent, const phys::sRigidBodyDef& bodyDef, const nPhysics::sSphereDef& sphereDef)
-	: cSphereBody(bodyDef, sphereDef.Position, sphereDef.Radius)
-	, iSphereComponent(parent)
-{
-}
+	bool cSphereComponent::serialize(rapidxml::xml_node<>* root_node)
+	{
+		return false;
+	}
 
-const glm::vec3& cSphereComponent::GetPosition()
-{
-	return this->mPosition;
-}
+	bool cSphereComponent::deserialize(rapidxml::xml_node<>* root_node)
+	{
+		return false;
+	}
 
-void cSphereComponent::SetPosition(const glm::vec3& pos)
-{
-	this->mPosition = pos;
-	this->UpdateTransform();
-}
+	void cSphereComponent::GetTransform(glm::mat4& transformOut)
+	{
+		cRigidBody::GetTransform(transformOut);
+	}
 
-const glm::vec3& cSphereComponent::GetVelocity()
-{
-	return this->mVelocity;
-}
+	void cSphereComponent::AddForce(const glm::vec3& force)
+	{
+		cRigidBody::AddForce(force);
+	}
 
-void cSphereComponent::SetVelocity(const glm::vec3& vel)
-{
-	this->mVelocity = vel;
-}
+	void cSphereComponent::SetVelocity(const glm::vec3& velocity)
+	{
+		cRigidBody::mVelocity = velocity;
+	}
 
-void cSphereComponent::UpdateTransform()
-{
-	transform.pos = this->mPosition;
-}
+	glm::vec3 cSphereComponent::GetVelocity()
+	{
+		return cRigidBody::mVelocity;
+	}
 
-void cSphereComponent::AddForce(const glm::vec3& force)
-{
-	cRigidBody::AddForce(force);
-}
+	void cSphereComponent::UpdateTransform()
+	{
+		transform.pos = cRigidBody::mPosition;
+	}
 
-bool cSphereComponent::serialize(rapidxml::xml_node<>* root_node)
-{
-	return false;
-}
-
-bool cSphereComponent::deserialize(rapidxml::xml_node<>* root_node)
-{
-	this->mPos = XML_Helper::AsVec3(root_node->first_node("Position"));
-	this->mRadius = XML_Helper::AsFloat(root_node->first_node("Radius"));
-	return false;
 }

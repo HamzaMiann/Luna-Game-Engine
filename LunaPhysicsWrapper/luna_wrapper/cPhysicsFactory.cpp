@@ -1,28 +1,34 @@
 #include "cPhysicsFactory.h"
-#include "cSphereComponent.h"
 #include "cPhysicsWorld.h"
+#include "cSphereComponent.h"
+#include "cPlaneComponent.h"
+#include <luna_physics/shapes.h>
 
 namespace nPhysics
 {
-	iSphereComponent* cPhysicsFactory::CreateSphere(const sSphereDef& def, iObject* attach_to)
+	iSphereComponent* cPhysicsFactory::CreateSphere(iObject* parent, const sSphereDef& def)
 	{
-		phys::sRigidBodyDef bodyDef;
-		bodyDef.Mass = def.Mass;
-		bodyDef.Position = attach_to->transform.pos;
-		bodyDef.Velocity = glm::vec3(0.f);
-		cSphereComponent* comp = new cSphereComponent(attach_to, bodyDef, def);
-		attach_to->AddComponent((iComponent*)comp);
-		return comp;
+		phys::iShape* shape = new phys::cSphere(def.Offset, def.Radius);
+		phys::sRigidBodyDef df;
+		df.Velocity = def.velocity;
+		df.Mass = def.mass;
+		df.Position = parent->transform.pos;
+		return new cSphereComponent(parent, df, shape);
 	}
 
-	iPlaneComponent* cPhysicsFactory::CreatePlane(const sPlaneDef& def, iObject* attach_to)
+	iPlaneComponent* cPhysicsFactory::CreatePlane(iObject* parent, const sPlaneDef& def)
 	{
-		return nullptr;
+		phys::iShape* shape = new phys::cPlane(def.Normal, def.Constant);
+		phys::sRigidBodyDef df;
+		df.Velocity = def.velocity;
+		df.Mass = def.mass;
+		df.Position = parent->transform.pos;
+		return new cPlaneComponent(parent, df, shape);
 	}
 
-	iPhysicsWorld* cPhysicsFactory::GetWorld()
+	iPhysicsWorld* cPhysicsFactory::CreateWorld()
 	{
-		static cPhysicsWorld world_instance;
-		return &world_instance;
+		static cPhysicsWorld instance;
+		return &instance;
 	}
 }

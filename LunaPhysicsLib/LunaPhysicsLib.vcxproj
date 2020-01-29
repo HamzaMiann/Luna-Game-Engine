@@ -144,12 +144,15 @@
   <ItemGroup>
     <ClCompile Include="luna_physics\cRigidBody.cpp" />
     <ClCompile Include="luna_physics\cWorld.cpp" />
+    <ClCompile Include="luna_physics\nCollide.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="luna_physics\cIntegrator.h" />
     <ClInclude Include="luna_physics\cRigidBody.h" />
     <ClInclude Include="luna_physics\cWorld.h" />
     <ClInclude Include="luna_physics\eShapeType.h" />
     <ClInclude Include="luna_physics\iShape.h" />
+    <ClInclude Include="luna_physics\nCollide.h" />
     <ClInclude Include="luna_physics\shapes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

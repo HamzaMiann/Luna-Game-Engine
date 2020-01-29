@@ -1,9 +1,9 @@
 #pragma once
 
-#include "cRigidBody.h"
 #include "shapes.h"
+#include "cIntegrator.h"
+#include "cRigidBody.h"
 #include <vector>
-#include <glm/vec3.hpp>
 
 namespace phys
 {
@@ -21,17 +21,20 @@ namespace phys
 		// what does the return bool mean?
 		bool RemoveRigidBody(cRigidBody* rigidBody);
 	protected:
+
+		void Integrate(cRigidBody* body, float dt);
+
 		bool Collide(cRigidBody* bodyA, cRigidBody* bodyB);
-		bool CollideSpherePlane(cRigidBody* sphereBody, const cSphereBody* sphereShape,
-								cRigidBody* planeBody, const cPlaneBody* planeShape);
-		bool CollideSphereSphere(cRigidBody* sphereBodyA, const cSphereBody* sphereShapeA,
-								 cRigidBody* sphereBodyB, const cSphereBody* sphereShapeB);
-		
-		void Integrate(cRigidBody* body);
+		bool CollideSpherePlane(cRigidBody* sphereBody, cSphere* sphereShape,
+								cRigidBody* planeBody,  cPlane* planeShape);
+		bool CollideSphereSphere(cRigidBody* bodyA, cSphere* sphereShapeA,
+								 cRigidBody* bodyB, cSphere* sphereShapeB);
+
 
 	private:
 		glm::vec3 mGravity;
 		std::vector<cRigidBody*> mBodies;
-		float last_dt;
+		float mDt;
+		cIntegrator mIntegrator;
 	};
 }

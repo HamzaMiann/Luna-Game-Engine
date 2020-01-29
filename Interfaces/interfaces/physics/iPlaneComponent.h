@@ -1,10 +1,9 @@
 #pragma once
-#include <glm/vec3.hpp>
 #include "iPhysicsComponent.h"
 
 namespace nPhysics
 {
-	struct sPlaneDef
+	struct sPlaneDef : public sComponentDef
 	{
 		float Constant;
 		glm::vec3 Normal;
@@ -15,7 +14,10 @@ namespace nPhysics
 		virtual ~iPlaneComponent() {}
 
 	protected:
-		iPlaneComponent(iObject* parent) : iPhysicsComponent(parent, eComponentType::plane) {}
+		iPlaneComponent(iObject* parent)
+			: iPhysicsComponent(parent, eComponentType::plane)
+		{}
+
 	private:
 		iPlaneComponent() = delete;
 		iPlaneComponent(const iPlaneComponent& other) = delete;

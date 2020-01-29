@@ -2,9 +2,10 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-phys::cRigidBody::cRigidBody(const sRigidBodyDef& def)//, iShape* shape)
-	: //mShape(shape),
+phys::cRigidBody::cRigidBody(const sRigidBodyDef& def, iShape* shape)
+	: mShape(shape),
 	mPosition(def.Position),
+	mPreviousPosition(def.Position),
 	mVelocity(def.Velocity),
 	mMass(def.Mass),
 	mAcceleration(glm::vec3(0.f))

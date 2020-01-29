@@ -21,6 +21,9 @@
     <ClCompile Include="luna_physics\cWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="luna_physics\nCollide.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="luna_physics\cRigidBody.h">
@@ -36,6 +39,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="luna_physics\shapes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="luna_physics\nCollide.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="luna_physics\cIntegrator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

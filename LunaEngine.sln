@@ -10,6 +10,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LunaPhysicsLib", "LunaPhysicsLib\LunaPhysicsLib.vcxproj", "{3643FD7F-8D68-44C3-B82A-6B968E3256CB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LunaPhysicsWrapper", "LunaPhysicsWrapper\LunaPhysicsWrapper.vcxproj", "{B64B8F1C-5692-4694-8616-2B5572D892D9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3643FD7F-8D68-44C3-B82A-6B968E3256CB} = {3643FD7F-8D68-44C3-B82A-6B968E3256CB}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

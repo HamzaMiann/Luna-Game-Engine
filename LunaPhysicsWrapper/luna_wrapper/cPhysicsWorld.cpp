@@ -1,5 +1,5 @@
 #include "cPhysicsWorld.h"
-#include <luna_physics/cWorld.h>
+#include <luna_physics/cRigidBody.h>
 
 nPhysics::cPhysicsWorld::cPhysicsWorld()
 {
@@ -14,14 +14,26 @@ nPhysics::cPhysicsWorld::~cPhysicsWorld()
 void nPhysics::cPhysicsWorld::Update(float dt)
 {
 	mWorld->Update(dt);
+	for (auto& component : components)
+	{
+		component->UpdateTransform();
+	}
 }
 
 bool nPhysics::cPhysicsWorld::AddComponent(iPhysicsComponent* component)
 {
+	components.push_back(component);
 	return mWorld->AddRigidBody(dynamic_cast<phys::cRigidBody*>(component));
 }
 
 bool nPhysics::cPhysicsWorld::RemoveComponent(iPhysicsComponent* component)
 {
-	return mWorld->RemoveRigidBody(dynamic_cast<phys::cRigidBody*>(component));
+	auto i = std::find(components.begin(), components.end(), component);
+	if (i != components.end())
+	{
+		components.erase(i);
+	}
+	bool toReturn = mWorld->AddRigidBody(dynamic_cast<phys::cRigidBody*>(component));
+	delete component;
+	return toReturn;
 }

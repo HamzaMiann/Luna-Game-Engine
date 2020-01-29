@@ -4,8 +4,7 @@ namespace nPhysics
 {
 	enum class eComponentType
 	{
-		none,
-		sphere,
+		ball,
 		plane
 	};
 }

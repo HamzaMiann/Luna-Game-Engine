@@ -4,20 +4,22 @@
 
 namespace nPhysics
 {
-	struct sSphereDef
+	struct sSphereDef : public sComponentDef
 	{
-		float Mass;
 		float Radius;
-		glm::vec3 Position;
+		glm::vec3 Offset;
 	};
-
 	class iSphereComponent : public iPhysicsComponent
 	{
 	public:
 		virtual ~iSphereComponent() {}
-		
+
 	protected:
-		iSphereComponent(iObject* parent) : iPhysicsComponent(parent, eComponentType::sphere) {}
+		iSphereComponent(iObject* parent)
+			: iPhysicsComponent(parent, eComponentType::plane)
+		{
+		}
+
 	private:
 		iSphereComponent() = delete;
 		iSphereComponent(const iSphereComponent& other) = delete;

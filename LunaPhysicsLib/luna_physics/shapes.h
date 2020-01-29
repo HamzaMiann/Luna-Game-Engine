@@ -1,36 +1,24 @@
 #pragma once
 
-#include "iShape.h" 
-#include "cRigidBody.h"
+#include "iShape.h"
 #include <glm/vec3.hpp>
 
 namespace phys
 {
-	class cPlaneBody : public iShape, public cRigidBody
+	class cPlane : public iShape
 	{
 	public:
-		virtual ~cPlaneBody() {}
+		virtual ~cPlane() {}
 
-		cPlaneBody(const sRigidBodyDef& def, const glm::vec3& normal, float constant)
-			: iShape(eShapeType::plane),
+		cPlane(const glm::vec3& normal, float constant)
+		: iShape(eShapeType::plane),
 			mNormal(normal),
-			mConstant(constant),
-			cRigidBody(def)
-		{
-		}
-
-		cPlaneBody(const sRigidBodyDef& def)
-			: iShape(eShapeType::plane),
-			mNormal(glm::vec3(0.f, 1.f, 0.1)),
-			mConstant(0.f),
-			cRigidBody(def)
+			mConstant(constant)
 		{
 		}
 
 		inline const glm::vec3& GetNormal() { return mNormal; }
-		inline float GetConstant() { return mConstant; }
-
-		virtual inline const eShapeType& GetShape() override { return GetShapeType(); }
+		inline const float GetConstant() { return mConstant; }
 
 	protected:
 		glm::vec3 mNormal;
@@ -39,42 +27,33 @@ namespace phys
 	private:
 		// private, so as to not be used. like, ever.
 
-		cPlaneBody() = delete;
-		cPlaneBody(const cPlaneBody& other) = delete;
-		cPlaneBody& operator=(const cPlaneBody& other) = delete;
+		cPlane() = delete;
+		cPlane(const cPlane& other) = delete;
+		cPlane& operator=(const cPlane& other) = delete;
 	};
 
-	class cSphereBody : public iShape, public cRigidBody
+	class cSphere : public iShape
 	{
 	public:
-		virtual ~cSphereBody() {}
+		virtual ~cSphere() {}
 
-		cSphereBody(const sRigidBodyDef& def, const glm::vec3& position, float radius)
+		cSphere(const glm::vec3& offset, float radius)
 			: iShape(eShapeType::sphere),
-			mPos(position),
-			mRadius(radius),
-			cRigidBody(def)
+			mOffset(offset),
+			mRadius(radius)
 		{
 		}
 
-		cSphereBody(const sRigidBodyDef& def)
-			: iShape(eShapeType::sphere),
-			mPos(glm::vec3(0.f)),
-			mRadius(1.f),
-			cRigidBody(def)
-		{
-		}
-
-		virtual inline const eShapeType& GetShape() override { return GetShapeType(); }
+		inline const glm::vec3& GetOffset() { return mOffset; }
+		inline const float GetRadius() { return mRadius; }
 
 	protected:
-		glm::vec3 mPos;
+		glm::vec3 mOffset;
 		float mRadius;
 
 	private:
-
-		cSphereBody() = delete;
-		cSphereBody(const cSphereBody& other) = delete;
-		cSphereBody& operator=(const cSphereBody& other) = delete;
+		cSphere() = delete;
+		cSphere(const cPlane& other) = delete;
+		cSphere& operator=(const cSphere& other) = delete;
 	};
 }
