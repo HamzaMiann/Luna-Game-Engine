@@ -6,6 +6,12 @@
 
 namespace nPhysics
 {
+	iPhysicsWorld* cPhysicsFactory::GetWorld()
+	{
+		static cPhysicsWorld instance;
+		return &instance;// new cPhysicsWorld;
+	}
+
 	iSphereComponent* cPhysicsFactory::CreateSphere(iObject* parent, const sSphereDef& def)
 	{
 		phys::iShape* shape = new phys::cSphere(def.Offset, def.Radius);
@@ -13,6 +19,7 @@ namespace nPhysics
 		df.Velocity = def.velocity;
 		df.Mass = def.mass;
 		df.Position = parent->transform.pos;
+		df.GravityFactor = def.gravity_factor;
 		return new cSphereComponent(parent, df, shape);
 	}
 
@@ -23,12 +30,8 @@ namespace nPhysics
 		df.Velocity = def.velocity;
 		df.Mass = def.mass;
 		df.Position = parent->transform.pos;
+		df.GravityFactor = def.gravity_factor;
 		return new cPlaneComponent(parent, df, shape);
 	}
 
-	iPhysicsWorld* cPhysicsFactory::CreateWorld()
-	{
-		static cPhysicsWorld instance;
-		return &instance;
-	}
 }

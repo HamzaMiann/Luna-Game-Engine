@@ -50,6 +50,24 @@ public:
 		return nullptr;
 	}
 
+	template<typename T>
+	void RemoveComponent()
+	{
+		auto it = _components.begin();
+		while (it != _components.end())
+		{
+			iComponent* comp = *it;
+			T* ptr = dynamic_cast<T*>(comp);
+			if (ptr != nullptr)
+			{
+				delete (*it);
+				_components.erase(it);
+				return;
+			}
+			it++;
+		}
+	}
+
 	const std::vector<iComponent*>& Components()
 	{
 		return _components;

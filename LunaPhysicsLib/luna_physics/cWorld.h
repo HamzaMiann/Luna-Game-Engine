@@ -32,7 +32,7 @@ namespace phys
 
 
 	private:
-		glm::vec3 mGravity;
+		glm::vec3 mGravity = glm::vec3(0.f, -9.8f, 0.f);
 		std::vector<cRigidBody*> mBodies;
 		float mDt;
 		cIntegrator mIntegrator;

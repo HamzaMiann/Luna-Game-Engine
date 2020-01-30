@@ -4,6 +4,7 @@
 iBehaviour::iBehaviour(iObject* root)
 	: parent(*root)
 	, transform(root->transform)
+	, _initialized(false)
 {
 	cBehaviourManager::Instance()->Register(this);
 }

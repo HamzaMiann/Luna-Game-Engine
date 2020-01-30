@@ -5,6 +5,8 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <Components/ComponentFactory.h>
+#include <Physics/global_physics.h>
+#include <xml_helper.h>
 using namespace rapidxml;
 
 std::string trim(std::string& str)
@@ -14,20 +16,6 @@ std::string trim(std::string& str)
 	return str.substr(first, (last - first + 1));
 }
 
-void setXYZ(glm::vec3& vec3, xml_node<>* node)
-{
-	vec3.x = strtof(node->first_attribute("x")->value(), 0);
-	vec3.y = strtof(node->first_attribute("y")->value(), 0);
-	vec3.z = strtof(node->first_attribute("z")->value(), 0);
-}
-
-void setXYZW(glm::vec4& vec4, xml_node<>* node)
-{
-	vec4.x = strtof(node->first_attribute("x")->value(), 0);
-	vec4.y = strtof(node->first_attribute("y")->value(), 0);
-	vec4.z = strtof(node->first_attribute("z")->value(), 0);
-	vec4.w = strtof(node->first_attribute("w")->value(), 0);
-}
 
 void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 {
@@ -56,17 +44,19 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				std::string propName = property_node->name();
 				if (propName == "Position")
 				{
-					setXYZ(ptr->transform.pos, property_node);
+					ptr->transform.pos = XML_Helper::AsVec3(property_node);
+					//setXYZ(ptr->transform.pos, property_node);
 				}
 				else if (propName == "Rotation")
 				{
-					glm::vec3 orientation(0.f);
-					setXYZ(orientation, property_node);
+					glm::vec3 orientation = XML_Helper::AsVec3(property_node);
+					//setXYZ(orientation, property_node);
 					ptr->transform.SetEulerRotation(orientation);
 				}
 				else if (propName == "Colour")
 				{
-					setXYZW(ptr->colour, property_node);
+					ptr->colour = XML_Helper::AsVec4(property_node);
+					//setXYZW(ptr->colour, property_node);
 				}
 				/*else if (propName == "Velocity")
 				{
@@ -85,13 +75,40 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 					for (xml_node<>* component_node = property_node->first_node(); component_node; component_node = component_node->next_sibling())
 					{
 						std::string n = component_node->name();
-						iComponent* comp = ComponentFactory::GetComponent(n, ptr);
-						if (comp) comp->deserialize(component_node);
+						if (n == "SphereBody")
+						{
+							nPhysics::sSphereDef def;
+							def.velocity = XML_Helper::AsVec3(component_node->first_node("Velocity"));
+							def.mass = XML_Helper::AsFloat(component_node->first_node("Mass"));
+							def.gravity_factor = XML_Helper::AsFloat(component_node->first_node("GFactor"));
+							def.Offset = XML_Helper::AsVec3(component_node->first_node("Offset"));
+							def.Radius = XML_Helper::AsFloat(component_node->first_node("Radius"));
+							ptr->physics_body = g_PhysicsFactory->CreateSphere(ptr, def);
+							ptr->AddComponent(ptr->physics_body);
+						}
+						else if (n == "PlaneBody")
+						{
+							nPhysics::sPlaneDef def;
+							def.velocity = XML_Helper::AsVec3(component_node->first_node("Velocity"));
+							def.mass = XML_Helper::AsFloat(component_node->first_node("Mass"));
+							def.gravity_factor = XML_Helper::AsFloat(component_node->first_node("GFactor"));
+							def.Normal = XML_Helper::AsVec3(component_node->first_node("Normal"));
+							def.Normal = glm::normalize(def.Normal);
+							def.Constant = XML_Helper::AsFloat(component_node->first_node("Constant"));
+							ptr->physics_body = g_PhysicsFactory->CreatePlane(ptr, def);
+							ptr->AddComponent(ptr->physics_body);
+						}
+						else
+						{
+							iComponent* comp = ComponentFactory::GetComponent(n, ptr);
+							if (comp) comp->deserialize(component_node);
+						}
 					}
 				}
 				else if (propName == "Scale")
 				{
-					ptr->transform.scale = glm::vec3(strtof(property_node->value(),0));
+					ptr->transform.scale = glm::vec3(XML_Helper::AsFloat(property_node));
+					//ptr->transform.scale = glm::vec3(strtof(property_node->value(),0));
 				}
 				/*else if (propName == "IMass")
 				{
@@ -99,11 +116,13 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				}*/
 				else if (propName == "SpecIntensity")
 				{
-					ptr->specIntensity = strtof(property_node->value(), 0);
+					ptr->specIntensity = XML_Helper::AsFloat(property_node);
+					//ptr->specIntensity = strtof(property_node->value(), 0);
 				}
 				else if (propName == "SpecColour")
 				{
-					setXYZ(ptr->specColour, property_node);
+					ptr->specColour = XML_Helper::AsVec3(property_node);
+					//setXYZ(ptr->specColour, property_node);
 				}
 				else if (propName == "LuaUpdate")
 				{
@@ -119,8 +138,8 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				}
 				else if (propName == "CollidePoint")
 				{
-					glm::vec3 point(0.f);
-					setXYZ(point, property_node);
+					glm::vec3 point = XML_Helper::AsVec3(property_node);
+					//setXYZ(point, property_node);
 					ptr->CollidePoints.push_back(point);
 				}
 				else if (propName == "Collider")

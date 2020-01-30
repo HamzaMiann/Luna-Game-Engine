@@ -5,6 +5,7 @@
 
 class iBehaviour : public iComponent
 {
+	friend class cBehaviourManager;
 public:
 	iBehaviour(iObject* root);
 	virtual ~iBehaviour();
@@ -13,4 +14,6 @@ public:
 protected:
 	sTransform& transform;
 	iObject& parent;
+private:
+	bool _initialized;
 };

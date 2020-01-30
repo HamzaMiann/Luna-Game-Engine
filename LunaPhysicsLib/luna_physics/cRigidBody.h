@@ -9,6 +9,7 @@ namespace phys
 	struct sRigidBodyDef
 	{
 		float Mass;
+		float GravityFactor;
 		glm::vec3 Position;
 		glm::vec3 Velocity;
 	};
@@ -19,8 +20,8 @@ namespace phys
 	public:
 		cRigidBody(const sRigidBodyDef& def, iShape* shape);
 
-		void GetTransform(glm::mat4& transform);
-		void AddForce(const glm::vec3& force);
+		void GetTransformFromBody(glm::mat4& transform);
+		void AddForceToCenter(const glm::vec3& force);
 		void AddForceAtPoint(const glm::vec3& force, const glm::vec3& relativePoint);
 
 		inline bool IsStatic() { return mMass == 0.f; }
@@ -38,6 +39,7 @@ namespace phys
 		glm::vec3 mAcceleration;
 		float mMass;
 		float mInvMass;
+		float mGravityFactor;
 
 	private:
 		// private, so as to not be used. like, ever

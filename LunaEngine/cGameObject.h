@@ -8,6 +8,7 @@
 #include <vector>
 #include <Commands/cCommandGroup.h>
 #include <iObject.h>
+#include <interfaces/physics/iPhysicsComponent.h>
 
 class Scene;
 class cLuaBrain;
@@ -29,6 +30,8 @@ public:
 	cGameObject();
 	
 	virtual ~cGameObject();
+
+	nPhysics::iPhysicsComponent* physics_body;
 
 	unsigned int id;
 	cLuaBrain* brain;

@@ -1,12 +1,12 @@
 #include <Components/ComponentFactory.h>
-#include <Components/cRigidBody.h>
 #include <iObject.h>
+#include <Behaviour/Controls/cSphereBehaviour.h>
 
 iComponent* ComponentFactory::GetComponent(std::string type, iObject* object)
 {
-	if (type == "cRigidBody")
+	if (type == "SphereBehaviour")
 	{
-		return (iComponent*)object->AddComponent<cRigidBody>();
+		return (iComponent*)object->AddComponent<cSphereBehaviour>();
 	}
 	return nullptr;
 }

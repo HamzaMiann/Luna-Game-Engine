@@ -1,4 +1,5 @@
 #include "cSphereComponent.h"
+#include "cPhysicsFactory.h"
 
 namespace nPhysics
 {
@@ -6,6 +7,8 @@ namespace nPhysics
 		: cRigidBody(def, shape)
 		, iSphereComponent(parent)
 	{
+		cPhysicsFactory factory;
+		factory.GetWorld()->AddComponent(this);
 	}
 
 	bool cSphereComponent::serialize(rapidxml::xml_node<>* root_node)
@@ -20,27 +23,27 @@ namespace nPhysics
 
 	void cSphereComponent::GetTransform(glm::mat4& transformOut)
 	{
-		cRigidBody::GetTransform(transformOut);
+		GetTransformFromBody(transformOut);
 	}
 
 	void cSphereComponent::AddForce(const glm::vec3& force)
 	{
-		cRigidBody::AddForce(force);
+		AddForceToCenter(force);
 	}
 
 	void cSphereComponent::SetVelocity(const glm::vec3& velocity)
 	{
-		cRigidBody::mVelocity = velocity;
+		mVelocity = velocity;
 	}
 
 	glm::vec3 cSphereComponent::GetVelocity()
 	{
-		return cRigidBody::mVelocity;
+		return mVelocity;
 	}
 
 	void cSphereComponent::UpdateTransform()
 	{
-		transform.pos = cRigidBody::mPosition;
+		transform.pos = mPosition;
 	}
 
 }

@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Interfaces;$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)lib/Debug64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)LunaPhysicsWrapper;$(SolutionDir)Interfaces;$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir);$(SolutionDir)lib/Debug64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)Interfaces;$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)lib\Release64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)LunaPhysicsWrapper;$(SolutionDir)Interfaces;$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(OutDir);$(SolutionDir)lib\Release64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
@@ -167,6 +167,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="EntityManager\cEntityManager.cpp" />
     <ClCompile Include="InputHandlers\cCameraInputHandler.cpp" />
     <ClCompile Include="iObject.cpp" />
+    <ClCompile Include="Physics\global_physics.cpp" />
     <ClCompile Include="Scene\Builders\cAudioBuilder.cpp" />
     <ClCompile Include="InputHandlers\cAudioInputHandler.cpp" />
     <ClCompile Include="Commands\cCommandGroup.cpp" />
@@ -235,6 +236,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Lua\cLuaBrain.h" />
     <ClInclude Include="Commands\cMoveTo.h" />
     <ClInclude Include="Particles\cParticleEffect.h" />
+    <ClInclude Include="Physics\global_physics.h" />
     <ClInclude Include="Scene\Builders\cTextureBuilder.h" />
     <ClInclude Include="Commands\cTrigger.h" />
     <ClInclude Include="FBO\cFBO.h" />

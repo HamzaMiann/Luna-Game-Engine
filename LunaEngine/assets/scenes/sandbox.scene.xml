@@ -15,6 +15,7 @@
 	<Models>
 		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
 		<Model file="cube_XYZ_N_UV.ply" friendlyName="cube" shader="basic"/>
+		<Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
 	</Models>
   
 	<Lights>
@@ -52,36 +53,70 @@
       <SpecIntensity>10.000000</SpecIntensity>
 			<Collider>SPHERE</Collider>
 			<Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+      
       <Components>
-        <cRigidBody>
+        
+        <SphereBody>
           <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Acceleration x="0.000000" y="0.000000" z="0.000000"/>
           <Mass>1.0</Mass>
-          <Gravity>1.0</Gravity>
-        </cRigidBody>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+        
+        <!-- IMPORTANT: This component is the component that lets you control the ball -->
+        <SphereBehaviour/>
+        
       </Components>
 		</GameObject>
 
     <GameObject mesh="sphere" tag="ball" shader="basic">
-      <Position x="3.0" y="0.0" z="0.0"/>
+      <Position x="6.0" y="5.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>1.0</Scale>
+      <Scale>3.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
       <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+      
       <Components>
-        <cRigidBody>
+        
+        <SphereBody>
           <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>0.0</Mass>
-          <Gravity>0.0</Gravity>
-        </cRigidBody>
+          <Mass>10.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>3.0</Radius>
+        </SphereBody>
+        
       </Components>
     </GameObject>
 
-    <GameObject mesh="cube" tag="cube" shader="basic">
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-3.0" y="5.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.5</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+      
+      <Components>
+        
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.5</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>0.5</Radius>
+        </SphereBody>
+        
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="plane" tag="plane" shader="basic">
       <Position x="0.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
       <Scale>1.0</Scale>
@@ -90,13 +125,109 @@
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>MESH</Collider>
       <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+      
       <Components>
-				<cRigidBody>
-					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-					<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-					<Mass>1.0</Mass>
-					<Gravity>0.0</Gravity>
-				</cRigidBody>
+        
+        <PlaneBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.0</Mass>
+          <GFactor>0.0</GFactor>
+          <Normal x="0.000000" y="1.000000" z="0.000000"/>
+          <Constant>0.0</Constant>
+        </PlaneBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="plane" tag="plane" shader="basic">
+      <Position x="-20.0" y="0.0" z="0.0"/>
+      <Rotation x="0" y="0" z="-90.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>MESH</Collider>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+
+      <Components>
+
+        <PlaneBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.0</Mass>
+          <GFactor>0.0</GFactor>
+          <Normal x="1.000000" y="0.000000" z="0.000000"/>
+          <Constant>-20.0</Constant>
+        </PlaneBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="plane" tag="plane" shader="basic">
+      <Position x="20.0" y="0.0" z="0.0"/>
+      <Rotation x="0" y="0" z="90.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>MESH</Collider>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+
+      <Components>
+
+        <PlaneBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.0</Mass>
+          <GFactor>0.0</GFactor>
+          <Normal x="-1.000000" y="0.000000" z="0.000000"/>
+          <Constant>-20.0</Constant>
+        </PlaneBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="plane" tag="plane" shader="basic">
+      <Position x="0.0" y="0.0" z="-30.0"/>
+      <Rotation x="90.0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>MESH</Collider>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+
+      <Components>
+
+        <PlaneBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.0</Mass>
+          <GFactor>0.0</GFactor>
+          <Normal x="0.000000" y="0.000000" z="1.000000"/>
+          <Constant>-30.0</Constant>
+        </PlaneBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="plane" tag="plane" shader="basic">
+      <Position x="0.0" y="0.0" z="30.0"/>
+      <Rotation x="-90.0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>MESH</Collider>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+
+      <Components>
+
+        <PlaneBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.0</Mass>
+          <GFactor>0.0</GFactor>
+          <Normal x="0.000000" y="0.000000" z="-1.000000"/>
+          <Constant>-30.0</Constant>
+        </PlaneBody>
+
       </Components>
     </GameObject>
     

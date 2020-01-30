@@ -2,7 +2,7 @@
 
 #include <Behaviour/iBehaviour.h>
 #include <iObject.h>
-class cRigidBody;
+#include <interfaces/physics/iPhysicsComponent.h>
 
 class cSphereBehaviour : public iBehaviour
 {
@@ -21,15 +21,15 @@ public:
 	virtual void update(float dt) override;
 
 private:
-	cRigidBody* body;
+	nPhysics::iPhysicsComponent* body;
 
 	glm::quat rotation;
-	glm::vec3 direction = glm::vec3(0.f, 0.f, 1.f);
+	static glm::vec3 direction;
 
 	glm::vec3 camera_target;
 	glm::vec3 camera_position;
 
-	float distance_from_object = 2.f;
+	static float distance_from_object;
 
 	float previousX = 0.f;
 	float previousY = 0.f;

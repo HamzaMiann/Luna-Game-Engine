@@ -9,6 +9,7 @@ namespace nPhysics
 	struct sComponentDef
 	{
 		glm::vec3 velocity;
+		float gravity_factor;
 		float mass;
 	};
 	class iPhysicsComponent : public iComponent

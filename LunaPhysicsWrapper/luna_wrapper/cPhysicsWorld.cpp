@@ -33,7 +33,5 @@ bool nPhysics::cPhysicsWorld::RemoveComponent(iPhysicsComponent* component)
 	{
 		components.erase(i);
 	}
-	bool toReturn = mWorld->AddRigidBody(dynamic_cast<phys::cRigidBody*>(component));
-	delete component;
-	return toReturn;
+	return mWorld->AddRigidBody(dynamic_cast<phys::cRigidBody*>(component));
 }

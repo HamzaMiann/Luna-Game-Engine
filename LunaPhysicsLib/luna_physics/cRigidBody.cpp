@@ -8,6 +8,7 @@ phys::cRigidBody::cRigidBody(const sRigidBodyDef& def, iShape* shape)
 	mPreviousPosition(def.Position),
 	mVelocity(def.Velocity),
 	mMass(def.Mass),
+	mGravityFactor(def.GravityFactor),
 	mAcceleration(glm::vec3(0.f))
 {
 	if (mMass == 0.f)
@@ -20,14 +21,14 @@ phys::cRigidBody::cRigidBody(const sRigidBodyDef& def, iShape* shape)
 	}
 }
 
-void phys::cRigidBody::GetTransform(glm::mat4& transform)
+void phys::cRigidBody::GetTransformFromBody(glm::mat4& transform)
 {
 	transform = glm::mat4(1.f);
 	// rotations
 	transform *= glm::translate(transform, mPosition);
 }
 
-void phys::cRigidBody::AddForce(const glm::vec3& force)
+void phys::cRigidBody::AddForceToCenter(const glm::vec3& force)
 {
 	mAcceleration += force * mInvMass;
 }

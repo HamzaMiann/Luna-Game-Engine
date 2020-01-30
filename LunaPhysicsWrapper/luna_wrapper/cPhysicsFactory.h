@@ -9,7 +9,7 @@ namespace nPhysics
 	public:
 		virtual ~cPhysicsFactory() {}
 
-		virtual iPhysicsWorld* CreateWorld() = 0;
+		virtual iPhysicsWorld* GetWorld() override;
 
 		// components
 		virtual iSphereComponent* CreateSphere(iObject* parent, const sSphereDef& def) override;

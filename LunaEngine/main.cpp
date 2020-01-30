@@ -36,6 +36,7 @@
 #include <Behaviour/cBehaviourManager.h>
 #include <EntityManager/cEntityManager.h>
 #include <Behaviour/Controls/cSphereBehaviour.h>
+#include <Physics/global_physics.h>
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
@@ -49,6 +50,8 @@ unsigned int input_id = 0;
 
 bool is_paused = false;
 int pass_id;
+
+int ball_id = 0;
 
 Scene* scene;
 GLFWwindow* global::window = 0;
@@ -88,6 +91,21 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 	{
 		is_paused = !is_paused;
+	}
+
+	if (key == GLFW_KEY_TAB && action == GLFW_RELEASE)
+	{
+		scene->vecGameObjects[ball_id]->RemoveComponent<cSphereBehaviour>();
+		ball_id++;
+		if (ball_id == scene->vecGameObjects.size())
+			ball_id = 0;
+		while (scene->vecGameObjects[ball_id]->tag != "ball")
+		{
+			ball_id++;
+			if (ball_id == scene->vecGameObjects.size())
+				ball_id = 0;
+		}
+		scene->vecGameObjects[ball_id]->AddComponent<cSphereBehaviour>();
 	}
 
 	if (pInputHandler) pInputHandler->key_callback(window, key, scancode, action, mods);
@@ -170,6 +188,9 @@ int main(void)
 
 	typedef glm::vec3 vec3;
 
+	// Initialize physics
+	InitPhysics();
+
 	// Load scene from file
 	cGameObject* pSkyBoxSphere = new cGameObject();
 
@@ -204,8 +225,9 @@ int main(void)
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
 
-	PhysicsEngine* phys = PhysicsEngine::Instance();
-	phys->GenerateAABB(scene);
+
+	//PhysicsEngine* phys = PhysicsEngine::Instance();
+	//phys->GenerateAABB(scene);
 
 	pInputHandler = 0;// new cPhysicsInputHandler(*scene, window);
 	//pInputHandler = new cPhysicsInputHandler(*scene, window);
@@ -216,7 +238,7 @@ int main(void)
 	renderer->initialize();
 
 #ifdef _DEBUG
-	phys->renderer = renderer;
+	//phys->renderer = renderer;
 #endif
 
 	
@@ -233,16 +255,14 @@ int main(void)
 	bounds->tag = "AABB";
 	bounds->shaderName = "basic";
 	bounds->isWireframe = true;
-	//bounds->inverseMass = 0.f;
 	bounds->uniformColour = true;
-	//scene->vecGameObjects.push_back(bounds);
 	
 	
 	//scene->cameraEye = glm::vec3(-39.f, 2.f, -63.f);
 
 
 	cGameObject* ship = scene->vecGameObjects[0];
-	ship->GetComponent<cRigidBody>()->gravityScale = 1.f;
+	//ship->GetComponent<cRigidBody>()->gravityScale = 1.f;
 	sLight* light1 = scene->pLightManager->Lights[0];
 	sLight* light2 = scene->pLightManager->Lights[1];
 
@@ -299,7 +319,7 @@ int main(void)
 	}
 #endif
 
-	scene->vecGameObjects[0]->AddComponent<cSphereBehaviour>();
+	//scene->vecGameObjects[0]->AddComponent<cSphereBehaviour>();
 
 	cBehaviourManager::Instance()->start();
 
@@ -353,16 +373,17 @@ int main(void)
 		//glDisable( GL_BLEND );
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		cBehaviourManager::Instance()->update(delta_time);
+		cEntityManager::Instance()->Update(delta_time);
+
+		g_PhysicsWorld->Update(delta_time);
 
 		// Update the objects' physics
-		phys->CheckCollisions(scene, delta_time);
-		phys->IntegrationStep(scene, delta_time);
+		//phys->CheckCollisions(scene, delta_time);
+		//phys->IntegrationStep(scene, delta_time);
 
 		// Update particles;
 		pEffect.Step(delta_time);
-
-		cBehaviourManager::Instance()->update(delta_time);
-		cEntityManager::Instance()->Update(delta_time);
 		
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
@@ -543,7 +564,7 @@ int main(void)
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
-
+	ReleasePhysics();
 	// Delete everything
 	delete scene;
 	//delete lightManager;

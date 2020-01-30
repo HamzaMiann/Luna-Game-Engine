@@ -1,4 +1,5 @@
 #include "cPlaneComponent.h"
+#include "cPhysicsFactory.h"
 
 namespace nPhysics
 {
@@ -6,6 +7,8 @@ namespace nPhysics
 		: cRigidBody(def, shape)
 		, iPlaneComponent(parent)
 	{
+		cPhysicsFactory factory;
+		factory.GetWorld()->AddComponent(this);
 	}
 
 	bool cPlaneComponent::serialize(rapidxml::xml_node<>* root_node)
@@ -20,27 +23,27 @@ namespace nPhysics
 
 	void cPlaneComponent::GetTransform(glm::mat4& transformOut)
 	{
-		cRigidBody::GetTransform(transformOut);
+		GetTransformFromBody(transformOut);
 	}
 
 	void cPlaneComponent::AddForce(const glm::vec3& force)
 	{
-		cRigidBody::AddForce(force);
+		AddForceToCenter(force);
 	}
 
 	void cPlaneComponent::SetVelocity(const glm::vec3& velocity)
 	{
-		cRigidBody::mVelocity = velocity;
+		mVelocity = velocity;
 	}
 
 	glm::vec3 cPlaneComponent::GetVelocity()
 	{
-		return cRigidBody::mVelocity;
+		return mVelocity;
 	}
 
 	void cPlaneComponent::UpdateTransform()
 	{
-		transform.pos = cRigidBody::mVelocity;
+		transform.pos = mPosition;
 	}
 
 }

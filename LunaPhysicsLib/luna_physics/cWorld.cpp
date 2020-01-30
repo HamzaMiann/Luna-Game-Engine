@@ -16,6 +16,7 @@ namespace phys
 	{
 		mDt = dt;
 		size_t numBodies = mBodies.size();
+
 		if (numBodies == 0) return;
 		// Step 1: Integrate
 		for (size_t c = 0; c < numBodies; c++)
@@ -64,12 +65,11 @@ namespace phys
 
 	void cWorld::Integrate(cRigidBody* body, float dt)
 	{
-		if (body->IsStatic()) return;
 		body->mPreviousPosition = body->mPosition;
-		mIntegrator.Euler(body->mPosition, body->mVelocity, body->mAcceleration, mGravity, dt);
+		mIntegrator.Euler(body->mPosition, body->mVelocity, body->mAcceleration, mGravity, body->mGravityFactor, dt);
 	}
 
-	bool phys::cWorld::Collide(cRigidBody* bodyA, cRigidBody* bodyB)
+	bool cWorld::Collide(cRigidBody* bodyA, cRigidBody* bodyB)
 	{
 		eShapeType shapeA = bodyA->GetShapeType();
 		eShapeType shapeB = bodyB->GetShapeType();
@@ -239,7 +239,7 @@ namespace phys
 		vB = bodyB->mVelocity;
 
 		// reflect
-		float c = 0.2f;
+		float c = 0.1f;
 		bodyA->mVelocity = (c * mb * (vB - vA) + ma * vA + mb * vB) / mt;
 		bodyB->mVelocity = (c * ma * (vA - vB) + ma * vA + mb * vB) / mt;
 
