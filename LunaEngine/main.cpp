@@ -321,6 +321,10 @@ int main(void)
 
 	//scene->vecGameObjects[0]->AddComponent<cSphereBehaviour>();
 
+	// MUST COME BEFORE THE START METHODS
+	cEntityManager::Instance()->SetEntities(&scene->vecGameObjects);
+
+	// Run the start method on all behaviour components
 	cBehaviourManager::Instance()->start();
 
 
@@ -475,19 +479,19 @@ int main(void)
 							false);
 			}
 
-			if (objPtr->tag == "player")
-			{
-				glm::mat4 model = objPtr->transform.ModelMatrix();
-				light1->position = model * glm::vec4(ship->CollidePoints[0], 1.f);
-				light2->position = model * glm::vec4(ship->CollidePoints[1], 1.f);
-				pEffect.pos = ((light2->position - light1->position) / 2.f) + light1->position;
-				/*for (int n = 0; n < objPtr->CollidePoints.size(); ++n)
-				{
-					renderer->addLine(objPtr->pos,
-									  glm::vec3(model * glm::vec4(objPtr->CollidePoints[n], 1.f)),
-									  glm::vec3(1.f, 0.f, 0.f), .1f);
-				}*/
-			}
+			//if (objPtr->tag == "player")
+			//{
+			//	glm::mat4 model = objPtr->transform.ModelMatrix();
+			//	light1->position = model * glm::vec4(ship->CollidePoints[0], 1.f);
+			//	light2->position = model * glm::vec4(ship->CollidePoints[1], 1.f);
+			//	pEffect.pos = ((light2->position - light1->position) / 2.f) + light1->position;
+			//	/*for (int n = 0; n < objPtr->CollidePoints.size(); ++n)
+			//	{
+			//		renderer->addLine(objPtr->pos,
+			//						  glm::vec3(model * glm::vec4(objPtr->CollidePoints[n], 1.f)),
+			//						  glm::vec3(1.f, 0.f, 0.f), .1f);
+			//	}*/
+			//}
 
 			DrawObject(objPtr, ratio, v, p);
 

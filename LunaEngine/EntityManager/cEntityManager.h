@@ -7,7 +7,7 @@ class cGameObject;
 class cEntityManager
 {
 private:
-	std::vector<cGameObject*> Entities;
+	std::vector<cGameObject*>* Entities;
 	cEntityManager();
 public:
 
@@ -21,7 +21,7 @@ public:
 
 	inline const std::vector<cGameObject*> GetEntities()
 	{
-		return Entities;
+		return *Entities;
 	}
 
 	bool AddEntity(cGameObject* entity);
@@ -29,6 +29,8 @@ public:
 	bool RemoveEntity(cGameObject* entity);
 
 	cGameObject* GetObjectByTag(std::string tag);
+
+	void SetEntities(std::vector<cGameObject*>* entities);
 
 	void Update(float dt);
 

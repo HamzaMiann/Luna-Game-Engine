@@ -9,23 +9,24 @@ namespace EntityManager
 
 cEntityManager::cEntityManager()
 {
+	Entities = new std::vector<cGameObject*>();
 }
 
 cEntityManager::~cEntityManager()
 {
-	for (size_t i = 0; i < Entities.size(); ++i)
+	for (size_t i = 0; i < Entities->size(); ++i)
 	{
-		delete Entities[i];
+		delete (*Entities)[i];
 	}
-	Entities.clear();
+	Entities->clear();
 }
 
 bool cEntityManager::AddEntity(cGameObject* entity)
 {
-	auto it = std::find(Entities.begin(), Entities.end(), entity);
-	if (it == Entities.end())
+	auto it = std::find(Entities->begin(), Entities->end(), entity);
+	if (it == Entities->end())
 	{
-		Entities.push_back(entity);
+		Entities->push_back(entity);
 		return true;
 	}
 	return false;
@@ -33,8 +34,8 @@ bool cEntityManager::AddEntity(cGameObject* entity)
 
 bool cEntityManager::RemoveEntity(cGameObject* entity)
 {
-	auto it = std::find(Entities.begin(), Entities.end(), entity);
-	if (it != Entities.end())
+	auto it = std::find(Entities->begin(), Entities->end(), entity);
+	if (it != Entities->end())
 	{
 		EntityManager::remove_queue.push(entity);
 		return true;
@@ -44,11 +45,17 @@ bool cEntityManager::RemoveEntity(cGameObject* entity)
 
 cGameObject* cEntityManager::GetObjectByTag(std::string tag)
 {
-	for (unsigned int i = 0; i < Entities.size(); ++i)
+	for (unsigned int i = 0; i < Entities->size(); ++i)
 	{
-		if (Entities[i]->tag == tag) return Entities[i];
+		if ((*Entities)[i]->tag == tag) return (*Entities)[i];
 	}
 	return nullptr;
+}
+
+void cEntityManager::SetEntities(std::vector<cGameObject*>* entities)
+{
+	delete Entities;
+	Entities = entities;
 }
 
 void cEntityManager::Update(float dt)
@@ -56,10 +63,10 @@ void cEntityManager::Update(float dt)
 	while (!EntityManager::remove_queue.empty())
 	{
 		iObject* obj = EntityManager::remove_queue.front();
-		auto it = std::find(Entities.begin(), Entities.end(), obj);
-		if (it != Entities.end())
+		auto it = std::find(Entities->begin(), Entities->end(), obj);
+		if (it != Entities->end())
 		{
-			Entities.erase(it);
+			Entities->erase(it);
 			delete obj;
 		}
 		EntityManager::remove_queue.pop();

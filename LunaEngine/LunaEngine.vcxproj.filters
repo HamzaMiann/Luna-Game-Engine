@@ -249,6 +249,9 @@
     <ClCompile Include="Physics\global_physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Behaviour\AI\cSeekBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextureManager\C24BitBMPpixel.h">
@@ -438,6 +441,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Physics\global_physics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour\AI\iAIBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour\AI\cSeekBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

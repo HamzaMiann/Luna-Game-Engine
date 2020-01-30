@@ -7,13 +7,14 @@ class iBehaviour : public iComponent
 {
 	friend class cBehaviourManager;
 public:
-	iBehaviour(iObject* root);
 	virtual ~iBehaviour();
 	virtual void start() = 0;
 	virtual void update(float dt) = 0;
 protected:
+	iBehaviour(iObject* root);
 	sTransform& transform;
 	iObject& parent;
 private:
 	bool _initialized;
+	iBehaviour() = delete;
 };
