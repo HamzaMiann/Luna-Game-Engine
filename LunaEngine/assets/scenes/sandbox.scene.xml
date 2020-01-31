@@ -6,6 +6,10 @@
 			<Vertex file="basic_vert.glsl"/>
 			<Fragment file="basic_frag.glsl"/>
 		</Shader>
+    <Shader name="post">
+      <Vertex file="postprocessing_vert.glsl"/>
+      <Fragment file="postprocessing_frag.glsl"/>
+    </Shader>
 	</Shaders>
   
 	<Textures>
@@ -20,6 +24,7 @@
 		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
 		<Model file="cube_XYZ_N_UV.ply" friendlyName="cube" shader="basic"/>
 		<Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
+		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen_quad" shader="post"/>
 	</Models>
   
 	<Lights>

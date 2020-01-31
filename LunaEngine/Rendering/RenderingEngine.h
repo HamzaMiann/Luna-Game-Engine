@@ -40,6 +40,8 @@ public:
 		return &instance;
 	}
 
+	Camera* MainCamera();
+
 	void UpdateView();
 	void SetUpTextureBindingsForObject(cMaterial* material, int shaderProgID);
 	void Render(iObject* object);

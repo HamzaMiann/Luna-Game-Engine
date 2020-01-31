@@ -24,6 +24,7 @@ bool cShaderManager::useShaderProgram( unsigned int ID )
 {
 	// Use the number directy... 
 	// TODO: Might do a lookup to see if we really have that ID...
+	if (last_used_shader_id == ID) return false;
 	glUseProgram(ID);
 	last_used_shader_id = ID;
 	return true;
@@ -39,6 +40,8 @@ bool cShaderManager::useShaderProgram( std::string friendlyName )
 		// Maybe set glUseProgram(0)....?
 		return false;
 	}
+	if (last_used_shader_id == itShad->second) return false;
+
 	glUseProgram(itShad->second);
 	last_used_shader_id = itShad->second;
 

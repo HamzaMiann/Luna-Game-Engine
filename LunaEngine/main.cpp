@@ -42,7 +42,7 @@
 #define WINDOW_HEIGHT 800
 #define CAMERA_CONTROL
 #define _DEBUG
-//#define DEFERRED_RENDERING
+#define DEFERRED_RENDERING
 
 cFBO* pTheFBO = NULL;
 
@@ -59,10 +59,10 @@ iInputHandler* pInputHandler;
 
 cBasicTextureManager* textureManager;
 
-void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p);
-void DrawParticle(sParticle* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p);
+void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p);
+void DrawParticle(sParticle* objPtr, glm::mat4 const& v, glm::mat4 const& p);
 
-void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p);
+void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p);
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -283,8 +283,12 @@ int main(void)
 	sphere->texture[0] = ship->texture[0];
 	sphere->textureRatio[0] = 1.f;
 
+	cGameObject quad;
+	quad.meshName = "screen_quad";
+	quad.shaderName = "post";
+
 	cLuaBrain::SetObjectVector(&scene->vecGameObjects);
-	cLuaBrain::SetCamera(&scene->camera);
+	cLuaBrain::SetCamera(Camera::main_camera);
 
 	for (int index = 0; index != scene->vecGameObjects.size(); index++)
 	{
@@ -303,12 +307,15 @@ int main(void)
 	scene->camera.Eye = glm::vec3(0.f, 100.f, -200.f);
 	scene->camera.Eye = glm::vec3(0, 0, -3);
 
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
 
 #ifdef DEFERRED_RENDERING
+
 	// Set up frame buffer
 	cFBO* fbo = new cFBO;
 	std::string fbo_error;
-	if (fbo->init(1024, 1024, fbo_error))
+	if (fbo->init(width, height, fbo_error))
 	{
 		printf("Frame buffer is OK\n");
 	}
@@ -331,6 +338,12 @@ int main(void)
 	while (!glfwWindowShouldClose(window))
 	{
 #ifdef DEFERRED_RENDERING
+
+		if (!fbo->reset(width, height, errorString))
+		{
+			exit(1);
+		}
+
 		// Draw to the frame buffer
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo->ID);
 
@@ -357,7 +370,6 @@ int main(void)
 		//scene->cameraTarget = ship->pos;
 
 		float ratio;
-		int width, height;
 
 		glfwGetFramebufferSize(window, &width, &height);
 		ratio = width / (float)height;
@@ -441,9 +453,6 @@ int main(void)
 				// TODO
 			}
 
-			//if (objPtr->shaderName == "post")
-				//continue;
-
 			objPtr->cmd_group->Update(delta_time);
 			objPtr->brain->Update(delta_time);
 
@@ -493,7 +502,7 @@ int main(void)
 			//	}*/
 			//}
 
-			DrawObject(objPtr, ratio, v, p);
+			DrawObject(objPtr, v, p);
 
 		}//for (int index...
 		// **************************************************
@@ -514,7 +523,7 @@ int main(void)
 			sParticle* particle = pEffect.particles[n];
 			sphere->transform.pos = particle->pos;
 			sphere->transform.scale = vec3(particle->scale);
-			DrawObject(sphere, ratio, v, p);
+			DrawObject(sphere, v, p);
 		}
 
 
@@ -535,8 +544,8 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// 3. Use the FBO colour texture as the texture on that quad
-		cGameObject* pQuad = scene->vecGameObjects[2];
-		GLint shaderProgID = scene->Shaders[pQuad->shaderName];
+		//cGameObject* pQuad = scene->vecGameObjects[2];
+		GLint shaderProgID = scene->Shaders[quad.shaderName];
 		glUseProgram(shaderProgID);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fbo->colourTexture_0_ID);
@@ -546,18 +555,21 @@ int main(void)
 		GLint textSamp00_UL = glGetUniformLocation(shaderProgID, "textSamp00");
 		glUniform1i(textSamp00_UL, 0);	// Texture unit 0
 
-		v = glm::lookAt(glm::vec3(0, 100, -200),
+		/*v = glm::lookAt(glm::vec3(0, 100, -200),
 						glm::vec3(0, 50, 0),
-						glm::vec3(0, 1, 0));
+						glm::vec3(0, 1, 0));*/
 
-		DrawObject(pQuad, ratio, v, p);
+		p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
+		v = glm::lookAt(glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 1.f, 0.f));
+
+		DrawObject(&quad, v, p);
 
 
-		pQuad = scene->vecGameObjects[1];
+		/*pQuad = scene->vecGameObjects[1];
 		shaderProgID = scene->Shaders[pQuad->shaderName];
 		glUseProgram(shaderProgID);
 		pass_id = 1;
-		DrawObject(pQuad, ratio, v, p);
+		DrawObject(pQuad, ratio, v, p);*/
 		
 #endif
 		
@@ -631,7 +643,7 @@ void SetUpTextureBindingsForObject(
 }
 
 
-void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
+void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 {
 	GLint shaderProgID = scene->Shaders[objPtr->shaderName];
 
@@ -661,7 +673,7 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 		glUniform1i(skyBoxSampler_UL, 26);	// Texture unit 26
 	}
 
-	glm::mat4 m, mvp;
+	glm::mat4 m;
 
 	m = glm::mat4(1.0f);
 
@@ -695,6 +707,8 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 	//								glm::vec3(1.0f, 0.0f, 0.0f));
 	m = m * glm::mat4(objPtr->transform.rotation);
 	// ******* ROTATION TRANSFORM *********
+
+	if (pass_id != 1) m = glm::mat4(1.f);
 
 	GLint matModelIT_UL = glGetUniformLocation(shaderProgID, "matModelInverTrans");
 	glm::mat4 matModelInverseTranspose = glm::inverse(glm::transpose(m));
@@ -778,29 +792,30 @@ void DrawObject(cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 
 	}
 }
 
-void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
+void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 {
 	if (node == nullptr) return;
 
 	if (!node->AABB->contains(obj->transform.pos)) return;
 
-	glUniform1i(glGetUniformLocation(scene->Shaders[obj->shaderName], "isWater"),
-				false);
-
+	
 	if (!node->has_nodes)
 	{
+		glUniform1i(glGetUniformLocation(scene->Shaders[obj->shaderName], "isWater"),
+			false);
+
 		objPtr->transform.pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
 		objPtr->transform.scale = glm::vec3(node->AABB->length / 2.f);
 
-		DrawObject(objPtr, ratio, v, p);
+		DrawObject(objPtr, v, p);
 	}
 
 	for (int i = 0; i < 8; ++i)
-		DrawOctree(obj, node->nodes[i], objPtr, ratio, v, p);
+		DrawOctree(obj, node->nodes[i], objPtr, v, p);
 
 }
 
-void DrawParticle(sParticle* objPtr, float ratio, glm::mat4 const& v, glm::mat4 const& p)
+void DrawParticle(sParticle* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 {
 
 }

@@ -1,5 +1,13 @@
 #include "global_physics.h"
 
+#define MY_PHYSICS
+
+#ifdef MY_PHYSICS
+#include <luna_wrapper/cPhysicsFactory.h>
+#pragma comment(lib, "LunaPhysicsWrapper.lib")
+typedef nPhysics::cPhysicsFactory MyPhysicsFactoryClass;
+#endif
+
 nPhysics::iPhysicsFactory* g_PhysicsFactory = 0;
 nPhysics::iPhysicsWorld* g_PhysicsWorld = 0;
 

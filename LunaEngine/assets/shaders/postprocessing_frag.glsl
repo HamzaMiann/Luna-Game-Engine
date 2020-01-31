@@ -57,11 +57,75 @@ const int LIGHT_BUFFER = 24;
 uniform int NUMBEROFLIGHTS;
 uniform sLight theLights[LIGHT_BUFFER];
 
+const int num_samples = 9;
+
+vec4 Blur()
+{
+
+	vec4 rgba = vec4(0.0);
+	float offset = 0.01;
+
+	vec3 offsets[num_samples] = {
+		vec3(0., 0., 0.5),
+		vec3(offset, 0., 0.1),
+		vec3(0., offset, 0.1),
+		vec3(-offset, 0., 0.1),
+		vec3(0., -offset, 0.1),
+		vec3(offset * 2.0, 0., 0.05),
+		vec3(0., offset * 2.0, 0.05),
+		vec3(-offset * 2.0, 0., 0.05),
+		vec3(0., -offset * 2.0, 0.05),
+	};
+
+	for (int i = 0; i < num_samples; ++i)
+	{
+		rgba += texture( textSamp00, fUVx2.st + offsets[i].xy ).rgba * offsets[i].z;
+	}
+
+	rgba.a = 1.0;
+
+	return rgba;
+}
+
+vec4 NoEffect()
+{
+	vec4 tex = texture( textSamp00, fUVx2.st ).rgba;
+	tex.a = 1.0;
+	return tex;
+}
+
+//vec4 BokehBlur()
+//{
+//	vec4 colour = vec4(0.0);
+//
+//	float max_radius = 0.05;
+//
+//	float weight = 0.;//vec4(0.,0.,0.,0.);  
+//    int radius = int(max_radius);  
+//    for(int x=radius*-1;x<radius;x++) {  
+//        for(int y=radius*-1;y<radius;y++){  
+//            vec2 coord = gl_TexCoord[0].xy+vec2(x,y);  
+//            if(distance(coord, gl_TexCoord[0].xy) < float(radius)){  
+//                vec4 texel = texture2DRect(tex, coord);  
+//                float w = length(texel.rgb)+0.1;  
+//                weight+=w;  
+//                finalColor += texel*w;  
+//            }  
+//        }  
+//    }  
+//  
+//    colour finalColor/weight; 
+//
+//	return colour;
+//}
+
+
 void main()  
 {
-	vec3 tex0_RGB = texture( textSamp00, fUVx2.st ).rgb;
 
-	pixelColour = vec4(tex0_RGB, 1.f);
+	pixelColour = vec4(0.);
+	pixelColour += Blur();
+
 	return;
 	
 } // end main
