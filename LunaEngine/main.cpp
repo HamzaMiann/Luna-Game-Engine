@@ -203,12 +203,12 @@ int main(void)
 													  "SpaceBox_front5_posZ.bmp", "SpaceBox_back6_negZ.bmp", true, errorString))
 	{
 		scene = Scene::LoadFromXML("sandbox.scene.xml");
-		pSkyBoxSphere->transform.pos = glm::vec3(0.f);
+		pSkyBoxSphere->transform.pos = vec3(0.f);
 		pSkyBoxSphere->meshName = "sphere";
 		pSkyBoxSphere->shaderName = "basic";
 		pSkyBoxSphere->tag = "skybox";
-		pSkyBoxSphere->transform.pos = glm::vec3(0.0f, 0.f, 0.0f);
-		pSkyBoxSphere->transform.scale = vec3(7000.0f);
+		pSkyBoxSphere->transform.pos = vec3(0.0f, 0.f, 0.0f);
+		pSkyBoxSphere->transform.scale = vec3(900.0f);
 		pSkyBoxSphere->texture[0] = "Pizza.bmp";
 		pSkyBoxSphere->textureRatio[0] = 1.0f;
 		//pSkyBoxSphere->inverseMass = 0.0f;
@@ -271,9 +271,9 @@ int main(void)
 	pEffect.max_time = 3.f;
 	pEffect.min_scale = 0.001f;
 	pEffect.max_scale = 0.03f;
-	pEffect.pos = glm::vec3(0.f, 20.f, 0.f);
-	pEffect.min_vel = glm::vec3(-.3f);
-	pEffect.max_vel = glm::vec3(.3f);
+	pEffect.pos = vec3(0.f, 20.f, 0.f);
+	pEffect.min_vel = vec3(-.3f);
+	pEffect.max_vel = vec3(.3f);
 	pEffect.Generate();
 
 	cGameObject* sphere = new cGameObject;
@@ -304,8 +304,8 @@ int main(void)
 	float previous_time = (float)glfwGetTime();
 	float delta_time = 0.f;
 
-	scene->camera.Eye = glm::vec3(0.f, 100.f, -200.f);
-	scene->camera.Eye = glm::vec3(0, 0, -3);
+	scene->camera.Eye = vec3(0.f, 100.f, -200.f);
+	scene->camera.Eye = vec3(0, 0, -3);
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
@@ -341,13 +341,14 @@ int main(void)
 
 		if (!fbo->reset(width, height, errorString))
 		{
+			std::cout << "fbo was unable to be reset..." << std::endl;
 			exit(1);
 		}
 
 		// Draw to the frame buffer
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo->ID);
+		fbo->use();
 
-		fbo->clearBuffers(true, true);
+		//fbo->clearBuffers(true, true);
 #endif
 		pass_id = 1;
 
@@ -413,7 +414,7 @@ int main(void)
 		p = glm::perspective(0.6f,		// FOV
 							 ratio,			// Aspect ratio
 							 0.1f,			// Near clipping plane
-							 100'000.f);		// Far clipping plane
+							 1000.f);		// Far clipping plane
 
 		// View matrix
 		//v = glm::mat4(1.0f);
@@ -547,20 +548,33 @@ int main(void)
 		//cGameObject* pQuad = scene->vecGameObjects[2];
 		GLint shaderProgID = scene->Shaders[quad.shaderName];
 		glUseProgram(shaderProgID);
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fbo->colourTexture_0_ID);
-		pass_id = 2;
+		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, fbo->normalTexture_ID);
+		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp01"), 1);	// Texture unit 0
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, fbo->positionTexture_ID);
+		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp02"), 2);	// Texture unit 0
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, fbo->bloomTexture_ID);
+		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 0
 
 		// 4. Draw a single object (a triangle or quad)
-		GLint textSamp00_UL = glGetUniformLocation(shaderProgID, "textSamp00");
-		glUniform1i(textSamp00_UL, 0);	// Texture unit 0
+		
 
 		/*v = glm::lookAt(glm::vec3(0, 100, -200),
 						glm::vec3(0, 50, 0),
 						glm::vec3(0, 1, 0));*/
 
 		p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
-		v = glm::lookAt(glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 1.f, 0.f));
+		//v = glm::lookAt(glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 1.f, 0.f));
+		pass_id = 2;
 
 		DrawObject(&quad, v, p);
 

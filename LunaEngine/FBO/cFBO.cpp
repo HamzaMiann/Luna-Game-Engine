@@ -17,6 +17,9 @@ bool cFBO::shutdown(void)
 {
 	glDeleteTextures( 1, &(this->colourTexture_0_ID) );
 	glDeleteTextures( 1, &(this->depthTexture_ID) );
+	glDeleteTextures( 1, &(this->normalTexture_ID) );
+	glDeleteTextures( 1, &(this->positionTexture_ID) );
+	glDeleteTextures( 1, &(this->bloomTexture_ID) );
 
 	glDeleteFramebuffers( 1, &(this->ID) );
 
@@ -41,7 +44,8 @@ bool cFBO::init( int width, int height, std::string &error )
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8,		// 8 bits per colour
 //	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F,		// 8 bits per colour
 				   this->width,				// g_FBO_SizeInPixes
-				   this->height);			// g_FBO_SizeInPixes
+				   this->height				// g_FBO_SizeInPixes
+	);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -61,7 +65,8 @@ bool cFBO::init( int width, int height, std::string &error )
 	// - GL_DEPTH24_STENCIL8,  which is 24 bit float depth + 8 bit stencil (more common?)
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8,	//GL_DEPTH32F_STENCIL8,
 				   this->width,		//g_FBO_SizeInPixes
-				   this->height);
+				   this->height
+	);
 //	glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT );
 //	glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_COMPONENT );
 //	glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, this->width, this->height, 0, GL_EXT_packe
@@ -70,10 +75,61 @@ bool cFBO::init( int width, int height, std::string &error )
 
 // ***************************************************************
 
+
+
+	// NORMAL MAP TEXTURE CREATION
+	//--------------------------------------
+	glGenTextures(1, &(this->normalTexture_ID));
+	glBindTexture(GL_TEXTURE_2D, this->normalTexture_ID);
+
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB16F,
+		this->width,
+		this->height
+	);
+
+	//--------------------------------------
+
+	// POSITION TEXTURE CREATION
+	//--------------------------------------
+	glGenTextures(1, &(this->positionTexture_ID));
+	glBindTexture(GL_TEXTURE_2D, this->positionTexture_ID);
+
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB16F,
+		this->width,
+		this->height
+	);
+
+	//--------------------------------------
+
+	// BLOOM TEXTURE CREATION
+	//--------------------------------------
+	glGenTextures(1, &(this->bloomTexture_ID));
+	glBindTexture(GL_TEXTURE_2D, this->bloomTexture_ID);
+
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8,
+		this->width,
+		this->height
+	);
+
+	//--------------------------------------
+
+
+
 	glFramebufferTexture(GL_FRAMEBUFFER,
 						 GL_COLOR_ATTACHMENT0,			// Colour goes to #0
 						 this->colourTexture_0_ID, 0);
 
+	glFramebufferTexture(GL_FRAMEBUFFER,
+						 GL_COLOR_ATTACHMENT1,			// Normal to #1
+						 this->normalTexture_ID, 0);
+
+	glFramebufferTexture(GL_FRAMEBUFFER,
+						 GL_COLOR_ATTACHMENT2,			// Position to #2
+						 this->positionTexture_ID, 0);
+
+	glFramebufferTexture(GL_FRAMEBUFFER,
+						 GL_COLOR_ATTACHMENT3,			// Bloom to #3
+						 this->bloomTexture_ID, 0);
 
 //	glFramebufferTexture(GL_FRAMEBUFFER,
 //						 GL_DEPTH_ATTACHMENT,
@@ -82,11 +138,16 @@ bool cFBO::init( int width, int height, std::string &error )
 						 GL_DEPTH_STENCIL_ATTACHMENT,
 						 this->depthTexture_ID, 0);
 
+	
+
 	static const GLenum draw_bufers[] = 
 	{ 
-		GL_COLOR_ATTACHMENT0
+		GL_COLOR_ATTACHMENT0,
+		GL_COLOR_ATTACHMENT1,
+		GL_COLOR_ATTACHMENT2,
+		GL_COLOR_ATTACHMENT3,
 	};
-	glDrawBuffers(1, draw_bufers);		// There are 4 outputs now
+	glDrawBuffers(4, draw_bufers);		// There are 4 outputs now
 
 	// ***************************************************************
 
@@ -130,19 +191,25 @@ void cFBO::clearColourBuffer(int bufferindex)
 }
 
 
-void cFBO::clearBuffers(bool bClearColour, bool bClearDepth)
+void cFBO::clearBuffers(bool bClearColour, bool bClearDepth, bool bClearNormal)
 {
 	glViewport(0, 0, this->width, this->height);
 	GLfloat	zero = 0.0f;
 	GLfloat one = 1.0f;
+	GLfloat two = 2.0f;
 	if ( bClearColour )
 	{
 		glClearBufferfv(GL_COLOR, 0, &zero);		// Colour
+	}
+	if (bClearNormal)
+	{
+		glClearBufferfv(GL_COLOR, 0, &two);		// Depth is normalized 0.0 to 1.0f
 	}
 	if ( bClearDepth )
 	{
 		glClearBufferfv(GL_DEPTH, 0, &one);		// Depth is normalized 0.0 to 1.0f
 	}
+	
 	// If buffer is GL_STENCIL, drawbuffer must be zero, and value points to a 
 	//  single value to clear the stencil buffer to. Masking is performed in the 
 	//  same fashion as for glClearStencil. Only the *iv forms of these commands 
