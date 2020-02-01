@@ -314,10 +314,20 @@ int main(void)
 
 	// Set up frame buffer
 	cFBO* fbo = new cFBO;
+	cFBO* fbo2 = new cFBO;
 	std::string fbo_error;
 	if (fbo->init(width, height, fbo_error))
 	{
-		printf("Frame buffer is OK\n");
+		printf("Frame buffer 1 is OK\n");
+	}
+	else
+	{
+		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
+		exit(1);
+	}
+	if (fbo2->init(width, height, fbo_error))
+	{
+		printf("Frame buffer 2 is OK\n");
 	}
 	else
 	{
@@ -538,7 +548,16 @@ int main(void)
 
 #ifdef DEFERRED_RENDERING
 		// 1. Disable the FBO
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		if (!fbo2->reset(width, height, errorString))
+		{
+			std::cout << "fbo was unable to be reset..." << std::endl;
+			exit(1);
+		}
+
+		// Draw to the frame buffer
+		fbo2->use();
 
 		// 2. Clear the ACTUAL screen buffer
 		glViewport(0, 0, width, height);
@@ -555,29 +574,43 @@ int main(void)
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, fbo->normalTexture_ID);
-		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp01"), 1);	// Texture unit 0
+		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp01"), 1);	// Texture unit 1
 
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, fbo->positionTexture_ID);
-		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp02"), 2);	// Texture unit 0
+		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp02"), 2);	// Texture unit 2
 
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, fbo->bloomTexture_ID);
-		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 0
+		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
 
 		// 4. Draw a single object (a triangle or quad)
-		
-
-		/*v = glm::lookAt(glm::vec3(0, 100, -200),
-						glm::vec3(0, 50, 0),
-						glm::vec3(0, 1, 0));*/
+		glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_FALSE);
 
 		p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
-		//v = glm::lookAt(glm::vec3(0.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 1.f, 0.f));
 		pass_id = 2;
 
 		DrawObject(&quad, v, p);
 
+
+		// LAST RENDER PASS
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, width, height);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(shaderProgID);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fbo2->colourTexture_0_ID);
+		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, fbo2->bloomTexture_ID);
+		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
+
+		glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_TRUE);
+
+		DrawObject(&quad, v, p);
 
 		/*pQuad = scene->vecGameObjects[1];
 		shaderProgID = scene->Shaders[pQuad->shaderName];
@@ -776,7 +809,10 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 	glUniform1i(isUniform_location, objPtr->uniformColour);
 
 
-	scene->pLightManager->Set_Light_Data(shaderProgID);
+	if (pass_id != 1)
+	{
+		scene->pLightManager->Set_Light_Data(shaderProgID);
+	}
 
 
 

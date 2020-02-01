@@ -7,22 +7,23 @@
 
 namespace AI
 {
-	class cSeekBehaviour : public iAIBehaviour
+	class cPursueBehaviour : public iAIBehaviour
 	{
 	public:
-		virtual ~cSeekBehaviour() {}
-		cSeekBehaviour(iObject* parent)
+		virtual ~cPursueBehaviour() {}
+		cPursueBehaviour(iObject* parent)
 			: iAIBehaviour(parent)
-		{ }
+		{
+		}
 
 
-        nPhysics::iPhysicsComponent* rb;
-        sTransform* target;
-        float mDt;
-		float slowingRadius;
+		nPhysics::iPhysicsComponent* rb;
+		nPhysics::iPhysicsComponent* target_rb;
+		sTransform* target;
+		float mDt;
 		float maxVelocity;
 
-		void SeekArrive();
+		void PursueEvade();
 
 		// Inherited via iAIBehaviour
 		virtual bool serialize(rapidxml::xml_node<>* root_node) override;

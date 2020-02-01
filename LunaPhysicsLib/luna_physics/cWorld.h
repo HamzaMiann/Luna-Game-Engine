@@ -36,6 +36,7 @@ namespace phys
 		std::vector<cRigidBody*> mBodies;
 		float mDt;
 		float mT;
+		float T;
 		cIntegrator mIntegrator;
 	};
 }

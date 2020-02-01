@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="luna_physics\cIntegrator.cpp" />
     <ClCompile Include="luna_physics\cRigidBody.cpp" />
     <ClCompile Include="luna_physics\cWorld.cpp" />
     <ClCompile Include="luna_physics\nCollide.cpp" />

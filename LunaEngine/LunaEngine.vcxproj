@@ -158,7 +158,9 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio\AudioEngine.cpp" />
+    <ClCompile Include="Behaviour\AI\cPursueBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cSeekBehaviour.cpp" />
+    <ClCompile Include="Behaviour\AI\cWanderBehaviour.cpp" />
     <ClCompile Include="Behaviour\cBehaviourManager.cpp" />
     <ClCompile Include="Behaviour\Controls\cSphereBehaviour.cpp" />
     <ClCompile Include="Behaviour\iBehaviour.cpp" />
@@ -217,7 +219,9 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="TextureManager\CTextureFromBMP.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Behaviour\AI\cPursueBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cSeekBehaviour.h" />
+    <ClInclude Include="Behaviour\AI\cWanderBehaviour.h" />
     <ClInclude Include="Behaviour\AI\iAIBehaviour.h" />
     <ClInclude Include="Behaviour\cBehaviourManager.h" />
     <ClInclude Include="Behaviour\Controls\cSphereBehaviour.h" />

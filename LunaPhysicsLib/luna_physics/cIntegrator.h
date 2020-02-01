@@ -7,16 +7,26 @@ class cIntegrator
 {
 public:
 
-	void RK4(glm::vec3& x, glm::vec3& v, glm::vec3& a, glm::vec3& g, float gf, float dt)
-	{
+	/*
+	x	= position
+	v	= velocity
+	a	= accelteration
+	g	= gravitational acceleration
+	gf	= gravitational impact ( 0 - INFINITE )
+	dt	= delta time
+	t	= last frame time
+	*/
+	void RK4(glm::vec3& x, glm::vec3& v, glm::vec3& a, glm::vec3& g, float gf, float dt, float t);
 
-	}
 
-	void Euler(glm::vec3& x, glm::vec3& v, glm::vec3& a, const glm::vec3& g, float gf, float dt)
-	{
-		v += a * dt;
-		v += g * dt * gf;
-		x += v * dt;
-	}
+	/*
+	x	= position
+	v	= velocity
+	a	= accelteration
+	g	= gravitational acceleration
+	gf	= gravitational impact ( 0 - INFINITE )
+	dt	= delta time
+	*/
+	void Euler(glm::vec3& x, glm::vec3& v, glm::vec3& a, const glm::vec3& g, float gf, float dt);
 
 };

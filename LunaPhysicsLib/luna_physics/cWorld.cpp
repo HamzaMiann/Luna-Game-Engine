@@ -10,6 +10,7 @@ namespace phys
 	cWorld::~cWorld()
 	{
 		mDt = 0.f;
+		T = 0.f;
 	}
 
 	void cWorld::Update(float dt)
@@ -39,6 +40,8 @@ namespace phys
 		}
 
 		// Step 4: Tell everyone about all the collisions!
+
+		T += dt;
 	}
 
 	bool cWorld::AddRigidBody(cRigidBody* rigidBody)
@@ -66,7 +69,9 @@ namespace phys
 	void cWorld::Integrate(cRigidBody* body, float dt)
 	{
 		body->mPreviousPosition = body->mPosition;
-		mIntegrator.Euler(body->mPosition, body->mVelocity, body->mAcceleration, mGravity, body->mGravityFactor, dt);
+
+		// RK4 integration
+		mIntegrator.RK4(body->mPosition, body->mVelocity, body->mAcceleration, mGravity, body->mGravityFactor, dt, T);
 	}
 
 	bool cWorld::Collide(cRigidBody* bodyA, cRigidBody* bodyB)

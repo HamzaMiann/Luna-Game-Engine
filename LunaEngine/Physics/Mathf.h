@@ -3,7 +3,9 @@
 #include <stdlib.h>			// For rand()
 #include <math.h>
 #include <glm/vec3.hpp>
+#include <math.h>
 #define PI 3.14159265f
+#define DEGREE_TO_RAD (PI / 180.f);
 
 namespace Mathf
 {
@@ -107,6 +109,16 @@ namespace Mathf
 	{
 		float y = smootherstep(0.f, 1.f, ratio);
 		return (to - from) * y + from;
+	}
+
+	static inline float Cos(float angle)
+	{
+		return ::cos(angle);
+	}
+
+	static inline float Sin(float angle)
+	{
+		return ::sin(angle);
 	}
 
 	template <class T>

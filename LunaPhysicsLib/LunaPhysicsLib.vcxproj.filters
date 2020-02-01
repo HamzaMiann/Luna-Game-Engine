@@ -24,6 +24,9 @@
     <ClCompile Include="luna_physics\nCollide.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="luna_physics\cIntegrator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="luna_physics\cRigidBody.h">

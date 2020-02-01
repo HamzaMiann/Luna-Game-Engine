@@ -7,22 +7,26 @@
 
 namespace AI
 {
-	class cSeekBehaviour : public iAIBehaviour
+	class cWanderBehaviour : public iAIBehaviour
 	{
 	public:
-		virtual ~cSeekBehaviour() {}
-		cSeekBehaviour(iObject* parent)
+		virtual ~cWanderBehaviour() {}
+		cWanderBehaviour(iObject* parent)
 			: iAIBehaviour(parent)
-		{ }
+		{
+		}
 
 
-        nPhysics::iPhysicsComponent* rb;
-        sTransform* target;
-        float mDt;
-		float slowingRadius;
+		nPhysics::iPhysicsComponent* rb;
+		float mDt;
 		float maxVelocity;
+		float distanceToCircle;
+		float circleRadius;
 
-		void SeekArrive();
+		float wander_time = 0.f;
+		float idle_time = 0.f;
+
+		void Wander();
 
 		// Inherited via iAIBehaviour
 		virtual bool serialize(rapidxml::xml_node<>* root_node) override;

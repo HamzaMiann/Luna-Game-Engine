@@ -29,9 +29,14 @@ in float fiTime;
 in float fisWater;
 uniform vec2 iResolution;
 
+uniform bool isFinalPass;
 
 
-out vec4 pixelColour;			// RGB A   (0 to 1) 
+
+layout (location = 0) out vec4 pixelColour;			// RGB A   (0 to 1) 
+layout (location = 1) out vec4 normalColour;	
+layout (location = 2) out vec4 positionColour;
+layout (location = 3) out vec4 bloomColour;			// BLOOM   (0 to 1) 
 
 // Fragment shader
 struct sLight
@@ -63,7 +68,7 @@ vec4 Blur(sampler2D tex)
 {
 
 	vec4 rgba = vec4(0.0);
-	float offset = 0.004;
+	float offset = 0.005;
 
 	vec3 offsets[num_samples] = {
 		vec3(0., 0., 0.2),		// CENTER
@@ -112,26 +117,34 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
                             vec3 vertexWorldPos, vec4 vertexSpecular );
 
 
+vec4 BloomCutoff(vec4 colour)
+{
+	vec4 BrightColor = vec4(colour.rgb, 1.0);
+
+	float brightness = dot(colour.rgb, vec3(0.2126, 0.6152, 0.522));
+	//float brightness = dot(colour.rgb, vec3(0.2126, 0.7152, 0.0722));
+    if(brightness <= 1.0)
+        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+
+	return BrightColor;
+}
+
 void main()  
 {
 	vec2 uv = fUVx2.st;
 
-	vec3 col = NoEffect().rgb;
-	vec3 normal = texture( textSamp01, fUVx2.st ).rgb - 1.0;
-	vec3 pos = texture( textSamp02, fUVx2.st ).rgb;
-	vec3 bloom = Bloom().rgb * 0.5;
+	if (isFinalPass)
+	{
+		pixelColour.rgb = texture(textSamp00, uv).rgb;
+		pixelColour.a = 1.0;
 
-	pixelColour = calcualteLightContrib(col, normal, pos, vec4(0.0));
-
-	//pixelColour.rgb = bloom;
-
-	if (bloom != col.rgb) {
+		vec3 bloom = Bloom().rgb * 1.0;
 		pixelColour += vec4(bloom, 0.0);
 
 		pixelColour = clamp(pixelColour, 0.0, 1.0);
 
 		float exposure = 2.0;
-		float gamma = 1.0;
+		float gamma = 0.6;
 
 		// tone mapping
 		vec3 result = vec3(1.0) - exp(-pixelColour.rgb * exposure);
@@ -139,7 +152,21 @@ void main()
 		result = pow(result, vec3(1.0 / gamma));
 
 		pixelColour.rgb = result;
+		//pixelColour.rgb = bloom;
+
+		return;
 	}
+
+	vec3 col = NoEffect().rgb;
+	vec3 normal = texture( textSamp01, fUVx2.st ).rgb - 1.0;
+	vec3 pos = texture( textSamp02, fUVx2.st ).rgb;
+	//vec3 bloom = Bloom().rgb * 1.0;
+
+	pixelColour = calcualteLightContrib(col, normal, pos, vec4(0.0));
+	bloomColour = BloomCutoff(pixelColour);
+
+
+	
 
 	return;
 	
