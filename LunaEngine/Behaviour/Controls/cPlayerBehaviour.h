@@ -4,12 +4,13 @@
 #include <iObject.h>
 #include <interfaces/physics/iPhysicsComponent.h>
 
-class cSphereBehaviour : public iBehaviour
+class cPlayerBehaviour : public iBehaviour
 {
+	typedef glm::vec3 vec3;
 public:
 
-	cSphereBehaviour(iObject* root);
-	virtual ~cSphereBehaviour();
+	cPlayerBehaviour(iObject* root);
+	virtual ~cPlayerBehaviour();
 
 	// Inherited via iBehaviour
 	virtual bool serialize(rapidxml::xml_node<>* root_node) override;
@@ -20,19 +21,17 @@ public:
 
 	virtual void update(float dt) override;
 
+	virtual void OnCollide(iObject* other) override;
+
+	void Reset();
+
+	const vec3 forward = glm::vec3(0.f, 0.f, 1.f);
+	vec3 direction;
 
 private:
-	nPhysics::iPhysicsComponent* body;
+	nPhysics::iPhysicsComponent* rb;
 
-	glm::quat rotation;
-	static glm::vec3 direction;
-
-	glm::vec3 camera_target;
-	glm::vec3 camera_position;
-
-	static float distance_from_object;
-
-	float previousX = 0.f;
-	float previousY = 0.f;
+	vec3 start_pos;
+	float reload_time;
 
 };

@@ -142,6 +142,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="interfaces\Behaviour\iAIBehaviour.h" />
+    <ClInclude Include="interfaces\Behaviour\iBehaviour.h" />
     <ClInclude Include="interfaces\iComponent.h" />
     <ClInclude Include="interfaces\iSerializable.h" />
     <ClInclude Include="interfaces\physics\eComponentType.h" />

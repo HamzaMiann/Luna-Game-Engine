@@ -1,4 +1,4 @@
-#include "iBehaviour.h"
+#include <interfaces/Behaviour/iBehaviour.h>
 #include <Behaviour/cBehaviourManager.h>
 
 iBehaviour::iBehaviour(iObject* root)

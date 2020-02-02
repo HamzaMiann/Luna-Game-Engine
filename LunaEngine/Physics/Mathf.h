@@ -3,6 +3,7 @@
 #include <stdlib.h>			// For rand()
 #include <math.h>
 #include <glm/vec3.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <math.h>
 #define PI 3.14159265f
 #define DEGREE_TO_RAD (PI / 180.f);
@@ -49,6 +50,21 @@ namespace Mathf
 	static glm::vec3 get_reverse_direction_vector(glm::vec3 const& from, glm::vec3 const& to)
 	{
 		return (from - to);
+	}
+
+	static glm::quat RotationFromTo(glm::vec3 v1, glm::vec3 v2)
+	{
+		glm::quat q;
+		v1 = glm::normalize(v1);
+		v2 = glm::normalize(v2);
+		glm::vec3 a = glm::cross(v1, v2);
+		q.x = a.x;
+		q.y = a.y;
+		q.z = a.z;
+		float l1 = glm::length(v1);
+		float l2 = glm::length(v2);
+		q.w = std::sqrt((l1 * l1) * (l2 * l2)) + glm::dot(v1, v2);
+		return glm::normalize(q);
 	}
 
 	static float lerp(float v0, float v1, float t)

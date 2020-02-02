@@ -2,7 +2,7 @@
 
 #ifndef _iAIBehaviour_HG_
 #define _iAIBehaviour_HG_
-#include "iAIBehaviour.h"
+#include <interfaces/Behaviour/iAIBehaviour.h>
 #endif
 
 namespace AI

@@ -9,6 +9,7 @@ namespace nPhysics
 	{
 	public:
 		cSphereComponent(iObject* parent, const phys::sRigidBodyDef& def, phys::iShape* shape);
+		virtual ~cSphereComponent();
 
 		// Inherited via iSphereComponent
 		virtual bool serialize(rapidxml::xml_node<>* root_node);
@@ -18,6 +19,13 @@ namespace nPhysics
 		virtual void SetVelocity(const glm::vec3& velocity) override;
 		virtual glm::vec3 GetVelocity() override;
 		virtual void UpdateTransform() override;
+
+		// Inherited via iSphereComponent
+		virtual void AddVelocity(const glm::vec3& velocity) override;
+		virtual void SetPosition(const glm::vec3& position) override;
+		virtual glm::vec3 GetPosition() override;
+
+		virtual void Collided(cRigidBody* other) override;
 	};
 
 }

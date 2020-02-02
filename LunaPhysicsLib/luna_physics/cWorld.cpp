@@ -30,7 +30,13 @@ namespace phys
 		{
 			for (size_t idxB = idxA + 1; idxB < numBodies; idxB++)
 			{
-				Collide(mBodies[idxA], mBodies[idxB]);
+				auto A = mBodies[idxA];
+				auto B = mBodies[idxB];
+				if (Collide(A, B))
+				{
+					A->Collided(B);
+					B->Collided(A);
+				}
 			}
 		}
 		// Step 3: Clear the accelerations!

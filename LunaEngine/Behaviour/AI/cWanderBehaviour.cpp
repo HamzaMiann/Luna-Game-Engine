@@ -9,7 +9,7 @@ void AI::cWanderBehaviour::Wander()
 {
     vec3 velocity = rb->GetVelocity();
     vec3 circlePoint;
-    if (glm::length(velocity) <= 0.01f)
+    if (glm::length(velocity) <= 0.1f)
     {
         circlePoint = glm::vec3(0.f, 0.f, 1.f) * distanceToCircle + transform.pos;
     }
@@ -75,6 +75,10 @@ void AI::cWanderBehaviour::update(float dt)
         {
             idle_time = 0.f;
         }
+        glm::vec3 velocity = rb->GetVelocity();
+        velocity.y = 0.f;
+        velocity = glm::normalize(velocity);
+        transform.rotation = Mathf::RotationFromTo(glm::vec3(0., 0., 1.), velocity);
     }
     else if (rb && idle_time < 3.f)
     {

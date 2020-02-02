@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iEngine.h>
-#include <Behaviour/iBehaviour.h>
+#include <interfaces/Behaviour/iBehaviour.h>
 
 class cBehaviourManager : public iEngine<iBehaviour>
 {

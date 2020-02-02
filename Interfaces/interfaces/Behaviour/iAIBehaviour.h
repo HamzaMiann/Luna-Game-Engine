@@ -1,5 +1,5 @@
 
-#include <Behaviour/iBehaviour.h>
+#include <interfaces/Behaviour/iBehaviour.h>
 #include <interfaces/physics/iPhysicsComponent.h>
 
 namespace AI {

@@ -30,6 +30,8 @@ namespace phys
 
 		inline void SetShape(iShape* shape) { mShape = shape; }
 
+		virtual void Collided(cRigidBody* other) {}
+
 	protected:
 		iShape* mShape;
 		// TODO: add/change as required:

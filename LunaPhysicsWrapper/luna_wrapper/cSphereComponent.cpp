@@ -1,5 +1,6 @@
 #include "cSphereComponent.h"
 #include "cPhysicsFactory.h"
+#include <interfaces/Behaviour/iBehaviour.h>
 
 namespace nPhysics
 {
@@ -9,6 +10,12 @@ namespace nPhysics
 	{
 		cPhysicsFactory factory;
 		factory.GetWorld()->AddComponent(this);
+	}
+
+	cSphereComponent::~cSphereComponent()
+	{
+		cPhysicsFactory factory;
+		factory.GetWorld()->RemoveComponent(this);
 	}
 
 	bool cSphereComponent::serialize(rapidxml::xml_node<>* root_node)
@@ -44,6 +51,31 @@ namespace nPhysics
 	void cSphereComponent::UpdateTransform()
 	{
 		transform.pos = mPosition;
+	}
+
+	void cSphereComponent::AddVelocity(const glm::vec3& velocity)
+	{
+		this->mVelocity += velocity;
+	}
+
+	void cSphereComponent::SetPosition(const glm::vec3& position)
+	{
+		this->mPosition = position;
+		this->mPreviousPosition = position;
+	}
+
+	glm::vec3 cSphereComponent::GetPosition()
+	{
+		return this->mPosition;
+	}
+
+	void cSphereComponent::Collided(cRigidBody* other)
+	{
+		iBehaviour* behaviour = parent.GetComponent<iBehaviour>();
+		if (behaviour)
+		{
+			behaviour->OnCollide(&dynamic_cast<iPhysicsComponent*>(other)->parent);
+		}
 	}
 
 }

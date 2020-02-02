@@ -2,8 +2,10 @@
 
 #ifndef _iAIBehaviour_HG_
 #define _iAIBehaviour_HG_
-#include "iAIBehaviour.h"
+#include <interfaces/Behaviour/iAIBehaviour.h>
 #endif
+
+#include "../Controls/cPlayerBehaviour.h"
 
 namespace AI
 {
@@ -17,6 +19,7 @@ namespace AI
 
 
         nPhysics::iPhysicsComponent* rb;
+		cPlayerBehaviour* player_component;
         sTransform* target;
         float mDt;
 		float slowingRadius;

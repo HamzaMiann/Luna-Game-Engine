@@ -258,6 +258,15 @@
     <ClCompile Include="Behaviour\AI\cWanderBehaviour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Behaviour\Controls\cPlayerBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Behaviour\AI\cApproachBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Behaviour\Managers\cAIGameManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextureManager\C24BitBMPpixel.h">
@@ -434,9 +443,6 @@
     <ClInclude Include="EntityManager\cEntityManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Behaviour\iBehaviour.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Behaviour\cBehaviourManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -449,9 +455,6 @@
     <ClInclude Include="Physics\global_physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Behaviour\AI\iAIBehaviour.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Behaviour\AI\cSeekBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -459,6 +462,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Behaviour\AI\cWanderBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour\Controls\cPlayerBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour\AI\cApproachBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour\Managers\cAIGameManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

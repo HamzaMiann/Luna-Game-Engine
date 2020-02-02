@@ -11,6 +11,12 @@ namespace nPhysics
 		factory.GetWorld()->AddComponent(this);
 	}
 
+	cPlaneComponent::~cPlaneComponent()
+	{
+		cPhysicsFactory factory;
+		factory.GetWorld()->RemoveComponent(this);
+	}
+
 	bool cPlaneComponent::serialize(rapidxml::xml_node<>* root_node)
 	{
 		return false;
@@ -44,6 +50,22 @@ namespace nPhysics
 	void cPlaneComponent::UpdateTransform()
 	{
 		transform.pos = mPosition;
+	}
+
+	void cPlaneComponent::AddVelocity(const glm::vec3& velocity)
+	{
+		mVelocity += velocity;
+	}
+
+	void cPlaneComponent::SetPosition(const glm::vec3& position)
+	{
+		mPosition = position;
+		mPreviousPosition = position;
+	}
+
+	glm::vec3 cPlaneComponent::GetPosition()
+	{
+		return mPosition;
 	}
 
 }

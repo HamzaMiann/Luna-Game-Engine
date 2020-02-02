@@ -54,5 +54,11 @@
     <ClInclude Include="xml_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="interfaces\Behaviour\iAIBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="interfaces\Behaviour\iBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

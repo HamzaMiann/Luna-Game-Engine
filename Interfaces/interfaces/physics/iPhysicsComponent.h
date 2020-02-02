@@ -24,6 +24,10 @@ namespace nPhysics
 		virtual void SetVelocity(const glm::vec3& velocity) = 0;
 		virtual glm::vec3 GetVelocity() = 0;
 
+		virtual void AddVelocity(const glm::vec3& velocity) = 0;
+		virtual void SetPosition(const glm::vec3& position) = 0;
+		virtual glm::vec3 GetPosition() = 0;
+
 		virtual void UpdateTransform() = 0;
 
 		sTransform& transform;

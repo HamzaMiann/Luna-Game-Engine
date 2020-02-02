@@ -51,8 +51,6 @@ unsigned int input_id = 0;
 bool is_paused = false;
 int pass_id;
 
-int ball_id = 0;
-
 Scene* scene;
 GLFWwindow* global::window = 0;
 iInputHandler* pInputHandler;
@@ -91,21 +89,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 	{
 		is_paused = !is_paused;
-	}
-
-	if (key == GLFW_KEY_TAB && action == GLFW_RELEASE)
-	{
-		scene->vecGameObjects[ball_id]->RemoveComponent<cSphereBehaviour>();
-		ball_id++;
-		if (ball_id == scene->vecGameObjects.size())
-			ball_id = 0;
-		while (scene->vecGameObjects[ball_id]->tag != "ball")
-		{
-			ball_id++;
-			if (ball_id == scene->vecGameObjects.size())
-				ball_id = 0;
-		}
-		scene->vecGameObjects[ball_id]->AddComponent<cSphereBehaviour>();
 	}
 
 	if (pInputHandler) pInputHandler->key_callback(window, key, scancode, action, mods);
@@ -313,10 +296,10 @@ int main(void)
 #ifdef DEFERRED_RENDERING
 
 	// Set up frame buffer
-	cFBO* fbo = new cFBO;
-	cFBO* fbo2 = new cFBO;
+	cFBO fbo;
+	cFBO fbo2;
 	std::string fbo_error;
-	if (fbo->init(width, height, fbo_error))
+	if (fbo.init(width, height, fbo_error))
 	{
 		printf("Frame buffer 1 is OK\n");
 	}
@@ -325,7 +308,7 @@ int main(void)
 		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
 		exit(1);
 	}
-	if (fbo2->init(width, height, fbo_error))
+	if (fbo2.init(width, height, fbo_error))
 	{
 		printf("Frame buffer 2 is OK\n");
 	}
@@ -349,14 +332,14 @@ int main(void)
 	{
 #ifdef DEFERRED_RENDERING
 
-		if (!fbo->reset(width, height, errorString))
+		if (!fbo.reset(width, height, errorString))
 		{
 			std::cout << "fbo was unable to be reset..." << std::endl;
 			exit(1);
 		}
 
 		// Draw to the frame buffer
-		fbo->use();
+		fbo.use();
 
 		//fbo->clearBuffers(true, true);
 #endif
@@ -550,38 +533,37 @@ int main(void)
 		// 1. Disable the FBO
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		if (!fbo2->reset(width, height, errorString))
+		if (!fbo2.reset(width, height, errorString))
 		{
 			std::cout << "fbo was unable to be reset..." << std::endl;
 			exit(1);
 		}
 
 		// Draw to the frame buffer
-		fbo2->use();
+		fbo2.use();
 
 		// 2. Clear the ACTUAL screen buffer
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// 3. Use the FBO colour texture as the texture on that quad
-		//cGameObject* pQuad = scene->vecGameObjects[2];
 		GLint shaderProgID = scene->Shaders[quad.shaderName];
 		glUseProgram(shaderProgID);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fbo->colourTexture_0_ID);
+		glBindTexture(GL_TEXTURE_2D, fbo.colourTexture_0_ID);
 		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
 
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, fbo->normalTexture_ID);
+		glBindTexture(GL_TEXTURE_2D, fbo.normalTexture_ID);
 		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp01"), 1);	// Texture unit 1
 
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, fbo->positionTexture_ID);
+		glBindTexture(GL_TEXTURE_2D, fbo.positionTexture_ID);
 		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp02"), 2);	// Texture unit 2
 
 		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, fbo->bloomTexture_ID);
+		glBindTexture(GL_TEXTURE_2D, fbo.bloomTexture_ID);
 		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
 
 		// 4. Draw a single object (a triangle or quad)
@@ -601,11 +583,11 @@ int main(void)
 		glUseProgram(shaderProgID);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fbo2->colourTexture_0_ID);
+		glBindTexture(GL_TEXTURE_2D, fbo2.colourTexture_0_ID);
 		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
 
 		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, fbo2->bloomTexture_ID);
+		glBindTexture(GL_TEXTURE_2D, fbo2.bloomTexture_ID);
 		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
 
 		glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_TRUE);
@@ -627,10 +609,9 @@ int main(void)
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
-	ReleasePhysics();
 	// Delete everything
 	delete scene;
-	//delete lightManager;
+	ReleasePhysics();
 
 	exit(EXIT_SUCCESS);
 }

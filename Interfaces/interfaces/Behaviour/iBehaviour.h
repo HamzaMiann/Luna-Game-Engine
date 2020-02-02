@@ -10,10 +10,15 @@ public:
 	virtual ~iBehaviour();
 	virtual void start() = 0;
 	virtual void update(float dt) = 0;
-protected:
-	iBehaviour(iObject* root);
+
+	virtual void OnCollide(iObject* other) {}
+
 	sTransform& transform;
 	iObject& parent;
+
+protected:
+	iBehaviour(iObject* root);
+	
 private:
 	bool _initialized;
 	iBehaviour() = delete;

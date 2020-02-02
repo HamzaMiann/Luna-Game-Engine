@@ -5,28 +5,29 @@
 #include <interfaces/Behaviour/iAIBehaviour.h>
 #endif
 
-class cAIGameManager;
+#include "../Controls/cPlayerBehaviour.h"
 
 namespace AI
 {
-	class cPursueBehaviour : public iAIBehaviour
+	class cApproachBehaviour : public iAIBehaviour
 	{
 	public:
-		virtual ~cPursueBehaviour() {}
-		cPursueBehaviour(iObject* parent)
+		virtual ~cApproachBehaviour() {}
+		cApproachBehaviour(iObject* parent)
 			: iAIBehaviour(parent)
 		{
 		}
 
-		cAIGameManager* manager;
+
 		nPhysics::iPhysicsComponent* rb;
-		nPhysics::iPhysicsComponent* target_rb;
+		cPlayerBehaviour* player_component;
 		sTransform* target;
 		float mDt;
+		float slowingRadius;
 		float maxVelocity;
+		float reload_time;
 
-		void Pursue();
-		void Evade(glm::vec3 position, glm::vec3 velocity);
+		void Approach();
 
 		// Inherited via iAIBehaviour
 		virtual bool serialize(rapidxml::xml_node<>* root_node) override;
