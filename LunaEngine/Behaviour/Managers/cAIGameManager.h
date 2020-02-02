@@ -1,6 +1,10 @@
 #pragma once
 
 #include <interfaces/Behaviour/iBehaviour.h>
+namespace nPhysics
+{
+	class iPhysicsComponent;
+}
 
 class cAIGameManager : public iBehaviour
 {
@@ -21,7 +25,7 @@ public:
 	void Player_Shoot(glm::vec3 const& start, glm::vec3 const& velocity);
 	void Enemy_Shoot(glm::vec3 const& start, glm::vec3 const& velocity);
 
-	std::vector<sTransform*> player_bullets;
+	std::vector<nPhysics::iPhysicsComponent*> player_bullets;
 
 	float time_passed;
 

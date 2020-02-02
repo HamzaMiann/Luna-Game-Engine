@@ -78,7 +78,11 @@ void AI::cWanderBehaviour::update(float dt)
         glm::vec3 velocity = rb->GetVelocity();
         velocity.y = 0.f;
         velocity = glm::normalize(velocity);
-        transform.rotation = Mathf::RotationFromTo(glm::vec3(0., 0., 1.), velocity);
+        transform.rotation = glm::slerp(
+            transform.rotation,
+            Mathf::RotationFromTo(glm::vec3(0., 0., 1.), velocity),
+            dt * 10.f
+        );
     }
     else if (rb && idle_time < 3.f)
     {

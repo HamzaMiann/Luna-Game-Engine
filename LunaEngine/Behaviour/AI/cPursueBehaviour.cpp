@@ -38,7 +38,7 @@ void AI::cPursueBehaviour::Evade(glm::vec3 position, glm::vec3 velocity)
 {
     //calculate the number of frames we are looking ahead
     vec3 distance = position - transform.pos;
-    int T = (int)glm::length(distance) / (int)maxVelocity;
+    int T = (int)glm::length(distance) / ((int)maxVelocity * 3);
 
     //the future target point the vehicle will pursue towards
     vec3 futurePosition = position + velocity * (float)T;
@@ -48,7 +48,7 @@ void AI::cPursueBehaviour::Evade(glm::vec3 position, glm::vec3 velocity)
 
     desiredVelocity = glm::normalize(desiredVelocity);
 
-    desiredVelocity *= maxVelocity;
+    desiredVelocity *= maxVelocity * 3.f;
 
     /*calculate the steering force */
     vec3 steer = desiredVelocity - rb->GetVelocity();
@@ -92,13 +92,13 @@ void AI::cPursueBehaviour::update(float dt)
         Pursue();
 
         float closest_distance = FLT_MAX;
-        sTransform* closest = 0;
+        nPhysics::iPhysicsComponent* closest = 0;
         for (auto& bullet : manager->player_bullets)
         {
             if (closest == 0) closest = bullet;
             else
             {
-                float d = glm::distance2(bullet->pos, transform.pos);
+                float d = glm::distance2(bullet->GetPosition(), transform.pos);
                 if (d < closest_distance)
                 {
                     closest = bullet;
@@ -109,7 +109,7 @@ void AI::cPursueBehaviour::update(float dt)
 
         if (closest)
         {
-            Evade(closest->pos, glm::vec3(0.f));
+            Evade(closest->GetPosition(), closest->GetVelocity());
         }
 
         glm::vec3 velocity = rb->GetVelocity();

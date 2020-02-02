@@ -5,6 +5,7 @@
 #include <Behaviour/Controls/cPlayerBehaviour.h>
 #include <Physics/Mathf.h>
 #include <Components/ComponentFactory.h>
+#include <interfaces/physics/iPhysicsComponent.h>
 
 namespace _GameManager_
 {
@@ -47,7 +48,7 @@ void cAIGameManager::update(float dt)
 			Mathf::randInRange(-18.f, 18.f)
 		);
 		cGameObject* newObject = _GameManager_::MakeShip(pos);
-		int index = Mathf::randInRange(0, 3);
+		int index = rand() % 4;
 		switch (index)
 		{
 		case 0: ComponentFactory::GetComponent("AISeekBehaviour", newObject); newObject->texture[0] = "yellow.bmp"; break;
@@ -84,7 +85,7 @@ void cAIGameManager::Player_Shoot(glm::vec3 const& start, glm::vec3 const& veloc
 	bullet->attack_layer = "enemy";
 	bullet->manager = this;
 	cEntityManager::Instance()->AddEntity(obj);
-	player_bullets.push_back(&obj->transform);
+	player_bullets.push_back(body);
 }
 
 void cAIGameManager::Enemy_Shoot(glm::vec3 const& start, glm::vec3 const& velocity)
@@ -120,6 +121,10 @@ void cAIGameManager::cBullet::update(float dt)
 	if (t > life_time)
 	{
 		cEntityManager::Instance()->RemoveEntity(dynamic_cast<cGameObject*>(&this->parent));
+		auto it = std::find(manager->player_bullets.begin(),
+			manager->player_bullets.end(),
+			parent.GetComponent<nPhysics::iPhysicsComponent>());
+		if (it != manager->player_bullets.end()) manager->player_bullets.erase(it);
 	}
 }
 
@@ -137,7 +142,7 @@ void cAIGameManager::cBullet::OnCollide(iObject* other)
 				player->Reset();
 				auto it = std::find(manager->player_bullets.begin(),
 					manager->player_bullets.end(),
-					&this->transform);
+					parent.GetComponent<nPhysics::iPhysicsComponent>());
 				if (it != manager->player_bullets.end()) manager->player_bullets.erase(it);
 			}
 			else
@@ -146,7 +151,7 @@ void cAIGameManager::cBullet::OnCollide(iObject* other)
 				cEntityManager::Instance()->RemoveEntity(obj);
 				auto it = std::find(manager->player_bullets.begin(),
 					manager->player_bullets.end(),
-					&this->transform);
+					parent.GetComponent<nPhysics::iPhysicsComponent>());
 				if (it != manager->player_bullets.end()) manager->player_bullets.erase(it);
 			}
 		}
