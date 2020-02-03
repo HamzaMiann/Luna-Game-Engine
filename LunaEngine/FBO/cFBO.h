@@ -14,6 +14,7 @@ public:
 		normalTexture_ID(0), 
 		positionTexture_ID(0),
 		bloomTexture_ID(0),
+		unlitTexture_ID(0),
 		width(-1), height(-1) {};
 
 	GLuint ID;						// = 0;
@@ -22,6 +23,7 @@ public:
 	GLuint normalTexture_ID;		// = 0;
 	GLuint positionTexture_ID;		// = 0;
 	GLuint bloomTexture_ID;		// = 0;
+	GLuint unlitTexture_ID;		// = 0;
 
 //	GLuint TBDTexture_1_ID;
 //	GLuint TBDTexture_2_ID;

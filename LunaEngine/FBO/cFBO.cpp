@@ -20,6 +20,7 @@ bool cFBO::shutdown(void)
 	glDeleteTextures( 1, &(this->normalTexture_ID) );
 	glDeleteTextures( 1, &(this->positionTexture_ID) );
 	glDeleteTextures( 1, &(this->bloomTexture_ID) );
+	glDeleteTextures( 1, &(this->unlitTexture_ID) );
 
 	glDeleteFramebuffers( 1, &(this->ID) );
 
@@ -113,6 +114,18 @@ bool cFBO::init( int width, int height, std::string &error )
 
 	//--------------------------------------
 
+	// UNLIT TEXTURE CREATION
+	//--------------------------------------
+	glGenTextures(1, &(this->unlitTexture_ID));
+	glBindTexture(GL_TEXTURE_2D, this->unlitTexture_ID);
+
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8,
+		this->width,
+		this->height
+	);
+
+	//--------------------------------------
+
 
 
 	glFramebufferTexture(GL_FRAMEBUFFER,
@@ -131,6 +144,10 @@ bool cFBO::init( int width, int height, std::string &error )
 						 GL_COLOR_ATTACHMENT3,			// Bloom to #3
 						 this->bloomTexture_ID, 0);
 
+	glFramebufferTexture(GL_FRAMEBUFFER,
+						 GL_COLOR_ATTACHMENT4,			// Unlit to #4
+						 this->unlitTexture_ID, 0);
+
 //	glFramebufferTexture(GL_FRAMEBUFFER,
 //						 GL_DEPTH_ATTACHMENT,
 //						 this->depthTexture_ID, 0);
@@ -146,8 +163,9 @@ bool cFBO::init( int width, int height, std::string &error )
 		GL_COLOR_ATTACHMENT1,
 		GL_COLOR_ATTACHMENT2,
 		GL_COLOR_ATTACHMENT3,
+		GL_COLOR_ATTACHMENT4,
 	};
-	glDrawBuffers(4, draw_bufers);		// There are 4 outputs now
+	glDrawBuffers(5, draw_bufers);		// There are 4 outputs now
 
 	// ***************************************************************
 

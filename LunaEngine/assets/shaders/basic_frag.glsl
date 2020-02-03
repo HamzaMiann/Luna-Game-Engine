@@ -35,6 +35,7 @@ layout (location = 0) out vec4 pixelColour;			// RGB A   (0 to 1)
 layout (location = 1) out vec4 normalColour;			// Depth (0 to 1)
 layout (location = 2) out vec4 positionColour;			// Depth (0 to 1)
 layout (location = 3) out vec4 bloomColour;			// Depth (0 to 1)
+layout (location = 4) out vec4 unlitColour;			// Depth (0 to 1)
 
 layout (location = 5) out vec4 depthColour;			// Depth (0 to 1)
 
@@ -76,20 +77,11 @@ vec4 GetTimeColValue(vec2 uv) { return vec4(0.5 + 0.5*cos(fiTime+uv.xyx+vec3(0,2
 float random (in vec2 st);
 float noise (in vec2 st);
 
-vec4 Bloom(vec4 colour)
-{
-	vec4 BrightColor = vec4(colour.rgb, 1.0);
-
-	float brightness = dot(colour.rgb, vec3(0.2126, 0.6152, 0.522));
-	//float brightness = dot(colour.rgb, vec3(0.2126, 0.7152, 0.0722));
-    if(brightness <= 1.0)
-        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
-
-	return BrightColor;
-}
 
 void main()  
 {
+	unlitColour = vec4(0.0);
+	bloomColour = vec4(0.0);
 	depthColour = vec4(vec3(distance(fVertWorldLocation.xyz, eyeLocation.xyz) / 1000.0), 1.0);
 	normalColour = vec4(normalize(fNormal.xyz) + 1.0, 1.0);
 	positionColour = vec4(fVertWorldLocation.xyz, 1.0);
@@ -97,7 +89,9 @@ void main()
 	if (isUniform)
 	{
 		pixelColour.rgb = diffuseColour.rgb;
-		pixelColour.a = 1.0f;
+		pixelColour.a = 1.0;
+		unlitColour += 1.0;
+
 		return;
 	}
 
@@ -111,7 +105,9 @@ void main()
 //		pixelColour.rgb = fNormal.xyz;
 		pixelColour.a = 1.0f;				// NOT transparent
 		
-		pixelColour.rgb *= 1.5f;		// Make it a little brighter
+		pixelColour.rgb *= 1.0;		// Make it a little brighter
+		unlitColour += 1.0;
+
 		return;
 	}
 
@@ -126,7 +122,6 @@ void main()
 				  + ( tex_0_3_ratio.w * tex3_RGB );
 
 	pixelColour = vec4(texRGB, diffuseColour.a);
-	bloomColour = Bloom(pixelColour);
 	return;
 
 	vec4 materialColour = diffuseColour;

@@ -173,6 +173,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="EntityManager\cEntityManager.cpp" />
     <ClCompile Include="InputHandlers\cCameraInputHandler.cpp" />
     <ClCompile Include="iObject.cpp" />
+    <ClCompile Include="LodePNG\lodepng.cpp" />
     <ClCompile Include="Physics\global_physics.cpp" />
     <ClCompile Include="Scene\Builders\cAudioBuilder.cpp" />
     <ClCompile Include="InputHandlers\cAudioInputHandler.cpp" />
@@ -237,6 +238,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="EntityManager\cEntityManager.h" />
     <ClInclude Include="iEngine.h" />
     <ClInclude Include="InputHandlers\cCameraInputHandler.h" />
+    <ClInclude Include="LodePNG\lodepng.h" />
     <ClInclude Include="Physics\cAABB.h" />
     <ClInclude Include="Audio\AudioEngine.hpp" />
     <ClInclude Include="Camera.h" />
@@ -310,16 +312,9 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <None Include="assets\shaders\water_vert.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="assets\scenes\AI.scene.xml" />
     <Xml Include="assets\scenes\sandbox.scene.xml" />
-    <Xml Include="assets\scenes\ship.scene.xml" />
-    <Xml Include="assets\scenes\water.scene.xml">
-      <SubType>Designer</SubType>
-    </Xml>
-    <Xml Include="assets\scenes\media.scene.xml" />
     <Xml Include="assets\scenes\physics.scene.xml">
-      <SubType>Designer</SubType>
-    </Xml>
-    <Xml Include="assets\scenes\scene1.scene.xml">
       <SubType>Designer</SubType>
     </Xml>
   </ItemGroup>

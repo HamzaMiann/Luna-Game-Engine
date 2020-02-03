@@ -20,6 +20,7 @@ uniform sampler2D textSamp00;
 uniform sampler2D textSamp01;
 uniform sampler2D textSamp02;
 uniform sampler2D textSamp03;
+uniform sampler2D textSamp04;
 uniform vec4 tex_0_3_ratio;		// x = 0, y = 1, z = 2, w = 3
 uniform samplerCube skyBox;
 
@@ -37,6 +38,7 @@ layout (location = 0) out vec4 pixelColour;			// RGB A   (0 to 1)
 layout (location = 1) out vec4 normalColour;	
 layout (location = 2) out vec4 positionColour;
 layout (location = 3) out vec4 bloomColour;			// BLOOM   (0 to 1) 
+layout (location = 4) out vec4 unlitColour;			// BLOOM   (0 to 1) 
 
 // Fragment shader
 struct sLight
@@ -121,7 +123,7 @@ vec4 BloomCutoff(vec4 colour)
 {
 	vec4 BrightColor = vec4(colour.rgb, 1.0);
 
-	float brightness = dot(colour.rgb, vec3(0.2126, 0.6152, 0.522));
+	float brightness = dot(colour.rgb, vec3(0.2126, 0.6152, 0.522) * 0.7);
 	//float brightness = dot(colour.rgb, vec3(0.2126, 0.7152, 0.0722));
     if(brightness <= 1.0)
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
@@ -132,6 +134,7 @@ vec4 BloomCutoff(vec4 colour)
 void main()  
 {
 	vec2 uv = fUVx2.st;
+	unlitColour = vec4(0.0);
 
 	if (isFinalPass)
 	{
@@ -158,11 +161,14 @@ void main()
 	}
 
 	vec3 col = NoEffect().rgb;
-	vec3 normal = texture( textSamp01, fUVx2.st ).rgb - 1.0;
-	vec3 pos = texture( textSamp02, fUVx2.st ).rgb;
-	//vec3 bloom = Bloom().rgb * 1.0;
+	vec3 normal = texture( textSamp01, uv ).rgb - 1.;
+	vec3 pos = texture( textSamp02, uv ).rgb;
 
-	pixelColour = calcualteLightContrib(col, normal, pos, vec4(0.0));
+	pixelColour = calcualteLightContrib(col, normal, pos, vec4(0.));
+	if (texture(textSamp04, uv).r > 0.0)
+	{
+		pixelColour.rgb = col;
+	}
 	bloomColour = BloomCutoff(pixelColour);
 
 
@@ -178,7 +184,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 {
 	vec3 norm = normalize(vertexNormal);
 	
-	vec4 finalObjectColour = vec4( 0.0f, 0.0f, 0.0f, 1.0f );
+	vec4 finalObjectColour = vec4( 0.0, 0.0, 0.0, 1.0 );
 	
 	for ( int index = 0; index < NUMBEROFLIGHTS; index++ )
 	{	

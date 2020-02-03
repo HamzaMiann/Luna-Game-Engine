@@ -181,9 +181,9 @@ int main(void)
 	std::string errorString;
 	textureManager->SetBasePath("assets/textures/cubemaps/");
 	if (textureManager->CreateCubeTextureFromBMPFiles("space",
-													  "SpaceBox_right1_posX.bmp", "SpaceBox_left2_negX.bmp",
-													  "SpaceBox_top3_posY.bmp", "SpaceBox_bottom4_negY.bmp",
-													  "SpaceBox_front5_posZ.bmp", "SpaceBox_back6_negZ.bmp", true, errorString))
+													  "right.bmp", "left.bmp",
+													  "top.bmp", "bottom.bmp",
+													  "front.bmp", "back.bmp", true, errorString))
 	{
 		scene = Scene::LoadFromXML("sandbox.scene.xml");
 		pSkyBoxSphere->transform.pos = vec3(0.f);
@@ -565,6 +565,10 @@ int main(void)
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, fbo.bloomTexture_ID);
 		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
+
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, fbo.unlitTexture_ID);
+		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp04"), 4);	// Texture unit 4
 
 		// 4. Draw a single object (a triangle or quad)
 		glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_FALSE);

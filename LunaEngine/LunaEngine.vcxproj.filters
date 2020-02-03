@@ -267,6 +267,9 @@
     <ClCompile Include="Behaviour\Managers\cAIGameManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LodePNG\lodepng.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextureManager\C24BitBMPpixel.h">
@@ -473,6 +476,9 @@
     <ClInclude Include="Behaviour\Managers\cAIGameManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LodePNG\lodepng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">
@@ -525,19 +531,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="assets\scenes\scene1.scene.xml">
-      <Filter>SceneFactory\Scenes</Filter>
-    </Xml>
     <Xml Include="assets\scenes\physics.scene.xml">
       <Filter>SceneFactory\Scenes</Filter>
     </Xml>
-    <Xml Include="assets\scenes\media.scene.xml">
-      <Filter>SceneFactory\Scenes</Filter>
-    </Xml>
-    <Xml Include="assets\scenes\water.scene.xml">
-      <Filter>SceneFactory\Scenes</Filter>
-    </Xml>
-    <Xml Include="assets\scenes\ship.scene.xml" />
     <Xml Include="assets\scenes\sandbox.scene.xml" />
+    <Xml Include="assets\scenes\AI.scene.xml" />
   </ItemGroup>
 </Project>

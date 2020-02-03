@@ -13,12 +13,11 @@
 	</Shaders>
   
 	<Textures>
-    <Texture name="Fighter_Ship_body_diffuse.bmp"/>
+		<Texture name="Ground_Dirt_007_basecolor.bmp"/>
+		<Texture name="pebbles-beach-textures.bmp"/>
 		<Texture name="fx3_Panels_Color.bmp"/>
 		<Texture name="blue.bmp"/>
 		<Texture name="red.bmp"/>
-		<Texture name="yellow.bmp"/>
-		<Texture name="Grass.bmp"/>
 	</Textures>
   
 	<Models>
@@ -26,7 +25,6 @@
 		<Model file="cube_XYZ_N_UV.ply" friendlyName="cube" shader="basic"/>
 		<Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
 		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen_quad" shader="post"/>
-    <Model file="13897_Sci-Fi_Fighter_Ship_v1_l1.ply" friendlyName="ship" shader="basic"/>
 	</Models>
   
 	<Lights>
@@ -181,40 +179,29 @@
 			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 		</Light>
     
-		<!--<Light>
+		<Light>
 			<Position x="0.000000" y="5.000000" z="-8.000000" w="1.000000"/>
 			<Diffuse x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-			<Atten x="0.8" y="0.00100" z="0.020000" w="1000.000000"/>
+			<Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
 			<Direction x="-0.861347" y="-1" z="-0.747035" w="1.000000"/>
 			<Param1 x="2.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-		</Light>-->
+		</Light>
     
 	</Lights>
   
 	<Layout>
-
-    <GameObject mesh="none" tag="manager" shader="basic">
-      <Position x="0.0" y="0.0" z="0.0"/>
-      <Rotation x="0" y="0" z="0.0"/>
-      <Scale>1.0</Scale>
-
-      <Components>
-
-        <AIGameManager/>
-
-      </Components>
-    </GameObject>
     
-		<GameObject mesh="ship" tag="player" shader="basic">
-			<Position x="0.0" y="1.0" z="0.0"/>
+		<GameObject mesh="sphere" tag="ball" shader="basic">
+			<Position x="0.0" y="10.0" z="0.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
-      <Scale>0.000731</Scale>
+      <Scale>1.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-			<Texture ratio="1.000000">Fighter_Ship_body_diffuse.bmp</Texture>
+			<Collider>SPHERE</Collider>
+			<Texture ratio="1.000000">blue.bmp</Texture>
       
       <Components>
         
@@ -223,50 +210,138 @@
           <Mass>1.0</Mass>
           <GFactor>1.0</GFactor>
           <Offset x="0.000000" y="0.000000" z="0.000000"/>
-          <Radius>0.9</Radius>
+          <Radius>1.0</Radius>
         </SphereBody>
         
-        <!-- IMPORTANT: This component is the component that lets you control the object -->
-        <PlayerBehaviour/>
-        <!--<SphereBehaviour/>-->
+        <!-- IMPORTANT: This component is the component that lets you control the ball -->
+        <SphereBehaviour/>
         
       </Components>
 		</GameObject>
 
-
-    <GameObject mesh="ship" tag="enemy" shader="basic">
-      <Position x="-17.0" y="1.0" z="0.0"/>
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="6.0" y="5.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <!--<Scale>0.9</Scale>-->
-      <Scale>0.000731</Scale>
+      <Scale>3.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">yellow.bmp</Texture>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">pebbles-beach-textures.bmp</Texture>
       
       <Components>
         
         <SphereBody>
           <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>1.0</Mass>
+          <Mass>10.0</Mass>
           <GFactor>1.0</GFactor>
           <Offset x="0.000000" y="0.000000" z="0.000000"/>
-          <Radius>0.9</Radius>
+          <Radius>3.0</Radius>
         </SphereBody>
-
-        <AISeekBehaviour/>
         
       </Components>
     </GameObject>
 
-    <GameObject mesh="ship" tag="enemy" shader="basic">
-      <Position x="17.0" y="1.0" z="0.0"/>
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="4.0" y="5.0" z="3.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>0.000731</Scale>
-      <!--<Scale>0.9</Scale>-->
+      <Scale>2.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">blue.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>4.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>2.0</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-3.0" y="5.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.5</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">red.bmp</Texture>
+      
+      <Components>
+        
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.5</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>0.5</Radius>
+        </SphereBody>
+        
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-3.0" y="20.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.5</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>3.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>1.5</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="1.0" y="25.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.2</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.2</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>1.2</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="3.0" y="20.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.9</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
       <Texture ratio="1.000000">red.bmp</Texture>
 
       <Components>
@@ -279,61 +354,100 @@
           <Radius>0.9</Radius>
         </SphereBody>
 
-        <AIPursueBehaviour/>
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="3.0" y="20.0" z="4.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="4.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
 
       </Components>
     </GameObject>
 
-    <GameObject mesh="ship" tag="enemy" shader="basic">
-      <Position x="1.0" y="1.0" z="10.0"/>
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-7.0" y="5.0" z="4.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>0.000731</Scale>
-      <!--<Scale>0.9</Scale>-->
+      <Scale>0.4</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="4.000000" y="0.000000" z="10.000000"/>
+          <Mass>0.4</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>0.4</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-5.0" y="20.0" z="-5.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.7</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
       <Texture ratio="1.000000">blue.bmp</Texture>
 
       <Components>
 
         <SphereBody>
-          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>1.0</Mass>
+          <Velocity x="4.000000" y="0.000000" z="-4.000000"/>
+          <Mass>0.7</Mass>
           <GFactor>1.0</GFactor>
           <Offset x="0.000000" y="0.000000" z="0.000000"/>
-          <Radius>0.9</Radius>
+          <Radius>0.7</Radius>
         </SphereBody>
-
-        <AIWanderBehaviour/>
 
       </Components>
     </GameObject>
 
-    <GameObject mesh="ship" tag="enemy" shader="basic">
-      <Position x="1.0" y="1.0" z="-10.0"/>
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-5.0" y="5.0" z="-5.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>0.000731</Scale>
-      <!--<Scale>0.9</Scale>-->
+      <Scale>0.8</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">Grass.bmp</Texture>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">blue.bmp</Texture>
 
       <Components>
 
         <SphereBody>
-          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>1.0</Mass>
+          <Velocity x="-10.000000" y="0.000000" z="-4.000000"/>
+          <Mass>0.8</Mass>
           <GFactor>1.0</GFactor>
           <Offset x="0.000000" y="0.000000" z="0.000000"/>
-          <Radius>0.9</Radius>
+          <Radius>0.8</Radius>
         </SphereBody>
-
-        <AIApproachBehaviour/>
 
       </Components>
     </GameObject>
-
 
     <GameObject mesh="plane" tag="plane" shader="basic">
       <Position x="0.0" y="0.0" z="0.0"/>
@@ -342,6 +456,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>MESH</Collider>
       <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
       
       <Components>
@@ -349,97 +464,9 @@
         <PlaneBody>
           <Velocity x="0.000000" y="0.000000" z="0.000000"/>
           <Mass>0.0</Mass>
-          <GFactor>1.0</GFactor>
+          <GFactor>0.0</GFactor>
           <Normal x="0.000000" y="1.000000" z="0.000000"/>
           <Constant>0.0</Constant>
-        </PlaneBody>
-
-      </Components>
-    </GameObject>
-
-    <GameObject mesh="plane" tag="plane" shader="basic">
-      <Position x="-20.0" y="0.0" z="0.0"/>
-      <Rotation x="0" y="0" z="-90.0"/>
-      <Scale>1.0</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
-
-      <Components>
-
-        <PlaneBody>
-          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>0.0</Mass>
-          <GFactor>0.0</GFactor>
-          <Normal x="1.000000" y="0.000000" z="0.000000"/>
-          <Constant>-20.0</Constant>
-        </PlaneBody>
-
-      </Components>
-    </GameObject>
-
-    <GameObject mesh="plane" tag="plane" shader="basic">
-      <Position x="20.0" y="0.0" z="0.0"/>
-      <Rotation x="0" y="0" z="90.0"/>
-      <Scale>1.0</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
-
-      <Components>
-
-        <PlaneBody>
-          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>0.0</Mass>
-          <GFactor>0.0</GFactor>
-          <Normal x="-1.000000" y="0.000000" z="0.000000"/>
-          <Constant>-20.0</Constant>
-        </PlaneBody>
-
-      </Components>
-    </GameObject>
-
-    <GameObject mesh="plane" tag="plane" shader="basic">
-      <Position x="0.0" y="0.0" z="-30.0"/>
-      <Rotation x="90.0" y="0" z="0.0"/>
-      <Scale>1.0</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
-
-      <Components>
-
-        <PlaneBody>
-          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>0.0</Mass>
-          <GFactor>0.0</GFactor>
-          <Normal x="0.000000" y="0.000000" z="1.000000"/>
-          <Constant>-30.0</Constant>
-        </PlaneBody>
-
-      </Components>
-    </GameObject>
-
-    <GameObject mesh="plane" tag="plane" shader="basic">
-      <Position x="0.0" y="0.0" z="30.0"/>
-      <Rotation x="-90.0" y="0" z="0.0"/>
-      <Scale>1.0</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
-
-      <Components>
-
-        <PlaneBody>
-          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>0.0</Mass>
-          <GFactor>0.0</GFactor>
-          <Normal x="0.000000" y="0.000000" z="-1.000000"/>
-          <Constant>-30.0</Constant>
         </PlaneBody>
 
       </Components>

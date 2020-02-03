@@ -1,143 +1,571 @@
 <?xml version="1.0"?>
-<Scene name="Media Fundamentals Project 1">
-	<Shader>
-		<Vertex file="vertexShader02.glsl"/>
-		<Fragment file="fragmentShader02.glsl"/>
-	</Shader>
+<Scene name="Experimental">
+  
+	<Shaders>
+		<Shader name="basic">
+			<Vertex file="basic_vert.glsl"/>
+			<Fragment file="basic_frag.glsl"/>
+		</Shader>
+    <Shader name="post">
+      <Vertex file="postprocessing_vert.glsl"/>
+      <Fragment file="postprocessing_frag.glsl"/>
+    </Shader>
+	</Shaders>
+  
+	<Textures>
+		<Texture name="Ground_Dirt_007_basecolor.bmp"/>
+		<Texture name="pebbles-beach-textures.bmp"/>
+		<Texture name="fx3_Panels_Color.bmp"/>
+		<Texture name="blue.bmp"/>
+		<Texture name="red.bmp"/>
+	</Textures>
+  
 	<Models>
-		<Model file="sphere_XYZ_N.ply" friendlyName="sphere"/>
-		<Model file="plane_XYZ_N.ply" friendlyName="plane_ground"/>
-		<Model file="cube_XYZ_N.ply" friendlyName="cube"/>
-		<Model file="plane_wall1_XYZ_N.ply" friendlyName="plane_wall"/>
-		<Model file="plane_wall2_XYZ_N.ply" friendlyName="plane_wall2"/>
-		<Model file="plane_angle_XYZ_N.ply" friendlyName="plane_angle"/>
-		<Model file="rectangle_XYZ_N.ply" friendlyName="rectangle"/>
-    <Model file="Entire_Babbage_Space_Station_xyz_n.ply" friendlyName="station"/>
+		<Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
+		<Model file="cube_XYZ_N_UV.ply" friendlyName="cube" shader="basic"/>
+		<Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
+		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen_quad" shader="post"/>
 	</Models>
+  
 	<Lights>
-		<Light>
-			<Position x="-5.000000" y="5.000000" z="0.000000" w="1.000000"/>
+
+    <Light>
+      <Position x="0.000000" y="1" z="1.000000" w="1.000000"/>
+      <Diffuse x="0.300000" y="0.300000" z="1.000000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    <Light>
+      <Position x="0.000000" y="1.900057" z="-2.000000" w="1.000000"/>
+      <Diffuse x="1.00000" y="0.300000" z="0.300000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    <Light>
+      <Position x="3.000000" y="1.900057" z="0.000000" w="1.000000"/>
+      <Diffuse x="0.30000" y="1.00000" z="0.300000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    <Light>
+      <Position x="5.0" y="1" z="5.000000" w="1.000000"/>
+      <Diffuse x="0.300000" y="0.300000" z="1.000000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    <Light>
+      <Position x="5.000000" y="1.900057" z="-5.000000" w="1.000000"/>
+      <Diffuse x="1.00000" y="0.300000" z="0.300000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    <Light>
+      <Position x="-5.000000" y="1.900057" z="5.000000" w="1.000000"/>
+      <Diffuse x="0.30000" y="1.00000" z="0.300000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+
+    <Light>
+      <Position x="10.0" y="1" z="-10.000000" w="1.000000"/>
+      <Diffuse x="0.300000" y="0.300000" z="1.000000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    <Light>
+      <Position x="-10.000000" y="1.900057" z="10.000000" w="1.000000"/>
+      <Diffuse x="1.00000" y="0.300000" z="0.300000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    <Light>
+      <Position x="-10.000000" y="1.900057" z="-10.000000" w="1.000000"/>
+      <Diffuse x="0.30000" y="1.00000" z="0.300000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+
+    <Light>
+      <Position x="-15.0" y="1" z="-15.000000" w="1.000000"/>
+      <Diffuse x="0.300000" y="0.300000" z="1.000000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    <Light>
+      <Position x="-15.000000" y="1.900057" z="15.000000" w="1.000000"/>
+      <Diffuse x="1.00000" y="0.300000" z="0.300000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    <Light>
+      <Position x="15.000000" y="1.900057" z="-15.000000" w="1.000000"/>
+      <Diffuse x="0.30000" y="1.00000" z="0.300000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    <Light>
+      <Position x="15.0" y="1" z="15.000000" w="1.000000"/>
+      <Diffuse x="0.300000" y="0.300000" z="1.000000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+
+    <Light>
+      <Position x="0" y="1" z="20.000000" w="1.000000"/>
+      <Diffuse x="0.700000" y="1.000000" z="0.2000000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+
+    <Light>
+      <Position x="0" y="1" z="-20.000000" w="1.000000"/>
+      <Diffuse x="1.00000" y="0.300000" z="1.000000" w="1.000000"/>
+      <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+      <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+      <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+      <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+    </Light>
+    
+		<!--<Light>
+			<Position x="0.000000" y="5.000000" z="-8.000000" w="1.000000"/>
 			<Diffuse x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
-			<Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
-			<Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Direction x="0.861347" y="0.000041" z="0.747035" w="1.000000"/>
+			<Param1 x="2.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 		</Light>
-		<Light>
-			<Position x="8.000000" y="5.000000" z="0.000000" w="1.000000"/>
-			<Diffuse x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-			<Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
-			<Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
-			<Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
-			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-		</Light>
-		<Light>
-			<Position x="0.000000" y="5.000000" z="5.000000" w="1.000000"/>
-			<Diffuse x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-			<Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
-			<Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
-			<Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
-			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-		</Light>
+    
 		<Light>
 			<Position x="0.000000" y="5.000000" z="-8.000000" w="1.000000"/>
 			<Diffuse x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
-			<Direction x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Direction x="-0.861347" y="-1" z="-0.747035" w="1.000000"/>
 			<Param1 x="2.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-		</Light>
+		</Light>-->
+    
 	</Lights>
+  
 	<Layout>
-		<GameObject mesh="station" tag="">
-			<Position x="-0.000000" y="-0.500000" z="-1.000000"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
-			<Colour x="0.600000" y="0.600000" z="0.600000" w="1.000000"/>
-			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>1.000000</Scale>
-			<SpecIntensity>1.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>AABB</Collider>
-		</GameObject>
-		<GameObject mesh="sphere" tag="player">
-			<Position x="-0.643652" y="1.091834" z="0.881849"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
-			<Colour x="0.100000" y="0.300000" z="0.900000" w="1.000000"/>
-			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>0.500000</Scale>
-			<SpecIntensity>100.000000</SpecIntensity>
-			<IMass>1.000000</IMass>
+    
+		<GameObject mesh="sphere" tag="ball" shader="basic">
+			<Position x="0.0" y="10.0" z="0.0"/>
+			<Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
 			<Collider>SPHERE</Collider>
+			<Texture ratio="1.000000">blue.bmp</Texture>
+      
+      <Components>
+        
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+        
+        <!-- IMPORTANT: This component is the component that lets you control the ball -->
+        <SphereBehaviour/>
+        
+      </Components>
 		</GameObject>
-		<GameObject mesh="rectangle" tag="">
-			<Position x="0.000019" y="-0.520333" z="0.000022"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
-			<Colour x="1.000000" y="0.000000" z="0.000000" w="1.000000"/>
-			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>1.000000</Scale>
-			<SpecIntensity>1.000000</SpecIntensity>
-			<IMass>1.000000</IMass>
-			<Collider>MESH</Collider>
-		</GameObject>
-		<GameObject mesh="rectangle" tag="">
-			<Position x="0.000000" y="8.499996" z="19.099997"/>
-			<Rotation x="0.000000" y="-0.700000" z="0.700000"/>
-			<Colour x="1.000000" y="0.000000" z="0.000000" w="1.000000"/>
-			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>3.675459</Scale>
-			<SpecIntensity>1.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>MESH</Collider>
-		</GameObject>
-		<GameObject mesh="rectangle" tag="">
-			<Position x="16.100027" y="8.799997" z="-6.299995"/>
-			<Rotation x="3.099999" y="-0.300000" z="-0.500000"/>
-			<Colour x="0.100000" y="0.100000" z="0.900000" w="1.000000"/>
-			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>4.410781</Scale>
-			<SpecIntensity>1.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>MESH</Collider>
-		</GameObject>
-		<GameObject mesh="rectangle" tag="">
-			<Position x="-16.300028" y="-13.700016" z="17.400030"/>
-			<Rotation x="0.800000" y="0.700000" z="1.700000"/>
-			<Colour x="1.000000" y="0.000000" z="0.000000" w="1.000000"/>
-			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>5.142331</Scale>
-			<SpecIntensity>1.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>MESH</Collider>
-		</GameObject>
-		<GameObject mesh="rectangle" tag="">
-			<Position x="0.000000" y="0.000000" z="-1.000000"/>
-			<Rotation x="0.000000" y="0.000000" z="0.000000"/>
-			<Colour x="0.200000" y="0.900000" z="0.100000" w="1.000000"/>
-			<SpecColour x="0.500000" y="0.500000" z="0.500000"/>
-			<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-			<Acceleration x="0.000000" y="0.000000" z="0.000000"/>
-			<Scale>0.600000</Scale>
-			<SpecIntensity>1.000000</SpecIntensity>
-			<IMass>0.000000</IMass>
-			<Collider>MESH</Collider>
-		</GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="6.0" y="5.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>3.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">pebbles-beach-textures.bmp</Texture>
+      
+      <Components>
+        
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>10.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>3.0</Radius>
+        </SphereBody>
+        
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="4.0" y="5.0" z="3.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>2.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">blue.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>4.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>2.0</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-3.0" y="5.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.5</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">red.bmp</Texture>
+      
+      <Components>
+        
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.5</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>0.5</Radius>
+        </SphereBody>
+        
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-3.0" y="20.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.5</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>3.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>1.5</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="1.0" y="25.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.2</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.2</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>1.2</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="3.0" y="20.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.9</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">red.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>0.9</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="3.0" y="20.0" z="4.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="4.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-7.0" y="5.0" z="4.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.4</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="4.000000" y="0.000000" z="10.000000"/>
+          <Mass>0.4</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>0.4</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-5.0" y="20.0" z="-5.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.7</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">blue.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="4.000000" y="0.000000" z="-4.000000"/>
+          <Mass>0.7</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>0.7</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="sphere" tag="ball" shader="basic">
+      <Position x="-5.0" y="5.0" z="-5.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.8</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>SPHERE</Collider>
+      <Texture ratio="1.000000">blue.bmp</Texture>
+
+      <Components>
+
+        <SphereBody>
+          <Velocity x="-10.000000" y="0.000000" z="-4.000000"/>
+          <Mass>0.8</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Radius>0.8</Radius>
+        </SphereBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="plane" tag="plane" shader="basic">
+      <Position x="0.0" y="0.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>MESH</Collider>
+      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      
+      <Components>
+        
+        <PlaneBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.0</Mass>
+          <GFactor>0.0</GFactor>
+          <Normal x="0.000000" y="1.000000" z="0.000000"/>
+          <Constant>0.0</Constant>
+        </PlaneBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="plane" tag="plane" shader="basic">
+      <Position x="-20.0" y="0.0" z="0.0"/>
+      <Rotation x="0" y="0" z="-90.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>MESH</Collider>
+      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+
+      <Components>
+
+        <PlaneBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.0</Mass>
+          <GFactor>0.0</GFactor>
+          <Normal x="1.000000" y="0.000000" z="0.000000"/>
+          <Constant>-20.0</Constant>
+        </PlaneBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="plane" tag="plane" shader="basic">
+      <Position x="20.0" y="0.0" z="0.0"/>
+      <Rotation x="0" y="0" z="90.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>MESH</Collider>
+      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+
+      <Components>
+
+        <PlaneBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.0</Mass>
+          <GFactor>0.0</GFactor>
+          <Normal x="-1.000000" y="0.000000" z="0.000000"/>
+          <Constant>-20.0</Constant>
+        </PlaneBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="plane" tag="plane" shader="basic">
+      <Position x="0.0" y="0.0" z="-30.0"/>
+      <Rotation x="90.0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>MESH</Collider>
+      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+
+      <Components>
+
+        <PlaneBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.0</Mass>
+          <GFactor>0.0</GFactor>
+          <Normal x="0.000000" y="0.000000" z="1.000000"/>
+          <Constant>-30.0</Constant>
+        </PlaneBody>
+
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="plane" tag="plane" shader="basic">
+      <Position x="0.0" y="0.0" z="30.0"/>
+      <Rotation x="-90.0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Collider>MESH</Collider>
+      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+
+      <Components>
+
+        <PlaneBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>0.0</Mass>
+          <GFactor>0.0</GFactor>
+          <Normal x="0.000000" y="0.000000" z="-1.000000"/>
+          <Constant>-30.0</Constant>
+        </PlaneBody>
+
+      </Components>
+    </GameObject>
+    
 	</Layout>
-  <Audio API="FMOD"/>
+  
+	<Audio API="FMOD"/>
 </Scene>
 
