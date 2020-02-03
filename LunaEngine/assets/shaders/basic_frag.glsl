@@ -14,6 +14,8 @@ uniform vec4 eyeLocation;
 // Used to draw debug (or unlit) objects
 uniform bool isUniform;
 uniform bool isSkybox;
+uniform bool isReflection;
+uniform bool isRefraction;
 
 // Texture
 uniform sampler2D textSamp00;
@@ -85,6 +87,31 @@ void main()
 	depthColour = vec4(vec3(distance(fVertWorldLocation.xyz, eyeLocation.xyz) / 1000.0), 1.0);
 	normalColour = vec4(normalize(fNormal.xyz) + 1.0, 1.0);
 	positionColour = vec4(fVertWorldLocation.xyz, 1.0);
+
+	if (isReflection)
+	{
+		vec3 direction = normalize(fVertWorldLocation.xyz - eyeLocation.xyz);
+		vec3 rd = reflect(direction, fNormal.xyz);
+		vec3 col = texture(skyBox, rd.xyz).rgb;
+		pixelColour.rgb = col.rgb;
+		pixelColour.a = 1.0;
+		//unlitColour += 1.0;
+
+		return;
+	}
+
+	if (isRefraction)
+	{
+		float ratio = 1.00 / 1.52;
+		vec3 direction = normalize(fVertWorldLocation.xyz - eyeLocation.xyz);
+		vec3 rd = refract(direction, fNormal.xyz, ratio);	// for refraction
+		vec3 col = texture(skyBox, rd.xyz).rgb;
+		pixelColour.rgb = col.rgb;
+		pixelColour.a = 1.0;
+		//unlitColour += 1.0;
+
+		return;
+	}
 
 	if (isUniform)
 	{

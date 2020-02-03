@@ -44,7 +44,8 @@
 #define _DEBUG
 #define DEFERRED_RENDERING
 
-cFBO* pTheFBO = NULL;
+std::string errorString;
+cGameObject quad;
 
 unsigned int input_id = 0;
 
@@ -61,6 +62,10 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p);
 void DrawParticle(sParticle* objPtr, glm::mat4 const& v, glm::mat4 const& p);
 
 void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p);
+
+void RenderObjectsToFBO(cFBO& fbo, float width, float height, glm::mat4 p, glm::mat4 v, float dt);
+void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO);
+void RenderQuadToScreen(cFBO& previousFBO);
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -178,7 +183,6 @@ int main(void)
 	cGameObject* pSkyBoxSphere = new cGameObject();
 
 	textureManager = cBasicTextureManager::Instance();
-	std::string errorString;
 	textureManager->SetBasePath("assets/textures/cubemaps/");
 	if (textureManager->CreateCubeTextureFromBMPFiles("space",
 													  "right.bmp", "left.bmp",
@@ -205,12 +209,7 @@ int main(void)
 		exit(1);
 	}
 
-	glEnable(GL_DEPTH);			// Write to the depth buffer
-	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
-
-
-	//PhysicsEngine* phys = PhysicsEngine::Instance();
-	//phys->GenerateAABB(scene);
+	
 
 	pInputHandler = 0;// new cPhysicsInputHandler(*scene, window);
 	//pInputHandler = new cPhysicsInputHandler(*scene, window);
@@ -220,34 +219,9 @@ int main(void)
 	cDebugRenderer* renderer = cDebugRenderer::Instance();
 	renderer->initialize();
 
-#ifdef _DEBUG
-	//phys->renderer = renderer;
-#endif
-
-	
-
-
 	glm::vec3 min = scene->pModelLoader->min;
 	glm::vec3 max = scene->pModelLoader->max;
-
-	cGameObject* bounds = new cGameObject;
-	bounds->transform.pos = (max + min) / 2.f;
-	bounds->transform.scale = vec3(glm::distance(max, min) / 2.f);
-	bounds->colour = glm::vec4(1.f, 0.f, 0.f, 1.f);
-	bounds->meshName = "cube";
-	bounds->tag = "AABB";
-	bounds->shaderName = "basic";
-	bounds->isWireframe = true;
-	bounds->uniformColour = true;
 	
-	
-	//scene->cameraEye = glm::vec3(-39.f, 2.f, -63.f);
-
-
-	cGameObject* ship = scene->vecGameObjects[0];
-	//ship->GetComponent<cRigidBody>()->gravityScale = 1.f;
-	sLight* light1 = scene->pLightManager->Lights[0];
-	sLight* light2 = scene->pLightManager->Lights[1];
 
 	cParticleEffect pEffect(200);
 	pEffect.min_time = .1f;
@@ -262,11 +236,8 @@ int main(void)
 	cGameObject* sphere = new cGameObject;
 	sphere->meshName = "sphere_particle";
 	sphere->shaderName = "particle";
-	//sphere->inverseMass = 0.f;
-	sphere->texture[0] = ship->texture[0];
 	sphere->textureRatio[0] = 1.f;
 
-	cGameObject quad;
 	quad.meshName = "screen_quad";
 	quad.shaderName = "post";
 
@@ -328,23 +299,12 @@ int main(void)
 	cBehaviourManager::Instance()->start();
 
 
+	glEnable(GL_DEPTH);			// Write to the depth buffer
+	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
+
 	while (!glfwWindowShouldClose(window))
 	{
-#ifdef DEFERRED_RENDERING
-
-		if (!fbo.reset(width, height, errorString))
-		{
-			std::cout << "fbo was unable to be reset..." << std::endl;
-			exit(1);
-		}
-
-		// Draw to the frame buffer
-		fbo.use();
-
-		//fbo->clearBuffers(true, true);
-#endif
 		pass_id = 1;
-
 
 		previous_time = current_time;
 		current_time = (float)glfwGetTime();
@@ -361,250 +321,41 @@ int main(void)
 		// Handle key inputs
 		HandleInput(window);
 
-		//scene->cameraTarget = ship->pos;
-
-		float ratio;
-
 		glfwGetFramebufferSize(window, &width, &height);
-		ratio = width / (float)height;
-
-
+		float ratio = width / (float)height;
 		glViewport(0, 0, width, height);
-
-		// Clear both the colour buffer (what we see) and the 
-		//  depth (or z) buffer.
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-		//glClearColor(0.7f, 0.85f, 1.f, 1.f);
-		//glClearColor(0.7f, 0.85f, 1.f, 1.f);
-		//glClearColor(0.f, 0.f, 0.f, 1.f);
-
-		glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
-		//glDisable( GL_BLEND );
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		cBehaviourManager::Instance()->update(delta_time);
 		cEntityManager::Instance()->Update(delta_time);
 
 		g_PhysicsWorld->Update(delta_time);
-
-		// Update the objects' physics
-		//phys->CheckCollisions(scene, delta_time);
-		//phys->IntegrationStep(scene, delta_time);
-
-		// Update particles;
-		pEffect.Step(delta_time);
 		
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
 
+		// Move skybox relative to the camera
 		pSkyBoxSphere->transform.pos = scene->camera.Eye;
-		// **************************************************
-		// **************************************************
+
 		glm::mat4 p, v;
 
 		// Projection matrix
-		p = glm::perspective(0.6f,		// FOV
+		p = glm::perspective(0.6f,			// FOV
 							 ratio,			// Aspect ratio
 							 0.1f,			// Near clipping plane
 							 1000.f);		// Far clipping plane
 
 		// View matrix
-		//v = glm::mat4(1.0f);
-
 		v = glm::lookAt(scene->camera.Eye,
 						scene->camera.Target,
 						scene->camera.Up);
 
 
-		int lastShader = -1;
-		
-		// Loop to draw everything in the scene
-		for (int index = 0; index != scene->vecGameObjects.size(); index++)
-		{
-#ifdef TRANSPARENCY_SORT
-			if (index < scene->vecGameObjects.size() - 1)
-			{
-				glm::vec3 ObjA = scene->vecGameObjects[index]->pos;
-				glm::vec3 ObjB = scene->vecGameObjects[index + 1]->pos;
+		RenderObjectsToFBO(fbo, width, height, p, v, delta_time);
+		RenderQuadToFBO(fbo2, fbo);
+		RenderQuadToScreen(fbo2);
 
-				//			if ( glm::distance( ObjA, ::g_pFlyCamera->eye ) < glm::distance( ObjB, ::g_pFlyCamera->eye ) )
-				if (glm::distance2(ObjA, scene->camera.Eye) < glm::distance2(ObjB, scene->camera.Eye))
-				{
-					// Out of order, so swap the positions...
-					cGameObject* pTemp = scene->vecGameObjects[index];
-					scene->vecGameObjects[index] = scene->vecGameObjects[index + 1];
-					scene->vecGameObjects[index + 1] = pTemp;
-				}
-			}
-#endif
-
-			cGameObject* objPtr = scene->vecGameObjects[index];
-
-			cMaterial* material = objPtr->GetComponent<cMaterial>();
-			if (material != nullptr)
-			{
-				// TODO
-			}
-
-			objPtr->cmd_group->Update(delta_time);
-			objPtr->brain->Update(delta_time);
-
-			
-
-			GLint shaderProgID = scene->Shaders[objPtr->shaderName];
-
-			// Only switch shaders if needed
-			if (lastShader != shaderProgID)
-			{
-				glUseProgram(shaderProgID);
-				lastShader = shaderProgID;
-
-				// set time
-				float time = glfwGetTime();
-				glUniform1f(glGetUniformLocation(shaderProgID, "iTime"), time);
-
-				// set resolution
-				glUniform2f(glGetUniformLocation(shaderProgID, "iResolution"),
-							width,
-							height);
-			}
-			
-
-			if (objPtr->tag == "water")
-			{
-				glUniform1i(glGetUniformLocation(shaderProgID, "isWater"),
-							true);
-			}
-			else
-			{
-				glUniform1i(glGetUniformLocation(shaderProgID, "isWater"),
-							false);
-			}
-
-			//if (objPtr->tag == "player")
-			//{
-			//	glm::mat4 model = objPtr->transform.ModelMatrix();
-			//	light1->position = model * glm::vec4(ship->CollidePoints[0], 1.f);
-			//	light2->position = model * glm::vec4(ship->CollidePoints[1], 1.f);
-			//	pEffect.pos = ((light2->position - light1->position) / 2.f) + light1->position;
-			//	/*for (int n = 0; n < objPtr->CollidePoints.size(); ++n)
-			//	{
-			//		renderer->addLine(objPtr->pos,
-			//						  glm::vec3(model * glm::vec4(objPtr->CollidePoints[n], 1.f)),
-			//						  glm::vec3(1.f, 0.f, 0.f), .1f);
-			//	}*/
-			//}
-
-			DrawObject(objPtr, v, p);
-
-		}//for (int index...
-		// **************************************************
-		// **************************************************
-
-
-		glUseProgram(scene->Shaders[sphere->shaderName]);
-		// set time
-		float time = glfwGetTime();
-		glUniform1f(glGetUniformLocation(scene->Shaders[sphere->shaderName], "iTime"), time);
-
-		// set resolution
-		glUniform2f(glGetUniformLocation(scene->Shaders[sphere->shaderName], "iResolution"),
-					width,
-					height);
-		for (unsigned int n = 0; n < pEffect.particles.size(); ++n)
-		{
-			sParticle* particle = pEffect.particles[n];
-			sphere->transform.pos = particle->pos;
-			sphere->transform.scale = vec3(particle->scale);
-			DrawObject(sphere, v, p);
-		}
-
-
-		
 		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
-
-		// **************************************************
-		// **************************************************
 		renderer->RenderDebugObjects(v, p, 0.01f);
-
-
-#ifdef DEFERRED_RENDERING
-		// 1. Disable the FBO
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		if (!fbo2.reset(width, height, errorString))
-		{
-			std::cout << "fbo was unable to be reset..." << std::endl;
-			exit(1);
-		}
-
-		// Draw to the frame buffer
-		fbo2.use();
-
-		// 2. Clear the ACTUAL screen buffer
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// 3. Use the FBO colour texture as the texture on that quad
-		GLint shaderProgID = scene->Shaders[quad.shaderName];
-		glUseProgram(shaderProgID);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fbo.colourTexture_0_ID);
-		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, fbo.normalTexture_ID);
-		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp01"), 1);	// Texture unit 1
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, fbo.positionTexture_ID);
-		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp02"), 2);	// Texture unit 2
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, fbo.bloomTexture_ID);
-		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
-
-		glActiveTexture(GL_TEXTURE4);
-		glBindTexture(GL_TEXTURE_2D, fbo.unlitTexture_ID);
-		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp04"), 4);	// Texture unit 4
-
-		// 4. Draw a single object (a triangle or quad)
-		glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_FALSE);
-
-		p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
-		pass_id = 2;
-
-		DrawObject(&quad, v, p);
-
-
-		// LAST RENDER PASS
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(shaderProgID);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fbo2.colourTexture_0_ID);
-		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, fbo2.bloomTexture_ID);
-		glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
-
-		glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_TRUE);
-
-		DrawObject(&quad, v, p);
-
-		/*pQuad = scene->vecGameObjects[1];
-		shaderProgID = scene->Shaders[pQuad->shaderName];
-		glUseProgram(shaderProgID);
-		pass_id = 1;
-		DrawObject(pQuad, ratio, v, p);*/
-		
-#endif
 		
 
 		glfwSwapBuffers(window);
@@ -626,10 +377,6 @@ void SetUpTextureBindingsForObject(
 	GLint shaderProgID)
 {
 	if (pass_id != 1) return;
-	//// Tie the texture to the texture unit
-	//GLuint texSamp0_UL = ::g_pTextureManager->getTextureIDFromName("Pizza.bmp");
-	//glActiveTexture(GL_TEXTURE0);				// Texture Unit 0
-	//glBindTexture(GL_TEXTURE_2D, texSamp0_UL);	// Texture now assoc with texture unit 0
 
 	// Tie the texture to the texture unit
 	GLuint texSamp0_UL = textureManager->getTextureIDFromName(pCurrentObject->texture[0]);
@@ -669,8 +416,6 @@ void SetUpTextureBindingsForObject(
 				pCurrentObject->textureRatio[2],
 				pCurrentObject->textureRatio[3]);
 
-
-
 	return;
 }
 
@@ -680,12 +425,54 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 	GLint shaderProgID = scene->Shaders[objPtr->shaderName];
 
 	GLint bIsSkyBox_UL = glGetUniformLocation(shaderProgID, "isSkybox");
+	GLint isReflection = glGetUniformLocation(shaderProgID, "isReflection");
+	GLint isRefraction = glGetUniformLocation(shaderProgID, "isRefraction");
+
+
+
 	if (objPtr->tag != "skybox")
 	{
-		glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
-		// Don't draw back facing triangles (default)
-		glCullFace(GL_BACK);
-		SetUpTextureBindingsForObject(objPtr, shaderProgID);
+		if (objPtr->tag == "reflect")
+		{
+			glCullFace(GL_BACK);
+			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
+			glUniform1i(isReflection, (int)GL_TRUE);
+			glUniform1i(isRefraction, (int)GL_FALSE);
+
+			GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
+			glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
+			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+
+			// Tie the texture units to the samplers in the shader
+			GLint skyBoxSampler_UL = glGetUniformLocation(shaderProgID, "skyBox");
+			glUniform1i(skyBoxSampler_UL, 26);
+
+		}
+		else if (objPtr->tag == "refract")
+		{
+			glCullFace(GL_BACK);
+			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
+			glUniform1i(isReflection, (int)GL_FALSE);
+			glUniform1i(isRefraction, (int)GL_TRUE);
+
+			GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
+			glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
+			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+
+			// Tie the texture units to the samplers in the shader
+			GLint skyBoxSampler_UL = glGetUniformLocation(shaderProgID, "skyBox");
+			glUniform1i(skyBoxSampler_UL, 26);
+
+		}
+		else
+		{
+			glUniform1i(isReflection, (int)GL_FALSE);
+			glUniform1i(isRefraction, (int)GL_FALSE);
+			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
+			// Don't draw back facing triangles (default)
+			glCullFace(GL_BACK);
+			SetUpTextureBindingsForObject(objPtr, shaderProgID);
+		}
 	}
 	else
 	{
@@ -693,8 +480,11 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 		// Because we are inside the object, so it will force a draw on the "back" of the sphere 
 		glCullFace(GL_FRONT);
 		//glCullFace(GL_FRONT_AND_BACK);
+		glUniform1i(glGetUniformLocation(shaderProgID, "isReflection"), (int)GL_FALSE);
 
 		glUniform1f(bIsSkyBox_UL, (float)GL_TRUE);
+		glUniform1i(isReflection, (int)GL_FALSE);
+		glUniform1i(isRefraction, (int)GL_FALSE);
 
 		GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
 		glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
@@ -850,7 +640,163 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 
 }
 
-void DrawParticle(sParticle* objPtr, glm::mat4 const& v, glm::mat4 const& p)
+void RenderObjectsToFBO(cFBO& fbo, float width, float height, glm::mat4 p, glm::mat4 v, float dt)
 {
+	if (!fbo.reset(width, height, errorString))
+	{
+		std::cout << "fbo was unable to be reset..." << std::endl;
+		exit(1);
+	}
 
+	// Draw to the frame buffer
+	fbo.use();
+
+	// Clear both the colour buffer (what we see) and the 
+		//  depth (or z) buffer.
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
+	//glDisable( GL_BLEND );
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	float ratio = width / height;
+
+
+	int lastShader = -1;
+
+	// Loop to draw everything in the scene
+	for (int index = 0; index != scene->vecGameObjects.size(); index++)
+	{
+#ifdef TRANSPARENCY_SORT
+		if (index < scene->vecGameObjects.size() - 1)
+		{
+			glm::vec3 ObjA = scene->vecGameObjects[index]->pos;
+			glm::vec3 ObjB = scene->vecGameObjects[index + 1]->pos;
+
+			//			if ( glm::distance( ObjA, ::g_pFlyCamera->eye ) < glm::distance( ObjB, ::g_pFlyCamera->eye ) )
+			if (glm::distance2(ObjA, scene->camera.Eye) < glm::distance2(ObjB, scene->camera.Eye))
+			{
+				// Out of order, so swap the positions...
+				cGameObject* pTemp = scene->vecGameObjects[index];
+				scene->vecGameObjects[index] = scene->vecGameObjects[index + 1];
+				scene->vecGameObjects[index + 1] = pTemp;
+			}
+		}
+#endif
+
+		cGameObject* objPtr = scene->vecGameObjects[index];
+
+		cMaterial* material = objPtr->GetComponent<cMaterial>();
+		if (material != nullptr)
+		{
+			// TODO
+		}
+
+		objPtr->cmd_group->Update(dt);
+		objPtr->brain->Update(dt);
+
+		GLint shaderProgID = scene->Shaders[objPtr->shaderName];
+
+		// Only switch shaders if needed
+		if (lastShader != shaderProgID)
+		{
+			glUseProgram(shaderProgID);
+			lastShader = shaderProgID;
+
+			// set time
+			float time = glfwGetTime();
+			glUniform1f(glGetUniformLocation(shaderProgID, "iTime"), time);
+
+			// set resolution
+			glUniform2f(glGetUniformLocation(shaderProgID, "iResolution"),
+				width,
+				height);
+
+			glUniform1i(glGetUniformLocation(shaderProgID, "isWater"),
+				false);
+		}
+
+		DrawObject(objPtr, v, p);
+
+	}//for (int index...
+	// **************************************************
+}
+void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
+{
+	float width = previousFBO.width;
+	float height = previousFBO.height;
+
+	// 1. Disable the FBO
+	if (!fbo.reset(width, height, errorString))
+	{
+		std::cout << "fbo was unable to be reset..." << std::endl;
+		exit(1);
+	}
+
+	// Draw to the frame buffer
+	fbo.use();
+
+	// 2. Clear the ACTUAL screen buffer
+	glViewport(0, 0, width, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// 3. Use the FBO colour texture as the texture on that quad
+	GLint shaderProgID = scene->Shaders[quad.shaderName];
+	glUseProgram(shaderProgID);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_0_ID);
+	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, previousFBO.normalTexture_ID);
+	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp01"), 1);	// Texture unit 1
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, previousFBO.positionTexture_ID);
+	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp02"), 2);	// Texture unit 2
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, previousFBO.bloomTexture_ID);
+	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
+
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, previousFBO.unlitTexture_ID);
+	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp04"), 4);	// Texture unit 4
+
+	// 4. Draw a single object (a triangle or quad)
+	glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_FALSE);
+
+	glm::mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
+	pass_id = 2;
+
+	DrawObject(&quad, glm::mat4(1.f), p);
+}
+void RenderQuadToScreen(cFBO& previousFBO)
+{
+	float width = previousFBO.width;
+	float height = previousFBO.height;
+
+	// LAST RENDER PASS
+	GLint shaderProgID = scene->Shaders[quad.shaderName];
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, width, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(shaderProgID);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_0_ID);
+	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, previousFBO.bloomTexture_ID);
+	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
+
+	glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_TRUE);
+
+	glm::mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
+	glm::mat4 v(1.f);
+
+	DrawObject(&quad, v, p);
 }
