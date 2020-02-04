@@ -208,6 +208,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Commands\cTrigger.cpp" />
     <ClCompile Include="Mesh\cVAOManager.cpp" />
     <ClCompile Include="FBO\cFBO.cpp" />
+    <ClCompile Include="Shader\Shader.cpp" />
     <ClCompile Include="Texture\cTexture.cpp" />
     <ClCompile Include="_GL\glad.c" />
     <ClCompile Include="Physics\octree.cpp" />
@@ -275,6 +276,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Shader\cShaderHelper.h" />
     <ClInclude Include="Shader\cShaderManager.h" />
     <ClInclude Include="Mesh\cVAOManager.h" />
+    <ClInclude Include="Shader\Shader.h" />
     <ClInclude Include="Texture\cTexture.h" />
     <ClInclude Include="Texture\stb_image.h" />
     <ClInclude Include="_GL\GLCommon.h" />

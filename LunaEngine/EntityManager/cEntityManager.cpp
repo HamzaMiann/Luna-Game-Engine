@@ -43,7 +43,21 @@ bool cEntityManager::RemoveEntity(cGameObject* entity)
 	return false;
 }
 
-cGameObject* cEntityManager::GetObjectByTag(std::string tag)
+bool cEntityManager::RemoveEntity(iObject* entity)
+{
+	return RemoveEntity(dynamic_cast<cGameObject*>(entity));
+}
+
+iObject* cEntityManager::GetObjectByTag(std::string tag)
+{
+	for (unsigned int i = 0; i < Entities->size(); ++i)
+	{
+		if ((*Entities)[i]->tag == tag) return (*Entities)[i];
+	}
+	return nullptr;
+}
+
+cGameObject* cEntityManager::GetGameObjectByTag(std::string tag)
 {
 	for (unsigned int i = 0; i < Entities->size(); ++i)
 	{

@@ -1,5 +1,4 @@
 #include "cWanderBehaviour.h"
-#include <cGameObject.h>
 #include <EntityManager/cEntityManager.h>
 #include <Physics/Mathf.h>
 

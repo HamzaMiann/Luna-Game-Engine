@@ -113,7 +113,7 @@ bool Scene::SaveLayout()
 
 			attr = new xml_attribute<>();
 			attr->name("shader");
-			valueBuffer = layout_doc.allocate_string(obj->shaderName.c_str());
+			valueBuffer = layout_doc.allocate_string(obj->shader.GetName().c_str());
 			attr->value(valueBuffer);
 			node->append_attribute(attr);
 

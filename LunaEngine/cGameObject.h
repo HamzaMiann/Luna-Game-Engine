@@ -1,15 +1,10 @@
 #ifndef _cGameObject_HG_
 #define _cGameObject_HG_
 
-#include <glm/glm.hpp>
-#include <glm/vec3.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <string>
-#include <vector>
-#include <Commands/cCommandGroup.h>
 #include <iObject.h>
-#include <interfaces/physics/iPhysicsComponent.h>
+#include <Commands/cCommandGroup.h>
 #include <Texture/cTexture.h>
+#include <Shader/Shader.h>
 
 class Scene;
 class cLuaBrain;
@@ -32,16 +27,14 @@ public:
 	
 	virtual ~cGameObject();
 
-	nPhysics::iPhysicsComponent* physics_body;
-
 	unsigned int id;
+	Shader shader;
+
 	cLuaBrain* brain;
 	std::string lua_script;
 
 	std::string meshName = "";
-	std::string tag = "";
 
-	std::string shaderName = "basic";
 	glm::vec4  colour = glm::vec4(1.f, 1.f, 1.f, 1.f);
 
 	glm::vec3 specColour = glm::vec3(.5f, .5f, .5f);

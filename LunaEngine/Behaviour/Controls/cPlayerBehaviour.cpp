@@ -1,7 +1,6 @@
 #include "cPlayerBehaviour.h"
 #include <_GL/Window.h>
 #include <Camera.h>
-#include <cGameObject.h>
 #include <EntityManager/cEntityManager.h>
 #include <Behaviour/Managers/cAIGameManager.h>
 
@@ -60,7 +59,7 @@ void cPlayerBehaviour::update(float dt)
 		if (glfwGetKey(global::window, GLFW_KEY_SPACE) && reload_time < 0.f)
 		{
 			reload_time = 3.f;
-			cGameObject* obj = cEntityManager::Instance()->GetObjectByTag("manager");
+			iObject* obj = (iObject*)cEntityManager::Instance()->GetObjectByTag("manager");
 			cAIGameManager* manager = obj->GetComponent<cAIGameManager>();
 			if (manager)
 			{
@@ -80,10 +79,9 @@ void cPlayerBehaviour::update(float dt)
 
 void cPlayerBehaviour::OnCollide(iObject* other)
 {
-	cGameObject* obj = dynamic_cast<cGameObject*>(other);
-	if (obj->tag == "enemy")
+	if (other->tag == "enemy")
 	{
-		cEntityManager::Instance()->RemoveEntity(obj);
+		cEntityManager::Instance()->RemoveEntity(other);
 		Reset();
 	}
 }

@@ -13,6 +13,8 @@ private:
 public:
 
 	sTransform transform;
+	std::string tag = "";
+
 
 	virtual ~iObject()
 	{

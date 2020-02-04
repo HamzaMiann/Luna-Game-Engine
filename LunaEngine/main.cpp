@@ -193,7 +193,7 @@ int main(void)
 		scene = Scene::LoadFromXML("sandbox.scene.xml");
 		pSkyBoxSphere->transform.pos = vec3(0.f);
 		pSkyBoxSphere->meshName = "sphere";
-		pSkyBoxSphere->shaderName = "basic";
+		pSkyBoxSphere->shader.SetShader("basic");
 		pSkyBoxSphere->tag = "skybox";
 		pSkyBoxSphere->transform.pos = vec3(0.0f, 0.f, 0.0f);
 		pSkyBoxSphere->transform.scale = vec3(900.0f);
@@ -235,11 +235,11 @@ int main(void)
 
 	cGameObject* sphere = new cGameObject;
 	sphere->meshName = "sphere_particle";
-	sphere->shaderName = "particle";
+	sphere->shader.SetShader("particle");
 	sphere->texture[0].SetBlend(1.f);
 
 	quad.meshName = "screen_quad";
-	quad.shaderName = "post";
+	quad.shader.SetShader("post");
 
 	cLuaBrain::SetObjectVector(&scene->vecGameObjects);
 	cLuaBrain::SetCamera(Camera::main_camera);
@@ -308,7 +308,7 @@ int main(void)
 	// Run the start method on all behaviour components
 	cBehaviourManager::Instance()->start();
 
-	cGameObject* screen = cEntityManager::Instance()->GetObjectByTag("screen");
+	cGameObject* screen = cEntityManager::Instance()->GetGameObjectByTag("screen");
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -359,7 +359,6 @@ int main(void)
 		v = glm::lookAt(scene->camera.Eye,
 						scene->camera.Target,
 						scene->camera.Up);
-
 
 		RenderObjectsToFBO(*fbo, width, height, p, v, delta_time);
 
@@ -444,7 +443,7 @@ void SetUpTextureBindingsForObject(
 
 void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 {
-	GLint shaderProgID = scene->Shaders[objPtr->shaderName];
+	GLint shaderProgID = objPtr->shader.GetID();
 
 	GLint bIsSkyBox_UL = glGetUniformLocation(shaderProgID, "isSkybox");
 	GLint isReflection = glGetUniformLocation(shaderProgID, "isReflection");
@@ -648,7 +647,7 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 	
 	if (!node->has_nodes)
 	{
-		glUniform1i(glGetUniformLocation(scene->Shaders[obj->shaderName], "isWater"),
+		glUniform1i(glGetUniformLocation(obj->shader.GetID(), "isWater"),
 			false);
 
 		objPtr->transform.pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
@@ -719,7 +718,7 @@ void RenderObjectsToFBO(cFBO& fbo, float width, float height, glm::mat4 p, glm::
 		objPtr->cmd_group->Update(dt);
 		objPtr->brain->Update(dt);
 
-		GLint shaderProgID = scene->Shaders[objPtr->shaderName];
+		GLint shaderProgID = objPtr->shader.GetID();
 
 		// Only switch shaders if needed
 		if (lastShader != shaderProgID)
@@ -757,7 +756,7 @@ void RenderObjectsToFBO(cFBO& fbo, float width, float height, glm::mat4 p, glm::
 	objPtr->cmd_group->Update(dt);
 	objPtr->brain->Update(dt);
 
-	GLint shaderProgID = scene->Shaders[objPtr->shaderName];
+	GLint shaderProgID = objPtr->shader.GetID();
 
 	// Only switch shaders if needed
 	if (lastShader != shaderProgID)
@@ -801,7 +800,7 @@ void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// 3. Use the FBO colour texture as the texture on that quad
-	GLint shaderProgID = scene->Shaders[quad.shaderName];
+	GLint shaderProgID = quad.shader.GetID();
 	glUseProgram(shaderProgID);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -838,7 +837,7 @@ void RenderQuadToScreen(cFBO& previousFBO)
 	float height = previousFBO.height;
 
 	// LAST RENDER PASS
-	GLint shaderProgID = scene->Shaders[quad.shaderName];
+	GLint shaderProgID = quad.shader.GetID();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, width, height);

@@ -273,6 +273,9 @@
     <ClCompile Include="Texture\cTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shader\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cGameObject.h">
@@ -486,6 +489,9 @@
       <Filter>TextureManager</Filter>
     </ClInclude>
     <ClInclude Include="Texture\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

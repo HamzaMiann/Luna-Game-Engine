@@ -16,7 +16,7 @@ namespace _GameManager_
 		obj->transform.scale = glm::vec3(0.000731f);
 		obj->meshName = "ship";
 		obj->tag = "enemy";
-		obj->shaderName = "basic";
+		obj->shader.SetShader("basic");
 		obj->specColour = glm::vec3(0.9f);
 		obj->specIntensity = 10.f;
 		obj->texture[0].SetTexture("blue.bmp", 1.0f);
@@ -70,7 +70,7 @@ void cAIGameManager::Player_Shoot(glm::vec3 const& start, glm::vec3 const& veloc
 	obj->transform.scale = vec3(.3f);
 	obj->meshName = "sphere";
 	obj->texture[0].SetTexture("blue.bmp", 1.f);
-	obj->shaderName = "basic";
+	obj->shader.SetShader("basic");
 	nPhysics::sSphereDef def;
 	def.gravity_factor = 1.f;
 	def.mass = 0.5f;
@@ -92,7 +92,7 @@ void cAIGameManager::Enemy_Shoot(glm::vec3 const& start, glm::vec3 const& veloci
 	obj->transform.pos = start;
 	obj->transform.scale = vec3(.3f);
 	obj->meshName = "sphere";
-	obj->shaderName = "basic";
+	obj->shader.SetShader("basic");
 	obj->texture[0].SetTexture("red.bmp", 1.f);
 	nPhysics::sSphereDef def;
 	def.gravity_factor = 0.f;

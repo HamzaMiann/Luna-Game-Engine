@@ -1,5 +1,4 @@
 #include "cPursueBehaviour.h"
-#include <cGameObject.h>
 #include <EntityManager/cEntityManager.h>
 #include <Physics/Mathf.h>
 #include <Behaviour/Managers/cAIGameManager.h>
@@ -77,10 +76,10 @@ bool AI::cPursueBehaviour::deserialize(rapidxml::xml_node<>* root_node)
 void AI::cPursueBehaviour::start()
 {
     rb = parent.GetComponent<nPhysics::iPhysicsComponent>();
-    cGameObject* player = cEntityManager::Instance()->GetObjectByTag("player");
+    iObject* player = (iObject*)cEntityManager::Instance()->GetObjectByTag("player");
     target = &player->transform;
     target_rb = player->GetComponent<nPhysics::iPhysicsComponent>();
-    manager = cEntityManager::Instance()->GetObjectByTag("manager")->GetComponent<cAIGameManager>();
+    manager = ((iObject*)cEntityManager::Instance()->GetObjectByTag("manager"))->GetComponent<cAIGameManager>();
     maxVelocity = 3.f;
 }
 

@@ -6,6 +6,8 @@
 			<Vertex file="basic_vert.glsl"/>
 			<Fragment file="basic_frag.glsl"/>
 		</Shader>
+    
+    <!-- MUST ALWAYS BE HERE -->
     <Shader name="post">
       <Vertex file="postprocessing_vert.glsl"/>
       <Fragment file="postprocessing_frag.glsl"/>
@@ -26,7 +28,8 @@
 		<Model file="mutant.fbx" friendlyName="character" shader="basic"/>
 		<Model file="RetroTV.edited.screenonly.ply" friendlyName="tv_screen" shader="basic"/>
 		<Model file="RetroTV.edited.bodyonly.ply" friendlyName="tv_body" shader="basic"/>
-    
+
+    <!-- MUST ALWAYS BE HERE -->
 		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen_quad" shader="post"/>
 	</Models>
   

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <iObject.h>
 class cGameObject;
 
 class cEntityManager
@@ -27,8 +28,10 @@ public:
 	bool AddEntity(cGameObject* entity);
 
 	bool RemoveEntity(cGameObject* entity);
+	bool RemoveEntity(iObject* entity);
 
-	cGameObject* GetObjectByTag(std::string tag);
+	iObject* GetObjectByTag(std::string tag);
+	cGameObject* GetGameObjectByTag(std::string tag);
 
 	void SetEntities(std::vector<cGameObject*>* entities);
 

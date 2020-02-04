@@ -1,5 +1,4 @@
 #include "cSphereBehaviour.h"
-#include <Components/cRigidBody.h>
 #include <_GL/Window.h>
 #include <Camera.h>
 #include <Physics/Mathf.h>

@@ -1,5 +1,4 @@
 #include "cApproachBehaviour.h"
-#include <cGameObject.h>
 #include <EntityManager/cEntityManager.h>
 #include <Physics/Mathf.h>
 #include <Behaviour/Managers/cAIGameManager.h>
@@ -56,7 +55,7 @@ bool AI::cApproachBehaviour::deserialize(rapidxml::xml_node<>* root_node)
 void AI::cApproachBehaviour::start()
 {
     rb = parent.GetComponent<nPhysics::iPhysicsComponent>();
-    cGameObject* player = cEntityManager::Instance()->GetObjectByTag("player");
+    iObject* player = cEntityManager::Instance()->GetObjectByTag("player");
     target = &player->transform;
     player_component = player->GetComponent<cPlayerBehaviour>();
     slowingRadius = 8.f;
@@ -78,7 +77,7 @@ void AI::cApproachBehaviour::update(float dt)
         {
             glm::vec3 direction = glm::normalize(target->pos - transform.pos);
             reload_time = 3.f;
-            cGameObject* obj = cEntityManager::Instance()->GetObjectByTag("manager");
+            iObject* obj = cEntityManager::Instance()->GetObjectByTag("manager");
             cAIGameManager* manager = obj->GetComponent<cAIGameManager>();
             if (manager)
             {

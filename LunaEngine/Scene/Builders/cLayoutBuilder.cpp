@@ -36,7 +36,7 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 
 			if (meshAttr) ptr->meshName = meshAttr->value();
 			if (tagAttr) ptr->tag = tagAttr->value();
-			ptr->shaderName = shader;
+			ptr->shader.SetShader(shader);
 			int texture_id = 0;
 			for (xml_node<>* property_node = object_node->first_node();
 				 property_node;
@@ -84,8 +84,7 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 							def.gravity_factor = XML_Helper::AsFloat(component_node->first_node("GFactor"));
 							def.Offset = XML_Helper::AsVec3(component_node->first_node("Offset"));
 							def.Radius = XML_Helper::AsFloat(component_node->first_node("Radius"));
-							ptr->physics_body = g_PhysicsFactory->CreateSphere(ptr, def);
-							ptr->AddComponent(ptr->physics_body);
+							ptr->AddComponent(g_PhysicsFactory->CreateSphere(ptr, def));
 						}
 						else if (n == "PlaneBody")
 						{
@@ -96,8 +95,7 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 							def.Normal = XML_Helper::AsVec3(component_node->first_node("Normal"));
 							def.Normal = glm::normalize(def.Normal);
 							def.Constant = XML_Helper::AsFloat(component_node->first_node("Constant"));
-							ptr->physics_body = g_PhysicsFactory->CreatePlane(ptr, def);
-							ptr->AddComponent(ptr->physics_body);
+							ptr->AddComponent(g_PhysicsFactory->CreatePlane(ptr, def));
 						}
 						else
 						{
