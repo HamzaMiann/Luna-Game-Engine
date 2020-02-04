@@ -208,6 +208,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Commands\cTrigger.cpp" />
     <ClCompile Include="Mesh\cVAOManager.cpp" />
     <ClCompile Include="FBO\cFBO.cpp" />
+    <ClCompile Include="Texture\cTexture.cpp" />
     <ClCompile Include="_GL\glad.c" />
     <ClCompile Include="Physics\octree.cpp" />
     <ClCompile Include="Physics\PhysicsEngine.cpp" />
@@ -218,9 +219,9 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Scene\SceneLightSave.cpp" />
     <ClCompile Include="Audio\Sound.cpp" />
     <ClCompile Include="Audio\SoundGroup.cpp" />
-    <ClCompile Include="TextureManager\C24BitBMPpixel.cpp" />
-    <ClCompile Include="TextureManager\cBasicTextureManager.cpp" />
-    <ClCompile Include="TextureManager\CTextureFromBMP.cpp" />
+    <ClCompile Include="Texture\C24BitBMPpixel.cpp" />
+    <ClCompile Include="Texture\cBasicTextureManager.cpp" />
+    <ClCompile Include="Texture\CTextureFromBMP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Behaviour\AI\cApproachBehaviour.h" />
@@ -274,6 +275,8 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Shader\cShaderHelper.h" />
     <ClInclude Include="Shader\cShaderManager.h" />
     <ClInclude Include="Mesh\cVAOManager.h" />
+    <ClInclude Include="Texture\cTexture.h" />
+    <ClInclude Include="Texture\stb_image.h" />
     <ClInclude Include="_GL\GLCommon.h" />
     <ClInclude Include="Commands\iCommand.h" />
     <ClInclude Include="DebugRenderer\iDebugRenderer.h" />
@@ -288,9 +291,9 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Commands\cRotateTo.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Lighting\sLight.h" />
-    <ClInclude Include="TextureManager\C24BitBMPpixel.h" />
-    <ClInclude Include="TextureManager\cBasicTextureManager.h" />
-    <ClInclude Include="TextureManager\CTextureFromBMP.h" />
+    <ClInclude Include="Texture\C24BitBMPpixel.h" />
+    <ClInclude Include="Texture\cBasicTextureManager.h" />
+    <ClInclude Include="Texture\CTextureFromBMP.h" />
     <ClInclude Include="_GL\Window.h" />
   </ItemGroup>
   <ItemGroup>

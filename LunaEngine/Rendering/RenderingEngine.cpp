@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <_GL/GLCommon.h>
 #include <Shader/cShaderManager.h>
-#include <TextureManager/cBasicTextureManager.h>
+#include <Texture/cBasicTextureManager.h>
 #include <Lighting/cLightManager.h>
 #include <Mesh\cVAOManager.h>
 

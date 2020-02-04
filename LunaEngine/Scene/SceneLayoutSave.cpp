@@ -188,9 +188,9 @@ bool Scene::SaveLayout()
 				prop->name("Texture");
 				attr = new xml_attribute<>();
 				attr->name("ratio");
-				attr->value(layout_doc.allocate_string(std::to_string(obj->textureRatio[i]).c_str()));
+				attr->value(layout_doc.allocate_string(std::to_string(obj->texture[i].GetBlend()).c_str()));
 				prop->append_attribute(attr);
-				prop->value(layout_doc.allocate_string(obj->texture[i].c_str()));
+				prop->value(layout_doc.allocate_string(obj->texture[i].GetName().c_str()));
 				node->append_node(prop);
 			}
 

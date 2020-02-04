@@ -7,6 +7,7 @@
 class cFBO
 {
 public:
+	~cFBO() { shutdown(); }
 	cFBO() : 
 		ID(0), 
 		colourTexture_0_ID(0),

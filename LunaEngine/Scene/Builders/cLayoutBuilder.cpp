@@ -7,6 +7,7 @@
 #include <Components/ComponentFactory.h>
 #include <Physics/global_physics.h>
 #include <xml_helper.h>
+#include <EntityManager/cEntityManager.h>
 using namespace rapidxml;
 
 std::string trim(std::string& str)
@@ -168,13 +169,13 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 				}
 				else if (propName == "Texture")
 				{
-					ptr->textureRatio[texture_id] = strtof(property_node->first_attribute("ratio")->value(), 0);
-					ptr->texture[texture_id++] = property_node->value();
+					ptr->texture[texture_id].SetBlend(strtof(property_node->first_attribute("ratio")->value(), 0));
+					ptr->texture[texture_id++].SetTexture(property_node->value());
 				}
 			}
 		}
 
 		if (ptr)
-			scene.vecGameObjects.push_back(ptr);
+			cEntityManager::Instance()->AddEntity(ptr);
 	}
 }

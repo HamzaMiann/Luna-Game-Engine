@@ -9,6 +9,7 @@
 #include <Commands/cCommandGroup.h>
 #include <iObject.h>
 #include <interfaces/physics/iPhysicsComponent.h>
+#include <Texture/cTexture.h>
 
 class Scene;
 class cLuaBrain;
@@ -52,8 +53,7 @@ public:
 	std::vector<glm::vec3> CollidePoints;
 	bool isCollided = false;
 
-	std::string texture[4];
-	float textureRatio[4];
+	cTexture texture[4];
 
 	std::vector<cGameObject*> children;
 

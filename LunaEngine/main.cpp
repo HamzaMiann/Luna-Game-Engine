@@ -23,7 +23,7 @@
 #include <InputHandlers/cLightController.h>
 #include <Mesh/cModelLoader.h>
 #include <Audio/AudioEngine.hpp>
-#include <TextureManager/cBasicTextureManager.h>
+#include <Texture/cBasicTextureManager.h>
 #include <Particles/cParticleEffect.h>
 #include <Misc/cLowpassFilter.h>
 #include <Lua/cLuaBrain.h>
@@ -57,6 +57,7 @@ GLFWwindow* global::window = 0;
 iInputHandler* pInputHandler;
 
 cBasicTextureManager* textureManager;
+cGameObject* pSkyBoxSphere;
 
 void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p);
 void DrawParticle(sParticle* objPtr, glm::mat4 const& v, glm::mat4 const& p);
@@ -180,7 +181,7 @@ int main(void)
 	InitPhysics();
 
 	// Load scene from file
-	cGameObject* pSkyBoxSphere = new cGameObject();
+	pSkyBoxSphere = new cGameObject();
 
 	textureManager = cBasicTextureManager::Instance();
 	textureManager->SetBasePath("assets/textures/cubemaps/");
@@ -196,8 +197,7 @@ int main(void)
 		pSkyBoxSphere->tag = "skybox";
 		pSkyBoxSphere->transform.pos = vec3(0.0f, 0.f, 0.0f);
 		pSkyBoxSphere->transform.scale = vec3(900.0f);
-		pSkyBoxSphere->texture[0] = "Pizza.bmp";
-		pSkyBoxSphere->textureRatio[0] = 1.0f;
+		pSkyBoxSphere->texture[0].SetTexture("Pizza.bmp", 1.0f);
 		//pSkyBoxSphere->inverseMass = 0.0f;
 		//pSkyBoxSphere->gravityScale = 0.f;
 		scene->vecGameObjects.push_back(pSkyBoxSphere);
@@ -236,7 +236,7 @@ int main(void)
 	cGameObject* sphere = new cGameObject;
 	sphere->meshName = "sphere_particle";
 	sphere->shaderName = "particle";
-	sphere->textureRatio[0] = 1.f;
+	sphere->texture[0].SetBlend(1.f);
 
 	quad.meshName = "screen_quad";
 	quad.shaderName = "post";
@@ -267,10 +267,10 @@ int main(void)
 #ifdef DEFERRED_RENDERING
 
 	// Set up frame buffer
-	cFBO fbo;
-	cFBO fbo2;
+	cFBO* fbo = new cFBO;
+	cFBO* fbo2 = new cFBO;
 	std::string fbo_error;
-	if (fbo.init(width, height, fbo_error))
+	if (fbo->init(width, height, fbo_error))
 	{
 		printf("Frame buffer 1 is OK\n");
 	}
@@ -279,7 +279,7 @@ int main(void)
 		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
 		exit(1);
 	}
-	if (fbo2.init(width, height, fbo_error))
+	if (fbo2->init(width, height, fbo_error))
 	{
 		printf("Frame buffer 2 is OK\n");
 	}
@@ -293,7 +293,7 @@ int main(void)
 	//scene->vecGameObjects[0]->AddComponent<cSphereBehaviour>();
 
 	// MUST COME BEFORE THE START METHODS
-	cEntityManager::Instance()->SetEntities(&scene->vecGameObjects);
+	//cEntityManager::Instance()->SetEntities(&scene->vecGameObjects);
 
 	// Run the start method on all behaviour components
 	cBehaviourManager::Instance()->start();
@@ -350,9 +350,9 @@ int main(void)
 						scene->camera.Up);
 
 
-		RenderObjectsToFBO(fbo, width, height, p, v, delta_time);
-		RenderQuadToFBO(fbo2, fbo);
-		RenderQuadToScreen(fbo2);
+		RenderObjectsToFBO(*fbo, width, height, p, v, delta_time);
+		RenderQuadToFBO(*fbo2, *fbo);
+		RenderQuadToScreen(*fbo2);
 
 		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 		renderer->RenderDebugObjects(v, p, 0.01f);
@@ -362,9 +362,14 @@ int main(void)
 		glfwPollEvents();
 	}
 	glfwDestroyWindow(window);
-	glfwTerminate();
+
 
 	// Delete everything
+	delete fbo;
+	delete fbo2;
+
+	glfwTerminate();
+
 	delete scene;
 	ReleasePhysics();
 
@@ -379,19 +384,19 @@ void SetUpTextureBindingsForObject(
 	if (pass_id != 1) return;
 
 	// Tie the texture to the texture unit
-	GLuint texSamp0_UL = textureManager->getTextureIDFromName(pCurrentObject->texture[0]);
+	GLuint texSamp0_UL = pCurrentObject->texture[0].GetID();
 	glActiveTexture(GL_TEXTURE0);				// Texture Unit 0
 	glBindTexture(GL_TEXTURE_2D, texSamp0_UL);	// Texture now assoc with texture unit 0
 
-	GLuint texSamp1_UL = ::textureManager->getTextureIDFromName(pCurrentObject->texture[1]);
+	GLuint texSamp1_UL = pCurrentObject->texture[1].GetID();
 	glActiveTexture(GL_TEXTURE1);				// Texture Unit 1
 	glBindTexture(GL_TEXTURE_2D, texSamp1_UL);	// Texture now assoc with texture unit 0
 
-	GLuint texSamp2_UL = ::textureManager->getTextureIDFromName(pCurrentObject->texture[2]);
+	GLuint texSamp2_UL = pCurrentObject->texture[2].GetID();
 	glActiveTexture(GL_TEXTURE2);				// Texture Unit 2
 	glBindTexture(GL_TEXTURE_2D, texSamp2_UL);	// Texture now assoc with texture unit 0
 
-	GLuint texSamp3_UL = ::textureManager->getTextureIDFromName(pCurrentObject->texture[3]);
+	GLuint texSamp3_UL = pCurrentObject->texture[3].GetID();
 	glActiveTexture(GL_TEXTURE3);				// Texture Unit 3
 	glBindTexture(GL_TEXTURE_2D, texSamp3_UL);	// Texture now assoc with texture unit 0
 
@@ -411,10 +416,11 @@ void SetUpTextureBindingsForObject(
 
 	GLint tex0_ratio_UL = glGetUniformLocation(shaderProgID, "tex_0_3_ratio");
 	glUniform4f(tex0_ratio_UL,
-				pCurrentObject->textureRatio[0],		// 1.0
-				pCurrentObject->textureRatio[1],
-				pCurrentObject->textureRatio[2],
-				pCurrentObject->textureRatio[3]);
+		pCurrentObject->texture[0].GetBlend(),
+		pCurrentObject->texture[1].GetBlend(),
+		pCurrentObject->texture[2].GetBlend(),
+		pCurrentObject->texture[3].GetBlend()
+	);
 
 	return;
 }
@@ -664,8 +670,10 @@ void RenderObjectsToFBO(cFBO& fbo, float width, float height, glm::mat4 p, glm::
 
 	int lastShader = -1;
 
+	auto& objects = cEntityManager::Instance()->GetEntities();
+
 	// Loop to draw everything in the scene
-	for (int index = 0; index != scene->vecGameObjects.size(); index++)
+	for (int index = 0; index != objects.size(); index++)
 	{
 #ifdef TRANSPARENCY_SORT
 		if (index < scene->vecGameObjects.size() - 1)
@@ -684,7 +692,7 @@ void RenderObjectsToFBO(cFBO& fbo, float width, float height, glm::mat4 p, glm::
 		}
 #endif
 
-		cGameObject* objPtr = scene->vecGameObjects[index];
+		cGameObject* objPtr = objects[index];
 
 		cMaterial* material = objPtr->GetComponent<cMaterial>();
 		if (material != nullptr)
@@ -720,6 +728,42 @@ void RenderObjectsToFBO(cFBO& fbo, float width, float height, glm::mat4 p, glm::
 
 	}//for (int index...
 	// **************************************************
+
+	// RENDER SKYBOX
+	cGameObject* objPtr = pSkyBoxSphere;
+
+	cMaterial* material = objPtr->GetComponent<cMaterial>();
+	if (material != nullptr)
+	{
+		// TODO
+	}
+
+	objPtr->cmd_group->Update(dt);
+	objPtr->brain->Update(dt);
+
+	GLint shaderProgID = scene->Shaders[objPtr->shaderName];
+
+	// Only switch shaders if needed
+	if (lastShader != shaderProgID)
+	{
+		glUseProgram(shaderProgID);
+		lastShader = shaderProgID;
+
+		// set time
+		float time = glfwGetTime();
+		glUniform1f(glGetUniformLocation(shaderProgID, "iTime"), time);
+
+		// set resolution
+		glUniform2f(glGetUniformLocation(shaderProgID, "iResolution"),
+			width,
+			height);
+
+		glUniform1i(glGetUniformLocation(shaderProgID, "isWater"),
+			false);
+	}
+
+	DrawObject(objPtr, v, p);
+
 }
 void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 {

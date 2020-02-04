@@ -24,7 +24,8 @@ public:
 private:
 	nPhysics::iPhysicsComponent* body;
 
-	glm::quat rotation;
+	glm::quat rotX;
+	glm::quat rotY;
 	static glm::vec3 direction;
 
 	glm::vec3 camera_target;

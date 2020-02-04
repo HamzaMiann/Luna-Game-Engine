@@ -13,11 +13,10 @@
 	</Shaders>
   
 	<Textures>
-		<Texture name="Ground_Dirt_007_basecolor.bmp"/>
-		<Texture name="pebbles-beach-textures.bmp"/>
-		<Texture name="fx3_Panels_Color.bmp"/>
-		<Texture name="blue.bmp"/>
-		<Texture name="red.bmp"/>
+		<Texture name="fx3_Panels_Color.png"/>
+		<Texture name="Grass.png"/>
+		<Texture name="blue.png"/>
+		<Texture name="red.png"/>
 	</Textures>
   
 	<Models>
@@ -201,7 +200,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">blue.bmp</Texture>
+      <Texture ratio="1.000000">red.png</Texture>
 
       <Components>
 
@@ -209,20 +208,19 @@
     </GameObject>
     
 		<GameObject mesh="sphere" tag="reflect" shader="basic">
-			<Position x="0.0" y="10.0" z="0.0"/>
+			<Position x="0.0" y="1.0" z="0.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
       <Scale>1.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-			<Collider>SPHERE</Collider>
-			<Texture ratio="1.000000">blue.bmp</Texture>
+			<Texture ratio="1.000000">red.png</Texture>
       
       <Components>
         
         <SphereBody>
           <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>1.0</Mass>
+          <Mass>5.0</Mass>
           <GFactor>1.0</GFactor>
           <Offset x="0.000000" y="0.000000" z="0.000000"/>
           <Radius>1.0</Radius>
@@ -241,8 +239,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Collider>MESH</Collider>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
       
       <Components>
         

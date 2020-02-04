@@ -19,8 +19,7 @@ namespace _GameManager_
 		obj->shaderName = "basic";
 		obj->specColour = glm::vec3(0.9f);
 		obj->specIntensity = 10.f;
-		obj->texture[0] = "blue.bmp";
-		obj->textureRatio[0] = 1.f;
+		obj->texture[0].SetTexture("blue.bmp", 1.0f);
 		nPhysics::sSphereDef def;
 		def.gravity_factor = 1.f;
 		def.mass = 1.0f;
@@ -51,10 +50,10 @@ void cAIGameManager::update(float dt)
 		int index = rand() % 4;
 		switch (index)
 		{
-		case 0: ComponentFactory::GetComponent("AISeekBehaviour", newObject); newObject->texture[0] = "yellow.bmp"; break;
+		case 0: ComponentFactory::GetComponent("AISeekBehaviour", newObject); newObject->texture[0].SetTexture("yellow.bmp"); break;
 		case 1: ComponentFactory::GetComponent("AIWanderBehaviour", newObject); break;
-		case 2: ComponentFactory::GetComponent("AIPursueBehaviour", newObject); newObject->texture[0] = "red.bmp"; break;
-		case 3: ComponentFactory::GetComponent("AIApproachBehaviour", newObject); newObject->texture[0] = "Grass.bmp"; break;
+		case 2: ComponentFactory::GetComponent("AIPursueBehaviour", newObject); newObject->texture[0].SetTexture("red.bmp"); break;
+		case 3: ComponentFactory::GetComponent("AIApproachBehaviour", newObject); newObject->texture[0].SetTexture("Grass.bmp"); break;
 		}
 		
 		cEntityManager::Instance()->AddEntity(newObject);
@@ -70,9 +69,8 @@ void cAIGameManager::Player_Shoot(glm::vec3 const& start, glm::vec3 const& veloc
 	obj->transform.pos = start;
 	obj->transform.scale = vec3(.3f);
 	obj->meshName = "sphere";
-	obj->texture[0] = "blue.bmp";
+	obj->texture[0].SetTexture("blue.bmp", 1.f);
 	obj->shaderName = "basic";
-	obj->textureRatio[0] = 0.f;
 	nPhysics::sSphereDef def;
 	def.gravity_factor = 1.f;
 	def.mass = 0.5f;
@@ -95,8 +93,7 @@ void cAIGameManager::Enemy_Shoot(glm::vec3 const& start, glm::vec3 const& veloci
 	obj->transform.scale = vec3(.3f);
 	obj->meshName = "sphere";
 	obj->shaderName = "basic";
-	obj->texture[0] = "red.bmp";
-	obj->textureRatio[0] = 1.f;
+	obj->texture[0].SetTexture("red.bmp", 1.f);
 	nPhysics::sSphereDef def;
 	def.gravity_factor = 0.f;
 	def.mass = 0.5f;

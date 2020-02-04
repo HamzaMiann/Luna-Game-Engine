@@ -10,14 +10,14 @@ cGameObject::cGameObject()
 	id = next_id++;
 	brain = new cLuaBrain(this);
 
-	this->textureRatio[0] = 1.f;
+	/*this->textureRatio[0] = 1.f;
 	this->textureRatio[1] = 0.f;
 	this->textureRatio[2] = 0.f;
 	this->textureRatio[3] = 0.f;
 	this->texture[0] = "";
 	this->texture[1] = "";
 	this->texture[2] = "";
-	this->texture[3] = "";
+	this->texture[3] = "";*/
 
 	cmd_group = new cCommandGroup;
 }

@@ -81,15 +81,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager\cBasicTextureManager.cpp">
-      <Filter>TextureManager</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureManager\CTextureFromBMP.cpp">
-      <Filter>TextureManager</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureManager\C24BitBMPpixel.cpp">
-      <Filter>TextureManager</Filter>
-    </ClCompile>
     <ClCompile Include="cGameObject.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
@@ -270,17 +261,20 @@
     <ClCompile Include="LodePNG\lodepng.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Texture\C24BitBMPpixel.cpp">
+      <Filter>TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture\cBasicTextureManager.cpp">
+      <Filter>TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture\CTextureFromBMP.cpp">
+      <Filter>TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture\cTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TextureManager\C24BitBMPpixel.h">
-      <Filter>TextureManager</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureManager\cBasicTextureManager.h">
-      <Filter>TextureManager</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureManager\CTextureFromBMP.h">
-      <Filter>TextureManager</Filter>
-    </ClInclude>
     <ClInclude Include="cGameObject.h">
       <Filter>GameObject</Filter>
     </ClInclude>
@@ -477,6 +471,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LodePNG\lodepng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture\C24BitBMPpixel.h">
+      <Filter>TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture\cBasicTextureManager.h">
+      <Filter>TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture\cTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture\CTextureFromBMP.h">
+      <Filter>TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
