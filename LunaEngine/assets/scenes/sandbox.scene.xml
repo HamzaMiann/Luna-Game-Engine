@@ -24,6 +24,9 @@
 		<Model file="cube_XYZ_N_UV.ply" friendlyName="cube" shader="basic"/>
 		<Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
 		<Model file="mutant.fbx" friendlyName="character" shader="basic"/>
+		<Model file="RetroTV.edited.screenonly.ply" friendlyName="tv_screen" shader="basic"/>
+		<Model file="RetroTV.edited.bodyonly.ply" friendlyName="tv_body" shader="basic"/>
+    
 		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen_quad" shader="post"/>
 	</Models>
   
@@ -193,8 +196,28 @@
   
 	<Layout>
 
+    <GameObject mesh="tv_screen" tag="screen" shader="basic">
+      <Position x="0.0" y="1.0" z="0.0"/>
+      <Rotation x="-90" y="0" z="0.0"/>
+      <Scale>0.03</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Texture ratio="1.000000">blue.png</Texture>
+    </GameObject>
+    
+    <GameObject mesh="tv_body" tag="body" shader="basic">
+      <Position x="0.0" y="1.0" z="0.0"/>
+      <Rotation x="-90" y="0" z="0.0"/>
+      <Scale>0.03</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Texture ratio="1.000000">red.png</Texture>
+    </GameObject>
+
     <GameObject mesh="character" tag="reflect" shader="basic">
-      <Position x="0.0" y="0.0" z="0.0"/>
+      <Position x="7.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
       <Scale>0.03</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
@@ -208,7 +231,7 @@
     </GameObject>
     
 		<GameObject mesh="sphere" tag="reflect" shader="basic">
-			<Position x="0.0" y="1.0" z="0.0"/>
+			<Position x="0.0" y="1.0" z="3.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
       <Scale>1.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>

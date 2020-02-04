@@ -268,6 +268,7 @@ int main(void)
 
 	// Set up frame buffer
 	cFBO* fbo = new cFBO;
+	cFBO* second_pass = new cFBO;
 	cFBO* fbo2 = new cFBO;
 	std::string fbo_error;
 	if (fbo->init(width, height, fbo_error))
@@ -288,6 +289,15 @@ int main(void)
 		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
 		exit(1);
 	}
+	if (second_pass->init(width, height, fbo_error))
+	{
+		printf("Frame buffer 2 is OK\n");
+	}
+	else
+	{
+		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
+		exit(1);
+	}
 #endif
 
 	//scene->vecGameObjects[0]->AddComponent<cSphereBehaviour>();
@@ -298,6 +308,7 @@ int main(void)
 	// Run the start method on all behaviour components
 	cBehaviourManager::Instance()->start();
 
+	cGameObject* screen = cEntityManager::Instance()->GetObjectByTag("screen");
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -351,7 +362,12 @@ int main(void)
 
 
 		RenderObjectsToFBO(*fbo, width, height, p, v, delta_time);
-		RenderQuadToFBO(*fbo2, *fbo);
+
+		screen->texture[0].SetTexture(fbo->colourTexture_0_ID);
+
+		RenderObjectsToFBO(*second_pass, width, height, p, v, delta_time);
+
+		RenderQuadToFBO(*fbo2, *second_pass);
 		RenderQuadToScreen(*fbo2);
 
 		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);

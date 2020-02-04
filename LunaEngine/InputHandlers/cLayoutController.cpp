@@ -2,6 +2,7 @@
 #include "cLayoutController.h"
 #include "cGameObject.h"
 #include <iostream>
+#include <EntityManager/cEntityManager.h>
 
 glm::vec3 original_target_position;
 
@@ -19,84 +20,88 @@ void cLayoutController::HandleInput(GLFWwindow * window)
 {
 	float speed = 10.f;
 
-	if (this->_scene.vecGameObjects.size() == 0) return;
+	auto& objects = cEntityManager::Instance()->GetEntities();
+
+	if (objects.size() == 0) return;
 
 	if (glfwGetKey(window, GLFW_KEY_UP))
 	{
-		this->_scene.vecGameObjects[index]->transform.pos.z += 0.1f * speed;
+		objects[index]->transform.pos.z += 0.1f * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN))
 	{
-		this->_scene.vecGameObjects[index]->transform.pos.z -= 0.1f * speed;
+		objects[index]->transform.pos.z -= 0.1f * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT))
 	{
-		this->_scene.vecGameObjects[index]->transform.pos.x += 0.1f * speed;
+		objects[index]->transform.pos.x += 0.1f * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT))
 	{
-		this->_scene.vecGameObjects[index]->transform.pos.x -= 0.1f * speed;
+		objects[index]->transform.pos.x -= 0.1f * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_T))
 	{
-		this->_scene.vecGameObjects[index]->transform.pos.y += 0.1f * speed;
+		objects[index]->transform.pos.y += 0.1f * speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_Y))
 	{
-		this->_scene.vecGameObjects[index]->transform.pos.y -= 0.1f * speed;
+		objects[index]->transform.pos.y -= 0.1f * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_I))
 	{
-		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, 0.f, 0.1f));
+		objects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, 0.f, 0.1f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_K))
 	{
-		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, 0.f, -0.1f));
+		objects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, 0.f, -0.1f));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_J))
 	{
-		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(0.1f, 0.f, 0.f));
+		objects[index]->transform.UpdateEulerRotation(glm::vec3(0.1f, 0.f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_L))
 	{
-		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(-0.1f, 0.f, 0.f));
+		objects[index]->transform.UpdateEulerRotation(glm::vec3(-0.1f, 0.f, 0.f));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_U))
 	{
-		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, 0.1f, 0.f));
+		objects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, 0.1f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_O))
 	{
-		this->_scene.vecGameObjects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, -0.1f, 0.f));
+		objects[index]->transform.UpdateEulerRotation(glm::vec3(0.f, -0.1f, 0.f));
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_EQUAL))
 	{
-		this->_scene.vecGameObjects[index]->transform.scale *= 1.05f;
+		objects[index]->transform.scale *= 1.05f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_MINUS))
 	{
-		this->_scene.vecGameObjects[index]->transform.scale *= 0.95f;
+		objects[index]->transform.scale *= 0.95f;
 	}
 
-	_scene.camera.Target = _scene.vecGameObjects[index]->transform.pos;
+	_scene.camera.Target = objects[index]->transform.pos;
 
 
 }
 
 void cLayoutController::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
-	if (this->_scene.vecGameObjects.size() == 0) return;
+	auto& objects = cEntityManager::Instance()->GetEntities();
+
+	if (objects.size() == 0) return;
 
 	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
 	{
 		index++;
-		if (index >= this->_scene.vecGameObjects.size())
+		if (index >= objects.size())
 		{
 			index = 0;
 		}
@@ -104,15 +109,15 @@ void cLayoutController::key_callback(GLFWwindow * window, int key, int scancode,
 
 	if (key == GLFW_KEY_N && action == GLFW_PRESS)
 	{
-		_scene.vecGameObjects[index]->isWireframe = !_scene.vecGameObjects[index]->isWireframe;
-		_scene.vecGameObjects[index]->uniformColour = !_scene.vecGameObjects[index]->uniformColour;
+		objects[index]->isWireframe = !objects[index]->isWireframe;
+		objects[index]->uniformColour = !objects[index]->uniformColour;
 	}
 
-	if (key == GLFW_KEY_S && action == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
+	/*if (key == GLFW_KEY_S && action == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
 	{
 		if (_scene.SaveLayout())
 			std::cout << "Layout Saved!" << std::endl;
 		else
 			std::cout << "Unable to save layout..." << std::endl;
-	}
+	}*/
 }
