@@ -7,6 +7,9 @@
 #include <Components/ComponentFactory.h>
 #include <interfaces/physics/iPhysicsComponent.h>
 
+#pragma warning(disable)
+
+
 namespace _GameManager_
 {
 	cGameObject* MakeShip(glm::vec3 const& position)

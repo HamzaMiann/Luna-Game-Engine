@@ -26,6 +26,8 @@ uniform vec4 tex_0_3_ratio;		// x = 0, y = 1, z = 2, w = 3
 uniform samplerCube skyBox;
 
 
+uniform bool isScope;
+
 // Globals
 in float fiTime;
 in float fisWater;
@@ -135,6 +137,21 @@ void main()
 		pixelColour.rgb *= 1.0;		// Make it a little brighter
 		unlitColour += 1.0;
 
+		return;
+	}
+
+	if (isScope)
+	{
+		vec3 tex = texture( textSamp00, fUVx2.st ).rgb;
+		vec3 scope = texture( textSamp01, fUVx2.st ).rgb;
+		if (length(scope) > 0.5)
+		{
+			pixelColour = vec4(tex, diffuseColour.a);
+		}
+		else
+		{
+			pixelColour = vec4(scope, diffuseColour.a);
+		}
 		return;
 	}
 

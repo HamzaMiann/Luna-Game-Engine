@@ -38,8 +38,7 @@
 #include <Behaviour/Controls/cSphereBehaviour.h>
 #include <Physics/global_physics.h>
 
-#define WINDOW_WIDTH 1200
-#define WINDOW_HEIGHT 800
+
 #define CAMERA_CONTROL
 #define _DEBUG
 #define DEFERRED_RENDERING
@@ -53,7 +52,6 @@ bool is_paused = false;
 int pass_id;
 
 Scene* scene;
-GLFWwindow* global::window = 0;
 iInputHandler* pInputHandler;
 
 cBasicTextureManager* textureManager;
@@ -151,31 +149,14 @@ static void HandleInput(GLFWwindow* window)
 
 int main(void)
 {
+	typedef glm::vec3 vec3;
 
-	glfwSetErrorCallback(error_callback);
-	if (!glfwInit())
-	{
-		exit(EXIT_FAILURE);
-	}
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-
-	global::window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "GLEngine", NULL, NULL);
+	// Initialize GL
+	SetErrorCallback(error_callback);
+	InitGL();
+	SetKeyCallback(key_callback);
 	GLFWwindow* window = global::window;
 
-	if (!window)
-	{
-		glfwTerminate();
-		exit(EXIT_FAILURE);
-	}
-
-	glfwSetKeyCallback(window, key_callback);
-	glfwMakeContextCurrent(window);
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-	glfwSwapInterval(1);
-
-	typedef glm::vec3 vec3;
 
 	// Initialize physics
 	InitPhysics();
@@ -308,7 +289,8 @@ int main(void)
 	// Run the start method on all behaviour components
 	cBehaviourManager::Instance()->start();
 
-	cGameObject* screen = cEntityManager::Instance()->GetGameObjectByTag("screen");
+	cGameObject* screen = cEntityManager::Instance()->GetGameObjectByTag("scope");
+	cGameObject* player = cEntityManager::Instance()->GetGameObjectByTag("reflect");
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -356,13 +338,17 @@ int main(void)
 							 1000.f);		// Far clipping plane
 
 		// View matrix
-		v = glm::lookAt(scene->camera.Eye,
-						scene->camera.Target,
+		v = glm::lookAt(vec3(0, 2.f, 0.f),
+						player->transform.pos,
 						scene->camera.Up);
 
 		RenderObjectsToFBO(*fbo, width, height, p, v, delta_time);
 
 		screen->texture[0].SetTexture(fbo->colourTexture_0_ID);
+
+		v = glm::lookAt(scene->camera.Eye,
+			scene->camera.Target,
+			scene->camera.Up);
 
 		RenderObjectsToFBO(*second_pass, width, height, p, v, delta_time);
 
@@ -445,10 +431,21 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 {
 	GLint shaderProgID = objPtr->shader.GetID();
 
+	GLint scopeUL = glGetUniformLocation(shaderProgID, "isScope");
+	if (objPtr->tag == "scope")
+	{
+		glUniform1i(scopeUL, (int)GL_TRUE);
+	}
+	else
+	{
+		glUniform1i(scopeUL, (int)GL_FALSE);
+	}
+
+
+
 	GLint bIsSkyBox_UL = glGetUniformLocation(shaderProgID, "isSkybox");
 	GLint isReflection = glGetUniformLocation(shaderProgID, "isReflection");
 	GLint isRefraction = glGetUniformLocation(shaderProgID, "isRefraction");
-
 
 
 	if (objPtr->tag != "skybox")

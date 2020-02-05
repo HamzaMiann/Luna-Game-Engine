@@ -4,6 +4,9 @@
 #include <EntityManager/cEntityManager.h>
 #include <Behaviour/Managers/cAIGameManager.h>
 
+#pragma warning(disable)
+
+
 cPlayerBehaviour::cPlayerBehaviour(iObject* root)
 	: iBehaviour(root)
 {

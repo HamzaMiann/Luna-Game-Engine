@@ -3,6 +3,8 @@
 #include <Physics/Mathf.h>
 #include <Behaviour/Managers/cAIGameManager.h>
 
+#pragma warning(disable)
+
 void AI::cApproachBehaviour::Approach()
 {
     /*calculates the desired velocity */

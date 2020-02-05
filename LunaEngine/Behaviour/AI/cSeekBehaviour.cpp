@@ -2,6 +2,9 @@
 #include <EntityManager/cEntityManager.h>
 #include <Physics/Mathf.h>
 
+#pragma warning(disable)
+
+
 void AI::cSeekBehaviour::SeekArrive()
 {
     /*calculates the desired velocity */

@@ -3,6 +3,9 @@
 #include <Physics/Mathf.h>
 #include <Behaviour/Managers/cAIGameManager.h>
 
+#pragma warning(disable)
+
+
 typedef glm::vec3 vec3;
 
 void AI::cPursueBehaviour::Pursue()

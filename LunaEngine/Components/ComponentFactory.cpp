@@ -8,6 +8,9 @@
 #include <Behaviour/AI/cApproachBehaviour.h>
 #include <Behaviour/Managers/cAIGameManager.h>
 
+#pragma warning(disable)
+
+
 iComponent* ComponentFactory::GetComponent(std::string type, iObject* object)
 {
 	if (type == "SphereBehaviour")

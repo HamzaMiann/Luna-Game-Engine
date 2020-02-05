@@ -2,6 +2,9 @@
 #include <EntityManager/cEntityManager.h>
 #include <Physics/Mathf.h>
 
+#pragma warning(disable)
+
+
 typedef glm::vec3 vec3;
 
 void AI::cWanderBehaviour::Wander()
