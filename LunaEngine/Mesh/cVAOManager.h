@@ -8,13 +8,19 @@
 
 #include <string>
 #include <map>
-#include <Components/cMesh.h>				// File as loaded from the file
+#include <Mesh/cMesh.h>				// File as loaded from the file
 
 // The vertex structure 
 //	that's ON THE GPU (eventually) 
 // So dictated from THE SHADER
-struct sVertex
+struct sVAOVertex
 {
+	sVAOVertex():
+		x(0.f), y(0.f), z(0.f), w(1.f),
+		r(1.f), g(1.f), b(1.f), a(1.f),
+		nx(0.f), ny(0.f), nz(0.f), nw(1.f),
+		u0(0.f), v0(0.f), u1(0.f), v1(0.f)
+	{ }
 	float x, y, z, w;
 	float r, g, b, a;
 	float nx, ny, nz, nw;
@@ -40,7 +46,7 @@ struct sModelDrawInfo
 	unsigned int numberOfTriangles;
 
 	// The "local" (i.e. "CPU side" temporary array)
-	sVertex* pVertices;	//  = 0;
+	sVAOVertex* pVertices;	//  = 0;
 	// The index buffer (CPU side)
 	unsigned int* pIndices;		
 };

@@ -132,7 +132,7 @@ void main()
 		pixelColour.rgb = skyColour.rgb;
 //		pixelColour.rgb *= 0.01f;
 //		pixelColour.rgb = fNormal.xyz;
-		pixelColour.a = 1.0f;				// NOT transparent
+		pixelColour.a = 1.0;				// NOT transparent
 		
 		pixelColour.rgb *= 1.0;		// Make it a little brighter
 		unlitColour += 1.0;
@@ -143,15 +143,9 @@ void main()
 	if (isScope)
 	{
 		vec3 tex = texture( textSamp00, fUVx2.st ).rgb;
-		vec3 scope = texture( textSamp01, fUVx2.st ).rgb;
-		if (length(scope) > 0.5)
-		{
-			pixelColour = vec4(tex, diffuseColour.a);
-		}
-		else
-		{
-			pixelColour = vec4(scope, diffuseColour.a);
-		}
+		tex = mix(tex, GetRandValue().rgb * 0.7, 0.5);
+		//tex = mix(tex, vec3(rand(gl_FragCoord.x, gl_FragCoord.y + fiTime)), 0.25);
+		pixelColour = vec4(tex, diffuseColour.a);
 		return;
 	}
 

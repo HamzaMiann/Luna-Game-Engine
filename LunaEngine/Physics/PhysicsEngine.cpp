@@ -2,7 +2,7 @@
 
 #include <Scene/Scene.h>
 #include <Physics/PhysicsEngine.h>
-#include <Components/cMesh.h>
+#include <Mesh/cMesh.h>
 #include <Components/cRigidBody.h>
 #include <Mesh/cVAOManager.h>
 #include <Mesh/cModelLoader.h>

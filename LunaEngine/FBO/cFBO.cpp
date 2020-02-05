@@ -15,7 +15,7 @@ bool cFBO::reset(int width, int height, std::string &error)
 
 bool cFBO::shutdown(void)
 {
-	glDeleteTextures( 1, &(this->colourTexture_0_ID) );
+	glDeleteTextures( 1, &(this->colourTexture_ID) );
 	glDeleteTextures( 1, &(this->depthTexture_ID) );
 	glDeleteTextures( 1, &(this->normalTexture_ID) );
 	glDeleteTextures( 1, &(this->positionTexture_ID) );
@@ -39,8 +39,8 @@ bool cFBO::init( int width, int height, std::string &error )
 
 //************************************************************
 	// Create the colour buffer (texture)
-	glGenTextures(1, &(this->colourTexture_0_ID ) );		//g_FBO_colourTexture
-	glBindTexture(GL_TEXTURE_2D, this->colourTexture_0_ID);
+	glGenTextures(1, &(this->colourTexture_ID ) );		//g_FBO_colourTexture
+	glBindTexture(GL_TEXTURE_2D, this->colourTexture_ID);
 
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8,		// 8 bits per colour
 //	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F,		// 8 bits per colour
@@ -130,7 +130,7 @@ bool cFBO::init( int width, int height, std::string &error )
 
 	glFramebufferTexture(GL_FRAMEBUFFER,
 						 GL_COLOR_ATTACHMENT0,			// Colour goes to #0
-						 this->colourTexture_0_ID, 0);
+						 this->colourTexture_ID, 0);
 
 	glFramebufferTexture(GL_FRAMEBUFFER,
 						 GL_COLOR_ATTACHMENT1,			// Normal to #1

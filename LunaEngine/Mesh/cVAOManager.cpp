@@ -48,7 +48,7 @@ bool cVAOManager::LoadModelIntoVAO(
 
 	drawInfo.numberOfVertices = theMesh.vecVertices.size();
 	// Allocate an array big enough
-	drawInfo.pVertices = new sVertex[drawInfo.numberOfVertices];
+	drawInfo.pVertices = new sVAOVertex[drawInfo.numberOfVertices];
 
 	// Copy the data from the vecVertices...
 	for (unsigned int index = 0; index != drawInfo.numberOfVertices; index++)
@@ -123,7 +123,7 @@ bool cVAOManager::LoadModelIntoVAO(
 	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.VertexBufferID);
 	// sVert vertices[3]
 	glBufferData( GL_ARRAY_BUFFER, 
-				  sizeof(sVertex) * drawInfo.numberOfVertices,	// ::g_NumberOfVertsToDraw,	// sizeof(vertices), 
+				  sizeof(sVAOVertex) * drawInfo.numberOfVertices,	// ::g_NumberOfVertsToDraw,	// sizeof(vertices), 
 				  (GLvoid*) drawInfo.pVertices,							// pVertices,			//vertices, 
 				  GL_STATIC_DRAW );
 
@@ -150,26 +150,26 @@ bool cVAOManager::LoadModelIntoVAO(
 	glEnableVertexAttribArray(vpos_location);
 	glVertexAttribPointer( vpos_location, 4,
 						   GL_FLOAT, GL_FALSE,
-						   sizeof(sVertex), 
-						   ( void* )offsetof(sVertex,x));
+						   sizeof(sVAOVertex), 
+						   ( void* )offsetof(sVAOVertex,x));
 
 	glEnableVertexAttribArray(vcol_location);
 	glVertexAttribPointer( vcol_location, 4,
 						   GL_FLOAT, GL_FALSE,
-						   sizeof(sVertex), 
-						   ( void* )offsetof(sVertex, r));
+						   sizeof(sVAOVertex),
+						   ( void* )offsetof(sVAOVertex, r));
 
 	glEnableVertexAttribArray(vnorm_location);
 	glVertexAttribPointer(vnorm_location, 4,
 						  GL_FLOAT, GL_FALSE,
-						  sizeof(sVertex),
-						  (void*)offsetof(sVertex, nx));
+						  sizeof(sVAOVertex),
+						  (void*)offsetof(sVAOVertex, nx));
 
 	glEnableVertexAttribArray(vuv_location);
 	glVertexAttribPointer(vuv_location, 4,
 						  GL_FLOAT, GL_FALSE,
-						  sizeof(sVertex),
-						  (void*)offsetof(sVertex, u0));
+						  sizeof(sVAOVertex),
+						  (void*)offsetof(sVAOVertex, u0));
 
 
 	// Now that all the parts are set up, set the VAO to zero

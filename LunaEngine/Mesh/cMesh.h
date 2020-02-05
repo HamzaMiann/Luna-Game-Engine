@@ -8,9 +8,9 @@
 static const unsigned int NUMBEROFBONES = 4;
 
 // structure of loaded data
-struct sPlyVertexXYZ
+struct sMeshVertex
 {
-	sPlyVertexXYZ():
+	sMeshVertex():
 		x(0.f), y(0.f), z(0.f), w(1.f),
 		nx(0.f), ny(0.f), nz(0.f), nw(1.f),
 		u(0.f), v(0.f),
@@ -29,7 +29,7 @@ struct sPlyVertexXYZ
 	float boneWeights[4];	// weights for bones
 };
 
-struct sPlyTriangle
+struct sTriangle
 {
 	unsigned int vert_index_1;
 	unsigned int vert_index_2;
@@ -56,12 +56,13 @@ public:
 	virtual ~cMesh() {};
 
 	std::string name;
+	bool isAnimated = false;
 
 	glm::vec3 min = glm::vec3(FLT_MAX);
 	glm::vec3 max = glm::vec3(FLT_MIN);
 
-	std::vector<sPlyVertexXYZ> vecVertices;
-	std::vector<sPlyTriangle> vecTriangles;
+	std::vector<sMeshVertex> vecVertices;
+	std::vector<sTriangle> vecTriangles;
 	std::vector<sMeshTriangle> vecMeshTriangles;
 
 };

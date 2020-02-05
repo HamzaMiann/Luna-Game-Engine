@@ -16,8 +16,6 @@
   
 	<Textures>
 		<Texture name="fx3_Panels_Color.png"/>
-		<Texture name="scope.jpg"/>
-		<Texture name="scope2.png"/>
 		<Texture name="Grass.png"/>
 		<Texture name="blue.png"/>
 		<Texture name="red.png"/>
@@ -211,7 +209,6 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Texture ratio="1.0">blue.png</Texture>
-      <Texture ratio="1.0">scope2.png</Texture>
     </GameObject>
     
     <GameObject mesh="tv_body" tag="body" shader="basic">

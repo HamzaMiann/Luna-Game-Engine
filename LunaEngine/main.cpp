@@ -62,7 +62,7 @@ void DrawParticle(sParticle* objPtr, glm::mat4 const& v, glm::mat4 const& p);
 
 void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p);
 
-void RenderObjectsToFBO(cFBO& fbo, float width, float height, glm::mat4 p, glm::mat4 v, float dt);
+void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, glm::mat4 p, glm::mat4 v, float dt);
 void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO);
 void RenderQuadToScreen(cFBO& previousFBO);
 
@@ -248,11 +248,11 @@ int main(void)
 #ifdef DEFERRED_RENDERING
 
 	// Set up frame buffer
-	cFBO* fbo = new cFBO;
-	cFBO* second_pass = new cFBO;
-	cFBO* fbo2 = new cFBO;
+	cFBO* albedoFBO = new cFBO;
+	cFBO* second_passFBO = new cFBO;
+	cFBO* finalFBO = new cFBO;
 	std::string fbo_error;
-	if (fbo->init(width, height, fbo_error))
+	if (albedoFBO->init(width, height, fbo_error))
 	{
 		printf("Frame buffer 1 is OK\n");
 	}
@@ -261,7 +261,7 @@ int main(void)
 		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
 		exit(1);
 	}
-	if (fbo2->init(width, height, fbo_error))
+	if (second_passFBO->init(width, height, fbo_error))
 	{
 		printf("Frame buffer 2 is OK\n");
 	}
@@ -270,7 +270,7 @@ int main(void)
 		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
 		exit(1);
 	}
-	if (second_pass->init(width, height, fbo_error))
+	if (finalFBO->init(width, height, fbo_error))
 	{
 		printf("Frame buffer 2 is OK\n");
 	}
@@ -318,6 +318,8 @@ int main(void)
 		float ratio = width / (float)height;
 		glViewport(0, 0, width, height);
 
+		
+
 		cBehaviourManager::Instance()->update(delta_time);
 		cEntityManager::Instance()->Update(delta_time);
 
@@ -337,23 +339,26 @@ int main(void)
 							 0.1f,			// Near clipping plane
 							 1000.f);		// Far clipping plane
 
+		vec3 dir = glm::normalize(scene->camera.Target - scene->camera.Eye);
+
 		// View matrix
 		v = glm::lookAt(vec3(0, 2.f, 0.f),
-						player->transform.pos,
+						vec3(0.f, 2.f, 0.f) + dir,
 						scene->camera.Up);
 
-		RenderObjectsToFBO(*fbo, width, height, p, v, delta_time);
+		RenderObjectsToFBO(albedoFBO, width, height, p, v, delta_time);
 
-		screen->texture[0].SetTexture(fbo->colourTexture_0_ID);
+		// set TV screen texture
+		screen->texture[0].SetTexture(albedoFBO->colourTexture_ID);
 
 		v = glm::lookAt(scene->camera.Eye,
 			scene->camera.Target,
 			scene->camera.Up);
 
-		RenderObjectsToFBO(*second_pass, width, height, p, v, delta_time);
+		RenderObjectsToFBO(second_passFBO, width, height, p, v, delta_time);
 
-		RenderQuadToFBO(*fbo2, *second_pass);
-		RenderQuadToScreen(*fbo2);
+		RenderQuadToFBO(*finalFBO, *second_passFBO);
+		RenderQuadToScreen(*finalFBO);
 
 		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 		renderer->RenderDebugObjects(v, p, 0.01f);
@@ -366,13 +371,13 @@ int main(void)
 
 
 	// Delete everything
-	delete fbo;
-	delete fbo2;
-
-	glfwTerminate();
-
+	delete albedoFBO;
+	delete second_passFBO;
+	delete finalFBO;
 	delete scene;
 	ReleasePhysics();
+
+	glfwTerminate();
 
 	exit(EXIT_SUCCESS);
 }
@@ -658,16 +663,16 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 
 }
 
-void RenderObjectsToFBO(cFBO& fbo, float width, float height, glm::mat4 p, glm::mat4 v, float dt)
+void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, glm::mat4 p, glm::mat4 v, float dt)
 {
-	if (!fbo.reset(width, height, errorString))
+	if (!fbo->reset(width, height, errorString))
 	{
 		std::cout << "fbo was unable to be reset..." << std::endl;
 		exit(1);
 	}
 
 	// Draw to the frame buffer
-	fbo.use();
+	fbo->use();
 
 	// Clear both the colour buffer (what we see) and the 
 		//  depth (or z) buffer.
@@ -801,7 +806,7 @@ void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 	glUseProgram(shaderProgID);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_0_ID);
+	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_ID);
 	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
 
 	glActiveTexture(GL_TEXTURE1);
@@ -842,7 +847,7 @@ void RenderQuadToScreen(cFBO& previousFBO)
 	glUseProgram(shaderProgID);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_0_ID);
+	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_ID);
 	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
 
 	glActiveTexture(GL_TEXTURE3);

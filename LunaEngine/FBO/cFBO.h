@@ -3,41 +3,30 @@
 
 #include <string>
 #include <_GL/GLCommon.h>
+#include <FBO/cSimpleFBO.h>
 
-class cFBO
+class cFBO : public cSimpleFBO
 {
 public:
 	~cFBO() { shutdown(); }
 	cFBO() : 
-		ID(0), 
-		colourTexture_0_ID(0),
-		depthTexture_ID(0), 
+		cSimpleFBO(),
 		normalTexture_ID(0), 
 		positionTexture_ID(0),
 		bloomTexture_ID(0),
-		unlitTexture_ID(0),
-		width(-1), height(-1) {};
+		unlitTexture_ID(0)
+	{ };
 
-	GLuint ID;						// = 0;
-	GLuint colourTexture_0_ID;		// = 0;
-	GLuint depthTexture_ID;			// = 0;
 	GLuint normalTexture_ID;		// = 0;
 	GLuint positionTexture_ID;		// = 0;
 	GLuint bloomTexture_ID;		// = 0;
 	GLuint unlitTexture_ID;		// = 0;
 
-//	GLuint TBDTexture_1_ID;
-//	GLuint TBDTexture_2_ID;
-
-	GLint width;		// = 512 the WIDTH of the framebuffer, in pixels;
-	GLint height;
-
 	// Inits the FBP
-	bool init(int width, int height, std::string &error);
-	bool shutdown(void);
+	virtual bool init(int width, int height, std::string &error) override;
+	virtual bool shutdown(void) override;
 	// Calls shutdown(), then init()
-	bool reset(int width, int height, std::string &error);
-	inline void use() { glBindFramebuffer(GL_FRAMEBUFFER, ID); }
+	virtual bool reset(int width, int height, std::string &error) override;
 	
 	void clearBuffers(bool bClearColour = true, bool bClearDepth = true, bool bClearNormal = true);
 

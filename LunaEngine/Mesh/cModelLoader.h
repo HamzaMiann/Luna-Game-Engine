@@ -3,7 +3,7 @@
 
 #include <string>	
 #include <vector>
-#include <Components/cMesh.h>
+#include <Mesh/cMesh.h>
 
 class cModelLoader
 {

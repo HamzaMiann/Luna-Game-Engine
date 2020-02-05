@@ -13,11 +13,11 @@
 	</Shaders>
   
 	<Textures>
-		<Texture name="Ground_Dirt_007_basecolor.bmp"/>
-		<Texture name="pebbles-beach-textures.bmp"/>
-		<Texture name="fx3_Panels_Color.bmp"/>
-		<Texture name="blue.bmp"/>
-		<Texture name="red.bmp"/>
+		<Texture name="Ground_Dirt_007_basecolor.png"/>
+		<Texture name="pebbles-beach-textures.png"/>
+		<Texture name="fx3_Panels_Color.png"/>
+		<Texture name="blue.png"/>
+		<Texture name="red.png"/>
 	</Textures>
   
 	<Models>
@@ -201,7 +201,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
 			<Collider>SPHERE</Collider>
-			<Texture ratio="1.000000">blue.bmp</Texture>
+			<Texture ratio="1.000000">blue.png</Texture>
       
       <Components>
         
@@ -227,7 +227,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
-      <Texture ratio="1.000000">pebbles-beach-textures.bmp</Texture>
+      <Texture ratio="1.000000">pebbles-beach-textures.png</Texture>
       
       <Components>
         
@@ -250,7 +250,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
-      <Texture ratio="1.000000">blue.bmp</Texture>
+      <Texture ratio="1.000000">blue.png</Texture>
 
       <Components>
 
@@ -273,7 +273,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
-      <Texture ratio="1.000000">red.bmp</Texture>
+      <Texture ratio="1.000000">red.png</Texture>
       
       <Components>
         
@@ -296,7 +296,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
-      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.png</Texture>
 
       <Components>
 
@@ -319,7 +319,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
-      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.bmp</Texture>
+      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.png</Texture>
 
       <Components>
 
@@ -342,7 +342,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
-      <Texture ratio="1.000000">red.bmp</Texture>
+      <Texture ratio="1.000000">red.png</Texture>
 
       <Components>
 
@@ -365,7 +365,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
 
       <Components>
 
@@ -388,7 +388,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
 
       <Components>
 
@@ -411,7 +411,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
-      <Texture ratio="1.000000">blue.bmp</Texture>
+      <Texture ratio="1.000000">blue.png</Texture>
 
       <Components>
 
@@ -434,7 +434,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>SPHERE</Collider>
-      <Texture ratio="1.000000">blue.bmp</Texture>
+      <Texture ratio="1.000000">blue.png</Texture>
 
       <Components>
 
@@ -457,7 +457,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>MESH</Collider>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
       
       <Components>
         
@@ -480,7 +480,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>MESH</Collider>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
 
       <Components>
 
@@ -503,7 +503,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>MESH</Collider>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
 
       <Components>
 
@@ -526,7 +526,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>MESH</Collider>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
 
       <Components>
 
@@ -549,7 +549,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Collider>MESH</Collider>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
 
       <Components>
 
