@@ -23,6 +23,18 @@ public:
 										std::string posZ_fileName, std::string negZ_fileName, 
 										bool bIsSeamless, std::string &errorString );
 
+	bool CreateCubeTextureFromPNGFiles(	std::string cubeMapName,
+										std::string posX_fileName, std::string negX_fileName,
+										std::string posY_fileName, std::string negY_fileName,
+										std::string posZ_fileName, std::string negZ_fileName,
+										bool bIsSeamless, std::string& errorString);
+
+	bool CreateCubeTextureFromJPGFiles(	std::string cubeMapName,
+										std::string posX_fileName, std::string negX_fileName,
+										std::string posY_fileName, std::string negY_fileName,
+										std::string posZ_fileName, std::string negZ_fileName,
+										bool bIsSeamless, std::string& errorString);
+
 
 	// returns 0 on error
 	GLuint getTextureIDFromName( std::string textureFileName );

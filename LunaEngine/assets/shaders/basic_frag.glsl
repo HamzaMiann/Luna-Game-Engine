@@ -14,8 +14,9 @@ uniform vec4 eyeLocation;
 // Used to draw debug (or unlit) objects
 uniform bool isUniform;
 uniform bool isSkybox;
-uniform bool isReflection;
-uniform bool isRefraction;
+
+uniform float reflectivity;	// 0 - 1
+uniform float refractivity; // 0 - 1
 
 // Texture
 uniform sampler2D textSamp00;
@@ -90,31 +91,6 @@ void main()
 	normalColour = vec4(normalize(fNormal.xyz) + 1.0, 1.0);
 	positionColour = vec4(fVertWorldLocation.xyz, 1.0);
 
-	if (isReflection)
-	{
-		vec3 direction = normalize(fVertWorldLocation.xyz - eyeLocation.xyz);
-		vec3 rd = reflect(direction, fNormal.xyz);
-		vec3 col = texture(skyBox, rd.xyz).rgb;
-		pixelColour.rgb = col.rgb;
-		pixelColour.a = 1.0;
-		//unlitColour += 1.0;
-
-		return;
-	}
-
-	if (isRefraction)
-	{
-		float ratio = 1.00 / 1.52;
-		vec3 direction = normalize(fVertWorldLocation.xyz - eyeLocation.xyz);
-		vec3 rd = refract(direction, fNormal.xyz, ratio);	// for refraction
-		vec3 col = texture(skyBox, rd.xyz).rgb;
-		pixelColour.rgb = col.rgb;
-		pixelColour.a = 1.0;
-		//unlitColour += 1.0;
-
-		return;
-	}
-
 	if (isUniform)
 	{
 		pixelColour.rgb = diffuseColour.rgb;
@@ -159,7 +135,14 @@ void main()
 				  + ( tex_0_3_ratio.z * tex2_RGB )
 				  + ( tex_0_3_ratio.w * tex3_RGB );
 
+	vec3 direction = normalize(fVertWorldLocation.xyz - eyeLocation.xyz);
+
+	vec3 reflectiveColour = texture(skyBox, reflect(direction, fNormal.xyz)).rgb;
+	vec3 refractiveColour = texture(skyBox, refract(direction, fNormal.xyz, 1.0 / 1.52)).rgb;
+
 	pixelColour = vec4(texRGB, diffuseColour.a);
+	pixelColour.rgb = mix(pixelColour.rgb, reflectiveColour.rgb, reflectivity);
+	pixelColour.rgb = mix(pixelColour.rgb, refractiveColour.rgb, refractivity);
 	return;
 
 	vec4 materialColour = diffuseColour;

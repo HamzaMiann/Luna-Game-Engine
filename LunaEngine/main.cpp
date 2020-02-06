@@ -164,10 +164,14 @@ int main(void)
 
 	textureManager = cBasicTextureManager::Instance();
 	textureManager->SetBasePath("assets/textures/cubemaps/");
-	if (textureManager->CreateCubeTextureFromBMPFiles("space",
-													  "right.bmp", "left.bmp",
-													  "top.bmp", "bottom.bmp",
-													  "front.bmp", "back.bmp", true, errorString))
+	/*if (textureManager->CreateCubeTextureFromPNGFiles("space",
+													  "pink_left.png", "pink_right.png",
+													  "pink_top.png", "pink_bottom.png",
+													  "pink_front.png", "pink_back.png", true, errorString))*/
+	if (textureManager->CreateCubeTextureFromJPGFiles("space",
+													  "mountains_right.jpg", "mountains_left.jpg",
+													  "mountains_top.jpg", "mountains_bottom.jpg",
+													  "mountains_front.jpg", "mountains_back.jpg", true, errorString))
 	{
 		scene = Scene::LoadFromXML("sandbox.scene.xml");
 		pSkyBoxSphere->transform.pos = vec3(0.f);
@@ -281,7 +285,9 @@ int main(void)
 	cBehaviourManager::Instance()->start();
 
 	cGameObject* screen = cEntityManager::Instance()->GetGameObjectByTag("scope");
-	cGameObject* player = cEntityManager::Instance()->GetGameObjectByTag("reflect");
+	cGameObject* player = cEntityManager::Instance()->GetGameObjectByTag("player");
+	cEntityManager::Instance()->GetGameObjectByTag("character")->refractivity = 1.0f;
+	player->reflectivity = 1.0f;
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -453,51 +459,55 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 
 
 	GLint bIsSkyBox_UL = shader["isSkybox"];
-	GLint isReflection = shader["isReflection"];
-	GLint isRefraction = shader["isRefraction"];
+	glUniform1f(shader["reflectivity"], objPtr->reflectivity);
+	glUniform1f(shader["refractivity"], objPtr->refractivity);
 
 
 	if (objPtr->tag != "skybox")
 	{
-		if (objPtr->tag == "reflect")
+		//if (objPtr->tag == "reflect")
+		//{
+		//	glCullFace(GL_BACK);
+		//	glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
+
+		//	GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
+		//	glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
+		//	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+
+		//	// Tie the texture units to the samplers in the shader
+		//	GLint skyBoxSampler_UL = shader["skyBox"];
+		//	glUniform1i(skyBoxSampler_UL, 26);
+
+		//}
+		//else if (objPtr->tag == "refract")
+		//{
+		//	glCullFace(GL_BACK);
+		//	glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
+
+		//	GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
+		//	glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
+		//	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+
+		//	// Tie the texture units to the samplers in the shader
+		//	GLint skyBoxSampler_UL = shader["skyBox"];
+		//	glUniform1i(skyBoxSampler_UL, 26);
+
+		//}
+		//else
 		{
-			glCullFace(GL_BACK);
-			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
-			glUniform1i(isReflection, (int)GL_TRUE);
-			glUniform1i(isRefraction, (int)GL_FALSE);
-
-			GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
-			glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
-			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
-
-			// Tie the texture units to the samplers in the shader
-			GLint skyBoxSampler_UL = shader["skyBox"];
-			glUniform1i(skyBoxSampler_UL, 26);
-
-		}
-		else if (objPtr->tag == "refract")
-		{
-			glCullFace(GL_BACK);
-			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
-			glUniform1i(isReflection, (int)GL_FALSE);
-			glUniform1i(isRefraction, (int)GL_TRUE);
-
-			GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
-			glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
-			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
-
-			// Tie the texture units to the samplers in the shader
-			GLint skyBoxSampler_UL = shader["skyBox"];
-			glUniform1i(skyBoxSampler_UL, 26);
-
-		}
-		else
-		{
-			glUniform1i(isReflection, (int)GL_FALSE);
-			glUniform1i(isRefraction, (int)GL_FALSE);
-			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
 			// Don't draw back facing triangles (default)
 			glCullFace(GL_BACK);
+			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
+			
+			GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
+			glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
+			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+
+			// Tie the texture units to the samplers in the shader
+			GLint skyBoxSampler_UL = shader["skyBox"];
+			glUniform1i(skyBoxSampler_UL, 26);
+
+
 			SetUpTextureBindingsForObject(objPtr);
 		}
 	}
@@ -507,11 +517,8 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 		// Because we are inside the object, so it will force a draw on the "back" of the sphere 
 		glCullFace(GL_FRONT);
 		//glCullFace(GL_FRONT_AND_BACK);
-		glUniform1i(shader["isReflection"], (int)GL_FALSE);
 
 		glUniform1f(bIsSkyBox_UL, (float)GL_TRUE);
-		glUniform1i(isReflection, (int)GL_FALSE);
-		glUniform1i(isRefraction, (int)GL_FALSE);
 
 		GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
 		glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
@@ -651,8 +658,7 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 	
 	if (!node->has_nodes)
 	{
-		glUniform1i(glGetUniformLocation(obj->shader.GetID(), "isWater"),
-			false);
+		glUniform1i(obj->shader["isWater"], (int)GL_FALSE);
 
 		objPtr->transform.pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
 		objPtr->transform.scale = glm::vec3(node->AABB->length / 2.f);
@@ -817,30 +823,35 @@ void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 
 	// 3. Use the FBO colour texture as the texture on that quad
 	GLint shaderProgID = quad.shader.GetID();
+	Shader& shader = quad.shader;
 	glUseProgram(shaderProgID);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_ID);
-	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
+	glUniform1i(shader["textSamp00"], 0);	// Texture unit 0
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.normalTexture_ID);
-	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp01"), 1);	// Texture unit 1
+	glUniform1i(shader["textSamp01"], 1);	// Texture unit 1
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.positionTexture_ID);
-	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp02"), 2);	// Texture unit 2
+	glUniform1i(shader["textSamp02"], 2);	// Texture unit 2
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.bloomTexture_ID);
-	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
+	glUniform1i(shader["textSamp03"], 3);	// Texture unit 3
 
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.unlitTexture_ID);
-	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp04"), 4);	// Texture unit 4
+	glUniform1i(shader["textSamp04"], 4);	// Texture unit 4
 
 	// 4. Draw a single object (a triangle or quad)
-	glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_FALSE);
+	glUniform1i(shader["isFinalPass"], (int)GL_FALSE);
+
+	glUniform2f(shader["iResolution"],
+		width,
+		height);
 
 	glm::mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
 	pass_id = 2;
@@ -857,6 +868,7 @@ void RenderQuadToScreen(cFBO& previousFBO)
 
 	// LAST RENDER PASS
 	GLint shaderProgID = quad.shader.GetID();
+	Shader& shader = quad.shader;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, width, height);
@@ -865,16 +877,16 @@ void RenderQuadToScreen(cFBO& previousFBO)
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_ID);
-	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp00"), 0);	// Texture unit 0
+	glUniform1i(shader["textSamp00"], 0);	// Texture unit 0
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.bloomTexture_ID);
-	glUniform1i(glGetUniformLocation(shaderProgID, "textSamp03"), 3);	// Texture unit 3
+	glUniform1i(shader["textSamp03"], 3);	// Texture unit 3
 
-	glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_TRUE);
+	glUniform1i(shader["isFinalPass"], (int)GL_TRUE);
 
 	glm::mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
-	glUniformMatrix4fv(quad.shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
+	glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
 
 	DrawObject(&quad, glm::mat4(1.f), p);
 }

@@ -51,23 +51,23 @@ bool cBasicTextureManager::Create2DTextureFromPNGFile(std::string textureFileNam
 	}
 
 	// Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
-	size_t u2 = 1; while (u2 < width) u2 *= 2;
-	size_t v2 = 1; while (v2 < height) v2 *= 2;
-	// Ratio for power of two version compared to actual version, to render the non power of two image with proper size.
-	double u3 = (double)width / u2;
-	double v3 = (double)height / v2;
+	//size_t u2 = 1; while (u2 < width) u2 *= 2;
+	//size_t v2 = 1; while (v2 < height) v2 *= 2;
+	//// Ratio for power of two version compared to actual version, to render the non power of two image with proper size.
+	//double u3 = (double)width / u2;
+	//double v3 = (double)height / v2;
 
-	std::vector<unsigned char> image2(u2 * v2 * 4);
-	for (size_t y = 0; y < height; y++)
-	{
-		for (size_t x = 0; x < width; x++)
-		{
-			for (size_t c = 0; c < 4; c++)
-			{
-				image2[4 * u2 * y + 4 * x + c] = image[4 * width * y + 4 * x + c];
-			}
-		}
-	}
+	//std::vector<unsigned char> image2(u2 * v2 * 4);
+	//for (size_t y = 0; y < height; y++)
+	//{
+	//	for (size_t x = 0; x < width; x++)
+	//	{
+	//		for (size_t c = 0; c < 4; c++)
+	//		{
+	//			image2[4 * u2 * y + 4 * x + c] = image[4 * width * y + 4 * x + c];
+	//		}
+	//	}
+	//}
 
 	unsigned int texture;
 	glGenTextures(1, &texture);
@@ -232,6 +232,92 @@ bool cBasicTextureManager::CreateCubeTextureFromBMPFiles(
 	
 	this->m_map_TexNameToTexture[ cubeMapName ] = pTempTexture;
 	this->m_map_NameToID[ cubeMapName ] = pTempTexture->getTextureNumber();
+
+	return true;
+}
+
+bool cBasicTextureManager::CreateCubeTextureFromPNGFiles(	std::string cubeMapName,
+															std::string posX_fileName, std::string negX_fileName,
+															std::string posY_fileName, std::string negY_fileName,
+															std::string posZ_fileName, std::string negZ_fileName,
+															bool bIsSeamless,
+															std::string& errorString)
+{
+
+	std::vector<std::string> files = { posX_fileName, negX_fileName, posY_fileName, negY_fileName, posZ_fileName, negZ_fileName };
+
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	for (unsigned int i = 0; i < files.size(); ++i)
+	{
+		std::string& file = files[i];
+		std::string fileToLoadFullPath = this->m_basePath + "/" + file;
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		unsigned error = lodepng::decode(image, width, height, fileToLoadFullPath);
+		if (error != 0)
+		{
+			errorString = "Error: Could not load cubemap (" + error + std::string(")");
+			return false;
+		}
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+			0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]
+		);
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	m_map_NameToID[cubeMapName] = textureID;
+
+	return true;
+}
+
+bool cBasicTextureManager::CreateCubeTextureFromJPGFiles(	std::string cubeMapName,
+															std::string posX_fileName, std::string negX_fileName,
+															std::string posY_fileName, std::string negY_fileName,
+															std::string posZ_fileName, std::string negZ_fileName,
+															bool bIsSeamless,
+															std::string& errorString)
+{
+	// TAKEN FROM https://learnopengl.com/Advanced-OpenGL/Cubemaps
+
+	std::vector<std::string> files = { posX_fileName, negX_fileName, posY_fileName, negY_fileName, posZ_fileName, negZ_fileName };
+
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	int width, height, nrChannels;
+	for (unsigned int i = 0; i < files.size(); i++)
+	{
+		std::string fileToLoadFullPath = this->m_basePath + "/" + files[i];
+		unsigned char* data = stbi_load(fileToLoadFullPath.c_str(), &width, &height, &nrChannels, 0);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+			);
+			stbi_image_free(data);
+		}
+		else
+		{
+			stbi_image_free(data);
+			return false;
+		}
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	m_map_NameToID[cubeMapName] = textureID;
 
 	return true;
 }

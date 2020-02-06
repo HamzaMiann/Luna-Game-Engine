@@ -221,7 +221,7 @@
       <Texture ratio="1.000000">red.png</Texture>
     </GameObject>
 
-    <GameObject mesh="character" tag="refract" shader="basic">
+    <GameObject mesh="character" tag="character" shader="basic">
       <Position x="7.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
       <Scale>0.03</Scale>
@@ -231,7 +231,7 @@
       <Texture ratio="1.000000">red.png</Texture>
     </GameObject>
     
-		<GameObject mesh="sphere" tag="reflect" shader="basic">
+		<GameObject mesh="sphere" tag="player" shader="basic">
 			<Position x="0.0" y="1.0" z="3.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
       <Scale>1.0</Scale>

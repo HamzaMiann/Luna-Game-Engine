@@ -16,13 +16,11 @@ uniform bool isUniform;
 uniform bool isSkybox;
 
 // Texture
-uniform sampler2D textSamp00;
-uniform sampler2D textSamp01;
-uniform sampler2D textSamp02;
-uniform sampler2D textSamp03;
-uniform sampler2D textSamp04;
-uniform vec4 tex_0_3_ratio;		// x = 0, y = 1, z = 2, w = 3
-uniform samplerCube skyBox;
+uniform sampler2D textSamp00;	// albedo
+uniform sampler2D textSamp01;	// normal
+uniform sampler2D textSamp02;	// position
+uniform sampler2D textSamp03;	// bloom
+uniform sampler2D textSamp04;	// unlit
 
 
 // Globals
@@ -65,6 +63,40 @@ uniform int NUMBEROFLIGHTS;
 uniform sLight theLights[LIGHT_BUFFER];
 
 const int num_samples = 13;
+
+const float GOLDEN_ANGLE = 2.39996323; 
+const float MAX_BLUR_SIZE = 5.0; 
+const float RAD_SCALE = 2.0; // Smaller = nicer blur, larger = faster
+
+float getBlurSize(float depth, float focusPoint, float focusScale)
+{
+	float coc = clamp((1.0 / focusPoint - 1.0 / depth)*focusScale, -1.0, 1.0);
+	return abs(coc) * MAX_BLUR_SIZE;
+}
+
+vec3 depthOfField(vec2 texCoord, float focusPoint, float focusScale)
+{
+	vec2 uPixelSize = vec2(1.0 / iResolution.x, 1.0 / iResolution.y);
+	float depth = distance(texture(textSamp02, texCoord).rgb, eyeLocation.rgb);
+	float centerDepth = depth;
+	float centerSize = getBlurSize(centerDepth, focusPoint, focusScale);
+	vec3 color = texture(textSamp00, texCoord).rgb;
+	float tot = 1.0;
+	float radius = RAD_SCALE;
+	for (float ang = 0.0; radius<MAX_BLUR_SIZE; ang += GOLDEN_ANGLE)
+	{
+		vec2 tc = texCoord + vec2(cos(ang), sin(ang)) * uPixelSize * radius;
+		vec3 sampleColor = texture(textSamp00, tc).rgb;
+		float sampleDepth = distance(texture(textSamp02, tc).rgb, eyeLocation.rgb);
+		float sampleSize = getBlurSize(sampleDepth, focusPoint, focusScale);
+		if (sampleDepth > centerDepth)
+			sampleSize = clamp(sampleSize, 0.0, centerSize*2.0);
+		float m = smoothstep(radius-0.5, radius+0.5, sampleSize);
+		color += mix(color/tot, sampleColor, m);
+		tot += 1.0;   radius += RAD_SCALE/radius;
+	}
+	return color /= tot;
+}
 
 vec4 Blur(sampler2D tex)
 {
@@ -138,7 +170,8 @@ void main()
 
 	if (isFinalPass)
 	{
-		pixelColour.rgb = texture(textSamp00, uv).rgb;
+//		pixelColour.rgb = texture(textSamp00, uv).rgb;
+		pixelColour.rgb = depthOfField(uv, 10.0, 5.0);
 		pixelColour.a = 1.0;
 
 		vec3 bloom = Bloom().rgb * 1.0;
