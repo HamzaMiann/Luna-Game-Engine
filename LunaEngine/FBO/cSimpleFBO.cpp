@@ -116,3 +116,10 @@ bool cSimpleFBO::reset(int width, int height, std::string& error)
 
 	return this->init(width, height, error);
 }
+
+bool cSimpleFBO::clear_all()
+{
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	return true;
+}

@@ -282,6 +282,9 @@
     <ClCompile Include="FBO\cSimpleFBO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Components\cMaterial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cGameObject.h">
@@ -429,9 +432,6 @@
       <Filter>ShadersRendering</Filter>
     </ClInclude>
     <ClInclude Include="Components\cRigidBody.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\Colliders\iCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="iEngine.h">

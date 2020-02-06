@@ -168,6 +168,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Behaviour\iBehaviour.cpp" />
     <ClCompile Include="Behaviour\Managers\cAIGameManager.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Components\cMaterial.cpp" />
     <ClCompile Include="Components\ComponentFactory.cpp" />
     <ClCompile Include="Components\cRigidBody.cpp" />
     <ClCompile Include="EntityManager\cEntityManager.cpp" />
@@ -237,7 +238,6 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Behaviour\Managers\cAIGameManager.h" />
     <ClInclude Include="Components\ComponentFactory.h" />
     <ClInclude Include="Components\cMaterial.h" />
-    <ClInclude Include="Components\Colliders\iCollider.h" />
     <ClInclude Include="Components\cRigidBody.h" />
     <ClInclude Include="EntityManager\cEntityManager.h" />
     <ClInclude Include="FBO\cSimpleFBO.h" />

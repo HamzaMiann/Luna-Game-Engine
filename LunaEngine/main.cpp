@@ -40,8 +40,6 @@
 
 
 #define CAMERA_CONTROL
-#define _DEBUG
-#define DEFERRED_RENDERING
 
 std::string errorString;
 cGameObject quad;
@@ -204,7 +202,7 @@ int main(void)
 	glm::vec3 max = scene->pModelLoader->max;
 	
 
-	cParticleEffect pEffect(200);
+	/*cParticleEffect pEffect(200);
 	pEffect.min_time = .1f;
 	pEffect.max_time = 3.f;
 	pEffect.min_scale = 0.001f;
@@ -212,7 +210,7 @@ int main(void)
 	pEffect.pos = vec3(0.f, 20.f, 0.f);
 	pEffect.min_vel = vec3(-.3f);
 	pEffect.max_vel = vec3(.3f);
-	pEffect.Generate();
+	pEffect.Generate();*/
 
 	cGameObject* sphere = new cGameObject;
 	sphere->meshName = "sphere_particle";
@@ -245,7 +243,6 @@ int main(void)
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 
-#ifdef DEFERRED_RENDERING
 
 	// Set up frame buffer
 	cFBO* albedoFBO = new cFBO;
@@ -279,12 +276,6 @@ int main(void)
 		printf("Frame buffer broke :(\n%s\n", fbo_error.c_str());
 		exit(1);
 	}
-#endif
-
-	//scene->vecGameObjects[0]->AddComponent<cSphereBehaviour>();
-
-	// MUST COME BEFORE THE START METHODS
-	//cEntityManager::Instance()->SetEntities(&scene->vecGameObjects);
 
 	// Run the start method on all behaviour components
 	cBehaviourManager::Instance()->start();
@@ -314,8 +305,19 @@ int main(void)
 		// Handle key inputs
 		HandleInput(window);
 
-		glfwGetFramebufferSize(window, &width, &height);
+		int newWidth, newHeight;
+		glfwGetFramebufferSize(window, &newWidth, &newHeight);
 		float ratio = width / (float)height;
+
+		if (newWidth != width || newHeight != height)
+		{
+			albedoFBO->reset(newWidth, newHeight, fbo_error);
+			second_passFBO->reset(newWidth, newHeight, fbo_error);
+			finalFBO->reset(newWidth, newHeight, fbo_error);
+		}
+
+		width = newWidth;
+		height = newHeight;
 		glViewport(0, 0, width, height);
 
 		
@@ -339,7 +341,7 @@ int main(void)
 							 0.1f,			// Near clipping plane
 							 1000.f);		// Far clipping plane
 
-		vec3 dir = glm::normalize(scene->camera.Target - scene->camera.Eye);
+		vec3 dir = glm::normalize(vec3(0, 2.f, 0.f) - scene->camera.Eye);
 
 		// View matrix
 		v = glm::lookAt(vec3(0, 2.f, 0.f),
@@ -383,11 +385,12 @@ int main(void)
 }
 
 
-void SetUpTextureBindingsForObject(
-	cGameObject* pCurrentObject,
-	GLint shaderProgID)
+void SetUpTextureBindingsForObject(cGameObject* pCurrentObject)
 {
 	if (pass_id != 1) return;
+
+	Shader& shader = pCurrentObject->shader;
+	GLint shaderProgID = shader.GetID();
 
 	// Tie the texture to the texture unit
 	GLuint texSamp0_UL = pCurrentObject->texture[0].GetID();
@@ -407,20 +410,20 @@ void SetUpTextureBindingsForObject(
 	glBindTexture(GL_TEXTURE_2D, texSamp3_UL);	// Texture now assoc with texture unit 0
 
 	// Tie the texture units to the samplers in the shader
-	GLint textSamp00_UL = glGetUniformLocation(shaderProgID, "textSamp00");
+	GLint textSamp00_UL = shader["textSamp00"];
 	glUniform1i(textSamp00_UL, 0);	// Texture unit 0
 
-	GLint textSamp01_UL = glGetUniformLocation(shaderProgID, "textSamp01");
+	GLint textSamp01_UL = shader["textSamp01"];
 	glUniform1i(textSamp01_UL, 1);	// Texture unit 1
 
-	GLint textSamp02_UL = glGetUniformLocation(shaderProgID, "textSamp02");
+	GLint textSamp02_UL = shader["textSamp02"];
 	glUniform1i(textSamp02_UL, 2);	// Texture unit 2
 
-	GLint textSamp03_UL = glGetUniformLocation(shaderProgID, "textSamp03");
+	GLint textSamp03_UL = shader["textSamp03"];
 	glUniform1i(textSamp03_UL, 3);	// Texture unit 3
 
 
-	GLint tex0_ratio_UL = glGetUniformLocation(shaderProgID, "tex_0_3_ratio");
+	GLint tex0_ratio_UL = shader["tex_0_3_ratio"];
 	glUniform4f(tex0_ratio_UL,
 		pCurrentObject->texture[0].GetBlend(),
 		pCurrentObject->texture[1].GetBlend(),
@@ -434,9 +437,10 @@ void SetUpTextureBindingsForObject(
 
 void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 {
-	GLint shaderProgID = objPtr->shader.GetID();
+	Shader& shader = objPtr->shader;
+	GLint shaderProgID = shader.GetID();
 
-	GLint scopeUL = glGetUniformLocation(shaderProgID, "isScope");
+	GLint scopeUL = shader["isScope"];
 	if (objPtr->tag == "scope")
 	{
 		glUniform1i(scopeUL, (int)GL_TRUE);
@@ -448,9 +452,9 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 
 
 
-	GLint bIsSkyBox_UL = glGetUniformLocation(shaderProgID, "isSkybox");
-	GLint isReflection = glGetUniformLocation(shaderProgID, "isReflection");
-	GLint isRefraction = glGetUniformLocation(shaderProgID, "isRefraction");
+	GLint bIsSkyBox_UL = shader["isSkybox"];
+	GLint isReflection = shader["isReflection"];
+	GLint isRefraction = shader["isRefraction"];
 
 
 	if (objPtr->tag != "skybox")
@@ -467,7 +471,7 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
 
 			// Tie the texture units to the samplers in the shader
-			GLint skyBoxSampler_UL = glGetUniformLocation(shaderProgID, "skyBox");
+			GLint skyBoxSampler_UL = shader["skyBox"];
 			glUniform1i(skyBoxSampler_UL, 26);
 
 		}
@@ -483,7 +487,7 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
 
 			// Tie the texture units to the samplers in the shader
-			GLint skyBoxSampler_UL = glGetUniformLocation(shaderProgID, "skyBox");
+			GLint skyBoxSampler_UL = shader["skyBox"];
 			glUniform1i(skyBoxSampler_UL, 26);
 
 		}
@@ -494,7 +498,7 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
 			// Don't draw back facing triangles (default)
 			glCullFace(GL_BACK);
-			SetUpTextureBindingsForObject(objPtr, shaderProgID);
+			SetUpTextureBindingsForObject(objPtr);
 		}
 	}
 	else
@@ -503,7 +507,7 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 		// Because we are inside the object, so it will force a draw on the "back" of the sphere 
 		glCullFace(GL_FRONT);
 		//glCullFace(GL_FRONT_AND_BACK);
-		glUniform1i(glGetUniformLocation(shaderProgID, "isReflection"), (int)GL_FALSE);
+		glUniform1i(shader["isReflection"], (int)GL_FALSE);
 
 		glUniform1f(bIsSkyBox_UL, (float)GL_TRUE);
 		glUniform1i(isReflection, (int)GL_FALSE);
@@ -514,7 +518,7 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
 
 		// Tie the texture units to the samplers in the shader
-		GLint skyBoxSampler_UL = glGetUniformLocation(shaderProgID, "skyBox");
+		GLint skyBoxSampler_UL = shader["skyBox"];
 		glUniform1i(skyBoxSampler_UL, 26);	// Texture unit 26
 	}
 
@@ -555,7 +559,7 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 
 	if (pass_id != 1) m = glm::mat4(1.f);
 
-	GLint matModelIT_UL = glGetUniformLocation(shaderProgID, "matModelInverTrans");
+	GLint matModelIT_UL = shader["matModelInverTrans"];
 	glm::mat4 matModelInverseTranspose = glm::inverse(glm::transpose(m));
 	glUniformMatrix4fv(matModelIT_UL, 1, GL_FALSE, glm::value_ptr(matModelInverseTranspose));
 
@@ -569,17 +573,15 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 	// ******* SCALE TRANSFORM *********
 	
 
-	GLint matModel_UL = glGetUniformLocation(shaderProgID, "matModel");
-	GLint matView_UL = glGetUniformLocation(shaderProgID, "matView");
-	GLint matProj_UL = glGetUniformLocation(shaderProgID, "matProj");
+	
 
+	GLint matModel_UL = shader["matModel"];
 	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(objPtr->transform.ModelMatrix()));
-	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
-	glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p));
+	
 
 	
 
-	GLint eye_loc = glGetUniformLocation(shaderProgID, "eyeLocation");
+	GLint eye_loc = shader["eyeLocation"];
 	glUniform4f(eye_loc,
 				scene->camera.Eye.x,
 				scene->camera.Eye.y,
@@ -587,7 +589,7 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 				1.0f
 	);
 
-	GLint diff_loc = glGetUniformLocation(shaderProgID, "diffuseColour");
+	GLint diff_loc = shader["diffuseColour"];
 	glUniform4f(diff_loc,
 				objPtr->colour.x,
 				objPtr->colour.y,
@@ -595,7 +597,7 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 				objPtr->colour.w
 	);
 
-	GLint spec_loc = glGetUniformLocation(shaderProgID, "specularColour");
+	GLint spec_loc = shader["specularColour"];
 	glUniform4f(spec_loc,
 				objPtr->specColour.x,
 				objPtr->specColour.y,
@@ -603,13 +605,13 @@ void DrawObject(cGameObject* objPtr, glm::mat4 const& v, glm::mat4 const& p)
 				objPtr->specIntensity
 	);
 
-	GLint isUniform_location = glGetUniformLocation(shaderProgID, "isUniform");
+	GLint isUniform_location = shader["isUniform"];
 	glUniform1i(isUniform_location, objPtr->uniformColour);
 
 
 	if (pass_id != 1)
 	{
-		scene->pLightManager->Set_Light_Data(shaderProgID);
+		scene->pLightManager->Set_Light_Data(shader);
 	}
 
 
@@ -665,14 +667,15 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 
 void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, glm::mat4 p, glm::mat4 v, float dt)
 {
-	if (!fbo->reset(width, height, errorString))
+	/*if (!fbo->reset(width, height, errorString))
 	{
 		std::cout << "fbo was unable to be reset..." << std::endl;
 		exit(1);
-	}
+	}*/
 
 	// Draw to the frame buffer
 	fbo->use();
+	fbo->clear_all();
 
 	// Clear both the colour buffer (what we see) and the 
 		//  depth (or z) buffer.
@@ -682,7 +685,7 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, glm::mat4 p,
 	//glDisable( GL_BLEND );
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	float ratio = width / height;
+	//float ratio = width / height;
 
 
 	int lastShader = -1;
@@ -710,6 +713,7 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, glm::mat4 p,
 #endif
 
 		cGameObject* objPtr = objects[index];
+		Shader& shader = objects[index]->shader;
 
 		cMaterial* material = objPtr->GetComponent<cMaterial>();
 		if (material != nullptr)
@@ -720,7 +724,7 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, glm::mat4 p,
 		objPtr->cmd_group->Update(dt);
 		objPtr->brain->Update(dt);
 
-		GLint shaderProgID = objPtr->shader.GetID();
+		GLint shaderProgID = shader.GetID();
 
 		// Only switch shaders if needed
 		if (lastShader != shaderProgID)
@@ -730,15 +734,19 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, glm::mat4 p,
 
 			// set time
 			float time = glfwGetTime();
-			glUniform1f(glGetUniformLocation(shaderProgID, "iTime"), time);
+			
+			glUniform1f(shader["iTime"], time);
 
 			// set resolution
-			glUniform2f(glGetUniformLocation(shaderProgID, "iResolution"),
+			glUniform2f(shader["iResolution"],
 				width,
 				height);
 
-			glUniform1i(glGetUniformLocation(shaderProgID, "isWater"),
+			glUniform1i(shader["isWater"],
 				false);
+
+			glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
+			glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
 		}
 
 		DrawObject(objPtr, v, p);
@@ -748,6 +756,7 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, glm::mat4 p,
 
 	// RENDER SKYBOX
 	cGameObject* objPtr = pSkyBoxSphere;
+	Shader& shader = objPtr->shader;
 
 	cMaterial* material = objPtr->GetComponent<cMaterial>();
 	if (material != nullptr)
@@ -758,7 +767,7 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, glm::mat4 p,
 	objPtr->cmd_group->Update(dt);
 	objPtr->brain->Update(dt);
 
-	GLint shaderProgID = objPtr->shader.GetID();
+	GLint shaderProgID = shader.GetID();
 
 	// Only switch shaders if needed
 	if (lastShader != shaderProgID)
@@ -768,15 +777,19 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, glm::mat4 p,
 
 		// set time
 		float time = glfwGetTime();
-		glUniform1f(glGetUniformLocation(shaderProgID, "iTime"), time);
+
+		glUniform1f(shader["iTime"], time);
 
 		// set resolution
-		glUniform2f(glGetUniformLocation(shaderProgID, "iResolution"),
+		glUniform2f(shader["iResolution"],
 			width,
 			height);
 
-		glUniform1i(glGetUniformLocation(shaderProgID, "isWater"),
+		glUniform1i(shader["isWater"],
 			false);
+
+		glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
+		glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
 	}
 
 	DrawObject(objPtr, v, p);
@@ -788,14 +801,15 @@ void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 	float height = previousFBO.height;
 
 	// 1. Disable the FBO
-	if (!fbo.reset(width, height, errorString))
+	/*if (!fbo.reset(width, height, errorString))
 	{
 		std::cout << "fbo was unable to be reset..." << std::endl;
 		exit(1);
-	}
+	}*/
 
 	// Draw to the frame buffer
 	fbo.use();
+	fbo.clear_all();
 
 	// 2. Clear the ACTUAL screen buffer
 	glViewport(0, 0, width, height);
@@ -831,8 +845,11 @@ void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 	glm::mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
 	pass_id = 2;
 
+	glUniformMatrix4fv(quad.shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
+
 	DrawObject(&quad, glm::mat4(1.f), p);
 }
+
 void RenderQuadToScreen(cFBO& previousFBO)
 {
 	float width = previousFBO.width;
@@ -857,7 +874,7 @@ void RenderQuadToScreen(cFBO& previousFBO)
 	glUniform1i(glGetUniformLocation(shaderProgID, "isFinalPass"), (int)GL_TRUE);
 
 	glm::mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
-	glm::mat4 v(1.f);
+	glUniformMatrix4fv(quad.shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
 
-	DrawObject(&quad, v, p);
+	DrawObject(&quad, glm::mat4(1.f), p);
 }

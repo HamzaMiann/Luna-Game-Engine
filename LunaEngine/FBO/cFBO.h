@@ -8,7 +8,7 @@
 class cFBO : public cSimpleFBO
 {
 public:
-	~cFBO() { shutdown(); }
+	virtual ~cFBO() { }
 	cFBO() : 
 		cSimpleFBO(),
 		normalTexture_ID(0), 

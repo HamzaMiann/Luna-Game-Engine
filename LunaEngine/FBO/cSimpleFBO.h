@@ -6,7 +6,7 @@
 class cSimpleFBO
 {
 public:
-	~cSimpleFBO() { shutdown(); }
+	virtual ~cSimpleFBO() { shutdown(); }
 	cSimpleFBO() :
 		ID(0),
 		colourTexture_ID(0),
@@ -27,6 +27,7 @@ public:
 	virtual bool shutdown(void);
 	// Calls shutdown(), then init()
 	virtual bool reset(int width, int height, std::string& error);
+	virtual bool clear_all();
 	inline void use() { glBindFramebuffer(GL_FRAMEBUFFER, ID); }
 
 };

@@ -1,29 +1,43 @@
 #pragma once
 
 #include <iObject.h>
+#include <string>
 #include <glm/vec4.hpp>
 #include <glm/vec3.hpp>
-#include <string>
+#include <Texture/cTexture.h>
+#include <Shader/Shader.h>
+#include <Mesh/cVAOManager.h>
 
 class cMaterial : public iComponent
 {
 public:
-	cMaterial(iObject* obj) : transform(obj->transform) {}
+	cMaterial(iObject* obj);
+	~cMaterial();
 
 	sTransform& transform;
+	iObject& parent;
 
-	std::string meshName = "";
-	std::string shaderName = "basic";
+	std::string layer;
 
-	glm::vec4  colour = glm::vec4(1.f, 1.f, 1.f, 1.f);
-	glm::vec3 specColour = glm::vec3(.5f, .5f, .5f);
+	cTexture texture[4];
+	Shader shader;
+	sModelDrawInfo* mesh;
 
-	float specIntensity = 1.f;
+	glm::vec4 specColour; // w value is intensity
 
-	bool uniformColour = false;
-	bool isWireframe = false;
-	bool isSkybox = false;
+	float reflectivity;
+	float refractivity;
 
-	std::string texture[4];
-	float textureRatio[4];
+	bool isUniformColour;
+	bool isWireframe;
+	bool isSkybox;
+
+	void SetMesh(std::string meshName);
+
+
+	// Inherited via iComponent
+	virtual bool serialize(rapidxml::xml_node<>* root_node) override;
+
+	virtual bool deserialize(rapidxml::xml_node<>* root_node) override;
+
 };

@@ -30,8 +30,6 @@ private:
 
 public:
 
-	Camera camera;
-
 	~RenderingEngine();
 
 	static RenderingEngine* Instance()
@@ -40,10 +38,9 @@ public:
 		return &instance;
 	}
 
-	Camera* MainCamera();
-
 	void UpdateView();
-	void SetUpTextureBindingsForObject(cMaterial* material, int shaderProgID);
+	void SetUpTextureBindings(cMaterial& material);
 	void Render(iObject* object);
+	void Render(cMaterial& material);
 
 };
