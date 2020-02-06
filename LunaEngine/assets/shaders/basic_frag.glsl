@@ -1,7 +1,6 @@
 #version 420
 
 // Vertex Shader Input
-in vec4 fColour;	
 in vec4 fVertWorldLocation;
 in vec4 fNormal;
 in vec4 fUVx2;

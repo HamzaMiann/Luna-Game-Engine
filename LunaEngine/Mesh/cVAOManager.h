@@ -15,16 +15,23 @@
 // So dictated from THE SHADER
 struct sVAOVertex
 {
-	sVAOVertex():
+	sVAOVertex() :
 		x(0.f), y(0.f), z(0.f), w(1.f),
-		r(1.f), g(1.f), b(1.f), a(1.f),
 		nx(0.f), ny(0.f), nz(0.f), nw(1.f),
-		u0(0.f), v0(0.f), u1(0.f), v1(0.f)
-	{ }
+		u0(0.f), v0(0.f), u1(0.f), v1(0.f),
+		tx(0.f), ty(0.f), tz(0.f), tw(1.f),
+		bx(0.f), by(0.f), bz(0.f), bw(1.f)
+	{
+		memset(this->boneID, 0, sizeof(unsigned int) * NUMBEROFBONES);
+		memset(this->weights, 0, sizeof(float) * NUMBEROFBONES);
+	}
 	float x, y, z, w;
-	float r, g, b, a;
 	float nx, ny, nz, nw;
 	float u0, v0, u1, v1;
+	float tx, ty, tz, tw;
+	float bx, by, bz, bw;
+	float boneID[4];
+	float weights[4];
 };
 
 

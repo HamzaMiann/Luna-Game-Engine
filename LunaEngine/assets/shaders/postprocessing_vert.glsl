@@ -8,14 +8,16 @@ uniform mat4 matProj;					// Projection transform
 uniform float iTime;
 uniform bool isWater;
 
-in vec4 vColour;				// Was vec3
 in vec4 vPosition;				// Was vec3
 in vec4 vNormal;				// Vertex Normal
 in vec4 vUVx2;					// 2 x Texture coord
+in vec4 vTangent;				// For bump mapping
+in vec4 vBiNormal;				// For bump mapping
+in vec4 vBoneID;				// For skinned mesh (FBX)
+in vec4 vBoneWeight;			// For skinned mesh (FBX)
 
 //out vec3 color;
 //out vec4 vertWorld;			// Location of the vertex in the world
-out vec4 fColour;	
 out vec4 fVertWorldLocation;
 out vec4 fNormal;
 out vec4 fUVx2;
@@ -33,7 +35,6 @@ void main()
 
 	//mat4 matInv = inverse(transpose(matModel));
 
-    fColour = vColour;
 	fNormal = matModelInverTrans * vNormal;
 	fUVx2 = vUVx2;
 	fiTime = iTime;

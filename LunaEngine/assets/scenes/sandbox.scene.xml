@@ -22,7 +22,7 @@
 	</Textures>
   
 	<Models>
-    <Model file="mutant.fbx" friendlyName="character" shader="basic"/>
+    <Model file="Walking.fbx" friendlyName="character" shader="basic"/>
     <Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
     <Model file="cube_XYZ_N_UV.ply" friendlyName="cube" shader="basic"/>
     <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>

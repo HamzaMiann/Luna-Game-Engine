@@ -58,11 +58,6 @@ bool cVAOManager::LoadModelIntoVAO(
 		drawInfo.pVertices[index].z = theMesh.vecVertices[index].z;
 		drawInfo.pVertices[index].w = 1.0f;
 
-		drawInfo.pVertices[index].r = 1.0f;
-		drawInfo.pVertices[index].g = 1.0f;
-		drawInfo.pVertices[index].b = 1.0f;
-		drawInfo.pVertices[index].a = 1.0f;
-
 		drawInfo.pVertices[index].nx = theMesh.vecVertices[index].nx;
 		drawInfo.pVertices[index].ny = theMesh.vecVertices[index].ny;
 		drawInfo.pVertices[index].nz = theMesh.vecVertices[index].nz;
@@ -73,6 +68,26 @@ bool cVAOManager::LoadModelIntoVAO(
 		drawInfo.pVertices[index].v0 = theMesh.vecVertices[index].v;
 		drawInfo.pVertices[index].u1 = 1.0f;
 		drawInfo.pVertices[index].v1 = 1.0f;
+
+		drawInfo.pVertices[index].tx = theMesh.vecVertices[index].tx;
+		drawInfo.pVertices[index].ty = theMesh.vecVertices[index].ty;
+		drawInfo.pVertices[index].tz = theMesh.vecVertices[index].tz;
+		drawInfo.pVertices[index].tw = theMesh.vecVertices[index].tw;
+
+		drawInfo.pVertices[index].bx = theMesh.vecVertices[index].bx;
+		drawInfo.pVertices[index].by = theMesh.vecVertices[index].by;
+		drawInfo.pVertices[index].bz = theMesh.vecVertices[index].bz;
+		drawInfo.pVertices[index].bw = theMesh.vecVertices[index].bw;
+
+		drawInfo.pVertices[index].boneID[0] = theMesh.vecVertices[index].boneID[0];
+		drawInfo.pVertices[index].boneID[1] = theMesh.vecVertices[index].boneID[1];
+		drawInfo.pVertices[index].boneID[2] = theMesh.vecVertices[index].boneID[2];
+		drawInfo.pVertices[index].boneID[3] = theMesh.vecVertices[index].boneID[3];
+
+		drawInfo.pVertices[index].weights[0] = theMesh.vecVertices[index].boneWeights[0];
+		drawInfo.pVertices[index].weights[1] = theMesh.vecVertices[index].boneWeights[1];
+		drawInfo.pVertices[index].weights[2] = theMesh.vecVertices[index].boneWeights[2];
+		drawInfo.pVertices[index].weights[3] = theMesh.vecVertices[index].boneWeights[3];
 	}
 
 	// Now copy the index information, too
@@ -142,9 +157,12 @@ bool cVAOManager::LoadModelIntoVAO(
 	// Set the vertex attributes.
 
 	GLint vpos_location = glGetAttribLocation(shaderProgramID, "vPosition");	// program
-	GLint vcol_location = glGetAttribLocation(shaderProgramID, "vColour");	// program;
 	GLint vnorm_location = glGetAttribLocation(shaderProgramID, "vNormal");	// program;
 	GLint vuv_location = glGetAttribLocation(shaderProgramID, "vUVx2");	// program;
+	GLint vtan_location = glGetAttribLocation(shaderProgramID, "vTangent");	// program;
+	GLint vbi_location = glGetAttribLocation(shaderProgramID, "vBiNormal");	// program;
+	GLint vbone_location = glGetAttribLocation(shaderProgramID, "vBoneID");	// program;
+	GLint vweight_location = glGetAttribLocation(shaderProgramID, "vBoneWeight");	// program;
 
 	// Set the vertex attributes for this shader
 	glEnableVertexAttribArray(vpos_location);
@@ -152,12 +170,6 @@ bool cVAOManager::LoadModelIntoVAO(
 						   GL_FLOAT, GL_FALSE,
 						   sizeof(sVAOVertex), 
 						   ( void* )offsetof(sVAOVertex,x));
-
-	glEnableVertexAttribArray(vcol_location);
-	glVertexAttribPointer( vcol_location, 4,
-						   GL_FLOAT, GL_FALSE,
-						   sizeof(sVAOVertex),
-						   ( void* )offsetof(sVAOVertex, r));
 
 	glEnableVertexAttribArray(vnorm_location);
 	glVertexAttribPointer(vnorm_location, 4,
@@ -171,6 +183,30 @@ bool cVAOManager::LoadModelIntoVAO(
 						  sizeof(sVAOVertex),
 						  (void*)offsetof(sVAOVertex, u0));
 
+	glEnableVertexAttribArray(vtan_location);
+	glVertexAttribPointer( vtan_location, 4,
+						   GL_FLOAT, GL_FALSE,
+						   sizeof(sVAOVertex), 
+						   ( void* )offsetof(sVAOVertex,tx));
+
+	glEnableVertexAttribArray(vbi_location);
+	glVertexAttribPointer(vbi_location, 4,
+						   GL_FLOAT, GL_FALSE,
+						   sizeof(sVAOVertex), 
+						   ( void* )offsetof(sVAOVertex,bx));
+
+	glEnableVertexAttribArray(vbone_location);
+	glVertexAttribPointer(vbone_location, 4,
+						   GL_FLOAT, GL_FALSE,
+						   sizeof(sVAOVertex), 
+						   ( void* )offsetof(sVAOVertex, boneID[0]));
+
+	glEnableVertexAttribArray(vweight_location);
+	glVertexAttribPointer(vweight_location, 4,
+						   GL_FLOAT, GL_FALSE,
+						   sizeof(sVAOVertex), 
+						   ( void* )offsetof(sVAOVertex, weights[0]));
+
 
 	// Now that all the parts are set up, set the VAO to zero
 	glBindVertexArray(0);
@@ -179,7 +215,7 @@ bool cVAOManager::LoadModelIntoVAO(
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glDisableVertexAttribArray(vpos_location);
-	glDisableVertexAttribArray(vcol_location);
+	//glDisableVertexAttribArray(vcol_location);
 
 
 	// Store the draw information into the map

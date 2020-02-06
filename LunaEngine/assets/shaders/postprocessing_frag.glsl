@@ -1,7 +1,6 @@
 #version 420
 
 // Vertex Shader Input
-in vec4 fColour;	
 in vec4 fVertWorldLocation;
 in vec4 fNormal;
 in vec4 fUVx2;
@@ -65,8 +64,8 @@ uniform sLight theLights[LIGHT_BUFFER];
 const int num_samples = 13;
 
 const float GOLDEN_ANGLE = 2.39996323; 
-const float MAX_BLUR_SIZE = 5.0; 
-const float RAD_SCALE = 2.0; // Smaller = nicer blur, larger = faster
+const float MAX_BLUR_SIZE = 20.0; 
+const float RAD_SCALE = 5.0; // Smaller = nicer blur, larger = faster
 
 float getBlurSize(float depth, float focusPoint, float focusScale)
 {

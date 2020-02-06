@@ -99,20 +99,63 @@ bool cModelLoader::LoadPlyModel(
 			theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
 		}
 
-		/*if (mesh.HasBones())
+		if (mesh.HasBones())
 		{
 			theMesh.isAnimated = true;
 			for (unsigned int i = 0; i < mesh.mNumBones; ++i)
 			{
 				aiBone* bone = mesh.mBones[i];
-				for (unsigned int n = 0; n < bone->mNumWeights; ++n)
+				for (unsigned int n = 0; n < bone->mNumWeights && n < 4u; ++n)
 				{
-					aiVertexWeight& weight = bone->mWeights[n];
+					aiVertexWeight weight = bone->mWeights[n];
 					theMesh.vecVertices[weight.mVertexId].boneID[n] = i;
 					theMesh.vecVertices[weight.mVertexId].boneWeights[n] = weight.mWeight;
 				}
 			}
-		}*/
+
+		}
+
+		if (scene->HasAnimations())
+		{
+			for (unsigned int i = 0; i < scene->mNumAnimations; ++i)
+			{
+				theMesh.animations.push_back(cAnimation());
+				cAnimation& anim = theMesh.animations[theMesh.animations.size() - 1];
+				aiAnimation* animation = scene->mAnimations[i];
+				anim.name = animation->mName.C_Str();
+				anim.duration = animation->mDuration;
+				anim.ticksPerSecond = animation->mTicksPerSecond;
+				for (unsigned int n = 0; n < animation->mNumChannels; ++n)
+				{
+					aiNodeAnim* node = animation->mChannels[n];
+					anim.channels.push_back(cAnimation::sAnimationNode());
+					auto& animnode = anim.channels[anim.channels.size() - 1];
+					animnode.name = node->mNodeName.C_Str();
+					for (unsigned int x = 0; x < node->mNumPositionKeys; ++x)
+					{
+						glm::vec3 pos;
+						glm::quat rot;
+						glm::vec3 scale;
+						pos.x = node->mPositionKeys[x].mValue.x;
+						pos.y = node->mPositionKeys[x].mValue.y;
+						pos.z = node->mPositionKeys[x].mValue.z;
+
+						rot.x = node->mRotationKeys[x].mValue.x;
+						rot.y = node->mRotationKeys[x].mValue.y;
+						rot.z = node->mRotationKeys[x].mValue.z;
+						rot.w = node->mRotationKeys[x].mValue.w;
+
+						scale.x = node->mScalingKeys[x].mValue.x;
+						scale.y = node->mScalingKeys[x].mValue.y;
+						scale.z = node->mScalingKeys[x].mValue.z;
+
+						animnode.positions.push_back(pos);
+						animnode.rotations.push_back(rot);
+						animnode.scalings.push_back(scale);
+					}
+				}
+			}
+		}
 
 		return true;
 

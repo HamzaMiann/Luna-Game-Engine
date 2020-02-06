@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <glm/vec3.hpp>
+#include <Mesh/cAnimation.h>
 
 static const unsigned int NUMBEROFBONES = 4;
 
@@ -64,6 +65,8 @@ public:
 	std::vector<sMeshVertex> vecVertices;
 	std::vector<sTriangle> vecTriangles;
 	std::vector<sMeshTriangle> vecMeshTriangles;
+
+	std::vector<cAnimation> animations;
 
 };
 
