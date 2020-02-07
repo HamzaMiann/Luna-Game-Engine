@@ -19,6 +19,7 @@
 		<Texture name="Grass.png"/>
 		<Texture name="blue.png"/>
 		<Texture name="red.png"/>
+		<Texture name="Cerberus_A.jpg"/>
 	</Textures>
   
 	<Models>
@@ -28,6 +29,8 @@
     <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
     <Model file="RetroTV.edited.screenonly.ply" friendlyName="tv_screen" shader="basic"/>
 		<Model file="RetroTV.edited.bodyonly.ply" friendlyName="tv_body" shader="basic"/>
+    
+		<Model file="Cerberus_LP.FBX" friendlyName="gun" shader="basic"/>
 
     <Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen" shader="basic"/>
 
@@ -219,6 +222,16 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Texture ratio="1.000000">red.png</Texture>
+    </GameObject>
+
+    <GameObject mesh="gun" tag="gun" shader="basic">
+      <Position x="-3.0" y="1.0" z="0.0"/>
+      <Rotation x="-90.0" y="0.0" z="0.0"/>
+      <Scale>0.03</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Texture ratio="1.000000">Cerberus_A.jpg</Texture>
     </GameObject>
 
     <GameObject mesh="character" tag="character" shader="basic">
