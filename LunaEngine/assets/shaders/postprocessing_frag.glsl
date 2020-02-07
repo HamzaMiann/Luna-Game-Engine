@@ -14,6 +14,9 @@ uniform vec4 eyeLocation;
 uniform bool isUniform;
 uniform bool isSkybox;
 
+uniform bool bloomEnabled;
+uniform bool DOFEnabled;
+
 // Texture
 uniform sampler2D textSamp00;	// albedo
 uniform sampler2D textSamp01;	// normal
@@ -60,40 +63,6 @@ const int DIRECTIONAL_LIGHT_TYPE = 2;
 const int LIGHT_BUFFER = 24;
 uniform int NUMBEROFLIGHTS;
 uniform sLight theLights[LIGHT_BUFFER];
-
-const float GOLDEN_ANGLE = 2.39996323; 
-const float MAX_BLUR_SIZE = 20.0; 
-const float RAD_SCALE = 5.0; // Smaller = nicer blur, larger = faster
-
-float getBlurSize(float depth, float focusPoint, float focusScale)
-{
-	float coc = clamp((1.0 / focusPoint - 1.0 / depth)*focusScale, -1.0, 1.0);
-	return abs(coc) * MAX_BLUR_SIZE;
-}
-
-vec3 depthOfField(vec2 texCoord, float focusPoint, float focusScale)
-{
-	vec2 uPixelSize = vec2(1.0 / iResolution.x, 1.0 / iResolution.y);
-	float centerDepth = distance(texture(textSamp02, texCoord).rgb, eyeLocation.rgb);
-	float centerSize = getBlurSize(centerDepth, focusPoint, focusScale);
-	vec3 color = texture(textSamp00, texCoord).rgb;
-	float tot = 1.0;
-	float radius = RAD_SCALE;
-	for (float ang = 0.0; radius<MAX_BLUR_SIZE; ang += GOLDEN_ANGLE)
-	{
-		vec2 tc = texCoord + vec2(cos(ang), sin(ang)) * uPixelSize * radius;
-		vec3 sampleColor = texture(textSamp00, tc).rgb;
-		float sampleDepth = distance(texture(textSamp02, tc).rgb, eyeLocation.rgb);
-		float sampleSize = getBlurSize(sampleDepth, focusPoint, focusScale);
-		if (sampleDepth > centerDepth)
-			sampleSize = clamp(sampleSize, 0.0, centerSize*2.0);
-		float m = smoothstep(radius-0.5, radius+0.5, sampleSize);
-		color += mix(color/tot, sampleColor, m);
-		tot += 1.0;   radius += RAD_SCALE/radius;
-	}
-	return color /= tot;
-}
-
 
 const int num_samples = 13;
 
@@ -161,15 +130,14 @@ const int num_circle_samples = 10;
 
 vec4 circular_blur(sampler2D tex, float offset)
 {
+	vec2 pixelSize = vec2(1.0 / iResolution.x, 1.0 / iResolution.y);
 	vec4 colour = vec4(0.0);
 	float contribution = 0.7 / (num_circle_samples);
 	float angle_step = 360.0 / num_circle_samples;
 	for (int i = 0; i < num_circle_samples; ++i)
 	{
-		vec2 uv = fUVx2.xy;
 		float angle = angle_step * i;
-		uv.x += sin(angle) * offset;
-		uv.y += cos(angle) * offset;
+		vec2 uv = fUVx2.xy + vec2(cos(angle), sin(angle)) * pixelSize * offset;
 		colour.rgb += texture(tex, uv).rgb * contribution;
 	}
 	colour.rgb += texture(tex, fUVx2.xy).rgb * 0.3;
@@ -177,27 +145,23 @@ vec4 circular_blur(sampler2D tex, float offset)
 	return colour;
 }
 
-const float focal_distance = 5.0;
-const float focus_length = 5.0;
+const float near_focus = 10.0;
+const float focus_length = 20.0;
+const float blur_scale = 10.0;
 vec4 DOF(sampler2D tex)
 {
 	vec4 colour = texture(tex, fUVx2.st);
 
 	float z = distance(texture(textSamp02, fUVx2.st).rgb, eyeLocation.rgb);
-//	float n = focal_distance - focus_length;
-//	float f = focal_distance + focus_length;
-//	float zfocus = focal_distance;
-//	float d = (f / (f - n)) - ((n * f) / (f - n)) * (1.0 / z);
-//
-//	float s = 1.0;
-//	float coc = abs(s * (1.0 - (zfocus / n)) + (s * zfocus * ((f-n)/(n*f))) * d);
-//	colour = circular_blur(tex, coc / 10000.0);
 
-	float distance_from_focus = abs(focal_distance - z);
-	float range = focus_length;
-	float ratio = min((distance_from_focus / range) - 1.0, 0.0);
-	
-	colour = circular_blur(tex, clamp(abs(distance_from_focus * ratio) / 500.0, 0.0, 0.01));
+	float distance_from_focus = abs(near_focus - z);
+	float ratio = 0.0;
+	if (z < near_focus)
+		ratio = clamp(1.0 / z, 0.0, 40.0);
+	else
+		ratio = clamp((distance_from_focus / focus_length) - 1.0, 0.0, 1.0);
+
+	colour = circular_blur(tex, blur_scale * ratio);
 
 	return colour;
 }
@@ -209,27 +173,31 @@ void main()
 
 	if (isFinalPass)
 	{
-		//pixelColour.rgb = texture(textSamp00, uv).rgb;
-		pixelColour.rgb = depthOfField(uv, 10.0, 5.0);
-		//pixelColour = circular_blur(textSamp00);
-		//pixelColour.rgb = DOF(textSamp00).rgb;
+		pixelColour.rgb = texture(textSamp00, uv).rgb;
+		if (DOFEnabled)
+		{
+			pixelColour.rgb = DOF(textSamp00).rgb;
+		}
+		
+		if (bloomEnabled)
+		{
+			vec3 bloom = circular_blur(textSamp03, 10.0).rgb * 1.0;
+			pixelColour += vec4(bloom, 0.0);
+
+			pixelColour = clamp(pixelColour, 0.0, 1.0);
+
+			float exposure = 2.0;
+			float gamma = 0.6;
+
+			// tone mapping
+			vec3 result = vec3(1.0) - exp(-pixelColour.rgb * exposure);
+			// also gamma correct while we're at it       
+			result = pow(result, vec3(1.0 / gamma));
+
+			pixelColour.rgb = result;
+		}
+
 		pixelColour.a = 1.0;
-
-		vec3 bloom = circular_blur(textSamp03, 0.008).rgb * 1.0;
-		pixelColour += vec4(bloom, 0.0);
-
-		pixelColour = clamp(pixelColour, 0.0, 1.0);
-
-		float exposure = 2.0;
-		float gamma = 0.6;
-
-		// tone mapping
-		vec3 result = vec3(1.0) - exp(-pixelColour.rgb * exposure);
-		// also gamma correct while we're at it       
-		result = pow(result, vec3(1.0 / gamma));
-
-		pixelColour.rgb = result;
-		//pixelColour.rgb = bloom;
 
 		return;
 	}
