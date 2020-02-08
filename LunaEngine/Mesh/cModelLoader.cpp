@@ -22,6 +22,7 @@ cModelLoader::~cModelLoader()			// destructor
 // Returns by ref the mesh
 bool cModelLoader::LoadPlyModel(
 	std::string filename,
+	std::string friendlyName,
 	cMesh &theMesh)				// Note the "&"
 {
 
@@ -46,6 +47,8 @@ bool cModelLoader::LoadPlyModel(
 	if (scene->HasMeshes())
 	{
 		aiMesh& mesh = *scene->mMeshes[0];
+		theMesh.name = friendlyName;
+
 		for (unsigned int i = 0; i < mesh.mNumVertices; ++i)
 		{
 			sMeshVertex tempVertex;
@@ -101,6 +104,7 @@ bool cModelLoader::LoadPlyModel(
 
 		if (mesh.HasBones())
 		{
+			scene->mRootNode->mTransformation;
 			theMesh.isAnimated = true;
 			for (unsigned int i = 0; i < mesh.mNumBones; ++i)
 			{

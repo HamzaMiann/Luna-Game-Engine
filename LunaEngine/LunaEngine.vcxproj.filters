@@ -285,6 +285,9 @@
     <ClCompile Include="Components\cMaterial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Behaviour\Controls\cFPSController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cGameObject.h">
@@ -506,6 +509,9 @@
     <ClInclude Include="Mesh\cAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Behaviour\Controls\cFPSController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">
@@ -556,6 +562,8 @@
     <None Include="assets\shaders\postprocessing_frag.glsl">
       <Filter>ShadersRendering\GLSL</Filter>
     </None>
+    <None Include="assets\shaders\pbr_vert.glsl" />
+    <None Include="assets\shaders\pbr_frag.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\scenes\physics.scene.xml">

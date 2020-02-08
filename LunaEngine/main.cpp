@@ -49,6 +49,9 @@ unsigned int input_id = 0;
 bool is_paused = false;
 int pass_id;
 
+bool bloom_enabled = true;
+bool DOF_enabled = true;
+
 Scene* scene;
 iInputHandler* pInputHandler;
 
@@ -91,6 +94,12 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 	{
 		is_paused = !is_paused;
+	}
+
+	if (key == GLFW_KEY_B && action == GLFW_RELEASE)
+	{
+		bloom_enabled = !bloom_enabled;
+		DOF_enabled = !DOF_enabled;
 	}
 
 	if (pInputHandler) pInputHandler->key_callback(window, key, scancode, action, mods);
@@ -343,7 +352,7 @@ int main(void)
 		glm::mat4 p, v;
 
 		// Projection matrix
-		p = glm::perspective(0.6f,			// FOV
+		p = glm::perspective(0.90f,			// FOV
 							 ratio,			// Aspect ratio
 							 0.1f,			// Near clipping plane
 							 1000.f);		// Far clipping plane
@@ -808,11 +817,6 @@ void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 	float height = previousFBO.height;
 
 	// 1. Disable the FBO
-	/*if (!fbo.reset(width, height, errorString))
-	{
-		std::cout << "fbo was unable to be reset..." << std::endl;
-		exit(1);
-	}*/
 
 	// Draw to the frame buffer
 	fbo.use();
@@ -888,6 +892,24 @@ void RenderQuadToScreen(cFBO& previousFBO)
 
 	glm::mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
 	glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
+
+	if (bloom_enabled)
+	{
+		glUniform1i(shader["bloomEnabled"], (int)GL_TRUE);
+	}
+	else
+	{
+		glUniform1i(shader["bloomEnabled"], (int)GL_FALSE);
+	}
+
+	if (DOF_enabled)
+	{
+		glUniform1i(shader["DOFEnabled"], (int)GL_TRUE);
+	}
+	else
+	{
+		glUniform1i(shader["DOFEnabled"], (int)GL_FALSE);
+	}
 
 	DrawObject(&quad, glm::mat4(1.f), p);
 }

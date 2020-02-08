@@ -163,6 +163,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Behaviour\AI\cSeekBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cWanderBehaviour.cpp" />
     <ClCompile Include="Behaviour\cBehaviourManager.cpp" />
+    <ClCompile Include="Behaviour\Controls\cFPSController.cpp" />
     <ClCompile Include="Behaviour\Controls\cPlayerBehaviour.cpp" />
     <ClCompile Include="Behaviour\Controls\cSphereBehaviour.cpp" />
     <ClCompile Include="Behaviour\iBehaviour.cpp" />
@@ -233,6 +234,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Behaviour\AI\cSeekBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cWanderBehaviour.h" />
     <ClInclude Include="Behaviour\cBehaviourManager.h" />
+    <ClInclude Include="Behaviour\Controls\cFPSController.h" />
     <ClInclude Include="Behaviour\Controls\cPlayerBehaviour.h" />
     <ClInclude Include="Behaviour\Controls\cSphereBehaviour.h" />
     <ClInclude Include="Behaviour\Managers\cAIGameManager.h" />
@@ -310,6 +312,8 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <None Include="assets\shaders\holo_frag.glsl" />
     <None Include="assets\shaders\particle_frag.glsl" />
     <None Include="assets\shaders\particle_vert.glsl" />
+    <None Include="assets\shaders\pbr_frag.glsl" />
+    <None Include="assets\shaders\pbr_vert.glsl" />
     <None Include="assets\shaders\postprocessing_frag.glsl" />
     <None Include="assets\shaders\postprocessing_vert.glsl" />
     <None Include="assets\shaders\skybox_frag.glsl" />

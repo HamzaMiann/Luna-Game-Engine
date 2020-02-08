@@ -7,6 +7,7 @@
 #include <Behaviour/AI/cWanderBehaviour.h>
 #include <Behaviour/AI/cApproachBehaviour.h>
 #include <Behaviour/Managers/cAIGameManager.h>
+#include <Behaviour/Controls/cFPSController.h>
 
 #pragma warning(disable)
 
@@ -20,6 +21,10 @@ iComponent* ComponentFactory::GetComponent(std::string type, iObject* object)
 	if (type == "PlayerBehaviour")
 	{
 		return (iComponent*)object->AddComponent<cPlayerBehaviour>();
+	}
+	if (type == "FPSBehaviour")
+	{
+		return (iComponent*)object->AddComponent<cFPSController>();
 	}
 
 	if (type == "AISeekBehaviour")
