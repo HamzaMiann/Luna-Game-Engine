@@ -295,7 +295,7 @@ int main(void)
 
 	cGameObject* screen = cEntityManager::Instance()->GetGameObjectByTag("scope");
 	cGameObject* player = cEntityManager::Instance()->GetGameObjectByTag("player");
-	cEntityManager::Instance()->GetGameObjectByTag("character")->refractivity = 1.0f;
+	//cEntityManager::Instance()->GetGameObjectByTag("character")->refractivity = 1.0f;
 	//cEntityManager::Instance()->GetGameObjectByTag("gun")->reflectivity = 0.2f;
 	player->reflectivity = 1.0f;
 

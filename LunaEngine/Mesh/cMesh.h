@@ -16,7 +16,8 @@ struct sMeshVertex
 		nx(0.f), ny(0.f), nz(0.f), nw(1.f),
 		u(0.f), v(0.f),
 		tx(0.f), ty(0.f), tz(0.f), tw(1.f),
-		bx(0.f), by(0.f), bz(0.f), bw(1.f)
+		bx(0.f), by(0.f), bz(0.f), bw(1.f),
+		index(0)
 	{
 		memset(this->boneID, 0, sizeof(unsigned int) * NUMBEROFBONES);
 		memset(this->boneWeights, 0, sizeof(float) * NUMBEROFBONES);
@@ -28,6 +29,9 @@ struct sMeshVertex
 	float bx, by, bz, bw;	// bi-tangents
 	float boneID[4];		// which bone impacts this vertex
 	float boneWeights[4];	// weights for bones
+
+	unsigned int index;
+	void SetID(float id, float weight) { boneID[index] = id; boneWeights[index++] = weight; }
 };
 
 struct sTriangle

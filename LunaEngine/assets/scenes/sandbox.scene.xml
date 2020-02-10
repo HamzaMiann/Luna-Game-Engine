@@ -37,7 +37,7 @@
     <Model file="RetroTV.edited.screenonly.ply" friendlyName="tv_screen" shader="basic"/>
 		<Model file="RetroTV.edited.bodyonly.ply" friendlyName="tv_body" shader="basic"/>
 		<Model file="Cerberus_LP.FBX" friendlyName="gun" shader="basic"/>
-		<Model file="Mountain.fbx" friendlyName="test_model" shader="basic"/>
+		<!--<Model file="Mountain.fbx" friendlyName="test_model" shader="basic"/>-->
     <Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen" shader="basic"/>
 
     <!-- MUST ALWAYS BE HERE -->
@@ -255,7 +255,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">red.png</Texture>
+      <Texture ratio="1.000000">Mutant_diffuse.png</Texture>
     </GameObject>
 
     <GameObject mesh="test_model" tag="test_model" shader="basic">
@@ -269,7 +269,7 @@
     </GameObject>
     
 		<GameObject mesh="sphere" tag="player" shader="basic">
-			<Position x="0.0" y="1.0" z="3.0"/>
+			<Position x="0.0" y="1.1" z="3.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
       <Scale>1.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>

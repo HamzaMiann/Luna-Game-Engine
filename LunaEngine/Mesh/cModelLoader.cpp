@@ -5,6 +5,7 @@
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
+#include <Texture/cBasicTextureManager.h>
 
 cModelLoader::cModelLoader()			// constructor
 {
@@ -102,6 +103,28 @@ bool cModelLoader::LoadPlyModel(
 			theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
 		}
 
+
+		if (scene->HasTextures())
+		{
+			for (unsigned int i = 0; i < scene->mNumTextures; ++i)
+			{
+				aiTexture& tex = *scene->mTextures[i];
+				std::string filename = tex.mFilename.C_Str();
+				filename = filename.substr(filename.find_last_of('/') + 1);
+				size_t size = sizeof(tex.pcData) / sizeof(aiTexel);
+				std::vector<unsigned char> data;
+				for (unsigned int n = 0; n < size; ++n)
+				{
+					data.push_back(tex.pcData[n].r);
+					data.push_back(tex.pcData[n].g);
+					data.push_back(tex.pcData[n].b);
+					data.push_back(tex.pcData[n].a);
+				}
+				cBasicTextureManager::Instance()->Create2DTexture(filename, true, data, tex.mWidth, tex.mHeight);
+				std::cout << "ASSIMP TEXTURE LOADED: " << filename << std::endl;
+			}
+		}
+
 		if (mesh.HasBones())
 		{
 			scene->mRootNode->mTransformation;
@@ -112,8 +135,9 @@ bool cModelLoader::LoadPlyModel(
 				for (unsigned int n = 0; n < bone->mNumWeights && n < 4u; ++n)
 				{
 					aiVertexWeight weight = bone->mWeights[n];
-					theMesh.vecVertices[weight.mVertexId].boneID[n] = i;
-					theMesh.vecVertices[weight.mVertexId].boneWeights[n] = weight.mWeight;
+					theMesh.vecVertices[weight.mVertexId].SetID(n, weight.mWeight);
+					//theMesh.vecVertices[weight.mVertexId].boneID[n] = i;
+					//theMesh.vecVertices[weight.mVertexId].boneWeights[n] = weight.mWeight;
 				}
 			}
 
@@ -140,6 +164,7 @@ bool cModelLoader::LoadPlyModel(
 						glm::vec3 pos;
 						glm::quat rot;
 						glm::vec3 scale;
+
 						pos.x = node->mPositionKeys[x].mValue.x;
 						pos.y = node->mPositionKeys[x].mValue.y;
 						pos.z = node->mPositionKeys[x].mValue.z;
@@ -153,8 +178,11 @@ bool cModelLoader::LoadPlyModel(
 						scale.y = node->mScalingKeys[x].mValue.y;
 						scale.z = node->mScalingKeys[x].mValue.z;
 
-						animnode.positions.push_back(pos);
-						animnode.rotations.push_back(rot);
+						glm::mat4 mat(1.f);
+						mat *= glm::translate(mat, pos);
+						mat *= glm::mat4(rot);
+
+						animnode.rotatedPositions.push_back(mat);
 						animnode.scalings.push_back(scale);
 					}
 				}

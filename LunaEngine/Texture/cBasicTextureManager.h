@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include <Texture/CTextureFromBMP.h>
 
 class cBasicTextureManager
@@ -16,6 +17,8 @@ public:
 
 	// Picks a random texture from the textures loaded
 	std::string PickRandomTexture(void);
+
+	bool Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, std::vector<unsigned char>& data, int width, int height);
 
 	bool CreateCubeTextureFromBMPFiles( std::string cubeMapName, 
 		                                std::string posX_fileName, std::string negX_fileName, 

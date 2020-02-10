@@ -126,13 +126,20 @@ vec4 BloomCutoff(vec4 colour)
 	return BrightColor;
 }
 
-const int num_circle_samples = 10;
 
+
+///
+// Computes blur for a given texture and pixel offset
+// using a circular blur technique
+///
 vec4 circular_blur(sampler2D tex, float offset)
 {
+	const int num_circle_samples = 10;
+	const float AOE_strength = 0.7;
+	// get the size of each pixel on the screen
 	vec2 pixelSize = vec2(1.0 / iResolution.x, 1.0 / iResolution.y);
 	vec4 colour = vec4(0.0);
-	float contribution = 0.7 / (num_circle_samples);
+	float contribution = AOE_strength / (num_circle_samples);
 	float angle_step = 360.0 / num_circle_samples;
 	for (int i = 0; i < num_circle_samples; ++i)
 	{
@@ -140,16 +147,20 @@ vec4 circular_blur(sampler2D tex, float offset)
 		vec2 uv = fUVx2.xy + vec2(cos(angle), sin(angle)) * pixelSize * offset;
 		colour.rgb += texture(tex, uv).rgb * contribution;
 	}
-	colour.rgb += texture(tex, fUVx2.xy).rgb * 0.3;
+	colour.rgb += texture(tex, fUVx2.xy).rgb * (1. - AOE_strength);
 	colour.a = 1.0;
 	return colour;
 }
 
-const float near_focus = 4.0;
-const float focus_length = 10.0;
-const float blur_scale = 5.0;
+///
+// Computes DOF for a given texture
+///
 vec4 DOF(sampler2D tex)
 {
+	const float near_focus = 4.0;
+	const float focus_length = 20.0;
+	const float blur_scale = 5.0;
+
 	vec4 colour = texture(tex, fUVx2.st);
 
 	float z = distance(texture(textSamp02, fUVx2.st).rgb, eyeLocation.rgb);
