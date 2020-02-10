@@ -243,7 +243,7 @@
       
       <Components>
 
-        <FPSBehaviour/>
+        <!--<FPSBehaviour/>-->
         
       </Components>
     </GameObject>
@@ -288,7 +288,7 @@
         </SphereBody>
         
         <!-- IMPORTANT: This component is the component that lets you control the ball -->
-        <!--<SphereBehaviour/>-->
+        <SphereBehaviour/>
         
       </Components>
 		</GameObject>

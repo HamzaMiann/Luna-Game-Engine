@@ -13,12 +13,12 @@
 	</Shaders>
   
 	<Textures>
-    <Texture name="Fighter_Ship_body_diffuse.bmp"/>
-		<Texture name="fx3_Panels_Color.bmp"/>
-		<Texture name="blue.bmp"/>
-		<Texture name="red.bmp"/>
-		<Texture name="yellow.bmp"/>
-		<Texture name="Grass.bmp"/>
+    <Texture name="Fighter_Ship_body_diffuse.png"/>
+		<Texture name="fx3_Panels_Color.png"/>
+		<Texture name="blue.png"/>
+		<Texture name="red.png"/>
+		<Texture name="yellow.png"/>
+		<Texture name="Grass.png"/>
 	</Textures>
   
 	<Models>
@@ -170,8 +170,8 @@
       <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
       <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
     </Light>
-    
-		<Light>
+
+    <!--<Light>
 			<Position x="0.000000" y="5.000000" z="-8.000000" w="1.000000"/>
 			<Diffuse x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
@@ -181,7 +181,7 @@
 			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 		</Light>
     
-		<!--<Light>
+		<Light>
 			<Position x="0.000000" y="5.000000" z="-8.000000" w="1.000000"/>
 			<Diffuse x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
@@ -214,7 +214,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-			<Texture ratio="1.000000">Fighter_Ship_body_diffuse.bmp</Texture>
+			<Texture ratio="1.000000">Fighter_Ship_body_diffuse.png</Texture>
       
       <Components>
         
@@ -242,7 +242,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">yellow.bmp</Texture>
+      <Texture ratio="1.000000">yellow.png</Texture>
       
       <Components>
         
@@ -267,7 +267,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">red.bmp</Texture>
+      <Texture ratio="1.000000">red.png</Texture>
 
       <Components>
 
@@ -292,7 +292,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">blue.bmp</Texture>
+      <Texture ratio="1.000000">blue.png</Texture>
 
       <Components>
 
@@ -317,7 +317,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">Grass.bmp</Texture>
+      <Texture ratio="1.000000">Grass.png</Texture>
 
       <Components>
 
@@ -338,11 +338,11 @@
     <GameObject mesh="plane" tag="plane" shader="basic">
       <Position x="0.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>1.0</Scale>
+      <Scale>0.5</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
       
       <Components>
         
@@ -360,11 +360,11 @@
     <GameObject mesh="plane" tag="plane" shader="basic">
       <Position x="-20.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="-90.0"/>
-      <Scale>1.0</Scale>
+      <Scale>0.5</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
 
       <Components>
 
@@ -382,11 +382,11 @@
     <GameObject mesh="plane" tag="plane" shader="basic">
       <Position x="20.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="90.0"/>
-      <Scale>1.0</Scale>
+      <Scale>0.5</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
 
       <Components>
 
@@ -404,11 +404,11 @@
     <GameObject mesh="plane" tag="plane" shader="basic">
       <Position x="0.0" y="0.0" z="-30.0"/>
       <Rotation x="90.0" y="0" z="0.0"/>
-      <Scale>1.0</Scale>
+      <Scale>0.5</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
 
       <Components>
 
@@ -426,11 +426,11 @@
     <GameObject mesh="plane" tag="plane" shader="basic">
       <Position x="0.0" y="0.0" z="30.0"/>
       <Rotation x="-90.0" y="0" z="0.0"/>
-      <Scale>1.0</Scale>
+      <Scale>0.5</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">fx3_Panels_Color.bmp</Texture>
+      <Texture ratio="1.000000">fx3_Panels_Color.png</Texture>
 
       <Components>
 
