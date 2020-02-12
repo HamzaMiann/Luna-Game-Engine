@@ -13,6 +13,9 @@ public:
 
 	virtual void OnCollide(iObject* other) {}
 
+	virtual bool serialize(rapidxml::xml_node<>* root_node) { return false; }
+	virtual bool deserialize(rapidxml::xml_node<>* root_node) { return false; }
+
 	sTransform& transform;
 	iObject& parent;
 

@@ -60,5 +60,8 @@
     <ClInclude Include="interfaces\Behaviour\iBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="iApplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -169,12 +169,15 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Behaviour\iBehaviour.cpp" />
     <ClCompile Include="Behaviour\Managers\cAIGameManager.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="cApplication.cpp" />
     <ClCompile Include="Components\cMaterial.cpp" />
     <ClCompile Include="Components\ComponentFactory.cpp" />
     <ClCompile Include="Components\cRigidBody.cpp" />
     <ClCompile Include="EntityManager\cEntityManager.cpp" />
     <ClCompile Include="FBO\cSimpleFBO.cpp" />
+    <ClCompile Include="iApplication.cpp" />
     <ClCompile Include="InputHandlers\cCameraInputHandler.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="iObject.cpp" />
     <ClCompile Include="LodePNG\lodepng.cpp" />
     <ClCompile Include="Physics\global_physics.cpp" />
@@ -238,6 +241,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Behaviour\Controls\cPlayerBehaviour.h" />
     <ClInclude Include="Behaviour\Controls\cSphereBehaviour.h" />
     <ClInclude Include="Behaviour\Managers\cAIGameManager.h" />
+    <ClInclude Include="cApplication.h" />
     <ClInclude Include="Components\ComponentFactory.h" />
     <ClInclude Include="Components\cMaterial.h" />
     <ClInclude Include="Components\cRigidBody.h" />
@@ -245,6 +249,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="FBO\cSimpleFBO.h" />
     <ClInclude Include="iEngine.h" />
     <ClInclude Include="InputHandlers\cCameraInputHandler.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="LodePNG\lodepng.h" />
     <ClInclude Include="Mesh\cAnimation.h" />
     <ClInclude Include="Physics\cAABB.h" />
@@ -307,6 +312,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
   <ItemGroup>
     <None Include="assets\shaders\basic_frag.glsl" />
     <None Include="assets\shaders\basic_vert.glsl" />
+    <None Include="assets\shaders\blur_frag.glsl" />
     <None Include="assets\shaders\bump_frag.glsl" />
     <None Include="assets\shaders\bump_vert.glsl" />
     <None Include="assets\shaders\holo_frag.glsl" />

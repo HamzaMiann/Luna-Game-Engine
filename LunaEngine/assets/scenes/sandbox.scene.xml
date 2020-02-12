@@ -10,6 +10,10 @@
       <Vertex file="pbr_vert.glsl"/>
       <Fragment file="pbr_frag.glsl"/>
     </Shader>
+    <Shader name="blur">
+      <Vertex file="postprocessing_vert.glsl"/>
+      <Fragment file="blur_frag.glsl"/>
+    </Shader>
     
     <!-- MUST ALWAYS BE HERE -->
     <Shader name="post">
@@ -282,7 +286,7 @@
         <SphereBody>
           <Velocity x="0.000000" y="0.000000" z="0.000000"/>
           <Mass>1.0</Mass>
-          <GFactor>0.0</GFactor>
+          <GFactor>1.0</GFactor>
           <Offset x="0.000000" y="0.000000" z="0.000000"/>
           <Radius>1.0</Radius>
         </SphereBody>

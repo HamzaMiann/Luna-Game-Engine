@@ -28,7 +28,7 @@ public:
 	virtual ~cGameObject();
 
 	unsigned int id;
-	Shader shader;
+	Shader* shader;
 
 	cLuaBrain* brain;
 	std::string lua_script;

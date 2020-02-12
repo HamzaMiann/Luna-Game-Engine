@@ -6,7 +6,6 @@ uniform mat4 matModelInverTrans;		// Model or World
 uniform mat4 matView; 					// View or camera
 uniform mat4 matProj;					// Projection transform
 uniform float iTime;
-uniform bool isWater;
 
 in vec4 vPosition;				// Was vec3
 in vec4 vNormal;				// Vertex Normal
@@ -22,7 +21,6 @@ out vec4 fVertWorldLocation;
 out vec4 fNormal;
 out vec4 fUVx2;
 out float fiTime;
-out float fisWater;
 
 void main()
 {
@@ -38,14 +36,5 @@ void main()
 	fNormal = matModelInverTrans * vNormal;
 	fUVx2 = vUVx2;
 	fiTime = iTime;
-
-	if (isWater)
-	{
-		fisWater = 1.0;
-	}
-	else
-	{
-		fisWater = 0.0;
-	}
 
 }

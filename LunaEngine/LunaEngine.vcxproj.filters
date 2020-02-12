@@ -288,6 +288,15 @@
     <ClCompile Include="Behaviour\Controls\cFPSController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cApplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="iApplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cGameObject.h">
@@ -512,6 +521,12 @@
     <ClInclude Include="Behaviour\Controls\cFPSController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cApplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">
@@ -564,6 +579,7 @@
     </None>
     <None Include="assets\shaders\pbr_vert.glsl" />
     <None Include="assets\shaders\pbr_frag.glsl" />
+    <None Include="assets\shaders\blur_frag.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\scenes\physics.scene.xml">

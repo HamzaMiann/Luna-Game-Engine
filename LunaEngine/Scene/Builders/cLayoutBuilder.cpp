@@ -36,7 +36,7 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 
 			if (meshAttr) ptr->meshName = meshAttr->value();
 			if (tagAttr) ptr->tag = tagAttr->value();
-			ptr->shader.SetShader(shader);
+			ptr->shader = Shader::FromName(shader);
 			int texture_id = 0;
 			for (xml_node<>* property_node = object_node->first_node();
 				 property_node;

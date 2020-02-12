@@ -11,11 +11,6 @@ public:
 	cSphereBehaviour(iObject* root);
 	virtual ~cSphereBehaviour();
 
-	// Inherited via iBehaviour
-	virtual bool serialize(rapidxml::xml_node<>* root_node) override;
-
-	virtual bool deserialize(rapidxml::xml_node<>* root_node) override;
-
 	virtual void start() override;
 
 	virtual void update(float dt) override;

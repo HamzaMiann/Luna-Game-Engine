@@ -51,3 +51,8 @@ void Shader::CacheUniforms()
 	}
 }
 
+Shader* Shader::FromName(std::string name)
+{
+	return cShaderManager::Instance()->GetShader(name);
+}
+

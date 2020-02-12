@@ -80,7 +80,6 @@ cShaderManager::cShaderProgram*
 	return pShaderIFound;
 }
 
-
 const unsigned int MAXLINELENGTH = 65536;		// 16x1024
 
 void cShaderManager::setBasePath( std::string basepath )
@@ -346,6 +345,10 @@ bool cShaderManager::createProgramFromFile(
 	this->m_ID_to_Shader[curProgram.ID] = curProgram;
 	// Save to other map, too
 	this->m_name_to_ID[curProgram.friendlyName] = curProgram.ID;
+
+	Shader* shader = new Shader();
+	shader->SetShader(friendlyName);
+	shaders[friendlyName] = shader;
 
 	return true;
 }

@@ -1,10 +1,8 @@
 #include "cSphereBehaviour.h"
-#include <_GL/Window.h>
 #include <Camera.h>
 #include <Physics/Mathf.h>
-
-typedef glm::vec3 vec3;
-typedef glm::quat quat;
+#include <InputManager.h>
+#include <glm/glm_common.h>
 
 vec3 cSphereBehaviour::direction = vec3(0.f, 0.f, 1.f);
 float cSphereBehaviour::distance_from_object = 10.f;
@@ -13,22 +11,12 @@ cSphereBehaviour::cSphereBehaviour(iObject* root)
 	: iBehaviour(root)
 	, body(nullptr)
 {
-	glfwSetInputMode(global::window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	Input::LockCursor();
 }
 
 cSphereBehaviour::~cSphereBehaviour()
 {
-	glfwSetInputMode(global::window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-}
-
-bool cSphereBehaviour::serialize(rapidxml::xml_node<>* root_node)
-{
-	return false;
-}
-
-bool cSphereBehaviour::deserialize(rapidxml::xml_node<>* root_node)
-{
-	return false;
+	Input::UnlockCursor();
 }
 
 void cSphereBehaviour::start()
@@ -46,7 +34,7 @@ void cSphereBehaviour::update(float dt)
 	Camera::main_camera->Target = camera_target;
 
 	double x, y;
-	glfwGetCursorPos(global::window, &x, &y);
+	Input::CursorPosition(x, y);
 
 	if (previousX == 0 && previousY == 0)
 	{
@@ -89,37 +77,37 @@ void cSphereBehaviour::update(float dt)
 		force_direction.y = 0.f;
 		force_direction = glm::normalize(force_direction);
 
-		if (glfwGetKey(global::window, GLFW_KEY_W))
+		if (Input::GetKey(GLFW_KEY_W))
 		{
 			body->AddForce(force_direction * 5.f);
 		}
 
-		if (glfwGetKey(global::window, GLFW_KEY_S))
+		if (Input::GetKey(GLFW_KEY_S))
 		{
 			body->AddForce(force_direction * -5.f);
 		}
 
-		if (glfwGetKey(global::window, GLFW_KEY_D))
+		if (Input::GetKey(GLFW_KEY_D))
 		{
 			body->AddForce((force_direction * -5.f) * quat(vec3(0.f, glm::radians(-90.f), 0.f)));
 		}
 
-		if (glfwGetKey(global::window, GLFW_KEY_A))
+		if (Input::GetKey(GLFW_KEY_A))
 		{
 			body->AddForce((force_direction * -5.f) * quat(vec3(0.f, glm::radians(90.f), 0.f)));
 		}
 
-		if (glfwGetKey(global::window, GLFW_KEY_SPACE))
+		if (Input::KeyDown(GLFW_KEY_SPACE))
 		{
 			body->AddForce(glm::vec3(0.f, 1.f, 0.f) * 100.f);
 		}
 
-		if (glfwGetMouseButton(global::window, GLFW_MOUSE_BUTTON_1))
+		if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_1))
 		{
 			distance_from_object *= 1.01f;
 		}
 
-		if (glfwGetMouseButton(global::window, GLFW_MOUSE_BUTTON_2))
+		if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_2))
 		{
 			distance_from_object *= 0.99f;
 		}

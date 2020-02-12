@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <Shader/Shader.h>
 
 class cShaderManager
 {
@@ -70,6 +71,8 @@ public:
 	cShaderProgram* pGetShaderProgramFromFriendlyName( std::string friendlyName );
 
 
+	inline Shader* GetShader(std::string name) { return shaders[name]; }
+
 	// Clears last error
 	std::string getLastError(void);
 private:
@@ -86,6 +89,7 @@ private:
 
 	std::map< unsigned int /*ID*/, cShaderProgram > m_ID_to_Shader;
 	std::map< std::string /*name*/, unsigned int /*ID*/ > m_name_to_ID;
+	std::map<std::string, Shader*> shaders;
 };
 
 #endif

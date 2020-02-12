@@ -54,4 +54,6 @@ public:
 
 	inline int operator[](std::string uniform) { return uniforms[uniform].ID; }
 
+	static Shader* FromName(std::string name);
+
 };

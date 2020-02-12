@@ -118,8 +118,8 @@ vec4 BloomCutoff(vec4 colour)
 {
 	vec4 BrightColor = vec4(colour.rgb, 1.0);
 
-	//float brightness = dot(colour.rgb, vec3(0.2126, 0.6152, 0.522));
-	float brightness = dot(colour.rgb, vec3(0.2126, 0.7152, 0.0722));
+	float brightness = dot(colour.rgb, vec3(0.2126, 0.6152, 0.522));
+	brightness = dot(colour.rgb, vec3(0.2126, 0.7152, 0.0722));
     if(brightness <= 1.0)
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 
@@ -158,7 +158,7 @@ vec4 circular_blur(sampler2D tex, float offset)
 vec4 DOF(sampler2D tex)
 {
 	const float near_focus = 4.0;
-	const float focus_length = 20.0;
+	const float focus_length = 60.0;
 	const float blur_scale = 5.0;
 
 	vec4 colour = texture(tex, fUVx2.st);
