@@ -21,6 +21,21 @@ namespace nPhysics
 		return new cPlaneComponent(parent, def);
 	}
 
+	iCubeComponent* cPhysicsFactory::CreateCube(iObject* parent, const sCubeDef& def)
+	{
+		return nullptr;
+	}
+
+	iCapsuleComponent* cPhysicsFactory::CreateCapsule(iObject* parent, const sCapsuleDef& def)
+	{
+		return nullptr;
+	}
+
+	iEmptyComponent* cPhysicsFactory::CreateEmpty(iObject* parent)
+	{
+		return nullptr;
+	}
+
 }
 
 DLL_EXPORT nPhysics::iPhysicsFactory* MakePhysicsFactory()

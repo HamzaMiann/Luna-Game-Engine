@@ -1,5 +1,6 @@
 #include "cSphereComponent.h"
 #include "cPhysicsFactory.h"
+#include <interfaces/Behaviour/iBehaviour.h>
 
 namespace nPhysics
 {
@@ -33,7 +34,7 @@ namespace nPhysics
 
 		mBody->applyCentralImpulse(nConvert::ToBullet(def.velocity));
 
-		mBody->setUserPointer(this);
+		mBody->setUserPointer((iPhysicsComponent*)this);
 
 		cPhysicsFactory factory;
 		factory.GetWorld()->AddComponent(this);
@@ -108,5 +109,14 @@ namespace nPhysics
 		btTransform tform;
 		mBody->getMotionState()->getWorldTransform(tform);
 		return nConvert::ToGLM(tform.getOrigin());
+	}
+
+	void cSphereComponent::CollidedWith(iPhysicsComponent* other)
+	{
+		iBehaviour* behaviour = parent.GetComponent<iBehaviour>();
+		if (behaviour)
+		{
+			behaviour->OnCollide(&other->parent);
+		}
 	}
 }

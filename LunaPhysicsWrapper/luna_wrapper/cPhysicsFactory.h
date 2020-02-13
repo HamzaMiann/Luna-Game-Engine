@@ -14,6 +14,9 @@ namespace nPhysics
 		// components
 		virtual iSphereComponent* CreateSphere(iObject* parent, const sSphereDef& def) override;
 		virtual iPlaneComponent* CreatePlane(iObject* parent, const sPlaneDef& def) override;
+		virtual iCubeComponent* CreateCube(iObject* parent, const sCubeDef& def) override { return nullptr; }
+		virtual iCapsuleComponent* CreateCapsule(iObject* parent, const sCapsuleDef& def) { return nullptr; }
+		virtual iEmptyComponent* CreateEmpty(iObject* parent) { return nullptr; }
 	};
 }
 

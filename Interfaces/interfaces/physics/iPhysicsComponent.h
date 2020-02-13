@@ -30,14 +30,21 @@ namespace nPhysics
 
 		virtual void UpdateTransform() = 0;
 
+		virtual void CollidedWith(iPhysicsComponent* other) {}
+
+		inline void setIsRotateable(bool value) { _rotateable = value; }
+
 		sTransform& transform;
 		iObject& parent;
 
 	protected:
+		bool _rotateable;
+
 		iPhysicsComponent(iObject* parent, eComponentType componentType)
 			: mComponentType(componentType)
 			, parent(*parent)
 			, transform(parent->transform)
+			, _rotateable(true)
 		{}
 
 	private:

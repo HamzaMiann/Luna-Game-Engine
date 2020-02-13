@@ -27,5 +27,7 @@ namespace nPhysics
 		virtual void AddVelocity(const glm::vec3& velocity) override;
 		virtual void SetPosition(const glm::vec3& position) override;
 		virtual glm::vec3 GetPosition() override;
+
+		virtual void CollidedWith(iPhysicsComponent* other) override;
 	};
 }

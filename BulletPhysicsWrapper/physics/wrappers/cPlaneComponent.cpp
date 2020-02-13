@@ -17,7 +17,8 @@ namespace nPhysics
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(0.f, myMotionState, colShape, btVector3(0.f, 0.f, 0.f));
 		mBody = new btRigidBody(rbInfo);
 		rbInfo.m_restitution = 0.5f;
-		mBody->setUserPointer(this);
+
+		mBody->setUserPointer((iPhysicsComponent*)this);
 
 		cPhysicsFactory factory;
 		factory.GetWorld()->AddComponent(this);

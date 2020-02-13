@@ -63,5 +63,14 @@
     <ClInclude Include="iApplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="interfaces\physics\iCubeComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="interfaces\physics\iCapsuleComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="interfaces\physics\iEmptyComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

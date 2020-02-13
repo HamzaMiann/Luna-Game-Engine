@@ -47,8 +47,18 @@ void nPhysics::cPhysicsWorld::Update(float dt)
 	//{
 	//	// TODO: COLLISION LISTENING STUFF
 	//}
+	for (unsigned int i = 0; i < mDispatcher->getNumManifolds(); ++i)
+	{
+		btPersistentManifold* manifold = mDispatcher->getManifoldByIndexInternal(i);
+		iPhysicsComponent* bodyA = (iPhysicsComponent*)manifold->getBody0()->getUserPointer();
+		iPhysicsComponent* bodyB = (iPhysicsComponent*)manifold->getBody1()->getUserPointer();
+		bodyA->CollidedWith(bodyB);
+		bodyB->CollidedWith(bodyA);
+	}
+
 	for (iPhysicsComponent*& i : components)
 	{
+		auto wrapper = dynamic_cast<cBulletWrapperComponent*>(i);
 		i->UpdateTransform();
 	}
 }
