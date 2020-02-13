@@ -17,6 +17,9 @@ namespace nPhysics
 		virtual bool AddComponent(iPhysicsComponent* component) override;
 		virtual bool RemoveComponent(iPhysicsComponent* component) override;
 
+		virtual std::vector<iPhysicsComponent*> RayCastAll(vec3 ro, vec3 rd, float t) override;
+		virtual iPhysicsComponent* RayCast(vec3 ro, vec3 rd, float t) override;
+
 	private:
 		btAlignedObjectArray<btCollisionShape*> collisionShapes;
 		btDefaultCollisionConfiguration* mCollisionConfiguration;
