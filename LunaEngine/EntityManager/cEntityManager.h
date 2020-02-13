@@ -35,6 +35,8 @@ public:
 
 	void SetEntities(std::vector<cGameObject*>* entities);
 
+	void Release();
+
 	void Update(float dt);
 
 };

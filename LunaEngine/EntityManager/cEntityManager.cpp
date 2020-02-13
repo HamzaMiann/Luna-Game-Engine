@@ -72,6 +72,15 @@ void cEntityManager::SetEntities(std::vector<cGameObject*>* entities)
 	Entities = entities;
 }
 
+void cEntityManager::Release()
+{
+	for (cGameObject*& object : *Entities)
+	{
+		delete object;
+	}
+	Entities->clear();
+}
+
 void cEntityManager::Update(float dt)
 {
 	while (!EntityManager::remove_queue.empty())

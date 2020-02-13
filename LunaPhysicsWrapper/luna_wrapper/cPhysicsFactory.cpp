@@ -35,3 +35,9 @@ namespace nPhysics
 	}
 
 }
+
+
+DLL_EXPORT nPhysics::iPhysicsFactory* MakePhysicsFactory()
+{
+	return new nPhysics::cPhysicsFactory;
+}

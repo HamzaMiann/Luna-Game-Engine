@@ -16,3 +16,7 @@ namespace nPhysics
 		virtual iPlaneComponent* CreatePlane(iObject* parent, const sPlaneDef& def) override;
 	};
 }
+
+#define DLL_EXPORT extern "C" __declspec(dllexport)
+
+DLL_EXPORT nPhysics::iPhysicsFactory* MakePhysicsFactory();

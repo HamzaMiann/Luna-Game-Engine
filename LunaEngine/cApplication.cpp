@@ -56,64 +56,6 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO);
 void RenderQuadToScreen(cFBO& previousFBO);
 
-//static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-//{
-//
-//	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-//		glfwSetWindowShouldClose(window, GLFW_TRUE);
-//
-//	if (pInputHandler) pInputHandler->key_callback(window, key, scancode, action, mods);
-//}
-//
-//static void error_callback(int error, const char* description)
-//{
-//	fprintf(stderr, "Error: %s\n", description);
-//}
-//
-//static void HandleInput(GLFWwindow* window)
-//{
-//#ifdef CAMERA_CONTROL
-//	vec3 forwardVector = Mathf::get_direction_vector(scene->camera.Eye, scene->camera.Target);
-//	vec3 backwardsVector = Mathf::get_reverse_direction_vector(scene->camera.Eye, scene->camera.Target);
-//	vec3 rightVector = Mathf::get_rotated_vector(-90.f, vec3(0.f), forwardVector);
-//	vec3 leftVector = Mathf::get_rotated_vector(90.f, vec3(0.f), forwardVector);
-//
-//
-//	// Move the camera (A & D for left and right, along the x axis)
-//	if (glfwGetKey(window, GLFW_KEY_A))
-//	{
-//		Mathf::rotate_vector(-5.f, scene->camera.Target, scene->camera.Eye);
-//	}
-//	if (glfwGetKey(window, GLFW_KEY_D))
-//	{
-//		Mathf::rotate_vector(5.f, scene->camera.Target, scene->camera.Eye);
-//	}
-//
-//	// Move the camera (Q & E for up and down, along the y axis)
-//	if (glfwGetKey(window, GLFW_KEY_Q))
-//	{
-//		scene->camera.Eye.y -= glm::length(forwardVector) * 0.05f;
-//	}
-//	if (glfwGetKey(window, GLFW_KEY_E))
-//	{
-//		scene->camera.Eye.y += glm::length(forwardVector) * 0.05f;
-//	}
-//
-//	// Move the camera (W & S for towards and away, along the z axis)
-//	if (glfwGetKey(window, GLFW_KEY_W))
-//	{
-//		scene->camera.Eye += forwardVector * 0.1f;
-//	}
-//	if (glfwGetKey(window, GLFW_KEY_S))
-//	{
-//		scene->camera.Eye += backwardsVector * 0.1f;
-//	}
-//#endif
-//
-//	if (pInputHandler) pInputHandler->HandleInput(window);
-//
-//}
-
 void cApplication::Init()
 {
 	// Initialize GL
@@ -231,7 +173,7 @@ void cApplication::Run()
 	cGameObject* player = entity_manager.GetGameObjectByTag("player");
 	//cEntityManager::Instance()->GetGameObjectByTag("character")->refractivity = 1.0f;
 	//cEntityManager::Instance()->GetGameObjectByTag("gun")->reflectivity = 0.2f;
-	player->reflectivity = 1.0f;
+	player->reflectivity = 0.2f;
 
 	cLowpassFilter& filter = *cLowpassFilter::Instance();
 	float current_time = (float)glfwGetTime();
@@ -334,6 +276,9 @@ void cApplication::End()
 	second_passFBO.shutdown();
 	finalFBO.shutdown();
 	blur_fbo.shutdown();
+
+	cEntityManager::Instance()->Release();
+
 	delete scene;
 	ReleasePhysics();
 

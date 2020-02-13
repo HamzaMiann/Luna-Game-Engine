@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)LunaPhysicsWrapper;$(SolutionDir)Interfaces;$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Interfaces;$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(OutDir);$(SolutionDir)lib/Debug64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)LunaPhysicsWrapper;$(SolutionDir)Interfaces;$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Interfaces;$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(OutDir);$(SolutionDir)lib\Release64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
