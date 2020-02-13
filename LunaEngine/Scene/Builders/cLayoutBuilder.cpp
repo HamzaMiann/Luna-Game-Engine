@@ -83,7 +83,15 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 					def.gravity_factor = XML_Helper::AsFloat(component_node->first_node("GFactor"));
 					def.Offset = XML_Helper::AsVec3(component_node->first_node("Offset"));
 					def.Radius = XML_Helper::AsFloat(component_node->first_node("Radius"));
-					ptr->AddComponent(g_PhysicsFactory->CreateSphere(ptr, def));
+					
+					nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateSphere(ptr, def);
+					component->setIsRotateable(false);
+					if (component_node->first_node("Rotateable"))
+					{
+						component->setIsRotateable(true);
+					}
+
+					ptr->AddComponent(component);
 				}
 				else if (n == "PlaneBody")
 				{

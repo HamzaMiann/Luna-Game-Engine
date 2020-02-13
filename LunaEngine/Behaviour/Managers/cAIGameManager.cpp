@@ -30,6 +30,7 @@ namespace _GameManager_
 		def.Radius = 0.9f;
 		def.velocity = glm::vec3(0.f);
 		nPhysics::iSphereComponent* body = g_PhysicsFactory->CreateSphere(obj, def);
+		body->setIsRotateable(false);
 		obj->AddComponent(body);
 		return obj;
 	}
@@ -81,6 +82,7 @@ void cAIGameManager::Player_Shoot(glm::vec3 const& start, glm::vec3 const& veloc
 	def.Radius = 0.3f;
 	def.velocity = velocity;
 	nPhysics::iSphereComponent* body = g_PhysicsFactory->CreateSphere(obj, def);
+	body->setIsRotateable(false);
 	obj->AddComponent(body);
 	cBullet* bullet = obj->AddComponent<cBullet>();
 	bullet->attack_layer = "enemy";
@@ -104,6 +106,7 @@ void cAIGameManager::Enemy_Shoot(glm::vec3 const& start, glm::vec3 const& veloci
 	def.Radius = 0.3f;
 	def.velocity = velocity;
 	nPhysics::iSphereComponent* body = g_PhysicsFactory->CreateSphere(obj, def);
+	body->setIsRotateable(false);
 	obj->AddComponent(body);
 	cBullet* bullet = obj->AddComponent<cBullet>();
 	bullet->attack_layer = "player";

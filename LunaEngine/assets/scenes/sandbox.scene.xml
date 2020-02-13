@@ -289,6 +289,7 @@
           <GFactor>1.0</GFactor>
           <Offset x="0.000000" y="0.000000" z="0.000000"/>
           <Radius>1.0</Radius>
+          <Rotateable/>
         </SphereBody>
         
         <!-- IMPORTANT: This component is the component that lets you control the ball -->

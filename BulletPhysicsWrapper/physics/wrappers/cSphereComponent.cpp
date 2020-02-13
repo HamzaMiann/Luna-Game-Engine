@@ -91,7 +91,8 @@ namespace nPhysics
 		btTransform tf;
 		mBody->getMotionState()->getWorldTransform(tf);
 		transform.pos = nConvert::ToGLM(tf.getOrigin());
-		transform.rotation = nConvert::ToGLM(tf.getRotation());
+		if (_rotateable)
+			transform.rotation = nConvert::ToGLM(tf.getRotation());
 	}
 	void cSphereComponent::AddVelocity(const glm::vec3& velocity)
 	{
@@ -100,9 +101,12 @@ namespace nPhysics
 	void cSphereComponent::SetPosition(const glm::vec3& position)
 	{
 		btTransform tform;
-		mBody->getMotionState()->getWorldTransform(tform);
+		btMotionState* state;
+		state = mBody->getMotionState();
+		state->getWorldTransform(tform);
 		tform.setOrigin(nConvert::ToBullet(position));
-		mBody->getMotionState()->setWorldTransform(tform);
+		state->setWorldTransform(tform);
+		mBody->setMotionState(state);
 	}
 	glm::vec3 cSphereComponent::GetPosition()
 	{
