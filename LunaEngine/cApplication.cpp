@@ -35,6 +35,8 @@ cGameObject quad;
 bool is_paused = false;
 int pass_id;
 
+int last_shader = -1;
+
 bool bloom_enabled = true;
 bool DOF_enabled = true;
 
@@ -268,6 +270,8 @@ void cApplication::Run()
 
 
 		Input::ClearBuffer();
+		last_shader = -1;
+
 		glfwSwapBuffers(global::window);
 		glfwPollEvents();
 	}
@@ -576,6 +580,44 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 
 }
 
+void RenderGO(cGameObject* object, float width, float height, mat4& p, mat4& v)
+{
+	Shader& shader = *object->shader;
+
+	cMaterial* material = object->GetComponent<cMaterial>();
+	if (material != nullptr)
+	{
+		// TODO
+	}
+
+	GLint shaderProgID = shader.GetID();
+
+	// Only switch shaders if needed
+	if (last_shader != shaderProgID)
+	{
+		glUseProgram(shaderProgID);
+		last_shader = shaderProgID;
+
+		// set time
+		float time = glfwGetTime();
+
+		glUniform1f(shader["iTime"], time);
+
+		// set resolution
+		glUniform2f(shader["iResolution"],
+			width,
+			height);
+
+		glUniform1i(shader["isWater"],
+			false);
+
+		glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
+		glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
+	}
+
+	DrawObject(object, v, p);
+}
+
 void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt)
 {
 	/*if (!fbo->reset(width, height, errorString))
@@ -624,6 +666,14 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 #endif
 
 		cGameObject* objPtr = objects[index];
+
+		objPtr->cmd_group->Update(dt);
+		objPtr->brain->Update(dt);
+
+		//RenderGO(objPtr, width, height, p, v);
+
+
+
 		Shader& shader = *objects[index]->shader;
 
 		cMaterial* material = objPtr->GetComponent<cMaterial>();
@@ -632,8 +682,7 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 			// TODO
 		}
 
-		objPtr->cmd_group->Update(dt);
-		objPtr->brain->Update(dt);
+		
 
 		GLint shaderProgID = shader.GetID();
 

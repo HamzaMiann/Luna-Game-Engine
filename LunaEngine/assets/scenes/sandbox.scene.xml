@@ -36,7 +36,7 @@
 	<Models>
     <Model file="Walking.fbx" friendlyName="character" shader="basic"/>
     <Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
-    <Model file="cube_XYZ_N_UV.ply" friendlyName="cube" shader="basic"/>
+    <Model file="cube.ply" friendlyName="cube" shader="basic"/>
     <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
     <Model file="RetroTV.edited.screenonly.ply" friendlyName="tv_screen" shader="basic"/>
 		<Model file="RetroTV.edited.bodyonly.ply" friendlyName="tv_body" shader="basic"/>
@@ -319,6 +319,17 @@
         <SphereBehaviour/>
         
       </Components>
+
+      <!--<GameObject mesh="cube" tag="child_cube" shader="basic">
+        <Position x="0.0" y="4" z="0"/>
+        <Rotation x="0" y="0" z="0.0"/>
+        <Scale>1.0</Scale>
+        <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+        <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+        <SpecIntensity>10.000000</SpecIntensity>
+        <Texture ratio="1.000000">blue.png</Texture>
+      </GameObject>-->
+      
 		</GameObject>
 
     <GameObject mesh="plane" tag="ground" shader="basic">

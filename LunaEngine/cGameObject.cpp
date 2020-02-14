@@ -10,6 +10,7 @@ cGameObject::cGameObject()
 	id = next_id++;
 	brain = new cLuaBrain(this);
 	shader = 0;
+	parent = 0;
 	cmd_group = new cCommandGroup;
 }
 
