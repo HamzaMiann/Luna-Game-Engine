@@ -1,18 +1,17 @@
-#include "cSphereComponent.h"
+#include "cCubeComponent.h"
 #include "cPhysicsFactory.h"
-#include <interfaces/Behaviour/iBehaviour.h>
+
 
 namespace nPhysics
 {
-	cSphereComponent::cSphereComponent(iObject* parent, const sSphereDef& def)
-		: iSphereComponent(parent)
-		, cBulletWrapperComponent()
+	cCubeComponent::cCubeComponent(iObject* parent, const sCubeDef& def)
+		: iCubeComponent(parent)
 	{
-		btCollisionShape* colShape = new btSphereShape(btScalar(def.Radius));
+		btCollisionShape* colShape = new btBoxShape(nConvert::ToBullet(def.Scale));
 
 		btTransform transform;
 		transform.setIdentity();
-		transform.setOrigin(nConvert::ToBullet(this->transform.pos + def.Offset));
+		transform.setOrigin(nConvert::ToBullet(this->transform.pos + def.Origin));
 
 		/// Create Dynamic Objects
 
@@ -40,7 +39,7 @@ namespace nPhysics
 		factory.GetWorld()->AddComponent(this);
 	}
 
-	cSphereComponent::~cSphereComponent()
+	cCubeComponent::~cCubeComponent()
 	{
 		cPhysicsFactory factory;
 		factory.GetWorld()->RemoveComponent(this);
@@ -52,53 +51,46 @@ namespace nPhysics
 		mBody = 0;
 	}
 
-	void cSphereComponent::GetTransform(glm::mat4& transformOut)
+	bool cCubeComponent::serialize(rapidxml::xml_node<>* root_node)
+	{
+		return false;
+	}
+
+	bool cCubeComponent::deserialize(rapidxml::xml_node<>* root_node)
+	{
+		return false;
+	}
+
+	void cCubeComponent::GetTransform(glm::mat4& transformOut)
 	{
 		btTransform transform;
 		mBody->getMotionState()->getWorldTransform(transform);
 		nConvert::ToSimple(transform, transformOut);
 	}
 
-	void cSphereComponent::AddForce(const glm::vec3& force)
+	void cCubeComponent::AddForce(const glm::vec3& force)
 	{
 		mBody->activate(true);
 		mBody->applyCentralForce(nConvert::ToBullet(force));
 	}
 
-	bool cSphereComponent::serialize(rapidxml::xml_node<>* root_node)
-	{
-		return false;
-	}
-
-	bool cSphereComponent::deserialize(rapidxml::xml_node<>* root_node)
-	{
-		return false;
-	}
-
-	void cSphereComponent::SetVelocity(const glm::vec3& velocity)
+	void cCubeComponent::SetVelocity(const glm::vec3& velocity)
 	{
 		mBody->activate(true);
 		mBody->setLinearVelocity(nConvert::ToBullet(velocity));
 	}
 
-	glm::vec3 cSphereComponent::GetVelocity()
+	glm::vec3 cCubeComponent::GetVelocity()
 	{
 		return nConvert::ToGLM(mBody->getLinearVelocity());
 	}
 
-	void cSphereComponent::UpdateTransform()
-	{
-		btTransform tf;
-		mBody->getMotionState()->getWorldTransform(tf);
-		transform.pos = nConvert::ToGLM(tf.getOrigin());
-		if (_rotateable)
-			transform.rotation = nConvert::ToGLM(tf.getRotation());
-	}
-	void cSphereComponent::AddVelocity(const glm::vec3& velocity)
+	void cCubeComponent::AddVelocity(const glm::vec3& velocity)
 	{
 		mBody->applyCentralImpulse(nConvert::ToBullet(velocity));
 	}
-	void cSphereComponent::SetPosition(const glm::vec3& position)
+
+	void cCubeComponent::SetPosition(const glm::vec3& position)
 	{
 		btTransform tform;
 		btMotionState* state;
@@ -108,19 +100,21 @@ namespace nPhysics
 		state->setWorldTransform(tform);
 		mBody->setMotionState(state);
 	}
-	glm::vec3 cSphereComponent::GetPosition()
+
+	glm::vec3 cCubeComponent::GetPosition()
 	{
 		btTransform tform;
 		mBody->getMotionState()->getWorldTransform(tform);
 		return nConvert::ToGLM(tform.getOrigin());
 	}
 
-	void cSphereComponent::CollidedWith(iPhysicsComponent* other)
+	void cCubeComponent::UpdateTransform()
 	{
-		iBehaviour* behaviour = parent.GetComponent<iBehaviour>();
-		if (behaviour)
-		{
-			behaviour->OnCollide(&other->parent);
-		}
+		btTransform tf;
+		mBody->getMotionState()->getWorldTransform(tf);
+		transform.pos = nConvert::ToGLM(tf.getOrigin());
+		if (_rotateable)
+			transform.rotation = nConvert::ToGLM(tf.getRotation());
 	}
+
 }

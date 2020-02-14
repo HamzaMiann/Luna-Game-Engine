@@ -16,7 +16,7 @@ namespace nPhysics
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(transform);
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(0.f, myMotionState, colShape, btVector3(0.f, 0.f, 0.f));
 		mBody = new btRigidBody(rbInfo);
-		rbInfo.m_restitution = 0.5f;
+		rbInfo.m_restitution = 0.7f;
 
 		mBody->setUserPointer((iPhysicsComponent*)this);
 

@@ -104,6 +104,24 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 					def.Constant = XML_Helper::AsFloat(component_node->first_node("Constant"));
 					ptr->AddComponent(g_PhysicsFactory->CreatePlane(ptr, def));
 				}
+				else if (n == "CubeBody")
+				{
+					nPhysics::sCubeDef def;
+					def.velocity = XML_Helper::AsVec3(component_node->first_node("Velocity"));
+					def.mass = XML_Helper::AsFloat(component_node->first_node("Mass"));
+					def.gravity_factor = XML_Helper::AsFloat(component_node->first_node("GFactor"));
+					def.Scale = XML_Helper::AsVec3(component_node->first_node("Scale"));
+					def.Origin = XML_Helper::AsVec3(component_node->first_node("Origin"));
+
+					nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateCube(ptr, def);
+					component->setIsRotateable(false);
+					if (component_node->first_node("Rotateable"))
+					{
+						component->setIsRotateable(true);
+					}
+
+					ptr->AddComponent(component);
+				}
 				else
 				{
 					iComponent* comp = ComponentFactory::GetComponent(n, ptr);

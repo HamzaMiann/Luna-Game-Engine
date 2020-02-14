@@ -2,6 +2,7 @@
 #include "cPhysicsWorld.h"
 #include "cSphereComponent.h"
 #include "cPlaneComponent.h"
+#include "cCubeComponent.h"
 
 namespace nPhysics
 {
@@ -23,7 +24,7 @@ namespace nPhysics
 
 	iCubeComponent* cPhysicsFactory::CreateCube(iObject* parent, const sCubeDef& def)
 	{
-		return nullptr;
+		return new cCubeComponent(parent, def);
 	}
 
 	iCapsuleComponent* cPhysicsFactory::CreateCapsule(iObject* parent, const sCapsuleDef& def)

@@ -249,9 +249,11 @@ void cApplication::Run()
 		// set TV screen texture
 		screen->texture[0].SetTexture(albedoFBO.colourTexture_ID);
 
-		v = glm::lookAt(scene->camera.Eye,
+		v = glm::lookAt(
+			scene->camera.Eye,
 			scene->camera.Target,
-			scene->camera.Up);
+			scene->camera.Up
+		);
 
 		RenderObjectsToFBO(&second_passFBO, width, height, p, v, delta_time);
 
