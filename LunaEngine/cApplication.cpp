@@ -445,12 +445,21 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 
 
 	// ******* TRANSLATION TRANSFORM *********
-	mat4 matTrans
-		= glm::translate(mat4(1.0f),
-			vec3(objPtr->transform.pos.x,
-				objPtr->transform.pos.y,
-				objPtr->transform.pos.z));
-	m = m * matTrans;
+	if (objPtr->parent)
+	{
+		vec3 pos = vec3(objPtr->parent->transform.ModelMatrix() * vec4(objPtr->transform.pos, 1.f));
+		mat4 matTrans
+			= glm::translate(mat4(1.0f), pos);
+		m = m * matTrans;
+		m = m * mat4(objPtr->transform.rotation * objPtr->parent->transform.rotation);
+	}
+	else
+	{
+		mat4 matTrans
+			= glm::translate(mat4(1.0f), objPtr->transform.pos);
+		m = m * matTrans;
+		m = m * mat4(objPtr->transform.rotation);
+	}
 	// ******* TRANSLATION TRANSFORM *********
 
 
@@ -470,7 +479,7 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 	//mat4 rotateX = glm::rotate(mat4(1.0f),
 	//								objPtr->rotation.x,	// (float)glfwGetTime(),					// Angle
 	//								vec3(1.0f, 0.0f, 0.0f));
-	m = m * mat4(objPtr->transform.rotation);
+	
 	// ******* ROTATION TRANSFORM *********
 
 	if (pass_id != 1) m = mat4(1.f);
@@ -489,14 +498,19 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 	// ******* SCALE TRANSFORM *********
 
 
+	if (objPtr->parent)
+	{
+		m *= glm::scale(mat4(1.f), objPtr->transform.scale);
+		GLint matModel_UL = shader["matModel"];
+		glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m));
+	}
+	else
+	{
+		GLint matModel_UL = shader["matModel"];
+		glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(objPtr->transform.ModelMatrix()));
+	}
 
-
-	GLint matModel_UL = shader["matModel"];
-	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(objPtr->transform.ModelMatrix()));
-
-
-
-
+	
 	GLint eye_loc = shader["eyeLocation"];
 	glUniform4f(eye_loc,
 		scene->camera.Eye.x,
@@ -582,50 +596,47 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 
 void RenderGO(cGameObject* object, float width, float height, mat4& p, mat4& v)
 {
-	Shader& shader = *object->shader;
 
-	cMaterial* material = object->GetComponent<cMaterial>();
-	if (material != nullptr)
+	for (cGameObject*& child : object->children)
 	{
-		// TODO
+		RenderGO(child, width, height, p, v);
 	}
 
+	Shader& shader = *object->shader;
 	GLint shaderProgID = shader.GetID();
 
+	//cMaterial* material = object->GetComponent<cMaterial>();
+	//if (material != nullptr)
+	//{
+	//	// TODO
+	//}
+
+
 	// Only switch shaders if needed
-	if (last_shader != shaderProgID)
-	{
-		glUseProgram(shaderProgID);
-		last_shader = shaderProgID;
+	glUseProgram(shaderProgID);
+	last_shader = shaderProgID;
 
-		// set time
-		float time = glfwGetTime();
+	// set time
+	float time = glfwGetTime();
 
-		glUniform1f(shader["iTime"], time);
+	glUniform1f(shader["iTime"], time);
 
-		// set resolution
-		glUniform2f(shader["iResolution"],
-			width,
-			height);
+	// set resolution
+	glUniform2f(shader["iResolution"],
+		width,
+		height);
 
-		glUniform1i(shader["isWater"],
-			false);
+	glUniform1i(shader["isWater"],
+		false);
 
-		glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
-		glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
-	}
+	glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
+	glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
 
 	DrawObject(object, v, p);
 }
 
 void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt)
 {
-	/*if (!fbo->reset(width, height, errorString))
-	{
-		std::cout << "fbo was unable to be reset..." << std::endl;
-		exit(1);
-	}*/
-
 	// Draw to the frame buffer
 	fbo->use();
 	fbo->clear_all();
@@ -670,46 +681,10 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 		objPtr->cmd_group->Update(dt);
 		objPtr->brain->Update(dt);
 
-		//RenderGO(objPtr, width, height, p, v);
+		RenderGO(objPtr, width, height, p, v);
 
+		continue;
 
-
-		Shader& shader = *objects[index]->shader;
-
-		cMaterial* material = objPtr->GetComponent<cMaterial>();
-		if (material != nullptr)
-		{
-			// TODO
-		}
-
-		
-
-		GLint shaderProgID = shader.GetID();
-
-		// Only switch shaders if needed
-		if (lastShader != shaderProgID)
-		{
-			glUseProgram(shaderProgID);
-			lastShader = shaderProgID;
-
-			// set time
-			float time = glfwGetTime();
-
-			glUniform1f(shader["iTime"], time);
-
-			// set resolution
-			glUniform2f(shader["iResolution"],
-				width,
-				height);
-
-			glUniform1i(shader["isWater"],
-				false);
-
-			glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
-			glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
-		}
-
-		DrawObject(objPtr, v, p);
 
 	}//for (int index...
 	// **************************************************

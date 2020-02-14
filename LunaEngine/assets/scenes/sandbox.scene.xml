@@ -223,6 +223,7 @@
       <SpecIntensity>10.000000</SpecIntensity>
       <Texture ratio="1.0">blue.png</Texture>
     </GameObject>
+
     
     <GameObject mesh="tv_body" tag="body" shader="basic">
       <Position x="0.0" y="1.0" z="0.0"/>
@@ -234,23 +235,32 @@
       <Texture ratio="1.000000">red.png</Texture>
     </GameObject>
 
-    <GameObject mesh="gun" tag="gun" shader="pbr">
+    <GameObject mesh="none" tag="fps" shader="basic">
       <Position x="-3.0" y="1.0" z="0.0"/>
-      <Rotation x="-90.0" y="0.0" z="0.0"/>
-      <Scale>0.03</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">Cerberus_A.jpg</Texture>
-      <Texture ratio="1.000000">Cerberus_N.jpg</Texture>
-      <Texture ratio="1.000000">Cerberus_M.jpg</Texture>
-      
+      <Rotation x="0.0" y="0.0" z="0.0"/>
+      <Scale>1.0</Scale>
+
       <Components>
 
         <!--<FPSBehaviour/>-->
-        
+
       </Components>
+
+      <GameObject mesh="gun" tag="gun" shader="pbr">
+        <Position x="0.5" y="0.3" z="0.0"/>
+        <Rotation x="-90.0" y="0.0" z="0.0"/>
+        <Scale>0.03</Scale>
+        <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+        <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+        <SpecIntensity>10.000000</SpecIntensity>
+        <Texture ratio="1.000000">Cerberus_A.jpg</Texture>
+        <Texture ratio="1.000000">Cerberus_N.jpg</Texture>
+        <Texture ratio="1.000000">Cerberus_M.jpg</Texture>
+      </GameObject>
+      
     </GameObject>
+    
+    
 
     <GameObject mesh="character" tag="character" shader="basic">
       <Position x="7.0" y="0.0" z="0.0"/>
@@ -320,15 +330,15 @@
         
       </Components>
 
-      <!--<GameObject mesh="cube" tag="child_cube" shader="basic">
-        <Position x="0.0" y="4" z="0"/>
+      <GameObject mesh="cube" tag="child_cube" shader="basic">
+        <Position x="0.0" y="2" z="0"/>
         <Rotation x="0" y="0" z="0.0"/>
-        <Scale>1.0</Scale>
+        <Scale>0.3</Scale>
         <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
         <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
         <SpecIntensity>10.000000</SpecIntensity>
         <Texture ratio="1.000000">blue.png</Texture>
-      </GameObject>-->
+      </GameObject>
       
 		</GameObject>
 
