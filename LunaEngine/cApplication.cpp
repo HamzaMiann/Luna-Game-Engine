@@ -53,6 +53,7 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p);
 void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, mat4 const& v, mat4 const& p);
 
 void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt);
+void RenderSkybox(float width, float height, mat4 p, mat4 v, float dt);
 void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO);
 void RenderQuadToScreen(cFBO& previousFBO);
 
@@ -63,7 +64,6 @@ void cApplication::Init()
 	InitGL();
 	SetKeyCallback(key_callback);
 	GLFWwindow* window = global::window;
-
 
 	// Initialize physics
 	InitPhysics();
@@ -87,7 +87,7 @@ void cApplication::Init()
 		pSkyBoxSphere->tag = "skybox";
 		pSkyBoxSphere->transform.pos = vec3(0.0f, 0.f, 0.0f);
 		pSkyBoxSphere->transform.scale = vec3(900.0f);
-		pSkyBoxSphere->texture[0].SetTexture("Pizza.bmp", 1.0f);
+		//pSkyBoxSphere->texture[0].SetTexture("Pizza.bmp", 1.0f);
 		std::cout << "Space skybox loaded" << std::endl;
 	}
 	else
@@ -245,6 +245,7 @@ void cApplication::Run()
 		);
 
 		RenderObjectsToFBO(&albedoFBO, width, height, p, v, delta_time);
+		RenderSkybox(width, height, p, v, delta_time);
 
 		// set TV screen texture
 		screen->texture[0].SetTexture(albedoFBO.colourTexture_ID);
@@ -256,12 +257,15 @@ void cApplication::Run()
 		);
 
 		RenderObjectsToFBO(&second_passFBO, width, height, p, v, delta_time);
+		RenderSkybox(width, height, p, v, delta_time);
 
 		RenderQuadToFBO(finalFBO, second_passFBO);
 		RenderQuadToScreen(finalFBO);
 
+
 		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
 		debug_renderer.RenderDebugObjects(v, p, 0.01f);
+
 
 		Input::ClearBuffer();
 		glfwSwapBuffers(global::window);
@@ -661,6 +665,10 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 	}//for (int index...
 	// **************************************************
 
+}
+
+void RenderSkybox(float width, float height, mat4 p, mat4 v, float dt)
+{
 	// RENDER SKYBOX
 	cGameObject* objPtr = pSkyBoxSphere;
 	Shader& shader = *objPtr->shader;
@@ -676,32 +684,27 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 
 	GLint shaderProgID = shader.GetID();
 
-	// Only switch shaders if needed
-	if (lastShader != shaderProgID)
-	{
-		glUseProgram(shaderProgID);
-		lastShader = shaderProgID;
+	glUseProgram(shaderProgID);
 
-		// set time
-		float time = glfwGetTime();
+	// set time
+	float time = glfwGetTime();
 
-		glUniform1f(shader["iTime"], time);
+	glUniform1f(shader["iTime"], time);
 
-		// set resolution
-		glUniform2f(shader["iResolution"],
-			width,
-			height);
+	// set resolution
+	glUniform2f(shader["iResolution"],
+		width,
+		height);
 
-		glUniform1i(shader["isWater"],
-			false);
+	glUniform1i(shader["isWater"],
+		false);
 
-		glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
-		glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
-	}
+	glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
+	glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
 
 	DrawObject(objPtr, v, p);
-
 }
+
 void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 {
 	float width = previousFBO.width;
