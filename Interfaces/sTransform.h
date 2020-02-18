@@ -8,7 +8,9 @@ struct sTransform
 {
 private:
 	typedef glm::vec3 vec3;
+	typedef glm::vec4 vec4;
 	typedef glm::quat quat;
+	typedef glm::mat4 mat4;
 
 public:
 	quat rotation;
@@ -21,6 +23,14 @@ public:
 		pos = vec3(0.f);
 		scale = vec3(1.f);
 	}
+
+	inline vec3 Position()	{ return pos; }
+	inline quat Rotation()	{ return rotation; }
+	inline vec3 Scale()		{ return scale; }
+
+	inline void Position(const vec3& position)	{ pos = position; }
+	inline void Rotation(const quat& rotation)	{ this->rotation = rotation; }
+	inline void Scale(const vec3& scale)		{ this->scale = scale; }
 
 	void SetEulerRotation(vec3 EulerAngleDegrees)
 	{
@@ -45,31 +55,46 @@ public:
 
 	vec3 EulerAngles(void) { return glm::eulerAngles(rotation); }
 
-	inline glm::mat4 ModelMatrix()
+	inline mat4 ModelMatrix()
 	{
 		return ((glm::mat4(1.f) * TranslationMatrix()) * RotationMatrix()) * ScaleMatrix();
 	}
 
-	inline glm::mat4 TranslationMatrix()
+	inline mat4 TranslationMatrix()
 	{
-		return glm::translate(glm::mat4(1.0f),
-							  glm::vec3(pos.x,
-										pos.y,
-										pos.z)
+		return glm::translate(mat4(1.0f), pos);
+	}
+
+	inline mat4 TranslationMatrix(sTransform& parent)
+	{
+		return glm::translate(mat4(1.0f),
+							  vec3(parent.ModelMatrix() * vec4(pos, 1.0f))
 		);
 	}
 
-	inline glm::mat4 RotationMatrix()
+	inline mat4 RotationMatrix()
 	{
-		return glm::mat4(1.f) * glm::mat4(rotation);
+		return mat4(1.f) * mat4(rotation);
 	}
 
-	inline glm::mat4 ScaleMatrix()
+	inline mat4 RotationMatrix(sTransform& parent)
 	{
-		return glm::scale(glm::mat4(1.0f),
-						  glm::vec3(scale.x,
-									scale.y,
-									scale.z)
+		return mat4(1.f) * mat4(rotation * parent.rotation);
+	}
+
+	inline mat4 ScaleMatrix()
+	{
+		return glm::scale(mat4(1.0f), scale);
+	}
+
+	inline mat4 ScaleMatrix(sTransform& parent)
+	{
+		return glm::scale(mat4(1.0f),
+			vec3(
+				scale.x * parent.scale.x,
+				scale.y * parent.scale.y,
+				scale.z * parent.scale.z
+			)
 		);
 	}
 

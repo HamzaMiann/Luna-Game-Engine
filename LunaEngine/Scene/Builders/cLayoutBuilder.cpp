@@ -137,6 +137,14 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 		{
 			ptr->specIntensity = XML_Helper::AsFloat(property_node);
 		}
+		else if (propName == "Reflectivity")
+		{
+			ptr->reflectivity = XML_Helper::AsFloat(property_node);
+		}
+		else if (propName == "Refractivity")
+		{
+			ptr->refractivity = XML_Helper::AsFloat(property_node);
+		}
 		else if (propName == "SpecColour")
 		{
 			ptr->specColour = XML_Helper::AsVec3(property_node);

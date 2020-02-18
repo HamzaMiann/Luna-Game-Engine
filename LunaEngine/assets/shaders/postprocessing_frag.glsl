@@ -9,6 +9,7 @@ in vec4 fUVx2;
 uniform vec4 diffuseColour;
 uniform vec4 specularColour;
 uniform vec4 eyeLocation;
+uniform vec4 eyeTarget;
 
 // Used to draw debug (or unlit) objects
 uniform bool isUniform;
@@ -23,6 +24,8 @@ uniform sampler2D textSamp01;	// normal
 uniform sampler2D textSamp02;	// position
 uniform sampler2D textSamp03;	// bloom
 uniform sampler2D textSamp04;	// unlit
+
+uniform vec2 lightPositionOnScreen;
 
 
 // Globals
@@ -177,6 +180,48 @@ vec4 DOF(sampler2D tex)
 	return colour;
 }
 
+vec4 CalculateVolumetricLightScattering(sampler2D tex)
+{
+	// direction of the camera
+	vec3 viewDir = normalize(eyeTarget.rgb - eyeLocation.rgb);
+
+	// direction of the light
+	vec3 lightDir = normalize(theLights[0].position.rgb - eyeLocation.rgb);
+
+	// ratio decreases when the camera is looking away from the light
+	float exposureRatio = smoothstep(0.0, 1.0, clamp(dot(viewDir, lightDir) - 0.3, 0.2, 1.0));
+
+	vec2 uv = fUVx2.st;
+	vec2 origin = uv;
+	vec4 colour = vec4(texture(tex, uv).rgb, 1);
+
+	// clamp the light position so that the delta is not too high
+	vec2 lightPos = clamp(lightPositionOnScreen.xy, vec2(-20), vec2(20));
+
+	float density = 0.97;
+	float weight = 0.5;
+	float exposure = 0.1 * exposureRatio;
+	float decay = 0.9;
+	int NUM_SAMPLES = 100;
+
+	vec2 deltaTextCoord = vec2( uv - lightPos.xy ) * 0.02;
+    deltaTextCoord *= 1.0 /  float(NUM_SAMPLES) * density;
+    float illuminationDecay = 1.0;
+
+    for(int i=0; i < NUM_SAMPLES && distance(origin, uv) < distance(origin, lightPos)  ; i++)
+    {
+            uv -= deltaTextCoord;
+            vec4 samp = texture2D(tex, uv);
+            samp *= illuminationDecay * weight;
+            colour += samp;
+            illuminationDecay *= decay;
+    }
+
+    colour *= exposure;
+
+	return colour;
+}
+
 void main()  
 {
 	vec2 uv = fUVx2.st;
@@ -184,7 +229,8 @@ void main()
 
 	if (isFinalPass)
 	{
-		pixelColour.rgb = texture(textSamp00, uv).rgb;
+		pixelColour.rgb = 1 - texture(textSamp00, uv).rgb;
+		
 
 		if (DOFEnabled)
 		{
@@ -209,6 +255,8 @@ void main()
 			pixelColour.rgb = result;
 		}
 
+		pixelColour.rgb += CalculateVolumetricLightScattering(textSamp01).rgb;
+
 		pixelColour.a = 1.0;
 
 		return;
@@ -225,8 +273,10 @@ void main()
 	}
 	bloomColour = BloomCutoff(pixelColour);
 
-
-	
+	positionColour = vec4(distance(pos, eyeLocation.xyz)) / 1000.0;
+	positionColour.r *= theLights[0].diffuse.r;
+	positionColour.g *= theLights[0].diffuse.g;
+	positionColour.b *= theLights[0].diffuse.b;
 
 	return;
 	

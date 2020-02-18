@@ -515,9 +515,6 @@
     <ClInclude Include="Mesh\cMesh.h">
       <Filter>ModelLoading</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh\cAnimation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Behaviour\Controls\cFPSController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -525,6 +522,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\cAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

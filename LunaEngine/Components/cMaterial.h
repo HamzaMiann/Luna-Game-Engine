@@ -14,24 +14,27 @@ public:
 	cMaterial(iObject* obj);
 	~cMaterial();
 
+	std::string layer;
+
 	sTransform& transform;
 	iObject& parent;
 
-	std::string layer;
-
 	cTexture texture[4];
-	Shader shader;
-	sModelDrawInfo* mesh;
+	Shader* shader;
 
-	glm::vec4 specColour; // w value is intensity
+	sModelDrawInfo* drawInfo;
+	cMesh* mesh;
 
-	float reflectivity;
-	float refractivity;
+	glm::vec4 specColour;	// w value is intensity
+
+	float reflectivity;		// 0 to 1
+	float refractivity;		// 0 to 1 overwrites reflectivity
 
 	bool isUniformColour;
 	bool isWireframe;
 	bool isSkybox;
 
+	inline bool HasMesh() { return mesh != 0; }
 	void SetMesh(std::string meshName);
 
 

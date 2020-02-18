@@ -63,10 +63,10 @@ class cVAOManager
 {
 public:
 
-	static cVAOManager* Instance()
+	static cVAOManager& Instance()
 	{
 		static cVAOManager instance;
-		return &instance;
+		return instance;
 	}
 
 	// Takes a cMesh object and copies it into the GPU (as a VOA)

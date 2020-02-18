@@ -50,6 +50,8 @@ cFBO second_passFBO;
 cFBO finalFBO;
 cFBO blur_fbo;
 
+vec2 screenPos(0.f, 0.f);
+
 void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p);
 
 void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, mat4 const& v, mat4 const& p);
@@ -104,8 +106,8 @@ void cApplication::Init()
 	//pInputHandler = new cPhysicsInputHandler(*scene, window);
 	//pInputHandler = new cLayoutController(*scene);
 
-	vec3 min = scene->pModelLoader->min;
-	vec3 max = scene->pModelLoader->max;
+	//vec3 min = scene->pModelLoader->min;
+	//vec3 max = scene->pModelLoader->max;
 
 	quad.meshName = "screen_quad";
 	quad.shader = Shader::FromName("post");
@@ -160,7 +162,7 @@ void cApplication::Run()
 	}
 	if (finalFBO.init(width, height, fbo_error))
 	{
-		printf("Frame buffer 2 is OK\n");
+		printf("Frame buffer 3 is OK\n");
 	}
 	else
 	{
@@ -175,7 +177,7 @@ void cApplication::Run()
 	cGameObject* player = entity_manager.GetGameObjectByTag("player");
 	//cEntityManager::Instance()->GetGameObjectByTag("character")->refractivity = 1.0f;
 	//cEntityManager::Instance()->GetGameObjectByTag("gun")->reflectivity = 0.2f;
-	player->reflectivity = 0.2f;
+	//player->reflectivity = 0.2f;
 
 	cLowpassFilter& filter = *cLowpassFilter::Instance();
 	float current_time = (float)glfwGetTime();
@@ -184,6 +186,8 @@ void cApplication::Run()
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
+
+	sLight* light = cLightManager::Instance()->Lights[0];
 
 	while (!glfwWindowShouldClose(global::window))
 	{
@@ -261,6 +265,8 @@ void cApplication::Run()
 		RenderObjectsToFBO(&second_passFBO, width, height, p, v, delta_time);
 		RenderSkybox(width, height, p, v, delta_time);
 
+		screenPos = vec2((p * v * mat4(1.0f)) * light->position);
+
 		RenderQuadToFBO(finalFBO, second_passFBO);
 		RenderQuadToScreen(finalFBO);
 
@@ -276,6 +282,8 @@ void cApplication::Run()
 		glfwPollEvents();
 	}
 }
+
+
 
 void cApplication::End()
 {
@@ -374,51 +382,20 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 
 	if (objPtr->tag != "skybox")
 	{
-		//if (objPtr->tag == "reflect")
-		//{
-		//	glCullFace(GL_BACK);
-		//	glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
+		// Don't draw back facing triangles (default)
+		glCullFace(GL_BACK);
+		glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
 
-		//	GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
-		//	glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
-		//	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+		GLuint skyBoxTextureID = cBasicTextureManager::Instance()->getTextureIDFromName("space");
+		glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
 
-		//	// Tie the texture units to the samplers in the shader
-		//	GLint skyBoxSampler_UL = shader["skyBox"];
-		//	glUniform1i(skyBoxSampler_UL, 26);
-
-		//}
-		//else if (objPtr->tag == "refract")
-		//{
-		//	glCullFace(GL_BACK);
-		//	glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
-
-		//	GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
-		//	glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
-		//	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
-
-		//	// Tie the texture units to the samplers in the shader
-		//	GLint skyBoxSampler_UL = shader["skyBox"];
-		//	glUniform1i(skyBoxSampler_UL, 26);
-
-		//}
-		//else
-		{
-			// Don't draw back facing triangles (default)
-			glCullFace(GL_BACK);
-			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
-
-			GLuint skyBoxTextureID = cBasicTextureManager::Instance()->getTextureIDFromName("space");
-			glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
-			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
-
-			// Tie the texture units to the samplers in the shader
-			GLint skyBoxSampler_UL = shader["skyBox"];
-			glUniform1i(skyBoxSampler_UL, 26);
+		// Tie the texture units to the samplers in the shader
+		GLint skyBoxSampler_UL = shader["skyBox"];
+		glUniform1i(skyBoxSampler_UL, 26);
 
 
-			SetUpTextureBindingsForObject(objPtr);
-		}
+		SetUpTextureBindingsForObject(objPtr);
 	}
 	else
 	{
@@ -438,49 +415,21 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 		glUniform1i(skyBoxSampler_UL, 26);	// Texture unit 26
 	}
 
-	mat4 m;
-
-	m = mat4(1.0f);
-
-
+	mat4 m(1.f);
 
 	// ******* TRANSLATION TRANSFORM *********
 	if (objPtr->parent)
 	{
-		vec3 pos = vec3(objPtr->parent->transform.ModelMatrix() * vec4(objPtr->transform.pos, 1.f));
-		mat4 matTrans
-			= glm::translate(mat4(1.0f), pos);
-		m = m * matTrans;
-		m = m * mat4(objPtr->transform.rotation * objPtr->parent->transform.rotation);
+		m *= objPtr->transform.TranslationMatrix(objPtr->parent->transform);
+		m *= objPtr->transform.RotationMatrix(objPtr->parent->transform);
 	}
 	else
 	{
-		mat4 matTrans
-			= glm::translate(mat4(1.0f), objPtr->transform.pos);
-		m = m * matTrans;
-		m = m * mat4(objPtr->transform.rotation);
+		m *= objPtr->transform.TranslationMatrix();
+		m *= objPtr->transform.RotationMatrix();
 	}
 	// ******* TRANSLATION TRANSFORM *********
 
-
-
-	// ******* ROTATION TRANSFORM *********
-	//mat4x4_rotate_Z(m, m, (float) glfwGetTime());
-	//mat4 rotateZ = glm::rotate(mat4(1.0f),
-	//								objPtr->rotation.z,					// Angle
-	//								vec3(0.0f, 0.0f, 1.0f));
-	//m = m * rotateZ;
-
-	//mat4 rotateY = glm::rotate(mat4(1.0f),
-	//								objPtr->rotation.y,	//(float)glfwGetTime(),					// Angle
-	//								vec3(0.0f, 1.0f, 0.0f));
-	//m = m * rotateY;
-
-	//mat4 rotateX = glm::rotate(mat4(1.0f),
-	//								objPtr->rotation.x,	// (float)glfwGetTime(),					// Angle
-	//								vec3(1.0f, 0.0f, 0.0f));
-	
-	// ******* ROTATION TRANSFORM *********
 
 	if (pass_id != 1) m = mat4(1.f);
 
@@ -489,61 +438,56 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 	glUniformMatrix4fv(matModelIT_UL, 1, GL_FALSE, glm::value_ptr(matModelInverseTranspose));
 
 
-	// ******* SCALE TRANSFORM *********
-	/*mat4 scale = glm::scale(mat4(1.0f),
-								 vec3(objPtr->scale,
-										   objPtr->scale,
-										   objPtr->scale));
-	m = m * scale;*/
-	// ******* SCALE TRANSFORM *********
-
-
+	GLint matModel_UL = shader["matModel"];
 	if (objPtr->parent)
 	{
-		m *= glm::scale(mat4(1.f), objPtr->transform.scale);
-		GLint matModel_UL = shader["matModel"];
+		m *= objPtr->transform.ScaleMatrix(objPtr->parent->transform);
 		glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m));
 	}
 	else
 	{
-		GLint matModel_UL = shader["matModel"];
-		glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(objPtr->transform.ModelMatrix()));
+		m *= objPtr->transform.ScaleMatrix();
+		glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m));
 	}
 
 	
-	GLint eye_loc = shader["eyeLocation"];
-	glUniform4f(eye_loc,
+	glUniform4f(shader["eyeLocation"],
 		scene->camera.Eye.x,
 		scene->camera.Eye.y,
 		scene->camera.Eye.z,
 		1.0f
 	);
 
-	GLint diff_loc = shader["diffuseColour"];
-	glUniform4f(diff_loc,
+	glUniform4f(shader["eyeTarget"],
+		scene->camera.Target.x,
+		scene->camera.Target.y,
+		scene->camera.Target.z,
+		1.0f
+	);
+
+
+	glUniform4f(shader["diffuseColour"],
 		objPtr->colour.x,
 		objPtr->colour.y,
 		objPtr->colour.z,
 		objPtr->colour.w
 	);
 
-	GLint spec_loc = shader["specularColour"];
-	glUniform4f(spec_loc,
+	glUniform4f(shader["specularColour"],
 		objPtr->specColour.x,
 		objPtr->specColour.y,
 		objPtr->specColour.z,
 		objPtr->specIntensity
 	);
 
-	GLint isUniform_location = shader["isUniform"];
-	glUniform1i(isUniform_location, objPtr->uniformColour);
+	glUniform1i(shader["isUniform"], objPtr->uniformColour);
 
 
 	if (pass_id != 1)
 	{
-		scene->pLightManager->Set_Light_Data(shader);
+		cLightManager::Instance()->Set_Light_Data(shader);
+		glUniform2f(shader["lightPositionOnScreen"], screenPos.x, screenPos.y);
 	}
-
 
 
 	// This will change the fill mode to something 
@@ -561,13 +505,15 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 	}
 
 	sModelDrawInfo drawInfo;
-	if (scene->pVAOManager->FindDrawInfoByModelName(objPtr->meshName, drawInfo))
+	if (cVAOManager::Instance().FindDrawInfoByModelName(objPtr->meshName, drawInfo))
 	{
 		glBindVertexArray(drawInfo.VAO_ID);
-		glDrawElements(GL_TRIANGLES,
+		glDrawElements(
+			GL_TRIANGLES,
 			drawInfo.numberOfIndices,
 			GL_UNSIGNED_INT,
-			0);
+			0
+		);
 		glBindVertexArray(0);
 	}
 }
@@ -594,13 +540,15 @@ void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr
 
 }
 
-void RenderGO(cGameObject* object, float width, float height, mat4& p, mat4& v)
+void RenderGO(cGameObject* object, float width, float height, mat4& p, mat4& v, int& lastShader)
 {
 
 	for (cGameObject*& child : object->children)
 	{
-		RenderGO(child, width, height, p, v);
+		RenderGO(child, width, height, p, v, lastShader);
 	}
+
+	if (!object->shader) return;
 
 	Shader& shader = *object->shader;
 	GLint shaderProgID = shader.GetID();
@@ -613,24 +561,27 @@ void RenderGO(cGameObject* object, float width, float height, mat4& p, mat4& v)
 
 
 	// Only switch shaders if needed
-	glUseProgram(shaderProgID);
-	last_shader = shaderProgID;
+	if (lastShader != shaderProgID)
+	{
+		glUseProgram(shaderProgID);
+		lastShader = shaderProgID;
 
-	// set time
-	float time = glfwGetTime();
+		// set time
+		float time = glfwGetTime();
 
-	glUniform1f(shader["iTime"], time);
+		glUniform1f(shader["iTime"], time);
 
-	// set resolution
-	glUniform2f(shader["iResolution"],
-		width,
-		height);
+		// set resolution
+		glUniform2f(shader["iResolution"],
+			width,
+			height);
 
-	glUniform1i(shader["isWater"],
-		false);
+		glUniform1i(shader["isWater"],
+			false);
 
-	glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
-	glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
+		glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
+		glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
+	}
 
 	DrawObject(object, v, p);
 }
@@ -662,8 +613,8 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 #ifdef TRANSPARENCY_SORT
 		if (index < scene->vecGameObjects.size() - 1)
 		{
-			vec3 ObjA = scene->vecGameObjects[index]->pos;
-			vec3 ObjB = scene->vecGameObjects[index + 1]->pos;
+			vec3 ObjA = objects[index]->transform.pos;
+			vec3 ObjB = objects[index + 1]->transform.pos;
 
 			//			if ( glm::distance( ObjA, ::g_pFlyCamera->eye ) < glm::distance( ObjB, ::g_pFlyCamera->eye ) )
 			if (glm::distance2(ObjA, scene->camera.Eye) < glm::distance2(ObjB, scene->camera.Eye))
@@ -681,9 +632,7 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 		objPtr->cmd_group->Update(dt);
 		objPtr->brain->Update(dt);
 
-		RenderGO(objPtr, width, height, p, v);
-
-		continue;
+		RenderGO(objPtr, width, height, p, v, lastShader);
 
 
 	}//for (int index...
@@ -801,6 +750,10 @@ void RenderQuadToScreen(cFBO& previousFBO)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_ID);
 	glUniform1i(shader["textSamp00"], 0);	// Texture unit 0
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, previousFBO.positionTexture_ID);
+	glUniform1i(shader["textSamp01"], 1);	// Texture unit 0
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.bloomTexture_ID);

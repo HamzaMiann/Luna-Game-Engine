@@ -10,7 +10,8 @@ cMaterial::cMaterial(iObject* obj) :
 	isSkybox(false),
 	reflectivity(0.f),
 	refractivity(0.f),
-	layer("default")
+	layer("default"),
+	shader(0)
 {
 }
 
@@ -21,12 +22,14 @@ cMaterial::~cMaterial()
 void cMaterial::SetMesh(std::string meshName)
 {
 	sModelDrawInfo info;
-	if (cVAOManager::Instance()->FindDrawInfoByModelName(meshName, info))
+	if (cVAOManager::Instance().FindDrawInfoByModelName(meshName, info))
 	{
-		mesh = &info;
+		mesh = cVAOManager::Instance().FindMeshByModelName(meshName);
+		drawInfo = &info;
 	}
 	else
 	{
+		drawInfo = 0;
 		mesh = 0;
 	}
 }

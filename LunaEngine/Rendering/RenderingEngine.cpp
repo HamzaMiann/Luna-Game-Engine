@@ -45,7 +45,7 @@ void RenderingEngine::SetUpTextureBindings(cMaterial& material)
 {
 	if (pass_id != 1) return;
 
-	Shader& shader = material.shader;
+	Shader& shader = *material.shader;
 	cTexture* textures = material.texture;
 
 
@@ -91,7 +91,7 @@ void RenderingEngine::Render(iObject* object)
 
 void RenderingEngine::Render(cMaterial& material)
 {
-	Shader& shader = material.shader;
+	Shader& shader = *material.shader;
 	sTransform& transform = material.transform;
 	Camera& camera = *Camera::main_camera;
 	cBasicTextureManager* textureManager = cBasicTextureManager::Instance();
@@ -242,7 +242,7 @@ void RenderingEngine::Render(cMaterial& material)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	sModelDrawInfo& drawInfo = *material.mesh;
+	sModelDrawInfo& drawInfo = *material.drawInfo;
 	glBindVertexArray(drawInfo.VAO_ID);
 	glDrawElements(
 		GL_TRIANGLES,

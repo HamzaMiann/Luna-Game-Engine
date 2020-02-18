@@ -32,10 +32,10 @@ public:
 
 	~RenderingEngine();
 
-	static RenderingEngine* Instance()
+	static RenderingEngine& Instance()
 	{
 		static RenderingEngine instance;
-		return &instance;
+		return instance;
 	}
 
 	void UpdateView();

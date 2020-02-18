@@ -251,7 +251,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="InputHandlers\cCameraInputHandler.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="LodePNG\lodepng.h" />
-    <ClInclude Include="Mesh\cAnimation.h" />
+    <ClInclude Include="Animation\cAnimation.h" />
     <ClInclude Include="Physics\cAABB.h" />
     <ClInclude Include="Audio\AudioEngine.hpp" />
     <ClInclude Include="Camera.h" />

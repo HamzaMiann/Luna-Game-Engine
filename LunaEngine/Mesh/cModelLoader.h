@@ -12,10 +12,10 @@ private:
 
 public:
 
-	static cModelLoader* Instance()
+	static cModelLoader& Instance()
 	{
 		static cModelLoader instance;
-		return &instance;
+		return instance;
 	}
 
 	~cModelLoader();		// destructor

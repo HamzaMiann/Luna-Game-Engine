@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <glm/vec3.hpp>
-#include <Mesh/cAnimation.h>
+#include <Animation/cAnimation.h>
 
 static const unsigned int NUMBEROFBONES = 4;
 

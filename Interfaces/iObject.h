@@ -15,6 +15,11 @@ public:
 	sTransform transform;
 	std::string tag = "";
 
+	std::vector<iObject*> Children;
+
+	inline void AddChild(iObject* child) { Children.push_back(child); }
+	inline void RemoveChild(iObject* child) { Children.erase(std::find(Children.begin(), Children.end(), child)); }
+
 
 	virtual ~iObject()
 	{
