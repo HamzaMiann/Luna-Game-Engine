@@ -6,6 +6,7 @@
 #include "Builders/cLayoutBuilder.h"
 #include "Builders/cLightBuilder.h"
 #include "Builders/cTextureBuilder.h"
+#include "Builders/cAnimationBuilder.h"
 
 iSceneBuilder* cSceneFactory::GetBuilder(std::string builder_name)
 {
@@ -32,6 +33,10 @@ iSceneBuilder* cSceneFactory::GetBuilder(std::string builder_name)
 	if (builder_name == "Textures")
 	{
 		return new cTextureBuilder();
+	}
+	if (builder_name == "Animations")
+	{
+		return new cAnimationBuilder();
 	}
 	return nullptr;
 }

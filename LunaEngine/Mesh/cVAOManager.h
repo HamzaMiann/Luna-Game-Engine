@@ -30,8 +30,8 @@ struct sVAOVertex
 	float u0, v0, u1, v1;
 	float tx, ty, tz, tw;
 	float bx, by, bz, bw;
-	float boneID[4];
-	float weights[4];
+	float boneID[NUMBEROFBONES];
+	float weights[NUMBEROFBONES];
 };
 
 

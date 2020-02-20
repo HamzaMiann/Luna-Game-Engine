@@ -13,8 +13,8 @@ in vec4 vNormal;				// Vertex Normal
 in vec4 vUVx2;					// 2 x Texture coord
 in vec4 vTangent;				// For bump mapping
 in vec4 vBiNormal;				// For bump mapping
-in vec4 vBoneID;				// For skinned mesh (FBX)
-in vec4 vBoneWeight;			// For skinned mesh (FBX)
+in vec4 vBoneID;			// For skinned mesh (FBX)
+in vec4 vBoneWeight;		// For skinned mesh (FBX)
 
 const int MAXNUMBEROFBONES = 100;
 uniform mat4 matBonesArray[MAXNUMBEROFBONES];
@@ -33,17 +33,49 @@ float noise (in vec2 st);
 
 void main()
 {
+
+	if (isSkinnedMesh)
+	{
+        mat4 BoneTransform = matBonesArray[ int(vBoneID[0]) ] * vBoneWeight[0];
+			 BoneTransform += matBonesArray[ int(vBoneID[1]) ] * vBoneWeight[1];
+			 BoneTransform += matBonesArray[ int(vBoneID[2]) ] * vBoneWeight[2];
+			 BoneTransform += matBonesArray[ int(vBoneID[3]) ] * vBoneWeight[3];
+
+        // Apply the bone transform to the vertex:
+		vec4 vertOriginal = vec4(vPosition.xyz, 1.0);
+
+		vec4 vertAfterBoneTransform = BoneTransform * vertOriginal;
+				
+		mat4 matMVP = matProj * matView * matModel;
+		// Transform the updated vertex location (from the bone)
+		//  and transform with model view projection matrix (as usual)
+		gl_Position = matMVP * vertAfterBoneTransform;
+		
+		
+		// Then we do the normals, etc.
+		fVertWorldLocation = matModel * vertAfterBoneTransform;	
+		
+		// Updated "world" or "model" transform 
+		mat4 matModelAndBone = matModel * BoneTransform;
+		
+		vec3 theNormal = normalize(vNormal.xyz);
+		fNormal = (matModelInverTrans * BoneTransform) * vec4(theNormal, 1.0);
+		fNormal.xyz = normalize(fNormal.xyz);
+		
+		fUVx2 = vUVx2;
+
+		return;
+	}
+
+	
     vec4 vertPosition = vPosition;
+
     mat4 matMVP = matProj * matView * matModel;
 
 	gl_Position = matMVP * vec4(vertPosition.xyz, 1.0);
 	
-	// Vertex location in "world space"
-
 	fVertWorldLocation = matModel * vec4(vertPosition.xyz, 1.0);
 
-	
-	
 	//mat4 matInv = inverse(transpose(matModel));
 
 	fNormal = matModelInverTrans * vNormal;
@@ -52,30 +84,6 @@ void main()
 
 	fiTime = iTime;
 
-	if (isWater)
-	{
-		float x = fVertWorldLocation.x * -0.5f + iTime * 5.f;
-		float n = (noise(fVertWorldLocation.xz * 20.f + iTime) - 0.5);
-
-		gl_Position.y += sin(x);
-		gl_Position.xy += n * 1.f;
-
-		fVertWorldLocation.y += sin(x);
-		fVertWorldLocation.xy += n * 1.f;
-
-		fNormal.x += sin(2*x) / 10.f;
-		fNormal.x += cos(x) / 10.f;
-		fNormal.xz += n / 10.f;
-		fNormal = normalize(fNormal);
-
-		fisWater = 1.f;
-	}
-	else
-	{
-		fisWater = 0.f;
-	}
-
-	//gl_Position = fVertWorldLocation;
 }
 
 

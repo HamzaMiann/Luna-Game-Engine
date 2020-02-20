@@ -27,7 +27,7 @@ void cModelBuilder::Build(Scene& scene, xml_node<>* node)
 				friendlyName = friendly->value();
 
 			cMesh* pMesh = new cMesh();
-			if (ModelLoader.LoadPlyModel("assets/models/" + fileName, friendlyName, *pMesh))
+			if (ModelLoader.LoadModel("assets/models/" + fileName, friendlyName, *pMesh))
 			{
 
 				sModelDrawInfo* pDrawInfo = new sModelDrawInfo();

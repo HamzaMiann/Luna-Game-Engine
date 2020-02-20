@@ -11,10 +11,10 @@ private:
 public:
 	virtual ~cBehaviourManager();
 
-	static cBehaviourManager* Instance()
+	static cBehaviourManager& Instance()
 	{
 		static cBehaviourManager instance;
-		return &instance;
+		return instance;
 	}
 
 	virtual void start();

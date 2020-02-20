@@ -98,7 +98,7 @@ namespace PhysX
 
 void PhysicsEngine::IntegrationStep(Scene* scene, float delta_time)
 {
-	float t = cLowpassFilter::Instance()->total_time;
+	float t = cLowpassFilter::Instance().total_time;
 
 	//for (size_t i = 0; i < scene->vecGameObjects.size(); ++i)
 	for (size_t i = 0; i < Components.size(); ++i)
@@ -419,7 +419,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 
 
 #if _DEBUG
-								cDebugRenderer::Instance()->addLine(closestPoint,
+								/*cDebugRenderer::Instance()->addLine(closestPoint,
 													closestPoint + normal,
 													glm::vec3(0.f, 1.f, 1.f),
 													1.f);
@@ -427,7 +427,7 @@ void PhysicsEngine::CheckCollisions(Scene* scene, float delta_time)
 								cDebugRenderer::Instance()->addLine(closestPoint,
 													closestPoint + glm::normalize(pObjBody->velocity),
 													glm::vec3(0.f, 1.f, 0.f),
-													1.f);
+													1.f);*/
 								
 #endif
 							}

@@ -189,7 +189,7 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 	vec3 lightDir = normalize(theLights[0].position.rgb - eyeLocation.rgb);
 
 	// ratio decreases when the camera is looking away from the light
-	float exposureRatio = smoothstep(0.0, 1.0, clamp(dot(viewDir, lightDir) - 0.3, 0.2, 1.0));
+	float exposureRatio = smoothstep(0.0, 1.0, clamp(dot(viewDir, lightDir) - 0.2, 0.1, 1.0));
 
 	vec2 uv = fUVx2.st;
 	vec2 origin = uv;

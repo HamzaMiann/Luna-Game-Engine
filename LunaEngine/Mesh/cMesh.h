@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <string>
-#include <glm/vec3.hpp>
-#include <Animation/cAnimation.h>
+#include <map>
+#include <glm/glm_common.h>
 
 static const unsigned int NUMBEROFBONES = 4;
 
@@ -19,16 +19,16 @@ struct sMeshVertex
 		bx(0.f), by(0.f), bz(0.f), bw(1.f),
 		index(0)
 	{
-		memset(this->boneID, 0, sizeof(unsigned int) * NUMBEROFBONES);
-		memset(this->boneWeights, 0, sizeof(float) * NUMBEROFBONES);
+		memset(this->boneID, 0.f, sizeof(float) * NUMBEROFBONES);
+		memset(this->boneWeights, 0.f, sizeof(float) * NUMBEROFBONES);
 	}
 	float x, y, z, w;
 	float nx, ny, nz, nw;
 	float u, v;
 	float tx, ty, tz, tw;	// tangents
 	float bx, by, bz, bw;	// bi-tangents
-	float boneID[4];		// which bone impacts this vertex
-	float boneWeights[4];	// weights for bones
+	float boneID[NUMBEROFBONES];		// which bone impacts this vertex
+	float boneWeights[NUMBEROFBONES];	// weights for bones
 
 	unsigned int index;
 	void SetID(float id, float weight) { boneID[index] = id; boneWeights[index++] = weight; }
@@ -43,15 +43,25 @@ struct sTriangle
 
 struct sMeshTriangle
 {
-	glm::vec3 first;
-	glm::vec3 second;
-	glm::vec3 third;
-	glm::vec3 normal;
+	vec3 first;
+	vec3 second;
+	vec3 third;
+	vec3 normal;
 
-	glm::vec3 m1;	// Mid-Vertex 1
-	glm::vec3 m2;	// Mid-Vertex 2
-	glm::vec3 m3;	// Mid-Vertex 3
-	glm::vec3 m;	// Mid-Vertex Global
+	vec3 m1;	// Mid-Vertex 1
+	vec3 m2;	// Mid-Vertex 2
+	vec3 m3;	// Mid-Vertex 3
+	vec3 m;	// Mid-Vertex Global
+};
+
+struct sHeirarchy
+{
+	std::string name;
+	unsigned int id;
+	mat4 transform;
+	mat4 boneOffset;
+	mat4 globalInverse;
+	std::vector<sHeirarchy*> children;
 };
 
 class cMesh
@@ -63,14 +73,17 @@ public:
 	std::string name;
 	bool isAnimated = false;
 
-	glm::vec3 min = glm::vec3(FLT_MAX);
-	glm::vec3 max = glm::vec3(FLT_MIN);
+	unsigned int numBones = 0;
+
+	vec3 min = vec3(FLT_MAX);
+	vec3 max = vec3(FLT_MIN);
+
+	std::map<std::string, unsigned int> boneIDs;
+	sHeirarchy* root = nullptr;
 
 	std::vector<sMeshVertex> vecVertices;
 	std::vector<sTriangle> vecTriangles;
 	std::vector<sMeshTriangle> vecMeshTriangles;
-
-	std::vector<cAnimation> animations;
 
 };
 

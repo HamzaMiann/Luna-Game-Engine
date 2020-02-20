@@ -1,5 +1,4 @@
-#ifndef _cSimpleAssimpSkinnedMesh_HG
-#define _cSimpleAssimpSkinnedMesh_HG
+#pragma once
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -17,7 +16,7 @@
 // Used by the game object and the rendering
 //#include "../cMesh.h"			// For loading into the VAO manager
 //#include "cMeshObject.h"
-#include "cMesh.h"
+#include "cAnimationMesh.h"
 
 //#include "../sMeshDrawInfo.h"	// For the draw call
 
@@ -98,7 +97,7 @@ public:
 
 
 	// Returns NULL (0) if there is no mesh at that index
-	cMesh* CreateMeshObjectFromCurrentModel( unsigned int meshIndex = 0 );
+	cAnimationMesh* CreateMeshObjectFromCurrentModel( unsigned int meshIndex = 0 );
 
 
 //	void BoneTransform(float TimeInSeconds, 
@@ -156,4 +155,3 @@ public:
 
 };
 
-#endif

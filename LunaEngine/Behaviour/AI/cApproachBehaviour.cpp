@@ -57,7 +57,7 @@ bool AI::cApproachBehaviour::deserialize(rapidxml::xml_node<>* root_node)
 void AI::cApproachBehaviour::start()
 {
     rb = parent.GetComponent<nPhysics::iPhysicsComponent>();
-    iObject* player = cEntityManager::Instance()->GetObjectByTag("player");
+    iObject* player = cEntityManager::Instance().GetObjectByTag("player");
     target = &player->transform;
     player_component = player->GetComponent<cPlayerBehaviour>();
     slowingRadius = 8.f;
@@ -79,7 +79,7 @@ void AI::cApproachBehaviour::update(float dt)
         {
             glm::vec3 direction = glm::normalize(target->pos - transform.pos);
             reload_time = 3.f;
-            iObject* obj = cEntityManager::Instance()->GetObjectByTag("manager");
+            iObject* obj = cEntityManager::Instance().GetObjectByTag("manager");
             cAIGameManager* manager = obj->GetComponent<cAIGameManager>();
             if (manager)
             {

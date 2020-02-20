@@ -24,7 +24,9 @@
 #include <Behaviour/cBehaviourManager.h>
 #include <EntityManager/cEntityManager.h>
 #include <Physics/global_physics.h>
+#include <Animation/cAnimationManager.h>
 #include <InputManager.h>
+#include <Animation/cSimpleAssimpSkinnedMeshLoader_OneMesh.h>
 
 iApplication* cApplication::app = cApplication::Instance();
 
@@ -34,8 +36,6 @@ cGameObject quad;
 
 bool is_paused = false;
 int pass_id;
-
-int last_shader = -1;
 
 bool bloom_enabled = true;
 bool DOF_enabled = true;
@@ -79,7 +79,8 @@ void cApplication::Init()
 													  "pink_left.png", "pink_right.png",
 													  "pink_top.png", "pink_bottom.png",
 													  "pink_front.png", "pink_back.png", true, errorString))*/
-	if (cBasicTextureManager::Instance()->CreateCubeTextureFromJPGFiles("space",
+	if (cBasicTextureManager::Instance()->CreateCubeTextureFromJPGFiles(
+		"space",
 		"mountains_right.jpg", "mountains_left.jpg",
 		"mountains_top.jpg", "mountains_bottom.jpg",
 		"mountains_front.jpg", "mountains_back.jpg", true, errorString))
@@ -130,9 +131,9 @@ void cApplication::Init()
 
 void cApplication::Run()
 {
-	cDebugRenderer& debug_renderer = *cDebugRenderer::Instance();
-	cEntityManager& entity_manager = *cEntityManager::Instance();
-	cBehaviourManager& behaviour_manager = *cBehaviourManager::Instance();
+	cDebugRenderer& debug_renderer = cDebugRenderer::Instance();
+	cEntityManager& entity_manager = cEntityManager::Instance();
+	cBehaviourManager& behaviour_manager = cBehaviourManager::Instance();
 
 
 	debug_renderer.initialize();
@@ -174,12 +175,8 @@ void cApplication::Run()
 	behaviour_manager.start();
 
 	cGameObject* screen = entity_manager.GetGameObjectByTag("scope");
-	cGameObject* player = entity_manager.GetGameObjectByTag("player");
-	//cEntityManager::Instance()->GetGameObjectByTag("character")->refractivity = 1.0f;
-	//cEntityManager::Instance()->GetGameObjectByTag("gun")->reflectivity = 0.2f;
-	//player->reflectivity = 0.2f;
 
-	cLowpassFilter& filter = *cLowpassFilter::Instance();
+	cLowpassFilter& filter = cLowpassFilter::Instance();
 	float current_time = (float)glfwGetTime();
 	float previous_time = (float)glfwGetTime();
 	float delta_time = 0.f;
@@ -188,6 +185,7 @@ void cApplication::Run()
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
 
 	sLight* light = cLightManager::Instance()->Lights[0];
+	vec3 origin = vec3(light->position);
 
 	while (!glfwWindowShouldClose(global::window))
 	{
@@ -265,6 +263,8 @@ void cApplication::Run()
 		RenderObjectsToFBO(&second_passFBO, width, height, p, v, delta_time);
 		RenderSkybox(width, height, p, v, delta_time);
 
+		light->position = vec4(origin + Camera::main_camera->Eye, 1.0f);
+
 		screenPos = vec2((p * v * mat4(1.0f)) * light->position);
 
 		RenderQuadToFBO(finalFBO, second_passFBO);
@@ -276,7 +276,6 @@ void cApplication::Run()
 
 
 		Input::ClearBuffer();
-		last_shader = -1;
 
 		glfwSwapBuffers(global::window);
 		glfwPollEvents();
@@ -295,7 +294,7 @@ void cApplication::End()
 	finalFBO.shutdown();
 	blur_fbo.shutdown();
 
-	cEntityManager::Instance()->Release();
+	cEntityManager::Instance().Release();
 
 	delete scene;
 	ReleasePhysics();
@@ -373,6 +372,50 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 		glUniform1i(scopeUL, (int)GL_FALSE);
 	}
 
+	//if (objPtr->tag == "character")
+	//{
+	//	std::vector< mat4 > vecFinalTransformation;
+	//	float time = (float)glfwGetTime();
+	//	//time = 2.1f;
+	//	auto& animManager = cAnimationManager::Instance();
+	//	animManager.UpdateTransforms(*animManager.animations["idle"], time, vecFinalTransformation);
+	//	GLint matBonesArray_UniLoc = glGetUniformLocation(shaderProgID, "matBonesArray");
+	//	GLint numBonesUsed = (GLint)vecFinalTransformation.size();
+	//	glUniformMatrix4fv(matBonesArray_UniLoc, numBonesUsed, 
+	//					   GL_FALSE, 
+	//					   glm::value_ptr(vecFinalTransformation[0]));
+	//	glUniform1f(shader["isSkinnedMesh"], (float)GL_TRUE);
+	//}
+	//else
+	//{
+	//	glUniform1f(shader["isSkinnedMesh"], (float)GL_FALSE);
+	//}
+
+	if (objPtr->animation)
+	{
+		glUniform1f(shader["isSkinnedMesh"], (float)GL_TRUE);
+		float time = (float)glfwGetTime();
+		std::vector< glm::mat4 > vecFinalTransformation;	
+		std::vector< glm::mat4x4 > vecOffsets;
+		std::vector< glm::mat4x4 > vecObjectBoneTransformation;
+
+		// This loads the bone transforms from the animation model
+		objPtr->animation->BoneTransform(	time,	// 0.0f // Frame time
+											"run",	// Animation (I need to load this))
+											vecFinalTransformation, 
+											vecObjectBoneTransformation, 
+										    vecOffsets );
+
+		GLint matBonesArray_UniLoc = glGetUniformLocation(shaderProgID, "matBonesArray");
+		GLint numBonesUsed = (GLint)vecFinalTransformation.size();
+		glUniformMatrix4fv(matBonesArray_UniLoc, numBonesUsed, 
+							GL_FALSE, 
+							glm::value_ptr(vecFinalTransformation[0]));
+	}
+	else
+	{
+		glUniform1f(shader["isSkinnedMesh"], (float)GL_FALSE);
+	}
 
 
 	GLint bIsSkyBox_UL = shader["isSkybox"];
@@ -605,7 +648,7 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 
 	int lastShader = -1;
 
-	auto& objects = cEntityManager::Instance()->GetEntities();
+	auto& objects = cEntityManager::Instance().GetEntities();
 
 	// Loop to draw everything in the scene
 	for (int index = 0; index != objects.size(); index++)

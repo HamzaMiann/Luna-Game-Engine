@@ -6,10 +6,10 @@ iBehaviour::iBehaviour(iObject* root)
 	, transform(root->transform)
 	, _initialized(false)
 {
-	cBehaviourManager::Instance()->Register(this);
+	cBehaviourManager::Instance().Register(this);
 }
 
 iBehaviour::~iBehaviour()
 {
-	cBehaviourManager::Instance()->Unregister(this);
+	cBehaviourManager::Instance().Unregister(this);
 }

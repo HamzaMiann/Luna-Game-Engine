@@ -60,7 +60,7 @@ void cAIGameManager::update(float dt)
 		case 3: ComponentFactory::GetComponent("AIApproachBehaviour", newObject); newObject->texture[0].SetTexture("Grass.png"); break;
 		}
 		
-		cEntityManager::Instance()->AddEntity(newObject);
+		cEntityManager::Instance().AddEntity(newObject);
 
 		time_passed = 0.f;
 	}
@@ -87,7 +87,7 @@ void cAIGameManager::Player_Shoot(glm::vec3 const& start, glm::vec3 const& veloc
 	cBullet* bullet = obj->AddComponent<cBullet>();
 	bullet->attack_layer = "enemy";
 	bullet->manager = this;
-	cEntityManager::Instance()->AddEntity(obj);
+	cEntityManager::Instance().AddEntity(obj);
 	player_bullets.push_back(body);
 }
 
@@ -111,7 +111,7 @@ void cAIGameManager::Enemy_Shoot(glm::vec3 const& start, glm::vec3 const& veloci
 	cBullet* bullet = obj->AddComponent<cBullet>();
 	bullet->attack_layer = "player";
 	bullet->manager = this;
-	cEntityManager::Instance()->AddEntity(obj);
+	cEntityManager::Instance().AddEntity(obj);
 }
 
 void cAIGameManager::cBullet::start()
@@ -123,7 +123,7 @@ void cAIGameManager::cBullet::update(float dt)
 	t += dt;
 	if (t > life_time)
 	{
-		cEntityManager::Instance()->RemoveEntity(dynamic_cast<cGameObject*>(&this->parent));
+		cEntityManager::Instance().RemoveEntity(dynamic_cast<cGameObject*>(&this->parent));
 		auto it = std::find(manager->player_bullets.begin(),
 			manager->player_bullets.end(),
 			parent.GetComponent<nPhysics::iPhysicsComponent>());
@@ -140,7 +140,7 @@ void cAIGameManager::cBullet::OnCollide(iObject* other)
 		{
 			if (attack_layer == "player")
 			{
-				cEntityManager::Instance()->RemoveEntity(dynamic_cast<cGameObject*>(&this->parent));
+				cEntityManager::Instance().RemoveEntity(dynamic_cast<cGameObject*>(&this->parent));
 				cPlayerBehaviour* player = obj->GetComponent<cPlayerBehaviour>();
 				player->Reset();
 				auto it = std::find(manager->player_bullets.begin(),
@@ -150,8 +150,8 @@ void cAIGameManager::cBullet::OnCollide(iObject* other)
 			}
 			else
 			{
-				cEntityManager::Instance()->RemoveEntity(dynamic_cast<cGameObject*>(&this->parent));
-				cEntityManager::Instance()->RemoveEntity(obj);
+				cEntityManager::Instance().RemoveEntity(dynamic_cast<cGameObject*>(&this->parent));
+				cEntityManager::Instance().RemoveEntity(obj);
 				auto it = std::find(manager->player_bullets.begin(),
 					manager->player_bullets.end(),
 					parent.GetComponent<nPhysics::iPhysicsComponent>());

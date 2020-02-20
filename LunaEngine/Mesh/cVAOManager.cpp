@@ -196,13 +196,13 @@ bool cVAOManager::LoadModelIntoVAO(
 						   ( void* )offsetof(sVAOVertex,bx));
 
 	glEnableVertexAttribArray(vbone_location);
-	glVertexAttribPointer(vbone_location, 4,
+	glVertexAttribPointer(vbone_location, (int)NUMBEROFBONES,
 						   GL_FLOAT, GL_FALSE,
 						   sizeof(sVAOVertex), 
 						   ( void* )offsetof(sVAOVertex, boneID[0]));
 
 	glEnableVertexAttribArray(vweight_location);
-	glVertexAttribPointer(vweight_location, 4,
+	glVertexAttribPointer(vweight_location, (int)NUMBEROFBONES,
 						   GL_FLOAT, GL_FALSE,
 						   sizeof(sVAOVertex), 
 						   ( void* )offsetof(sVAOVertex, weights[0]));

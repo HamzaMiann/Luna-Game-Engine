@@ -24,10 +24,10 @@ private:
 public:
 	~cDebugRenderer();
 
-	static cDebugRenderer* Instance()
+	static cDebugRenderer& Instance()
 	{
 		static cDebugRenderer instance;
-		return &instance;
+		return instance;
 	}
 
 	// Default maximum number of objects in buffer before a resize is forced

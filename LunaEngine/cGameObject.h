@@ -6,7 +6,8 @@
 #include <Texture/cTexture.h>
 #include <Shader/Shader.h>
 
-class Scene;
+
+class cSimpleAssimpSkinnedMesh;
 class cLuaBrain;
 
 enum ColliderType
@@ -29,6 +30,8 @@ public:
 
 	unsigned int id;
 	Shader* shader;
+
+	cSimpleAssimpSkinnedMesh* animation = 0;
 
 	cLuaBrain* brain;
 	std::string lua_script;

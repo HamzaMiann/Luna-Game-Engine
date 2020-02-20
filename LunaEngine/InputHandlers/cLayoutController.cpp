@@ -20,7 +20,7 @@ void cLayoutController::HandleInput(GLFWwindow * window)
 {
 	float speed = 10.f;
 
-	auto& objects = cEntityManager::Instance()->GetEntities();
+	auto& objects = cEntityManager::Instance().GetEntities();
 
 	if (objects.size() == 0) return;
 
@@ -94,7 +94,7 @@ void cLayoutController::HandleInput(GLFWwindow * window)
 
 void cLayoutController::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
-	auto& objects = cEntityManager::Instance()->GetEntities();
+	auto& objects = cEntityManager::Instance().GetEntities();
 
 	if (objects.size() == 0) return;
 

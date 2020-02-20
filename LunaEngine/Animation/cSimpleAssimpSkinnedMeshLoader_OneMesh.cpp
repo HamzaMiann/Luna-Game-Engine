@@ -217,11 +217,21 @@ void cSimpleAssimpSkinnedMesh::BoneTransform( float TimeInSeconds,
 {
 	glm::mat4 Identity(1.0f);
 
-	float TicksPerSecond = static_cast<float>( this->pScene->mAnimations[0]->mTicksPerSecond != 0 ?
-	                                           this->pScene->mAnimations[0]->mTicksPerSecond : 25.0 );
+	float TicksPerSecond = static_cast<float>(this->pScene->mAnimations[0]->mTicksPerSecond != 0 ?
+		this->pScene->mAnimations[0]->mTicksPerSecond : 25.0);
+	float duration = (float)this->pScene->mAnimations[0]->mDuration;
+
+	std::map< std::string /*animation FRIENDLY name*/,
+		sAnimationInfo >::iterator itAnimation = this->mapAnimationFriendlyNameTo_pScene.find(animationName);		// Animations
+
+	if (itAnimation != this->mapAnimationFriendlyNameTo_pScene.end())
+	{
+		TicksPerSecond = (itAnimation->second.pAIScene->mAnimations[0]->mTicksPerSecond);
+		duration = (itAnimation->second.pAIScene->mAnimations[0]->mDuration);
+	}
 
 	float TimeInTicks = TimeInSeconds * TicksPerSecond;
-	float AnimationTime = fmod(TimeInTicks, (float)this->pScene->mAnimations[0]->mDuration);
+	float AnimationTime = fmod(TimeInTicks, duration);
 	
 	// use the "animation" file to look up these nodes
 	// (need the matOffset information from the animation file)
@@ -572,7 +582,7 @@ float cSimpleAssimpSkinnedMesh::GetDuration(void)
 
 
 // Returns NULL (0) if there is no mesh at that index
-cMesh* cSimpleAssimpSkinnedMesh::CreateMeshObjectFromCurrentModel( unsigned int meshIndex /*=0*/)
+cAnimationMesh* cSimpleAssimpSkinnedMesh::CreateMeshObjectFromCurrentModel( unsigned int meshIndex /*=0*/)
 {
 	if ( this->pScene->mNumMeshes < meshIndex )
 	{	// Doesn't have this mesh
@@ -580,7 +590,7 @@ cMesh* cSimpleAssimpSkinnedMesh::CreateMeshObjectFromCurrentModel( unsigned int 
 	}
 
 	// Assume there is a valid mesh there
-	cMesh* pTheMesh = new cMesh();
+	cAnimationMesh* pTheMesh = new cAnimationMesh();
 
 	aiMesh* pAIMesh = this->pScene->mMeshes[meshIndex];
 

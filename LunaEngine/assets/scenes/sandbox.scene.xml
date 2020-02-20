@@ -34,7 +34,7 @@
 	</Textures>
   
 	<Models>
-    <Model file="Walking.fbx" friendlyName="character" shader="basic"/>
+    <Model file="RPG-Character.fbx" friendlyName="character" shader="basic"/>
     <Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
     <Model file="cube.ply" friendlyName="cube" shader="basic"/>
     <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
@@ -47,14 +47,14 @@
     <!-- MUST ALWAYS BE HERE -->
 		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen_quad" shader="post"/>
 	</Models>
-  
+
 	<Lights>
 
     <Light>
       <Position x="-60.000000" y="50" z="-100.000000" w="1.000000"/>
       <Diffuse x="0.900000" y="0.800000" z="0.300000" w="1.000000"/>
       <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-      <Atten x="0.900000" y="0.000100" z="0.00000020000" w="1000.000000"/>
+      <Atten x="0.900000" y="0.0000000100" z="0.000000020000" w="1000.000000"/>
       <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
       <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
       <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
@@ -234,16 +234,7 @@
       <SpecIntensity>10.000000</SpecIntensity>
       <Texture ratio="1.000000">red.png</Texture>
     </GameObject>
-
-    <GameObject mesh="none" tag="sun" shader="basic">
-      <Position x="-60.0" y="50.0" z="-100.0"/>
-      <Rotation x="0" y="0" z="0.0"/>
-      <Scale>1.0</Scale>
-      <Colour x="0.900000" y="0.800000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">red.png</Texture>
-    </GameObject>
+    
 
     <GameObject mesh="none" tag="fps" shader="basic">
       <Position x="-3.0" y="1.0" z="0.0"/>
@@ -279,7 +270,14 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">Mutant_diffuse.png</Texture>
+      <Texture ratio="1.000000">blue.png</Texture>
+      
+      <Animations file="RPG-Character.fbx">
+        <Animation file="RPG-Idle.fbx" friendlyName="idle"/>
+        <Animation file="RPG-Walk.fbx" friendlyName="walk"/>
+        <Animation file="RPG-Run.fbx" friendlyName="run"/>
+      </Animations>
+      
     </GameObject>
 
     <GameObject mesh="test_model" tag="test_model" shader="basic">
@@ -341,14 +339,46 @@
         
       </Components>
 
-      <GameObject mesh="cube" tag="child_cube" shader="basic">
-        <Position x="0.0" y="2" z="0"/>
+      <GameObject mesh="sphere" tag="child_cube" shader="basic">
+        <Position x="0.0" y="1" z="0"/>
         <Rotation x="0" y="0" z="0.0"/>
         <Scale>0.3</Scale>
-        <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-        <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-        <SpecIntensity>10.000000</SpecIntensity>
-        <Texture ratio="1.000000">blue.png</Texture>
+        <Refractivity>1.0</Refractivity>
+      </GameObject>
+
+      <GameObject mesh="sphere" tag="child_cube" shader="basic">
+        <Position x="0.0" y="-1" z="0"/>
+        <Rotation x="0" y="0" z="0.0"/>
+        <Scale>0.3</Scale>
+        <Refractivity>1.0</Refractivity>
+      </GameObject>
+
+      <GameObject mesh="sphere" tag="child_cube" shader="basic">
+        <Position x="1.0" y="0" z="0"/>
+        <Rotation x="0" y="0" z="0.0"/>
+        <Scale>0.3</Scale>
+        <Refractivity>1.0</Refractivity>
+      </GameObject>
+
+      <GameObject mesh="sphere" tag="child_cube" shader="basic">
+        <Position x="-1.0" y="0" z="0"/>
+        <Rotation x="0" y="0" z="0.0"/>
+        <Scale>0.3</Scale>
+        <Refractivity>1.0</Refractivity>
+      </GameObject>
+
+      <GameObject mesh="sphere" tag="child_cube" shader="basic">
+        <Position x="0.0" y="0" z="1"/>
+        <Rotation x="0" y="0" z="0.0"/>
+        <Scale>0.3</Scale>
+        <Refractivity>1.0</Refractivity>
+      </GameObject>
+
+      <GameObject mesh="sphere" tag="child_cube" shader="basic">
+        <Position x="0.0" y="0" z="-1"/>
+        <Rotation x="0" y="0" z="0.0"/>
+        <Scale>0.3</Scale>
+        <Refractivity>1.0</Refractivity>
       </GameObject>
       
 		</GameObject>

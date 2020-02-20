@@ -17,6 +17,8 @@ cGameObject::cGameObject()
 cGameObject::~cGameObject()
 {
 	delete brain;
+	if (animation) delete animation;
+	animation = 0;
 }
 std::string cGameObject::ObjectName()
 {

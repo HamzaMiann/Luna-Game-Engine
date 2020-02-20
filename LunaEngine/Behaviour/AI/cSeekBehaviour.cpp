@@ -63,7 +63,7 @@ bool AI::cSeekBehaviour::deserialize(rapidxml::xml_node<>* root_node)
 void AI::cSeekBehaviour::start()
 {
     rb = parent.GetComponent<nPhysics::iPhysicsComponent>();
-    iObject* player = (iObject*)cEntityManager::Instance()->GetObjectByTag("player");
+    iObject* player = (iObject*)cEntityManager::Instance().GetObjectByTag("player");
     target = &player->transform;
     player_component = player->GetComponent<cPlayerBehaviour>();
     maxVelocity = 2.f;

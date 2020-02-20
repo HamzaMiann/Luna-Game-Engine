@@ -8,6 +8,7 @@
 #include <Physics/global_physics.h>
 #include <xml_helper.h>
 #include <EntityManager/cEntityManager.h>
+#include <Animation/cSimpleAssimpSkinnedMeshLoader_OneMesh.h>
 using namespace rapidxml;
 
 std::string trim(std::string& str)
@@ -34,7 +35,7 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 			MakeGO(object_node, ptr);
 
 			if (ptr)
-				cEntityManager::Instance()->AddEntity(ptr);
+				cEntityManager::Instance().AddEntity(ptr);
 
 			continue;
 		}
@@ -170,6 +171,18 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 		{
 			ptr->texture[texture_id].SetBlend(strtof(property_node->first_attribute("ratio")->value(), 0));
 			ptr->texture[texture_id++].SetTexture(property_node->value());
+		}
+		else if (propName == "Animations")
+		{
+			std::string meshFile = property_node->first_attribute("file")->value();
+			ptr->animation = new cSimpleAssimpSkinnedMesh;
+			ptr->animation->LoadMeshFromFile("animation", "assets/models/" + meshFile);
+			for (xml_node<>* animation_node = property_node->first_node("Animation"); animation_node; animation_node = animation_node->next_sibling("Animation"))
+			{
+				std::string file = animation_node->first_attribute("file")->value();
+				std::string name = animation_node->first_attribute("friendlyName")->value();
+				ptr->animation->LoadMeshAnimation(name, "assets/models/" + file);
+			}
 		}
 		else if (propName == "GameObject")
 		{

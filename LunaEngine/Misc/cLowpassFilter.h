@@ -12,10 +12,10 @@ private:
 	cLowpassFilter() {}
 
 public:
-	static cLowpassFilter* Instance()
+	static cLowpassFilter& Instance()
 	{
 		static cLowpassFilter instance;
-		return &instance;
+		return instance;
 	}
 
 	float delta_time() { return average; }

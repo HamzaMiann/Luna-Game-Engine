@@ -43,7 +43,7 @@ void cFollowCurve::Update(float delta_time)
 			vec3 line = pointB - pointA;
 			vec3 pos = (line * ratio) + pointA;
 
-			cDebugRenderer::Instance()->addLine(last_pos, pos, vec3(1.f, 0.f, 0.f), max_time);
+			cDebugRenderer::Instance().addLine(last_pos, pos, vec3(1.f, 0.f, 0.f), max_time);
 
 			last_pos = pos;
 		}

@@ -14,10 +14,10 @@ public:
 
 	~cEntityManager();
 
-	static cEntityManager* Instance()
+	static cEntityManager& Instance()
 	{
 		static cEntityManager instance;
-		return &instance;
+		return instance;
 	}
 
 	inline const std::vector<cGameObject*> GetEntities()

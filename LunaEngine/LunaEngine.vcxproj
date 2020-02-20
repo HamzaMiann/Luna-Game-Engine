@@ -157,6 +157,9 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation\cAnimationManager.cpp" />
+    <ClCompile Include="Animation\cAnimationMesh.cpp" />
+    <ClCompile Include="Animation\cSimpleAssimpSkinnedMeshLoader_OneMesh.cpp" />
     <ClCompile Include="Audio\AudioEngine.cpp" />
     <ClCompile Include="Behaviour\AI\cApproachBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cPursueBehaviour.cpp" />
@@ -181,6 +184,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="iObject.cpp" />
     <ClCompile Include="LodePNG\lodepng.cpp" />
     <ClCompile Include="Physics\global_physics.cpp" />
+    <ClCompile Include="Scene\Builders\cAnimationBuilder.cpp" />
     <ClCompile Include="Scene\Builders\cAudioBuilder.cpp" />
     <ClCompile Include="InputHandlers\cAudioInputHandler.cpp" />
     <ClCompile Include="Commands\cCommandGroup.cpp" />
@@ -232,6 +236,10 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="_GL\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation\cAnimationManager.h" />
+    <ClInclude Include="Animation\cAnimationMesh.h" />
+    <ClInclude Include="Animation\cSimpleAssimpSkinnedMeshLoader_OneMesh.h" />
+    <ClInclude Include="Animation\sVertex_xyz_rgba_n_uv2_bt_4Bones.h" />
     <ClInclude Include="Behaviour\AI\cApproachBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cPursueBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cSeekBehaviour.h" />
@@ -263,6 +271,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Commands\cMoveTo.h" />
     <ClInclude Include="Particles\cParticleEffect.h" />
     <ClInclude Include="Physics\global_physics.h" />
+    <ClInclude Include="Scene\Builders\cAnimationBuilder.h" />
     <ClInclude Include="Scene\Builders\cTextureBuilder.h" />
     <ClInclude Include="Commands\cTrigger.h" />
     <ClInclude Include="FBO\cFBO.h" />

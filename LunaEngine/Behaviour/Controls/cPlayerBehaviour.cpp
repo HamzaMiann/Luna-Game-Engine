@@ -62,7 +62,7 @@ void cPlayerBehaviour::update(float dt)
 		if (glfwGetKey(global::window, GLFW_KEY_SPACE) && reload_time < 0.f)
 		{
 			reload_time = 3.f;
-			iObject* obj = (iObject*)cEntityManager::Instance()->GetObjectByTag("manager");
+			iObject* obj = (iObject*)cEntityManager::Instance().GetObjectByTag("manager");
 			cAIGameManager* manager = obj->GetComponent<cAIGameManager>();
 			if (manager)
 			{
@@ -84,7 +84,7 @@ void cPlayerBehaviour::OnCollide(iObject* other)
 {
 	if (other->tag == "enemy")
 	{
-		cEntityManager::Instance()->RemoveEntity(other);
+		cEntityManager::Instance().RemoveEntity(other);
 		Reset();
 	}
 }

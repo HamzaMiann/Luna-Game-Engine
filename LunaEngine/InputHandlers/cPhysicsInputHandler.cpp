@@ -89,8 +89,6 @@ void cPhysicsInputHandler::HandleInput(GLFWwindow* window)
 	xchange = Mathf::lerp(xchange, deltaX, 0.2f);
 	ychange = Mathf::lerp(ychange, deltaY, 0.2f);
 
-	cLowpassFilter* filter = cLowpassFilter::Instance();
-
 	cRigidBody* body = player->GetComponent<cRigidBody>();
 	if (body != nullptr)
 	{

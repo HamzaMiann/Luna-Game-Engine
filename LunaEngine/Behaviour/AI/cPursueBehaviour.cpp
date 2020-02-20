@@ -79,10 +79,10 @@ bool AI::cPursueBehaviour::deserialize(rapidxml::xml_node<>* root_node)
 void AI::cPursueBehaviour::start()
 {
     rb = parent.GetComponent<nPhysics::iPhysicsComponent>();
-    iObject* player = (iObject*)cEntityManager::Instance()->GetObjectByTag("player");
+    iObject* player = (iObject*)cEntityManager::Instance().GetObjectByTag("player");
     target = &player->transform;
     target_rb = player->GetComponent<nPhysics::iPhysicsComponent>();
-    manager = ((iObject*)cEntityManager::Instance()->GetObjectByTag("manager"))->GetComponent<cAIGameManager>();
+    manager = ((iObject*)cEntityManager::Instance().GetObjectByTag("manager"))->GetComponent<cAIGameManager>();
     maxVelocity = 3.f;
 }
 
