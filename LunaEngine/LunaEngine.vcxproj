@@ -166,6 +166,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Behaviour\AI\cSeekBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cWanderBehaviour.cpp" />
     <ClCompile Include="Behaviour\cBehaviourManager.cpp" />
+    <ClCompile Include="Behaviour\Controls\cCharacterController.cpp" />
     <ClCompile Include="Behaviour\Controls\cFPSController.cpp" />
     <ClCompile Include="Behaviour\Controls\cPlayerBehaviour.cpp" />
     <ClCompile Include="Behaviour\Controls\cSphereBehaviour.cpp" />
@@ -173,6 +174,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Behaviour\Managers\cAIGameManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cApplication.cpp" />
+    <ClCompile Include="Components\cAnimationController.cpp" />
     <ClCompile Include="Components\cMaterial.cpp" />
     <ClCompile Include="Components\ComponentFactory.cpp" />
     <ClCompile Include="Components\cRigidBody.cpp" />
@@ -245,11 +247,13 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Behaviour\AI\cSeekBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cWanderBehaviour.h" />
     <ClInclude Include="Behaviour\cBehaviourManager.h" />
+    <ClInclude Include="Behaviour\Controls\cCharacterController.h" />
     <ClInclude Include="Behaviour\Controls\cFPSController.h" />
     <ClInclude Include="Behaviour\Controls\cPlayerBehaviour.h" />
     <ClInclude Include="Behaviour\Controls\cSphereBehaviour.h" />
     <ClInclude Include="Behaviour\Managers\cAIGameManager.h" />
     <ClInclude Include="cApplication.h" />
+    <ClInclude Include="Components\cAnimationController.h" />
     <ClInclude Include="Components\ComponentFactory.h" />
     <ClInclude Include="Components\cMaterial.h" />
     <ClInclude Include="Components\cRigidBody.h" />

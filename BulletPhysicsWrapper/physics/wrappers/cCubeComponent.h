@@ -23,5 +23,7 @@ namespace nPhysics
 		virtual void SetPosition(const glm::vec3& position) override;
 		virtual glm::vec3 GetPosition() override;
 		virtual void UpdateTransform() override;
+
+		vec3 offset;
 	};
 }

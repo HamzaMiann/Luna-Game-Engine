@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Animation/cAnimation.h>
+#include <Animation/cSimpleAssimpSkinnedMeshLoader_OneMesh.h>
 #include <map>
 #include <string>
 
@@ -16,6 +17,8 @@ public:
 	}
 
 	std::map<std::string, cAnimation*> animations;
+	std::map<std::string, cSimpleAssimpSkinnedMesh*> profiles;
 
 	void UpdateTransforms(cAnimation& animation, float animationTime, std::vector<mat4>& transformations);
+
 };

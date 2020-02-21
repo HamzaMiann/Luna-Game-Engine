@@ -26,7 +26,7 @@
 #include <Physics/global_physics.h>
 #include <Animation/cAnimationManager.h>
 #include <InputManager.h>
-#include <Animation/cSimpleAssimpSkinnedMeshLoader_OneMesh.h>
+#include <Components/cAnimationController.h>
 
 iApplication* cApplication::app = cApplication::Instance();
 
@@ -75,7 +75,7 @@ void cApplication::Init()
 	// Load scene from file
 	scene = Scene::LoadFromXML("sandbox.scene.xml");
 	cBasicTextureManager::Instance()->SetBasePath("assets/textures/cubemaps/");
-	/*if (textureManager->CreateCubeTextureFromPNGFiles("space",
+	/*if (cBasicTextureManager::Instance()->CreateCubeTextureFromPNGFiles("space",
 													  "pink_left.png", "pink_right.png",
 													  "pink_top.png", "pink_bottom.png",
 													  "pink_front.png", "pink_back.png", true, errorString))*/
@@ -391,32 +391,22 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 	//	glUniform1f(shader["isSkinnedMesh"], (float)GL_FALSE);
 	//}
 
-	if (objPtr->animation)
+	cAnimationController* animator = objPtr->GetComponent<cAnimationController>();
+
+	if (animator)
 	{
 		glUniform1f(shader["isSkinnedMesh"], (float)GL_TRUE);
-		float time = (float)glfwGetTime();
-		std::vector< glm::mat4 > vecFinalTransformation;	
-		std::vector< glm::mat4x4 > vecOffsets;
-		std::vector< glm::mat4x4 > vecObjectBoneTransformation;
-
-		// This loads the bone transforms from the animation model
-		objPtr->animation->BoneTransform(	time,	// 0.0f // Frame time
-											"run",	// Animation (I need to load this))
-											vecFinalTransformation, 
-											vecObjectBoneTransformation, 
-										    vecOffsets );
-
+		auto& transforms = animator->GetTransformations();
 		GLint matBonesArray_UniLoc = glGetUniformLocation(shaderProgID, "matBonesArray");
-		GLint numBonesUsed = (GLint)vecFinalTransformation.size();
+		GLint numBonesUsed = (GLint)transforms.size();
 		glUniformMatrix4fv(matBonesArray_UniLoc, numBonesUsed, 
 							GL_FALSE, 
-							glm::value_ptr(vecFinalTransformation[0]));
+							glm::value_ptr(transforms[0]));
 	}
 	else
 	{
 		glUniform1f(shader["isSkinnedMesh"], (float)GL_FALSE);
 	}
-
 
 	GLint bIsSkyBox_UL = shader["isSkybox"];
 	glUniform1f(shader["reflectivity"], objPtr->reflectivity);

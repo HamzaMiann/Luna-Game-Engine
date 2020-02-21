@@ -58,9 +58,15 @@ void main()
 		// Updated "world" or "model" transform 
 		mat4 matModelAndBone = matModel * BoneTransform;
 		
+		//vec3 theNormal = normalize(vNormal.xyz);
+		//fNormal = (matModelInverTrans * BoneTransform) * vec4(theNormal, 1.0);
+		//fNormal.xyz = normalize(fNormal.xyz);
+//		fNormal = (matModelInverTrans) * vNormal;
+//		fNormal.xyz = normalize(fNormal.xyz);
+
 		vec3 theNormal = normalize(vNormal.xyz);
-		fNormal = (matModelInverTrans * BoneTransform) * vec4(theNormal, 1.0);
-		fNormal.xyz = normalize(fNormal.xyz);
+		fNormal = inverse(transpose(matModelAndBone)) * vec4(theNormal, 1.0);
+		fNormal.xyz = normalize(fNormal.xyz); 
 		
 		fUVx2 = vUVx2;
 

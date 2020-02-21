@@ -12,6 +12,7 @@ namespace nPhysics
 		btTransform transform;
 		transform.setIdentity();
 		transform.setOrigin(nConvert::ToBullet(this->transform.pos + def.Origin));
+		offset = def.Origin;
 
 		/// Create Dynamic Objects
 
@@ -99,22 +100,23 @@ namespace nPhysics
 		tform.setOrigin(nConvert::ToBullet(position));
 		state->setWorldTransform(tform);
 		mBody->setMotionState(state);
+		offset = vec3(0.f);
 	}
 
 	glm::vec3 cCubeComponent::GetPosition()
 	{
 		btTransform tform;
 		mBody->getMotionState()->getWorldTransform(tform);
-		return nConvert::ToGLM(tform.getOrigin());
+		return nConvert::ToGLM(tform.getOrigin()) + offset;
 	}
 
 	void cCubeComponent::UpdateTransform()
 	{
 		btTransform tf;
 		mBody->getMotionState()->getWorldTransform(tf);
-		transform.pos = nConvert::ToGLM(tf.getOrigin());
+		transform.Position(nConvert::ToGLM(tf.getOrigin()) + offset);
 		if (_rotateable)
-			transform.rotation = nConvert::ToGLM(tf.getRotation());
+			transform.Rotation(nConvert::ToGLM(tf.getRotation()));
 	}
 
 }

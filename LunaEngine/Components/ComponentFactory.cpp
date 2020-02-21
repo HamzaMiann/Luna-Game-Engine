@@ -7,7 +7,9 @@
 #include <Behaviour/AI/cWanderBehaviour.h>
 #include <Behaviour/AI/cApproachBehaviour.h>
 #include <Behaviour/Managers/cAIGameManager.h>
+#include <Behaviour/Controls/cCharacterController.h>
 #include <Behaviour/Controls/cFPSController.h>
+#include <Components/cAnimationController.h>
 
 #pragma warning(disable)
 
@@ -47,6 +49,16 @@ iComponent* ComponentFactory::GetComponent(std::string type, iObject* object)
 	if (type == "AIGameManager")
 	{
 		return (iComponent*)object->AddComponent<cAIGameManager>();
+	}
+
+	if (type == "AnimationController")
+	{
+		return (iComponent*)object->AddComponent<cAnimationController>();
+	}
+
+	if (type == "CharacterController")
+	{
+		return (iComponent*)object->AddComponent<cCharacterController>();
 	}
 	
 	

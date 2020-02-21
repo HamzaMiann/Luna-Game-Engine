@@ -160,7 +160,7 @@ vec4 circular_blur(sampler2D tex, float offset)
 ///
 vec4 DOF(sampler2D tex)
 {
-	const float near_focus = 4.0;
+	const float near_focus = 10.0;
 	const float focus_length = 60.0;
 	const float blur_scale = 5.0;
 
@@ -171,7 +171,8 @@ vec4 DOF(sampler2D tex)
 	float distance_from_focus = abs(near_focus - z);
 	float ratio = 0.0;
 	if (z < near_focus)
-		ratio = clamp(1.0 / z, 0.0, 40.0);
+		//ratio = clamp(1.0 / (z / 10.), 0.0, 40.0);
+		ratio = smoothstep(0., 1., 1. - (z / near_focus));
 	else
 		ratio = clamp((distance_from_focus / focus_length) - 1.0, 0.0, 1.0);
 
@@ -196,13 +197,18 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 	vec4 colour = vec4(texture(tex, uv).rgb, 1);
 
 	// clamp the light position so that the delta is not too high
-	vec2 lightPos = clamp(lightPositionOnScreen.xy, vec2(-20), vec2(20));
+	vec2 lightPos = lightPositionOnScreen.xy;
+	if (distance(lightPositionOnScreen.xy, vec2(0.0)) > 20)
+	{
+		lightPos = normalize(lightPositionOnScreen.xy) * 20.0;
+	}
+	//vec2 lightPos = clamp(lightPositionOnScreen.xy, vec2(-20), vec2(20));
 
 	float density = 0.97;
 	float weight = 0.5;
 	float exposure = 0.1 * exposureRatio;
 	float decay = 0.9;
-	int NUM_SAMPLES = 100;
+	int NUM_SAMPLES = 50;
 
 	vec2 deltaTextCoord = vec2( uv - lightPos.xy ) * 0.02;
     deltaTextCoord *= 1.0 /  float(NUM_SAMPLES) * density;

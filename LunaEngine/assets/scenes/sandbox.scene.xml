@@ -41,12 +41,26 @@
     <Model file="RetroTV.edited.screenonly.ply" friendlyName="tv_screen" shader="basic"/>
 		<Model file="RetroTV.edited.bodyonly.ply" friendlyName="tv_body" shader="basic"/>
 		<Model file="Cerberus_LP.FBX" friendlyName="gun" shader="basic"/>
-		<!--<Model file="Mountain.fbx" friendlyName="test_model" shader="basic"/>-->
+		<Model file="portal.obj" friendlyName="portal" shader="basic"/>
+    
+    
     <Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen" shader="basic"/>
 
     <!-- MUST ALWAYS BE HERE -->
 		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen_quad" shader="post"/>
 	</Models>
+
+  <Animations>
+    <AnimationProfile profile="character" mesh="RPG-Character.fbx">
+      <Animation file="RPG-Idle.fbx" friendlyName="idle"/>
+      <Animation file="RPG-Walk.fbx" friendlyName="walk"/>
+      <Animation file="RPG-Run.fbx" friendlyName="run"/>
+      <Animation file="RPG-Walk-Backwards.fbx" friendlyName="walk-backwards"/>
+      <Animation file="RPG-Walk-Right.fbx" friendlyName="walk-right"/>
+      <Animation file="RPG-Walk-Left.fbx" friendlyName="walk-left"/>
+      <Animation file="RPG-Jump.fbx" friendlyName="jump"/>
+    </AnimationProfile>
+  </Animations>
 
 	<Lights>
 
@@ -260,24 +274,53 @@
       </GameObject>
       
     </GameObject>
-    
-    
 
-    <GameObject mesh="character" tag="character" shader="basic">
-      <Position x="7.0" y="0.0" z="0.0"/>
+    <GameObject mesh="portal" tag="portal" shader="basic">
+      <Position x="0.0" y="5.5" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>0.03</Scale>
+      <Scale>20.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Texture ratio="1.000000">blue.png</Texture>
-      
-      <Animations file="RPG-Character.fbx">
-        <Animation file="RPG-Idle.fbx" friendlyName="idle"/>
-        <Animation file="RPG-Walk.fbx" friendlyName="walk"/>
-        <Animation file="RPG-Run.fbx" friendlyName="run"/>
-      </Animations>
-      
+    </GameObject>
+
+    <GameObject mesh="character" tag="character" shader="basic">
+      <Position x="7.0" y="0.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Texture ratio="1.000000">blue.png</Texture>
+
+      <Components>
+        <AnimationController profile="character"/>
+        
+        <CharacterController>
+          <Forward x="0" y="0" z="-1"/>
+          <Offset x="-2.0" y="3.5" z="0"/>
+          <CameraDistance>6.0</CameraDistance>
+          <Speed>4.0</Speed>
+          <MouseSpeed>0.15</MouseSpeed>
+        </CharacterController>
+        
+      </Components>
+    </GameObject>
+
+    <GameObject mesh="character" tag="character2" shader="basic">
+      <Position x="-7.0" y="0.0" z="0.0"/>
+      <Rotation x="0" y="90" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Texture ratio="1.000000">red.png</Texture>
+
+      <Components>
+        <AnimationController profile="character"/>
+
+      </Components>
     </GameObject>
 
     <GameObject mesh="test_model" tag="test_model" shader="basic">
@@ -291,7 +334,7 @@
     </GameObject>
 
     <GameObject mesh="cube" tag="cube" shader="basic">
-      <Position x="0.0" y="5.0" z="3.0"/>
+      <Position x="0.0" y="5.0" z="3.2"/>
       <Rotation x="0" y="0" z="0.0"/>
       <Scale>1.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
@@ -310,6 +353,8 @@
           <Rotateable/>
         </CubeBody>
 
+        <!--<SphereBehaviour/>-->
+        
       </Components>
     </GameObject>
     
@@ -335,7 +380,7 @@
         </SphereBody>
         
         <!-- IMPORTANT: This component is the component that lets you control the ball -->
-        <SphereBehaviour/>
+        <!--<SphereBehaviour/>-->
         
       </Components>
 

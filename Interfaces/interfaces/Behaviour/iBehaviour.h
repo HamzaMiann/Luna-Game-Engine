@@ -12,6 +12,7 @@ public:
 	virtual void update(float dt) = 0;
 
 	virtual void OnCollide(iObject* other) {}
+	virtual void OnDestroy() {}
 
 	virtual bool serialize(rapidxml::xml_node<>* root_node) { return false; }
 	virtual bool deserialize(rapidxml::xml_node<>* root_node) { return false; }
