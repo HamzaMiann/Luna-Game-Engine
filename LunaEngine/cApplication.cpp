@@ -51,6 +51,8 @@ cFBO second_passFBO;
 cFBO finalFBO;
 cFBO blur_fbo;
 
+cTexture noise;
+
 vec2 screenPos(0.f, 0.f);
 
 void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p);
@@ -180,6 +182,7 @@ void cApplication::Run()
 	unsigned int charIndex = 0;
 	cGameObject* char1 = entity_manager.GetGameObjectByTag("character1");
 	cGameObject* char2 = entity_manager.GetGameObjectByTag("character2");
+	noise.SetTexture("noise.jpg");
 
 	cLowpassFilter& filter = cLowpassFilter::Instance();
 	float current_time = (float)glfwGetTime();
@@ -762,23 +765,23 @@ void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_ID);
-	glUniform1i(shader["textSamp00"], 0);	// Texture unit 0
+	glUniform1i(shader["textSamp00"], 0);	// Texture unit 0		ALBEDO TEXTURE
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.normalTexture_ID);
-	glUniform1i(shader["textSamp01"], 1);	// Texture unit 1
+	glUniform1i(shader["textSamp01"], 1);	// Texture unit 1		NORMAL TEXTURE
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.positionTexture_ID);
-	glUniform1i(shader["textSamp02"], 2);	// Texture unit 2
+	glUniform1i(shader["textSamp02"], 2);	// Texture unit 2		POSITION TEXTURE
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.bloomTexture_ID);
-	glUniform1i(shader["textSamp03"], 3);	// Texture unit 3
+	glUniform1i(shader["textSamp03"], 3);	// Texture unit 3		BLOOM TEXTURE (NOT USED ON THIS PASS)
 
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.unlitTexture_ID);
-	glUniform1i(shader["textSamp04"], 4);	// Texture unit 4
+	glUniform1i(shader["textSamp04"], 4);	// Texture unit 4		TEXTURE INDICATING UNLIT OBJECTS
 
 	// 4. Draw a single object (a triangle or quad)
 	glUniform1i(shader["isFinalPass"], (int)GL_FALSE);
@@ -809,17 +812,24 @@ void RenderQuadToScreen(cFBO& previousFBO)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgID);
 
+
+	glUniform1f(shader["iTime"], (float)glfwGetTime());
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_ID);
-	glUniform1i(shader["textSamp00"], 0);	// Texture unit 0
+	glUniform1i(shader["textSamp00"], 0);	// Texture unit 0	LIT SCENE TEXTURE
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.positionTexture_ID);
-	glUniform1i(shader["textSamp01"], 1);	// Texture unit 0
+	glUniform1i(shader["textSamp01"], 1);	// Texture unit 0	LIGHTING DEPTH BUFFER TEXTURE
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, noise.GetID());
+	glUniform1i(shader["textSamp02"], 2);	// Texture unit 1	NOISE TEXTURE
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.bloomTexture_ID);
-	glUniform1i(shader["textSamp03"], 3);	// Texture unit 3
+	glUniform1i(shader["textSamp03"], 3);	// Texture unit 3	BLOOM CUTOFF TEXTURE
 
 	glUniform1i(shader["isFinalPass"], (int)GL_TRUE);
 

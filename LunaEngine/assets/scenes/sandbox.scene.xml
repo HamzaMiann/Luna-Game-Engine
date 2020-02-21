@@ -31,6 +31,7 @@
 		<Texture name="Cerberus_N.jpg"/>
 		<Texture name="Cerberus_M.jpg"/>
 		<Texture name="Ground_Dirt_007_basecolor.png"/>
+		<Texture name="noise.jpg"/>
 	</Textures>
   
 	<Models>

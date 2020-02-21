@@ -208,7 +208,7 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 	float weight = 0.5;
 	float exposure = 0.1 * exposureRatio;
 	float decay = 0.9;
-	int NUM_SAMPLES = 50;
+	int NUM_SAMPLES = 100;
 
 	vec2 deltaTextCoord = vec2( uv - lightPos.xy ) * 0.02;
     deltaTextCoord *= 1.0 /  float(NUM_SAMPLES) * density;
@@ -223,7 +223,10 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
             illuminationDecay *= decay;
     }
 
+	float fogAmount = length(colour.rgb);
     colour *= exposure;
+	uv = vec2(fUVx2.x + (fiTime / (15.0)), fUVx2.y + (fiTime / -20.0));
+	colour.rgb += (texture(textSamp02, uv).rgb / 2.0) * exposure * fogAmount;
 
 	return colour;
 }
