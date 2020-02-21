@@ -46,6 +46,9 @@ private:
 	quat rotX;
 	quat rotY;
 
+	bool isJumping = false;
+	float jumpDuration = 0.f;
+
 	sCharacterControllerSettings settings;
 
 };

@@ -78,7 +78,6 @@ void cCharacterController::update(float dt)
 
 	if (anim)
 	{
-
 		direction.y = 0.f;
 		direction = normalize(direction);
 
@@ -87,66 +86,81 @@ void cCharacterController::update(float dt)
 
 		direction *= -1.f;
 
-		if (Input::GetKey(GLFW_KEY_W))
+		if (isJumping)
 		{
-			if (Input::GetKey(GLFW_KEY_A))
-			{
-				direction = direction * quat(vec3(0.f, glm::radians(-45.f), 0.f));
-				rotation = Mathf::RotationFromTo(settings.forward, -direction);
-			}
-			else if (Input::GetKey(GLFW_KEY_D))
-			{
-				direction = direction * quat(vec3(0.f, glm::radians(45.f), 0.f));
-				rotation = Mathf::RotationFromTo(settings.forward, -direction);
-			}
-
-			if (Input::GetKey(GLFW_KEY_LEFT_SHIFT))
-			{
-				direction *= 3.f;
-				anim->SetAnimation("run");
-			}
-			else
-			{
-				anim->SetAnimation("walk");
-			}
-
-			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
-			movement = direction;
-		}
-		else if (Input::GetKey(GLFW_KEY_S))
-		{
-			if (Input::GetKey(GLFW_KEY_A))
-			{
-				direction = direction * quat(vec3(0.f, glm::radians(45.f), 0.f));
-				rotation = Mathf::RotationFromTo(settings.forward, -direction);
-			}
-			else if (Input::GetKey(GLFW_KEY_D))
-			{
-				direction = direction * quat(vec3(0.f, glm::radians(-45.f), 0.f));
-				rotation = Mathf::RotationFromTo(settings.forward, -direction);
-			}
-			movement = -direction;
-			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
-			anim->SetAnimation("walk-backwards");
-		}
-		else if (Input::GetKey(GLFW_KEY_A))
-		{
-			movement = direction * quat(vec3(0.f, glm::radians(-90.f), 0.f));
-			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
-			anim->SetAnimation("walk-left");
-		}
-		else if (Input::GetKey(GLFW_KEY_D))
-		{
-			movement = direction * quat(vec3(0.f, glm::radians(90.f), 0.f));;
-			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
-			anim->SetAnimation("walk-right");
+			float t = anim->GetCurrentTime();
+			if (t > jumpDuration)
+				isJumping = false;
 		}
 		else
 		{
-			anim->SetAnimation("idle");
-		}
+			if (Input::KeyDown(GLFW_KEY_SPACE))
+			{
+				anim->SetAnimation("jump", 0.f);
+				isJumping = true;
+				jumpDuration = anim->GetAnimationDuration();
+			}
+			else if (Input::GetKey(GLFW_KEY_W))
+			{
+				if (Input::GetKey(GLFW_KEY_A))
+				{
+					direction = direction * quat(vec3(0.f, glm::radians(-45.f), 0.f));
+					rotation = Mathf::RotationFromTo(settings.forward, -direction);
+				}
+				else if (Input::GetKey(GLFW_KEY_D))
+				{
+					direction = direction * quat(vec3(0.f, glm::radians(45.f), 0.f));
+					rotation = Mathf::RotationFromTo(settings.forward, -direction);
+				}
 
-		transform.Position(transform.Position() + movement * settings.speed * dt);
+				if (Input::GetKey(GLFW_KEY_LEFT_SHIFT))
+				{
+					direction *= 3.f;
+					anim->SetAnimation("run");
+				}
+				else
+				{
+					anim->SetAnimation("walk");
+				}
+
+				transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
+				movement = direction;
+			}
+			else if (Input::GetKey(GLFW_KEY_S))
+			{
+				if (Input::GetKey(GLFW_KEY_A))
+				{
+					direction = direction * quat(vec3(0.f, glm::radians(45.f), 0.f));
+					rotation = Mathf::RotationFromTo(settings.forward, -direction);
+				}
+				else if (Input::GetKey(GLFW_KEY_D))
+				{
+					direction = direction * quat(vec3(0.f, glm::radians(-45.f), 0.f));
+					rotation = Mathf::RotationFromTo(settings.forward, -direction);
+				}
+				movement = -direction;
+				transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
+				anim->SetAnimation("walk-backwards");
+			}
+			else if (Input::GetKey(GLFW_KEY_A))
+			{
+				movement = direction * quat(vec3(0.f, glm::radians(-90.f), 0.f));
+				transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
+				anim->SetAnimation("walk-left");
+			}
+			else if (Input::GetKey(GLFW_KEY_D))
+			{
+				movement = direction * quat(vec3(0.f, glm::radians(90.f), 0.f));;
+				transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
+				anim->SetAnimation("walk-right");
+			}
+			else
+			{
+				anim->SetAnimation("idle");
+			}
+
+			transform.Position(transform.Position() + movement * settings.speed * dt);
+		}
 	}
 
 	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_1))

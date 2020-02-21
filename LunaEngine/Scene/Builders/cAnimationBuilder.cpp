@@ -7,6 +7,7 @@ using namespace rapidxml;
 
 void cAnimationBuilder::Build(Scene& scene, xml_node<>* node)
 {
+	std::cout << "Loading Animations..." << std::endl;
 	for (xml_node<>* profile_node = node->first_node("AnimationProfile"); profile_node; profile_node = profile_node->next_sibling("AnimationProfile"))
 	{
 		std::string name = profile_node->first_attribute("profile")->value();
@@ -22,10 +23,5 @@ void cAnimationBuilder::Build(Scene& scene, xml_node<>* node)
 		}
 		
 		cAnimationManager::Instance().profiles[name] = profile;
-
-		/*if (!cModelLoader::Instance().LoadAnimation(file, friendlyName, mesh))
-		{
-			std::cout << "Unable to load animation: " << file << std::endl;
-		}*/
 	}
 }

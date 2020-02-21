@@ -73,7 +73,8 @@ float cAnimationController::GetAnimationDuration(std::string name)
 
 	if (itAnimation != animation->mapAnimationFriendlyNameTo_pScene.end())
 	{
-		duration = (itAnimation->second.pAIScene->mAnimations[0]->mDuration);
+		float TicksPerSecond = (itAnimation->second.pAIScene->mAnimations[0]->mTicksPerSecond);
+		duration = (itAnimation->second.pAIScene->mAnimations[0]->mDuration) / TicksPerSecond;
 	}
 
 	return duration;
