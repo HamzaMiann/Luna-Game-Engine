@@ -86,11 +86,14 @@ void cCharacterController::update(float dt)
 
 		direction *= -1.f;
 
-		if (isJumping)
+		if (isJumping || isAttacking)
 		{
 			float t = anim->GetCurrentTime();
-			if (t > jumpDuration)
+			if (t > animationDuration)
+			{
 				isJumping = false;
+				isAttacking = false;
+			}
 		}
 		else
 		{
@@ -98,7 +101,13 @@ void cCharacterController::update(float dt)
 			{
 				anim->SetAnimation("jump", 0.f);
 				isJumping = true;
-				jumpDuration = anim->GetAnimationDuration();
+				animationDuration = anim->GetAnimationDuration();
+			}
+			else if (Input::KeyDown(GLFW_KEY_F))
+			{
+				anim->SetAnimation("attack", 0.f);
+				isAttacking = true;
+				animationDuration = anim->GetAnimationDuration();
 			}
 			else if (Input::GetKey(GLFW_KEY_W))
 			{

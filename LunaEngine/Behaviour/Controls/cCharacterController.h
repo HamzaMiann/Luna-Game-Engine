@@ -47,7 +47,8 @@ private:
 	quat rotY;
 
 	bool isJumping = false;
-	float jumpDuration = 0.f;
+	bool isAttacking = false;
+	float animationDuration = 0.f;
 
 	sCharacterControllerSettings settings;
 

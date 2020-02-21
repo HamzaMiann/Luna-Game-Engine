@@ -9,14 +9,12 @@ cAnimationController::~cAnimationController()
 bool cAnimationController::deserialize(xml_node<>* root_node)
 {
 	std::string profile = root_node->first_attribute("profile")->value();
+	std::string defaultAnim = root_node->first_attribute("default")->value();
 	animation = cAnimationManager::Instance().profiles[profile];
+	currentAnimation = defaultAnim;
 	if (animation)
 	{
 		numAnimations = animation->mapAnimationFriendlyNameTo_pScene.size();
-		if (numAnimations > 0)
-		{
-			currentAnimation = animation->mapAnimationFriendlyNameTo_pScene.begin()->first;
-		}
 	}
 	return true;
 }

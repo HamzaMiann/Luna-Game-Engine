@@ -59,6 +59,7 @@
       <Animation file="RPG-Walk-Right.fbx" friendlyName="walk-right"/>
       <Animation file="RPG-Walk-Left.fbx" friendlyName="walk-left"/>
       <Animation file="RPG-Jump.fbx" friendlyName="jump"/>
+      <Animation file="RPG-Attack.fbx" friendlyName="attack"/>
     </AnimationProfile>
   </Animations>
 
@@ -295,7 +296,7 @@
       <Texture ratio="1.000000">blue.png</Texture>
 
       <Components>
-        <AnimationController profile="character"/>
+        <AnimationController profile="character" default="idle"/>
         
         <CharacterController>
           <Forward x="0" y="0" z="-1"/>
@@ -318,7 +319,7 @@
       <Texture ratio="1.000000">red.png</Texture>
 
       <Components>
-        <AnimationController profile="character"/>
+        <AnimationController profile="character" default="idle"/>
 
       </Components>
     </GameObject>
