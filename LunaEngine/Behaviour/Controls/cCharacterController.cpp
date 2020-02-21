@@ -39,6 +39,7 @@ void cCharacterController::start()
 	anim = parent.GetComponent<cAnimationController>();
 	rotX = quat(vec3(0.f));
 	rotY = quat(vec3(0.f));
+	jumpVelocity = vec3(0.f);
 	Input::LockCursor();
 }
 
@@ -88,6 +89,8 @@ void cCharacterController::update(float dt)
 
 		if (isJumping || isAttacking)
 		{
+			if (isJumping)
+				transform.Position(transform.Position() + jumpVelocity * settings.speed * dt);
 			float t = anim->GetCurrentTime();
 			if (t > animationDuration)
 			{
@@ -100,6 +103,25 @@ void cCharacterController::update(float dt)
 			if (Input::KeyDown(GLFW_KEY_SPACE))
 			{
 				anim->SetAnimation("jump", 0.f);
+				if (Input::GetKey(GLFW_KEY_W))
+				{
+					if (Input::GetKey(GLFW_KEY_A))
+					{
+						direction = direction * quat(vec3(0.f, glm::radians(-45.f), 0.f));
+					}
+					else if (Input::GetKey(GLFW_KEY_D))
+					{
+						direction = direction * quat(vec3(0.f, glm::radians(45.f), 0.f));
+					}
+					if (Input::GetKey(GLFW_KEY_LEFT_SHIFT))
+					{
+						direction *= 3.f;
+					}
+					jumpVelocity = direction;
+					anim->SetAnimation("run-jump", 0.f);
+				}
+				else
+					jumpVelocity = vec3(0.f);
 				isJumping = true;
 				animationDuration = anim->GetAnimationDuration();
 			}
@@ -192,4 +214,9 @@ void cCharacterController::OnDestroy()
 		anim->SetAnimation("idle");
 	}
 	Input::UnlockCursor();
+}
+
+void cCharacterController::SetSettings(const sCharacterControllerSettings& settings)
+{
+	this->settings = settings;
 }

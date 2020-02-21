@@ -27,6 +27,7 @@
 #include <Animation/cAnimationManager.h>
 #include <InputManager.h>
 #include <Components/cAnimationController.h>
+#include <Behaviour/Controls/cCharacterController.h>
 
 iApplication* cApplication::app = cApplication::Instance();
 
@@ -176,6 +177,10 @@ void cApplication::Run()
 
 	cGameObject* screen = entity_manager.GetGameObjectByTag("scope");
 
+	unsigned int charIndex = 0;
+	cGameObject* char1 = entity_manager.GetGameObjectByTag("character1");
+	cGameObject* char2 = entity_manager.GetGameObjectByTag("character2");
+
 	cLowpassFilter& filter = cLowpassFilter::Instance();
 	float current_time = (float)glfwGetTime();
 	float previous_time = (float)glfwGetTime();
@@ -217,6 +222,30 @@ void cApplication::Run()
 		width = newWidth;
 		height = newHeight;
 		glViewport(0, 0, width, height);
+
+
+
+		if (Input::KeyUp(GLFW_KEY_TAB))
+		{
+			if (charIndex == 0)
+			{
+				charIndex = 1;
+				auto settings = char1->GetComponent<cCharacterController>()->GetSettings();
+				char1->GetComponent<cCharacterController>()->OnDestroy();
+				char1->RemoveComponent<cCharacterController>();
+				cCharacterController* controller = char2->AddComponent<cCharacterController>();
+				controller->SetSettings(settings);
+			}
+			else
+			{
+				charIndex = 0;
+				auto settings = char2->GetComponent<cCharacterController>()->GetSettings();
+				char2->GetComponent<cCharacterController>()->OnDestroy();
+				char2->RemoveComponent<cCharacterController>();
+				cCharacterController* controller = char1->AddComponent<cCharacterController>();
+				controller->SetSettings(settings);
+			}
+		}
 
 
 

@@ -60,6 +60,7 @@
       <Animation file="RPG-Walk-Left.fbx" friendlyName="walk-left"/>
       <Animation file="RPG-Jump.fbx" friendlyName="jump"/>
       <Animation file="RPG-Attack.fbx" friendlyName="attack"/>
+      <Animation file="RPG-Run-Jump.fbx" friendlyName="run-jump"/>
     </AnimationProfile>
   </Animations>
 
@@ -286,7 +287,7 @@
       <Texture ratio="1.000000">blue.png</Texture>
     </GameObject>
 
-    <GameObject mesh="character" tag="character" shader="basic">
+    <GameObject mesh="character" tag="character1" shader="basic">
       <Position x="7.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
       <Scale>0.02</Scale>

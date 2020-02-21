@@ -34,6 +34,7 @@ public:
 	virtual void OnDestroy() override;
 
 	inline sCharacterControllerSettings GetSettings() { return settings; }
+	void SetSettings(const sCharacterControllerSettings& settings);
 
 private:
 
@@ -41,6 +42,7 @@ private:
 	cAnimationController* anim;
 
 	vec3 direction;
+	vec3 jumpVelocity;
 	float previousX = 0.f, previousY = 0.f;
 
 	quat rotX;
