@@ -32,6 +32,22 @@
 		<Texture name="Cerberus_M.jpg"/>
 		<Texture name="Ground_Dirt_007_basecolor.png"/>
 		<Texture name="noise.jpg"/>
+    <Skybox name="sky">
+      <Right texture="mountains_right.jpg"/>
+      <Left texture="mountains_left.jpg"/>
+      <Top texture="mountains_top.jpg"/>
+      <Bottom texture="mountains_bottom.jpg"/>
+      <Front texture="mountains_front.jpg"/>
+      <Back texture="mountains_back.jpg"/>
+    </Skybox>
+    <Skybox name="pinksky">
+      <Right texture="pink_left.png"/>
+      <Left texture="pink_right.png"/>
+      <Top texture="pink_top.png"/>
+      <Bottom texture="pink_bottom.png"/>
+      <Front texture="pink_front.png"/>
+      <Back texture="pink_back.png"/>
+    </Skybox>
 	</Textures>
   
 	<Models>
@@ -279,9 +295,18 @@
     </GameObject>
 
     <GameObject mesh="portal" tag="portal" shader="basic">
-      <Position x="0.0" y="5.5" z="0.0"/>
+      <Position x="0.0" y="7" z="20.0"/>
+      <Rotation x="0" y="180" z="0.0"/>
+      <Scale3D x="200" y="50" z="1"/>
+      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+      <SpecIntensity>10.000000</SpecIntensity>
+      <Texture ratio="1.000000">blue.png</Texture>
+    </GameObject>
+    <GameObject mesh="portal" tag="portal2" shader="basic">
+      <Position x="0.0" y="7" z="20.001"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>20.0</Scale>
+      <Scale3D x="200" y="50" z="1"/>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
@@ -434,7 +459,7 @@
     <GameObject mesh="plane" tag="ground" shader="basic">
       <Position x="0.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>0.1</Scale>
+      <Scale>0.5</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>

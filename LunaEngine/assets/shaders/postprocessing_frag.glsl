@@ -122,7 +122,7 @@ vec4 BloomCutoff(vec4 colour)
 	vec4 BrightColor = vec4(colour.rgb, 1.0);
 
 	float brightness = dot(colour.rgb, vec3(0.2126, 0.6152, 0.522));
-	brightness = dot(colour.rgb, vec3(0.2126, 0.7152, 0.0722));
+	//brightness = dot(colour.rgb, vec3(0.2126, 0.7152, 0.0722));
     if(brightness <= 1.0)
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 
@@ -158,15 +158,15 @@ vec4 circular_blur(sampler2D tex, float offset)
 ///
 // Computes DOF for a given texture
 ///
-vec4 DOF(sampler2D tex)
+vec4 DOF(sampler2D mainTexture, sampler2D positionTexture)
 {
 	const float near_focus = 10.0;
 	const float focus_length = 60.0;
 	const float blur_scale = 5.0;
 
-	vec4 colour = texture(tex, fUVx2.st);
+	vec4 colour = vec4(0., 0., 0., 1.);
 
-	float z = distance(texture(textSamp02, fUVx2.st).rgb, eyeLocation.rgb);
+	float z = distance(texture(positionTexture, fUVx2.st).rgb, eyeLocation.rgb);
 
 	float distance_from_focus = abs(near_focus - z);
 	float ratio = 0.0;
@@ -176,7 +176,7 @@ vec4 DOF(sampler2D tex)
 	else
 		ratio = clamp((distance_from_focus / focus_length) - 1.0, 0.0, 1.0);
 
-	colour = circular_blur(tex, blur_scale * ratio);
+	colour = circular_blur(mainTexture, blur_scale * ratio);
 
 	return colour;
 }
@@ -202,7 +202,6 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 	{
 		lightPos = normalize(lightPositionOnScreen.xy) * 20.0;
 	}
-	//vec2 lightPos = clamp(lightPositionOnScreen.xy, vec2(-20), vec2(20));
 
 	float density = 0.97;
 	float weight = 0.5;
@@ -223,10 +222,10 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
             illuminationDecay *= decay;
     }
 
-	float fogAmount = length(colour.rgb);
+	float dustAmount = length(colour.rgb);
     colour *= exposure;
 	uv = vec2(fUVx2.x + (fiTime / (15.0)), fUVx2.y + (fiTime / -20.0));
-	colour.rgb += (texture(textSamp02, uv).rgb / 2.0) * exposure * fogAmount;
+	colour.rgb += (texture(textSamp04, uv).rgb / 2.0) * exposure * dustAmount;
 
 	return colour;
 }
@@ -238,12 +237,11 @@ void main()
 
 	if (isFinalPass)
 	{
-		pixelColour.rgb = 1 - texture(textSamp00, uv).rgb;
+		pixelColour.rgb = texture(textSamp00, uv).rgb;
 		
-
 		if (DOFEnabled)
 		{
-			pixelColour.rgb = DOF(textSamp00).rgb;
+			pixelColour.rgb = DOF(textSamp00, textSamp01).rgb;
 		}
 		
 		if (bloomEnabled)
@@ -258,13 +256,14 @@ void main()
 
 			// tone mapping
 			vec3 result = vec3(1.0) - exp(-pixelColour.rgb * exposure);
-			// also gamma correct while we're at it       
+
+			// gamma correction       
 			result = pow(result, vec3(1.0 / gamma));
 
 			pixelColour.rgb = result;
 		}
 
-		pixelColour.rgb += CalculateVolumetricLightScattering(textSamp01).rgb;
+		pixelColour.rgb += CalculateVolumetricLightScattering(textSamp02).rgb;
 
 		pixelColour.a = 1.0;
 
@@ -282,10 +281,13 @@ void main()
 	}
 	bloomColour = BloomCutoff(pixelColour);
 
-	positionColour = vec4(distance(pos, eyeLocation.xyz)) / 1000.0;
-	positionColour.r *= theLights[0].diffuse.r;
-	positionColour.g *= theLights[0].diffuse.g;
-	positionColour.b *= theLights[0].diffuse.b;
+	positionColour.rgb = pos;
+	positionColour.a = 1.;
+
+	normalColour = vec4(distance(pos, eyeLocation.xyz)) / 1000.0;
+	normalColour.r *= theLights[0].diffuse.r;
+	normalColour.g *= theLights[0].diffuse.g;
+	normalColour.b *= theLights[0].diffuse.b;
 
 	return;
 	

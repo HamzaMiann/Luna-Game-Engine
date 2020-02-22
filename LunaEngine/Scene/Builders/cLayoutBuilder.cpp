@@ -134,6 +134,10 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 		{
 			ptr->transform.scale = glm::vec3(XML_Helper::AsFloat(property_node));
 		}
+		else if (propName == "Scale3D")
+		{
+			ptr->transform.scale = XML_Helper::AsVec3(property_node);
+		}
 		else if (propName == "SpecIntensity")
 		{
 			ptr->specIntensity = XML_Helper::AsFloat(property_node);

@@ -45,6 +45,7 @@ Scene* scene;
 iInputHandler* pInputHandler;
 
 cGameObject* pSkyBoxSphere;
+std::string skyboxName = "sky";
 
 cFBO albedoFBO;
 cFBO second_passFBO;
@@ -58,7 +59,7 @@ vec2 screenPos(0.f, 0.f);
 void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p);
 
 void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, mat4 const& v, mat4 const& p);
-
+void RenderGO(cGameObject* object, float width, float height, mat4& p, mat4& v, int& lastShader);
 void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt);
 void RenderSkybox(float width, float height, mat4 p, mat4 v, float dt);
 void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO);
@@ -77,32 +78,13 @@ void cApplication::Init()
 
 	// Load scene from file
 	scene = Scene::LoadFromXML("sandbox.scene.xml");
-	cBasicTextureManager::Instance()->SetBasePath("assets/textures/cubemaps/");
-	/*if (cBasicTextureManager::Instance()->CreateCubeTextureFromPNGFiles("space",
-													  "pink_left.png", "pink_right.png",
-													  "pink_top.png", "pink_bottom.png",
-													  "pink_front.png", "pink_back.png", true, errorString))*/
-	if (cBasicTextureManager::Instance()->CreateCubeTextureFromJPGFiles(
-		"space",
-		"mountains_right.jpg", "mountains_left.jpg",
-		"mountains_top.jpg", "mountains_bottom.jpg",
-		"mountains_front.jpg", "mountains_back.jpg", true, errorString))
-	{
-		pSkyBoxSphere = new cGameObject();
-		pSkyBoxSphere->transform.pos = vec3(0.f);
-		pSkyBoxSphere->meshName = "sphere";
-		pSkyBoxSphere->shader = Shader::FromName("basic");
-		pSkyBoxSphere->tag = "skybox";
-		pSkyBoxSphere->transform.pos = vec3(0.0f, 0.f, 0.0f);
-		pSkyBoxSphere->transform.scale = vec3(900.0f);
-		//pSkyBoxSphere->texture[0].SetTexture("Pizza.bmp", 1.0f);
-		std::cout << "Space skybox loaded" << std::endl;
-	}
-	else
-	{
-		std::cout << "OH NO! Error while loading cubemap :( " << errorString << std::endl;
-		exit(1);
-	}
+
+	pSkyBoxSphere = new cGameObject();
+	pSkyBoxSphere->transform.pos = vec3(0.f);
+	pSkyBoxSphere->meshName = "sphere";
+	pSkyBoxSphere->shader = Shader::FromName("basic");
+	pSkyBoxSphere->tag = "skybox";
+	pSkyBoxSphere->transform.scale = vec3(900.0f);
 
 
 
@@ -182,6 +164,9 @@ void cApplication::Run()
 	unsigned int charIndex = 0;
 	cGameObject* char1 = entity_manager.GetGameObjectByTag("character1");
 	cGameObject* char2 = entity_manager.GetGameObjectByTag("character2");
+	cGameObject* portal = entity_manager.GetGameObjectByTag("portal");
+	cGameObject* portal2 = entity_manager.GetGameObjectByTag("portal2");
+	cGameObject* ground = entity_manager.GetGameObjectByTag("ground");
 	noise.SetTexture("noise.jpg");
 
 	cLowpassFilter& filter = cLowpassFilter::Instance();
@@ -280,11 +265,19 @@ void cApplication::Run()
 			scene->camera.Up
 		);
 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);	// Enable writing to the colour buffer
+		glDepthMask(GL_TRUE);								// Enable writing to the depth buffer
+		glEnable(GL_DEPTH_TEST);							// Enable depth testing
+		glDisable(GL_STENCIL_TEST);							// Disable stencil test
+
 		RenderObjectsToFBO(&albedoFBO, width, height, p, v, delta_time);
 		RenderSkybox(width, height, p, v, delta_time);
 
 		// set TV screen texture
-		screen->texture[0].SetTexture(albedoFBO.colourTexture_ID);
+		screen->texture[0].SetTexture(albedoFBO.normalTexture_ID);
 
 		v = glm::lookAt(
 			scene->camera.Eye,
@@ -295,8 +288,64 @@ void cApplication::Run()
 		RenderObjectsToFBO(&second_passFBO, width, height, p, v, delta_time);
 		RenderSkybox(width, height, p, v, delta_time);
 
-		light->position = vec4(origin + Camera::main_camera->Eye, 1.0f);
 
+		glClearStencil(47); 
+		glClear(GL_STENCIL_BUFFER_BIT);
+
+		glEnable(GL_STENCIL_TEST);
+
+		glStencilOp(GL_KEEP,		// Stencil fails KEEP the original value (47)
+			GL_KEEP,		// Depth fails KEEP the original value
+			GL_REPLACE);	// Stencil AND depth PASSES, REPLACE with 133
+
+		glStencilFunc(GL_ALWAYS,	// If is succeed, ALWAYS do this
+			133,			// Replace with this
+			0xFF);		// Mask of 1111,1111 (no mask)
+
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glDepthMask(GL_FALSE);
+
+		int last = -1;
+		RenderGO(portal, width, height, p, v, last);
+		RenderGO(portal2, width, height, p, v, last);
+
+		glDepthMask(GL_TRUE);
+
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+
+		// Change the stencil test
+		glStencilOp(GL_KEEP,		// Stencil fails KEEP the original value (47)
+			GL_KEEP,		// (stencil passes) Depth fails KEEP the original value
+			GL_KEEP);		// Stencil AND depth PASSES, Keep 133
+		glStencilFunc(GL_EQUAL,		// Test if equal
+			133,			//
+			0xFF);
+
+
+		// Draw the "inside the room" scene...
+		// (only visible where the "door" model drew 133 to the stencil buffer
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+		int texture = ground->texture[0].GetID();
+		ground->texture[0].SetTexture(noise.GetID());
+		RenderGO(char1, width, height, p, v, last);
+		RenderGO(char2, width, height, p, v, last);
+		RenderGO(ground, width, height, p, v, last);
+		skyboxName = "pinksky";
+		RenderSkybox(width, height, p, v, delta_time);
+
+		ground->texture[0].SetTexture(texture);
+
+		glDisable(GL_STENCIL_TEST);
+
+		skyboxName = "sky";
+
+
+
+
+
+		light->position = vec4(origin + Camera::main_camera->Eye, 1.0f);
 		screenPos = vec2((p * v * mat4(1.0f)) * light->position);
 
 		RenderQuadToFBO(finalFBO, second_passFBO);
@@ -394,35 +443,20 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 	Shader& shader = *objPtr->shader;
 	GLint shaderProgID = shader.GetID();
 
-	GLint scopeUL = shader["isScope"];
-	if (objPtr->tag == "scope")
-	{
-		glUniform1i(scopeUL, (int)GL_TRUE);
-	}
-	else
-	{
-		glUniform1i(scopeUL, (int)GL_FALSE);
-	}
+	/*
+	
+	MISC EFFECTS
+	
+	*/
+	if (objPtr->tag == "scope") glUniform1i(shader["isScope"], (int)GL_TRUE);
+	else glUniform1i(shader["isScope"], (int)GL_FALSE);
 
-	//if (objPtr->tag == "character")
-	//{
-	//	std::vector< mat4 > vecFinalTransformation;
-	//	float time = (float)glfwGetTime();
-	//	//time = 2.1f;
-	//	auto& animManager = cAnimationManager::Instance();
-	//	animManager.UpdateTransforms(*animManager.animations["idle"], time, vecFinalTransformation);
-	//	GLint matBonesArray_UniLoc = glGetUniformLocation(shaderProgID, "matBonesArray");
-	//	GLint numBonesUsed = (GLint)vecFinalTransformation.size();
-	//	glUniformMatrix4fv(matBonesArray_UniLoc, numBonesUsed, 
-	//					   GL_FALSE, 
-	//					   glm::value_ptr(vecFinalTransformation[0]));
-	//	glUniform1f(shader["isSkinnedMesh"], (float)GL_TRUE);
-	//}
-	//else
-	//{
-	//	glUniform1f(shader["isSkinnedMesh"], (float)GL_FALSE);
-	//}
 
+	/*
+	
+	ANIMATION
+
+	*/
 	cAnimationController* animator = objPtr->GetComponent<cAnimationController>();
 
 	if (animator)
@@ -435,30 +469,37 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 							GL_FALSE, 
 							glm::value_ptr(transforms[0]));
 	}
-	else
-	{
-		glUniform1f(shader["isSkinnedMesh"], (float)GL_FALSE);
-	}
+	else glUniform1f(shader["isSkinnedMesh"], (float)GL_FALSE);
 
-	GLint bIsSkyBox_UL = shader["isSkybox"];
+	
+	/*
+	
+	REFLECTION AND REFRACTION
+
+	*/
 	glUniform1f(shader["reflectivity"], objPtr->reflectivity);
 	glUniform1f(shader["refractivity"], objPtr->refractivity);
 
 
+	/*
+	
+	SKYBOX
+	
+	*/
+	GLint bIsSkyBox_UL = shader["isSkybox"];
 	if (objPtr->tag != "skybox")
 	{
 		// Don't draw back facing triangles (default)
 		glCullFace(GL_BACK);
 		glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
 
-		GLuint skyBoxTextureID = cBasicTextureManager::Instance()->getTextureIDFromName("space");
+		GLuint skyBoxTextureID = cBasicTextureManager::Instance()->getTextureIDFromName(skyboxName);
 		glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
 
 		// Tie the texture units to the samplers in the shader
 		GLint skyBoxSampler_UL = shader["skyBox"];
 		glUniform1i(skyBoxSampler_UL, 26);
-
 
 		SetUpTextureBindingsForObject(objPtr);
 	}
@@ -471,7 +512,7 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 
 		glUniform1f(bIsSkyBox_UL, (float)GL_TRUE);
 
-		GLuint skyBoxTextureID = cBasicTextureManager::Instance()->getTextureIDFromName("space");
+		GLuint skyBoxTextureID = cBasicTextureManager::Instance()->getTextureIDFromName(skyboxName);
 		glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
 
@@ -482,7 +523,6 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 
 	mat4 m(1.f);
 
-	// ******* TRANSLATION TRANSFORM *********
 	if (objPtr->parent)
 	{
 		m *= objPtr->transform.TranslationMatrix(objPtr->parent->transform);
@@ -493,28 +533,22 @@ void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
 		m *= objPtr->transform.TranslationMatrix();
 		m *= objPtr->transform.RotationMatrix();
 	}
-	// ******* TRANSLATION TRANSFORM *********
 
+	
+
+	mat4 matModelInverseTranspose = glm::inverse(glm::transpose(m));
+	glUniformMatrix4fv(shader["matModelInverTrans"], 1, GL_FALSE, glm::value_ptr(matModelInverseTranspose));
+
+
+	if (objPtr->parent)
+		m *= objPtr->transform.ScaleMatrix(objPtr->parent->transform);
+	else
+		m *= objPtr->transform.ScaleMatrix();
 
 	if (pass_id != 1) m = mat4(1.f);
 
-	GLint matModelIT_UL = shader["matModelInverTrans"];
-	mat4 matModelInverseTranspose = glm::inverse(glm::transpose(m));
-	glUniformMatrix4fv(matModelIT_UL, 1, GL_FALSE, glm::value_ptr(matModelInverseTranspose));
 
-
-	GLint matModel_UL = shader["matModel"];
-	if (objPtr->parent)
-	{
-		m *= objPtr->transform.ScaleMatrix(objPtr->parent->transform);
-		glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m));
-	}
-	else
-	{
-		m *= objPtr->transform.ScaleMatrix();
-		glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(m));
-	}
-
+	glUniformMatrix4fv(shader["matModel"], 1, GL_FALSE, glm::value_ptr(m));
 	
 	glUniform4f(shader["eyeLocation"],
 		scene->camera.Eye.x,
@@ -655,7 +689,6 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 {
 	// Draw to the frame buffer
 	fbo->use();
-	fbo->clear_all();
 
 	// Clear both the colour buffer (what we see) and the 
 		//  depth (or z) buffer.
@@ -696,6 +729,8 @@ void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4
 
 		objPtr->cmd_group->Update(dt);
 		objPtr->brain->Update(dt);
+
+		if (objPtr->tag == "portal" || objPtr->tag == "portal2") continue;
 
 		RenderGO(objPtr, width, height, p, v, lastShader);
 
@@ -752,7 +787,7 @@ void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 
 	// Draw to the frame buffer
 	fbo.use();
-	fbo.clear_all();
+	//fbo.clear_all();
 
 	// 2. Clear the ACTUAL screen buffer
 	glViewport(0, 0, width, height);
@@ -821,15 +856,19 @@ void RenderQuadToScreen(cFBO& previousFBO)
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.positionTexture_ID);
-	glUniform1i(shader["textSamp01"], 1);	// Texture unit 0	LIGHTING DEPTH BUFFER TEXTURE
+	glUniform1i(shader["textSamp01"], 1);	// Texture unit 0	POSITION TEXTURE
 
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, noise.GetID());
-	glUniform1i(shader["textSamp02"], 2);	// Texture unit 1	NOISE TEXTURE
+	glBindTexture(GL_TEXTURE_2D, previousFBO.normalTexture_ID);
+	glUniform1i(shader["textSamp02"], 2);	// Texture unit 1	LIGHTING DEPTH BUFFER TEXTURE
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, previousFBO.bloomTexture_ID);
 	glUniform1i(shader["textSamp03"], 3);	// Texture unit 3	BLOOM CUTOFF TEXTURE
+
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, noise.GetID());
+	glUniform1i(shader["textSamp04"], 4);	// Texture unit 1	NOISE TEXTURE
 
 	glUniform1i(shader["isFinalPass"], (int)GL_TRUE);
 
