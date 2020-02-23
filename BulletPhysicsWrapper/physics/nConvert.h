@@ -10,6 +10,11 @@ namespace nConvert
 		return btVector3(vec.x, vec.y, vec.z);
 	}
 
+	inline btQuaternion ToBullet(const glm::quat& rot)
+	{
+		return btQuaternion(rot.x, rot.y, rot.z, rot.w);
+	}
+
 	inline glm::vec3 ToGLM(const btVector3& vec)
 	{
 		return glm::vec3(vec.x(), vec.y(), vec.z());

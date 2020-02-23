@@ -353,7 +353,7 @@ void cApplication::Run()
 
 
 		//DrawOctree(ship, phys->tree->main_node, bounds, ratio, v, p);
-		debug_renderer.RenderDebugObjects(v, p, 0.01f);
+		debug_renderer.RenderDebugObjects(v, p, delta_time);
 
 
 		Input::ClearBuffer();

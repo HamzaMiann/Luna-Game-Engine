@@ -52,6 +52,7 @@
   
 	<Models>
     <Model file="RPG-Character.fbx" friendlyName="character" shader="basic"/>
+    <Model file="typhoon.fbx" friendlyName="typhoon" shader="basic"/>
     <Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
     <Model file="cube.ply" friendlyName="cube" shader="basic"/>
     <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
@@ -329,9 +330,17 @@
           <Forward x="0" y="0" z="-1"/>
           <Offset x="-2.0" y="3.5" z="0"/>
           <CameraDistance>6.0</CameraDistance>
-          <Speed>4.0</Speed>
+          <Speed>6.0</Speed>
           <MouseSpeed>0.15</MouseSpeed>
         </CharacterController>
+
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="2.000000" z="0.000000"/>
+          <Radius>2.0</Radius>
+        </SphereBody>
         
       </Components>
     </GameObject>
@@ -347,6 +356,14 @@
 
       <Components>
         <AnimationController profile="character" default="idle"/>
+
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
 
       </Components>
     </GameObject>

@@ -1,5 +1,5 @@
 #pragma once
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm_common.h>
 #include <interfaces/iComponent.h>
 #include <iObject.h>
 #include "eComponentType.h"
@@ -18,15 +18,22 @@ namespace nPhysics
 		virtual ~iPhysicsComponent() {}
 		inline const eComponentType& GetComponentType() { return mComponentType; }
 
-		virtual void GetTransform(glm::mat4& transformOut) = 0;
+		virtual void GetTransform(mat4& transformOut) = 0;
 
-		virtual void AddForce(const glm::vec3& force) = 0;
-		virtual void SetVelocity(const glm::vec3& velocity) = 0;
-		virtual glm::vec3 GetVelocity() = 0;
+		virtual void AddForce(const vec3& force) = 0;
 
-		virtual void AddVelocity(const glm::vec3& velocity) = 0;
-		virtual void SetPosition(const glm::vec3& position) = 0;
-		virtual glm::vec3 GetPosition() = 0;
+		virtual void AddVelocity(const vec3& velocity) = 0;
+		virtual void SetVelocity(const vec3& velocity) = 0;
+		virtual vec3 GetVelocity() = 0;
+
+		virtual void SetPosition(const vec3& position) = 0;
+		virtual vec3 GetPosition() = 0;
+
+		virtual void SetRotation(const quat& rotation) = 0;
+		virtual quat GetRotation() = 0;
+
+		virtual void SetOffset(const vec3& newOffset) { offset = newOffset; }
+		virtual inline vec3 GetOffset() { return offset; }
 
 		virtual void UpdateTransform() = 0;
 
@@ -39,6 +46,7 @@ namespace nPhysics
 
 	protected:
 		bool _rotateable;
+		vec3 offset;
 
 		iPhysicsComponent(iObject* parent, eComponentType componentType)
 			: mComponentType(componentType)

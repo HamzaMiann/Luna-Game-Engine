@@ -3,6 +3,7 @@
 #include <xml_helper.h>
 #include <Camera.h>
 #include <Physics/Mathf.h>
+#include <DebugRenderer/cDebugRenderer.h>
 using namespace rapidxml;
 
 bool cCharacterController::deserialize(xml_node<>* root_node)
@@ -37,6 +38,7 @@ bool cCharacterController::deserialize(xml_node<>* root_node)
 void cCharacterController::start()
 {
 	anim = parent.GetComponent<cAnimationController>();
+	rigidBody = parent.GetComponent<nPhysics::iPhysicsComponent>();
 	rotX = quat(vec3(0.f));
 	rotY = quat(vec3(0.f));
 	jumpVelocity = vec3(0.f);
@@ -66,6 +68,18 @@ void cCharacterController::update(float dt)
 		0.f
 	));
 
+	previousX = x;
+	previousY = y;
+
+	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_1))
+	{
+		settings.distance_from_object += dt * 3.f;
+	}
+	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_2))
+	{
+		settings.distance_from_object -= dt * 3.f;
+	}
+
 	direction = settings.forward * rotX;
 	direction.y = (settings.forward * rotY).y;
 	direction = glm::normalize(direction);
@@ -77,7 +91,7 @@ void cCharacterController::update(float dt)
 		+ (settings.camera_offset * rotX)
 		+ direction;
 
-	if (anim)
+	if (anim && rigidBody)
 	{
 		direction.y = 0.f;
 		direction = normalize(direction);
@@ -89,8 +103,6 @@ void cCharacterController::update(float dt)
 
 		if (isJumping || isAttacking)
 		{
-			if (isJumping)
-				transform.Position(transform.Position() + jumpVelocity * settings.speed * dt);
 			float t = anim->GetCurrentTime();
 			if (t > animationDuration)
 			{
@@ -124,12 +136,23 @@ void cCharacterController::update(float dt)
 					jumpVelocity = vec3(0.f);
 				isJumping = true;
 				animationDuration = anim->GetAnimationDuration();
+
+				vec3 velocity = rigidBody->GetVelocity();
+				jumpVelocity *= settings.speed;
+				jumpVelocity.y = velocity.y + settings.speed;
+				rigidBody->SetVelocity(jumpVelocity);
+
+				return;
 			}
 			else if (Input::KeyDown(GLFW_KEY_F))
 			{
 				anim->SetAnimation("attack", 0.f);
 				isAttacking = true;
 				animationDuration = anim->GetAnimationDuration();
+				jumpVelocity = vec3(0.f);
+				vec3 velocity = rigidBody->GetVelocity();
+				jumpVelocity.y = velocity.y;
+				rigidBody->SetVelocity(jumpVelocity);
 			}
 			else if (Input::GetKey(GLFW_KEY_W))
 			{
@@ -190,21 +213,14 @@ void cCharacterController::update(float dt)
 				anim->SetAnimation("idle");
 			}
 
-			transform.Position(transform.Position() + movement * settings.speed * dt);
+			vec3 velocity = rigidBody->GetVelocity();
+			movement *= settings.speed;
+			movement.y = velocity.y;
+			rigidBody->SetVelocity(movement);
+			
 		}
 	}
 
-	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_1))
-	{
-		settings.distance_from_object += dt * 3.f;
-	}
-	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_2))
-	{
-		settings.distance_from_object -= dt * 3.f;
-	}
-
-	previousX = x;
-	previousY = y;
 }
 
 void cCharacterController::OnDestroy()

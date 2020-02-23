@@ -35,6 +35,11 @@ namespace nPhysics
 		mBody->applyCentralImpulse(nConvert::ToBullet(def.velocity));
 
 		mBody->setUserPointer((iPhysicsComponent*)this);
+		if (!this->_rotateable)
+		{
+			mBody->setAngularFactor(btVector3(0., 0., 0.));
+			mBody->setLinearFactor(btVector3(1., 0., 1.));
+		}
 
 		cPhysicsFactory factory;
 		factory.GetWorld()->AddComponent(this);
@@ -107,16 +112,34 @@ namespace nPhysics
 	{
 		btTransform tform;
 		mBody->getMotionState()->getWorldTransform(tform);
-		return nConvert::ToGLM(tform.getOrigin()) + offset;
+		return nConvert::ToGLM(tform.getOrigin()) - offset;
 	}
 
 	void cCubeComponent::UpdateTransform()
 	{
 		btTransform tf;
 		mBody->getMotionState()->getWorldTransform(tf);
-		transform.Position(nConvert::ToGLM(tf.getOrigin()) + offset);
+		transform.Position(nConvert::ToGLM(tf.getOrigin()) - offset);
 		if (_rotateable)
 			transform.Rotation(nConvert::ToGLM(tf.getRotation()));
+	}
+
+	void cCubeComponent::SetRotation(const quat& rotation)
+	{
+		btTransform tform;
+		btMotionState* state;
+		state = mBody->getMotionState();
+		state->getWorldTransform(tform);
+		tform.setRotation(nConvert::ToBullet(rotation));
+		state->setWorldTransform(tform);
+		mBody->setMotionState(state);
+	}
+
+	quat cCubeComponent::GetRotation()
+	{
+		btTransform tform;
+		mBody->getMotionState()->getWorldTransform(tform);
+		return nConvert::ToGLM(tform.getRotation());
 	}
 
 }

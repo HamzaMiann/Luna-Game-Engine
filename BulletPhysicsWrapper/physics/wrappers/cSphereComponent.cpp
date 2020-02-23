@@ -13,6 +13,7 @@ namespace nPhysics
 		btTransform transform;
 		transform.setIdentity();
 		transform.setOrigin(nConvert::ToBullet(this->transform.pos + def.Offset));
+		offset = def.Offset;
 
 		/// Create Dynamic Objects
 
@@ -90,7 +91,7 @@ namespace nPhysics
 	{
 		btTransform tf;
 		mBody->getMotionState()->getWorldTransform(tf);
-		transform.pos = nConvert::ToGLM(tf.getOrigin());
+		transform.pos = nConvert::ToGLM(tf.getOrigin()) - offset;
 		if (_rotateable)
 			transform.rotation = nConvert::ToGLM(tf.getRotation());
 	}
@@ -107,12 +108,31 @@ namespace nPhysics
 		tform.setOrigin(nConvert::ToBullet(position));
 		state->setWorldTransform(tform);
 		mBody->setMotionState(state);
+		offset = vec3(0.f);
 	}
 	glm::vec3 cSphereComponent::GetPosition()
 	{
 		btTransform tform;
 		mBody->getMotionState()->getWorldTransform(tform);
 		return nConvert::ToGLM(tform.getOrigin());
+	}
+
+	void cSphereComponent::SetRotation(const quat& rotation)
+	{
+		btTransform tform;
+		btMotionState* state;
+		state = mBody->getMotionState();
+		state->getWorldTransform(tform);
+		tform.setRotation(nConvert::ToBullet(rotation));
+		state->setWorldTransform(tform);
+		mBody->setMotionState(state);
+	}
+
+	quat cSphereComponent::GetRotation()
+	{
+		btTransform tform;
+		mBody->getMotionState()->getWorldTransform(tform);
+		return nConvert::ToGLM(tform.getRotation());
 	}
 
 	void cSphereComponent::CollidedWith(iPhysicsComponent* other)
