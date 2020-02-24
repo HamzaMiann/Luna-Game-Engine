@@ -4,6 +4,7 @@
 void AI::cFormationBehaviour::start()
 {
 	maxVelocity = 10.f;
+	slowingRadius = 3.f;
 	rigidBody = parent.GetComponent<nPhysics::iPhysicsComponent>();
 	animator = parent.GetComponent<cAnimationController>();
 }
@@ -49,10 +50,23 @@ void AI::cFormationBehaviour::Seek(float dt)
 {
     if (!rigidBody) return;
 
-    vec3 desiredVelocity = glm::normalize(target - transform.Position());
-    desiredVelocity *= maxVelocity;
+    vec3 desiredVelocity = target - transform.Position();
+	float dist = glm::length(desiredVelocity);
+	desiredVelocity = glm::normalize(desiredVelocity);
+
+	if (dist < slowingRadius)
+	{
+		/* game object is approaching the target and slows down*/
+		desiredVelocity = desiredVelocity * maxVelocity * (dist / slowingRadius);
+	}
+	else
+	{
+		/* target is far away from game object*/
+		desiredVelocity *= maxVelocity;
+	}
 
     vec3 steer = desiredVelocity - rigidBody->GetVelocity();
+
 
     /* add steering force to current velocity*/
     rigidBody->AddVelocity(steer * dt);

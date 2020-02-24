@@ -44,19 +44,19 @@ void cFormationGameManager::HandleInput()
 	else if (Input::KeyUp(GLFW_KEY_3))
 	{
 		state = AI::AI_STATE::FORMATION;
-		formation = FORM::V;
+		formation = FORM::Square;
 		NotifyStateChange();
 	}
 	else if (Input::KeyUp(GLFW_KEY_4))
 	{
 		state = AI::AI_STATE::FORMATION;
-		formation = FORM::V;
+		formation = FORM::Line;
 		NotifyStateChange();
 	}
 	else if (Input::KeyUp(GLFW_KEY_5))
 	{
 		state = AI::AI_STATE::FORMATION;
-		formation = FORM::V;
+		formation = FORM::TwoRows;
 		NotifyStateChange();
 	}
 }
@@ -141,7 +141,24 @@ void cFormationGameManager::SetV()
 
 void cFormationGameManager::SetSquare()
 {
-	int numPerSide = (int)ceil(sqrt(agents.size()));
+	vec3 pos = transform.Position();
+
+	float dist= 3.5f;
+
+	agents[0u]->target = vec3(pos.x + 0.f * dist, pos.y, pos.z + 1.f * dist);
+	agents[1u]->target = vec3(pos.x + -1.f * dist, pos.y, pos.z + 1.f * dist);
+	agents[2u]->target = vec3(pos.x + 1.f * dist, pos.y, pos.z + 1.f * dist);
+	agents[3u]->target = vec3(pos.x + 2.f * dist, pos.y, pos.z + 1.f * dist);
+
+	agents[4u]->target = vec3(pos.x + 2.f * dist, pos.y, pos.z + 0.f * dist);
+	agents[5u]->target = vec3(pos.x + 2.f * dist, pos.y, pos.z + -1.f * dist);
+	agents[6u]->target = vec3(pos.x + 2.f * dist, pos.y, pos.z + -2.f * dist);
+	agents[7u]->target = vec3(pos.x + 1.f * dist, pos.y, pos.z + -2.f * dist);
+
+	agents[8u]->target = vec3(pos.x + 0.f * dist, pos.y, pos.z + -2.f * dist);
+	agents[9u]->target = vec3(pos.x + -1.f * dist, pos.y, pos.z + -2.f * dist);
+	agents[10u]->target = vec3(pos.x + -1.f * dist, pos.y, pos.z + -1.f * dist);
+	agents[11u]->target = vec3(pos.x + -1.f * dist, pos.y, pos.z + 0.f * dist);
 }
 
 void cFormationGameManager::SetLine()

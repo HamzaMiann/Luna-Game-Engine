@@ -97,6 +97,7 @@ namespace nPhysics
 	}
 	void cSphereComponent::AddVelocity(const glm::vec3& velocity)
 	{
+		mBody->activate(true);
 		mBody->applyCentralImpulse(nConvert::ToBullet(velocity));
 	}
 	void cSphereComponent::SetPosition(const glm::vec3& position)
@@ -109,6 +110,7 @@ namespace nPhysics
 		state->setWorldTransform(tform);
 		mBody->setMotionState(state);
 		offset = vec3(0.f);
+		mBody->activate(true);
 	}
 	glm::vec3 cSphereComponent::GetPosition()
 	{

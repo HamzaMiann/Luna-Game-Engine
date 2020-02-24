@@ -131,17 +131,21 @@ void cCharacterController::update(float dt)
 					}
 					jumpVelocity = direction;
 					anim->SetAnimation("run-jump", 0.f);
+					isJumping = true;
 				}
 				else
 					jumpVelocity = vec3(0.f);
-				isJumping = true;
+				
 				animationDuration = anim->GetAnimationDuration();
 
 				vec3 velocity = rigidBody->GetVelocity();
 				jumpVelocity *= settings.speed;
-				jumpVelocity.y = velocity.y + settings.speed;
-				rigidBody->SetVelocity(jumpVelocity);
 
+				if (isJumping)
+					jumpVelocity.y = velocity.y + settings.speed;
+
+				rigidBody->SetVelocity(jumpVelocity);
+				isJumping = true;
 				return;
 			}
 			else if (Input::KeyDown(GLFW_KEY_F))

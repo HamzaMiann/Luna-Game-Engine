@@ -36,6 +36,7 @@ namespace AI
 
 		vec3 target;
 		float maxVelocity;
+		float slowingRadius;
 
 		// Inherited via iAIBehaviour
 		virtual bool serialize(rapidxml::xml_node<>* root_node) override { return false; }
