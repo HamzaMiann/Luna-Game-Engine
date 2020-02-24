@@ -33,31 +33,52 @@ void cFormationGameManager::HandleInput()
 	{
 		state = AI::AI_STATE::FORMATION;
 		formation = FORM::Circle;
-		NotifyStateChange();
+		NotifyStateChange(state);
 	}
 	else if (Input::KeyUp(GLFW_KEY_2))
 	{
 		state = AI::AI_STATE::FORMATION;
 		formation = FORM::V;
-		NotifyStateChange();
+		NotifyStateChange(state);
 	}
 	else if (Input::KeyUp(GLFW_KEY_3))
 	{
 		state = AI::AI_STATE::FORMATION;
 		formation = FORM::Square;
-		NotifyStateChange();
+		NotifyStateChange(state);
 	}
 	else if (Input::KeyUp(GLFW_KEY_4))
 	{
 		state = AI::AI_STATE::FORMATION;
 		formation = FORM::Line;
-		NotifyStateChange();
+		NotifyStateChange(state);
 	}
 	else if (Input::KeyUp(GLFW_KEY_5))
 	{
 		state = AI::AI_STATE::FORMATION;
 		formation = FORM::TwoRows;
-		NotifyStateChange();
+		NotifyStateChange(state);
+	}
+	else if (Input::KeyUp(GLFW_KEY_6))
+	{
+		// TODO
+	}
+	else if (Input::KeyUp(GLFW_KEY_7))
+	{
+		state = AI::AI_STATE::FORMATION;
+		NotifyStateChange(state);
+	}
+	else if (Input::KeyUp(GLFW_KEY_8))
+	{
+		// TODO
+	}
+	else if (Input::KeyUp(GLFW_KEY_9))
+	{
+		// TODO
+	}
+	else if (Input::KeyUp(GLFW_KEY_0))
+	{
+		// TODO
 	}
 }
 
@@ -66,7 +87,7 @@ void cFormationGameManager::HandleState()
 	if (state == AI::AI_STATE::NONE)
 	{
 		state = AI::AI_STATE::FORMATION;
-		NotifyStateChange();
+		NotifyStateChange(state);
 	}
 	else if (state == AI::AI_STATE::FORMATION)
 	{
@@ -86,7 +107,7 @@ void cFormationGameManager::HandleState()
 	}
 }
 
-void cFormationGameManager::NotifyStateChange()
+void cFormationGameManager::NotifyStateChange(AI::AI_STATE _state)
 {
 	for (AI::cFormationBehaviour* agent : agents)
 	{

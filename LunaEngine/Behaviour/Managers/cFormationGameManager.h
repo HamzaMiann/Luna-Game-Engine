@@ -42,7 +42,7 @@ private:
 	void HandleState();
 
 
-	void NotifyStateChange();
+	void NotifyStateChange(AI::AI_STATE _state);
 
 	void SetCircle();
 	void SetV();

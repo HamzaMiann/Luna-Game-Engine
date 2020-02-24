@@ -15,6 +15,7 @@ namespace AI
 	{
 		NONE,
 		FORMATION,
+		PATH_FOLLOW,
 		FLOCKING,
 	};
 
