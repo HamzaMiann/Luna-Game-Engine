@@ -52,5 +52,13 @@ namespace AI
 
 		void Animate(float length);
 
+		vec3 Flock(float dt);
+
+		vec3 Separation(float dt);
+
+		vec3 Alignment(float dt);
+
+		vec3 Cohesion(float dt);
+
 	};
 };

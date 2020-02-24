@@ -14,6 +14,17 @@ public:
 	{
 	}
 
+	float separationRadius;
+	float alignmentRadius;
+	float cohesionRadius;
+
+	struct Weights
+	{
+		float separation;
+		float alignment;
+		float cohesion;
+	} weight;
+
 	enum class FORM
 	{
 		Circle,

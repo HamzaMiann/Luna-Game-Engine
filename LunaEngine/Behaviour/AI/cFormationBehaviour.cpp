@@ -1,10 +1,11 @@
 #include "cFormationBehaviour.h"
 #include <Physics/Mathf.h>
+#include <Behaviour/Managers/cFormationGameManager.h>
 
 void AI::cFormationBehaviour::start()
 {
-	maxVelocity = 10.f;
-	slowingRadius = 3.f;
+	maxVelocity = 20.f;
+	slowingRadius = 5.f;
 	rigidBody = parent.GetComponent<nPhysics::iPhysicsComponent>();
 	animator = parent.GetComponent<cAnimationController>();
 }
@@ -17,7 +18,7 @@ void AI::cFormationBehaviour::update(float dt)
 	}
 	else if (state == AI_STATE::FLOCKING)
 	{
-		// TODO
+		if (rigidBody) rigidBody->AddVelocity(Flock(dt) * dt);
 	}
 
 	float length = 0.f;
@@ -94,4 +95,118 @@ void AI::cFormationBehaviour::Animate(float length)
 			animator->SetAnimation("idle");
 		}
 	}
+}
+
+vec3 AI::cFormationBehaviour::Flock(float dt)
+{
+	return
+		//Separation(dt) * manager->weight.separation
+		//+ Alignment(dt) * manager->weight.alignment
+		Cohesion(dt) * manager->weight.cohesion;
+}
+
+vec3 AI::cFormationBehaviour::Separation(float dt)
+{
+	std::vector<cFormationBehaviour*>& boids = manager->agents;
+	vec3 flee(0.f);
+	int neighbourCount = 0;
+	for (unsigned int i = 0; i < boids.size(); i++)
+	{
+		if (boids[i] == this) continue;
+
+		float dist = glm::distance(transform.Position(), boids[i]->transform.Position());
+		if ((dist > 0) && (dist < manager->separationRadius))
+		{
+			vec3 fleeVelocity = transform.Position() - boids[i]->transform.Position();
+			fleeVelocity = glm::normalize(fleeVelocity);
+			fleeVelocity /= dist; //scale based on distancetotal
+			flee += fleeVelocity;
+			neighbourCount++;
+		}
+	}
+
+	vec3 steerForce(0.f);
+	vec3 desiredVelocity(0.f);
+	float maxForce = 1.f;
+	if (neighbourCount > 0)
+	{
+		desiredVelocity = flee / (float)neighbourCount;
+		desiredVelocity = glm::normalize(desiredVelocity);
+		desiredVelocity *= maxVelocity;
+		steerForce = (desiredVelocity - rigidBody->GetVelocity());
+		steerForce *= maxForce;
+	}
+	return steerForce;
+}
+
+vec3 AI::cFormationBehaviour::Alignment(float dt)
+{
+	vec3 totalVelocity(0.f);
+	int neighbourCount = 0;
+	std::vector<cFormationBehaviour*>& boids = manager->agents;
+
+	for (unsigned int i = 0; i < boids.size(); i++)
+	{
+		if (boids[i] == this) continue;
+
+		float dist = glm::distance(transform.Position(), boids[i]->transform.Position());
+		if ((dist > 0) && (dist < manager->alignmentRadius))
+		{
+			totalVelocity += boids[i]->rigidBody->GetVelocity();
+			neighbourCount++;
+		}
+	}
+
+	vec3 steerForce(0.f);
+	vec3 desiredVelocity(0.f);
+	float maxForce = 1.f;
+	if (neighbourCount > 0)
+	{
+		desiredVelocity = totalVelocity / (float)neighbourCount;
+		desiredVelocity = glm::normalize(desiredVelocity);
+		desiredVelocity *= maxVelocity;
+		steerForce = (desiredVelocity - rigidBody->GetVelocity());
+		steerForce *= maxForce;
+	}
+	return steerForce;
+}
+
+vec3 AI::cFormationBehaviour::Cohesion(float dt)
+{
+	vec3 totalPosition(0.f);
+	int neighbourCount = 0;
+	std::vector<cFormationBehaviour*>& boids = manager->agents;
+	for (unsigned int i = 0; i < boids.size(); i++)
+	{
+		if (boids[i] == this) continue;
+
+		float dist = glm::distance(transform.Position(), boids[i]->transform.Position());
+		if (dist < manager->cohesionRadius)
+		{
+			totalPosition += boids[i]->transform.Position();
+			neighbourCount++;
+		}
+	}
+
+	vec3 steerForce(0.f);
+	if (neighbourCount > 0)
+	{
+		vec3 target = totalPosition / (float)neighbourCount;
+
+
+		vec3 desiredVelocity = glm::normalize(target - transform.Position());
+		vec3 steer = desiredVelocity - rigidBody->GetVelocity();
+
+		vec3 velocity = rigidBody->GetVelocity();
+		/* add steering force to current velocity*/
+		velocity += steer * dt;
+
+		if (glm::length(velocity) > maxVelocity)
+		{
+			velocity = glm::normalize(velocity) * maxVelocity;
+		}
+
+		steerForce = velocity;
+	}
+	return steerForce;
 }

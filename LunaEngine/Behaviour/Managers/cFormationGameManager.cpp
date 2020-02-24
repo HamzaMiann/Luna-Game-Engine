@@ -7,6 +7,13 @@
 void cFormationGameManager::start()
 {
 	maxVelocity = 10.f;
+	separationRadius = 10.f;
+	alignmentRadius = 15.f;
+	cohesionRadius = 15.f;
+
+	weight.cohesion = 1.0f;
+	weight.alignment = 0.0f;
+	weight.separation = 0.0f;
 
 	auto& objects = cEntityManager::Instance().GetEntities();
 	for (cGameObject* obj : objects)
@@ -61,7 +68,8 @@ void cFormationGameManager::HandleInput()
 	}
 	else if (Input::KeyUp(GLFW_KEY_6))
 	{
-		// TODO
+		state = AI::AI_STATE::FLOCKING;
+		NotifyStateChange(state);
 	}
 	else if (Input::KeyUp(GLFW_KEY_7))
 	{
