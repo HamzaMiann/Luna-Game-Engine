@@ -35,19 +35,76 @@ RenderingEngine::RenderingEngine()
 	screenPos = vec2(0.f, 0.f);
 	skyboxName = "sky";
 	noise.SetTexture("noise.jpg");
+
+	glEnable(GL_DEPTH);			// Write to the depth buffer
+	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
+
 }
 
 RenderingEngine::~RenderingEngine()
 {
 }
 
-void RenderingEngine::UpdateView()
+void RenderingEngine::Reset()
 {
 	view = glm::lookAt(
 		Camera::main_camera->Eye,
 		Camera::main_camera->Target,
 		Camera::main_camera->Up
 	);
+
+	// RESET
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);	// Enable writing to the colour buffer
+	glDepthMask(GL_TRUE);								// Enable writing to the depth buffer
+	glEnable(GL_DEPTH_TEST);							// Enable depth testing
+	glDisable(GL_STENCIL_TEST);							// Disable stencil test
+}
+
+void RenderingEngine::StencilInit()
+{
+	glClearStencil(47);
+	glClear(GL_STENCIL_BUFFER_BIT);
+
+	glEnable(GL_STENCIL_TEST);
+
+	glStencilOp(GL_KEEP,		// Stencil fails KEEP the original value (47)
+		GL_KEEP,		// Depth fails KEEP the original value
+		GL_REPLACE);	// Stencil AND depth PASSES, REPLACE with 133
+
+	glStencilFunc(GL_ALWAYS,	// If is succeed, ALWAYS do this
+		133,			// Replace with this
+		0xFF);		// Mask of 1111,1111 (no mask)
+
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDepthMask(GL_FALSE);
+}
+
+void RenderingEngine::StencilBegin()
+{
+	glDepthMask(GL_TRUE);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+
+	// Change the stencil test
+	glStencilOp(GL_KEEP,		// Stencil fails KEEP the original value (47)
+		GL_KEEP,		// (stencil passes) Depth fails KEEP the original value
+		GL_KEEP);		// Stencil AND depth PASSES, Keep 133
+	glStencilFunc(GL_EQUAL,		// Test if equal
+		133,			//
+		0xFF);
+
+
+	// Draw the "inside the room" scene...
+	// (only visible where the "door" model drew 133 to the stencil buffer
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+}
+
+void RenderingEngine::StencilEnd()
+{
+	glDisable(GL_STENCIL_TEST);
 }
 
 void RenderingEngine::SetUpTextureBindings(cMaterial& material)

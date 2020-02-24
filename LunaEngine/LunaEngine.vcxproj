@@ -162,6 +162,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Animation\cSimpleAssimpSkinnedMeshLoader_OneMesh.cpp" />
     <ClCompile Include="Audio\AudioEngine.cpp" />
     <ClCompile Include="Behaviour\AI\cApproachBehaviour.cpp" />
+    <ClCompile Include="Behaviour\AI\cFormationBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cPursueBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cSeekBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cWanderBehaviour.cpp" />
@@ -172,6 +173,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Behaviour\Controls\cSphereBehaviour.cpp" />
     <ClCompile Include="Behaviour\iBehaviour.cpp" />
     <ClCompile Include="Behaviour\Managers\cAIGameManager.cpp" />
+    <ClCompile Include="Behaviour\Managers\cFormationGameManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cApplication.cpp" />
     <ClCompile Include="Components\cAnimationController.cpp" />
@@ -243,6 +245,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Animation\cSimpleAssimpSkinnedMeshLoader_OneMesh.h" />
     <ClInclude Include="Animation\sVertex_xyz_rgba_n_uv2_bt_4Bones.h" />
     <ClInclude Include="Behaviour\AI\cApproachBehaviour.h" />
+    <ClInclude Include="Behaviour\AI\cFormationBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cPursueBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cSeekBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cWanderBehaviour.h" />
@@ -252,6 +255,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Behaviour\Controls\cPlayerBehaviour.h" />
     <ClInclude Include="Behaviour\Controls\cSphereBehaviour.h" />
     <ClInclude Include="Behaviour\Managers\cAIGameManager.h" />
+    <ClInclude Include="Behaviour\Managers\cFormationGameManager.h" />
     <ClInclude Include="cApplication.h" />
     <ClInclude Include="Components\cAnimationController.h" />
     <ClInclude Include="Components\ComponentFactory.h" />
@@ -345,6 +349,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\scenes\AI.scene.xml" />
+    <Xml Include="assets\scenes\AI2.scene.xml" />
     <Xml Include="assets\scenes\sandbox.scene.xml" />
     <Xml Include="assets\scenes\physics.scene.xml">
       <SubType>Designer</SubType>

@@ -315,6 +315,12 @@
     <ClCompile Include="Behaviour\Controls\cCharacterController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Behaviour\Managers\cFormationGameManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Behaviour\AI\cFormationBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cGameObject.h">
@@ -566,6 +572,12 @@
     <ClInclude Include="Behaviour\Controls\cCharacterController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Behaviour\Managers\cFormationGameManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour\AI\cFormationBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">
@@ -626,5 +638,6 @@
     </Xml>
     <Xml Include="assets\scenes\sandbox.scene.xml" />
     <Xml Include="assets\scenes\AI.scene.xml" />
+    <Xml Include="assets\scenes\AI2.scene.xml" />
   </ItemGroup>
 </Project>

@@ -48,7 +48,11 @@ public:
 		return instance;
 	}
 
-	void UpdateView();
+	void Reset();
+	void StencilInit();
+	void StencilBegin();
+	void StencilEnd();
+
 	void SetUpTextureBindings(cMaterial& material);
 	void SetUpTextureBindingsForObject(cGameObject* pCurrentObject);
 	void Render(iObject& object);

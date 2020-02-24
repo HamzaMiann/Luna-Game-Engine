@@ -248,73 +248,16 @@
   
 	<Layout>
 
-    <GameObject mesh="tv_screen" tag="scope" shader="basic">
+    <GameObject mesh="none" tag="gameManager" shader="basic">
       <Position x="0.0" y="1.0" z="0.0"/>
-      <Rotation x="-90" y="0" z="0.0"/>
-      <Scale>0.03</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.0">blue.png</Texture>
-    </GameObject>
-
-    
-    <GameObject mesh="tv_body" tag="body" shader="basic">
-      <Position x="0.0" y="1.0" z="0.0"/>
-      <Rotation x="-90" y="0" z="0.0"/>
-      <Scale>0.03</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">red.png</Texture>
-    </GameObject>
-    
-
-    <GameObject mesh="none" tag="fps" shader="basic">
-      <Position x="-3.0" y="1.0" z="0.0"/>
-      <Rotation x="0.0" y="0.0" z="0.0"/>
-      <Scale>1.0</Scale>
-
-      <Components>
-
-        <!--<FPSBehaviour/>-->
-
-      </Components>
-
-      <GameObject mesh="gun" tag="gun" shader="pbr">
-        <Position x="0.5" y="0.3" z="0.0"/>
-        <Rotation x="-90.0" y="0.0" z="0.0"/>
-        <Scale>0.03</Scale>
-        <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-        <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-        <SpecIntensity>10.000000</SpecIntensity>
-        <Texture ratio="1.000000">Cerberus_A.jpg</Texture>
-        <Texture ratio="1.000000">Cerberus_N.jpg</Texture>
-        <Texture ratio="1.000000">Cerberus_M.jpg</Texture>
-      </GameObject>
-      
-    </GameObject>
-
-    <GameObject mesh="portal" tag="portal" shader="basic">
-      <Position x="0.0" y="7" z="20.0"/>
-      <Rotation x="0" y="180" z="0.0"/>
-      <Scale3D x="200" y="50" z="1"/>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">blue.png</Texture>
-    </GameObject>
-    <GameObject mesh="portal" tag="portal2" shader="basic">
-      <Position x="0.0" y="7" z="20.001"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale3D x="200" y="50" z="1"/>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">blue.png</Texture>
+      <Scale>1.0</Scale>
+      <Components>
+        <FormationManager/>
+      </Components>
     </GameObject>
 
-    <GameObject mesh="character" tag="character1" shader="basic">
+    <GameObject mesh="character" tag="player" shader="basic">
       <Position x="7.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
       <Scale>0.02</Scale>
@@ -330,32 +273,9 @@
           <Forward x="0" y="0" z="-1"/>
           <Offset x="-2.0" y="3.5" z="0"/>
           <CameraDistance>6.0</CameraDistance>
-          <Speed>6.0</Speed>
+          <Speed>5.0</Speed>
           <MouseSpeed>0.15</MouseSpeed>
         </CharacterController>
-
-        <SphereBody>
-          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>1.0</Mass>
-          <GFactor>1.0</GFactor>
-          <Offset x="0.000000" y="2.000000" z="0.000000"/>
-          <Radius>2.0</Radius>
-        </SphereBody>
-        
-      </Components>
-    </GameObject>
-
-    <GameObject mesh="character" tag="character2" shader="basic">
-      <Position x="-7.0" y="0.0" z="0.0"/>
-      <Rotation x="0" y="90" z="0.0"/>
-      <Scale>0.02</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">red.png</Texture>
-
-      <Components>
-        <AnimationController profile="character" default="idle"/>
 
         <SphereBody>
           <Velocity x="0.000000" y="0.000000" z="0.000000"/>
@@ -364,115 +284,207 @@
           <Offset x="0.000000" y="1.000000" z="0.000000"/>
           <Radius>1.0</Radius>
         </SphereBody>
-
+        
       </Components>
     </GameObject>
 
-    <GameObject mesh="test_model" tag="test_model" shader="basic">
-      <Position x="0.0" y="-50" z="-500.0"/>
-      <Rotation x="-90" y="0" z="0.0"/>
-      <Scale>500.0</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.png</Texture>
-    </GameObject>
-
-    <GameObject mesh="cube" tag="cube" shader="basic">
-      <Position x="0.0" y="5.0" z="3.2"/>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="0.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>1.0</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">blue.png</Texture>
-
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
       <Components>
-
-        <CubeBody>
-          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>1.0</Mass>
-          <GFactor>1.0</GFactor>
-          <Origin x="0.000000" y="0.000000" z="0.000000"/>
-          <Scale x="1" y="1" z="1"/>
-          <Rotateable/>
-        </CubeBody>
-
-        <!--<SphereBehaviour/>-->
-        
-      </Components>
-    </GameObject>
-    
-		<GameObject mesh="sphere" tag="player" shader="basic">
-			<Position x="0.0" y="1.1" z="3.0"/>
-			<Rotation x="0" y="0" z="0.0"/>
-      <Scale>1.0</Scale>
-      <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
-      <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-      <SpecIntensity>10.000000</SpecIntensity>
-      <Reflectivity>0.2</Reflectivity>
-			<Texture ratio="1.000000">blue.png</Texture>
-      
-      <Components>
-        
+        <AnimationController profile="character" default="idle"/>
         <SphereBody>
           <Velocity x="0.000000" y="0.000000" z="0.000000"/>
           <Mass>1.0</Mass>
           <GFactor>1.0</GFactor>
-          <Offset x="0.000000" y="0.000000" z="0.000000"/>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
           <Radius>1.0</Radius>
-          <Rotateable/>
         </SphereBody>
-        
-        <!-- IMPORTANT: This component is the component that lets you control the ball -->
-        <!--<SphereBehaviour/>-->
-        
       </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="0.0" y="0.0" z="3.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="0.0" y="0.0" z="-3.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="3.0" y="0.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="-3.0" y="0.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="-3.0" y="0.0" z="-3.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="3.0" y="0.0" z="-3.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="3.0" y="0.0" z="3.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="-3.0" y="0.0" z="3.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="-3.0" y="0.0" z="6.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="0.0" y="0.0" z="6.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
+    <GameObject mesh="character" tag="agent" shader="basic">
+      <Position x="3.0" y="0.0" z="6.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>0.02</Scale>
+      <Texture ratio="1.000000">red.png</Texture>
+      <Components>
+        <AnimationController profile="character" default="idle"/>
+        <SphereBody>
+          <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+          <Mass>1.0</Mass>
+          <GFactor>1.0</GFactor>
+          <Offset x="0.000000" y="1.000000" z="0.000000"/>
+          <Radius>1.0</Radius>
+        </SphereBody>
+      </Components>
+    </GameObject>
 
-      <GameObject mesh="sphere" tag="child_cube" shader="basic">
-        <Position x="0.0" y="1" z="0"/>
-        <Rotation x="0" y="0" z="0.0"/>
-        <Scale>0.3</Scale>
-        <Refractivity>1.0</Refractivity>
-      </GameObject>
-
-      <GameObject mesh="sphere" tag="child_cube" shader="basic">
-        <Position x="0.0" y="-1" z="0"/>
-        <Rotation x="0" y="0" z="0.0"/>
-        <Scale>0.3</Scale>
-        <Refractivity>1.0</Refractivity>
-      </GameObject>
-
-      <GameObject mesh="sphere" tag="child_cube" shader="basic">
-        <Position x="1.0" y="0" z="0"/>
-        <Rotation x="0" y="0" z="0.0"/>
-        <Scale>0.3</Scale>
-        <Refractivity>1.0</Refractivity>
-      </GameObject>
-
-      <GameObject mesh="sphere" tag="child_cube" shader="basic">
-        <Position x="-1.0" y="0" z="0"/>
-        <Rotation x="0" y="0" z="0.0"/>
-        <Scale>0.3</Scale>
-        <Refractivity>1.0</Refractivity>
-      </GameObject>
-
-      <GameObject mesh="sphere" tag="child_cube" shader="basic">
-        <Position x="0.0" y="0" z="1"/>
-        <Rotation x="0" y="0" z="0.0"/>
-        <Scale>0.3</Scale>
-        <Refractivity>1.0</Refractivity>
-      </GameObject>
-
-      <GameObject mesh="sphere" tag="child_cube" shader="basic">
-        <Position x="0.0" y="0" z="-1"/>
-        <Rotation x="0" y="0" z="0.0"/>
-        <Scale>0.3</Scale>
-        <Refractivity>1.0</Refractivity>
-      </GameObject>
-      
-		</GameObject>
-
+    
+    
+    
+    
     <GameObject mesh="plane" tag="ground" shader="basic">
       <Position x="0.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>

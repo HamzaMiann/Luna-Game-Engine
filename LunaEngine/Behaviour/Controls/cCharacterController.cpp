@@ -73,11 +73,11 @@ void cCharacterController::update(float dt)
 
 	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_1))
 	{
-		settings.distance_from_object += dt * 3.f;
+		settings.distance_from_object += dt * 10.f;
 	}
 	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_2))
 	{
-		settings.distance_from_object -= dt * 3.f;
+		settings.distance_from_object -= dt * 10.f;
 	}
 
 	direction = settings.forward * rotX;
