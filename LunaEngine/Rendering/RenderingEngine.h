@@ -1,12 +1,13 @@
 #pragma once
 
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
+#include <glm/glm_common.h>
 #include <string>
 #include <Camera.h>
 #include <iObject.h>
 #include <Components/cMaterial.h>
+#include <Physics/octree.h>
+#include <FBO/cFBO.h>
+#include <cGameObject.h>
 
 class cGameObject;
 class cAABB;
@@ -14,21 +15,30 @@ class cAABB;
 class RenderingEngine
 {
 private:
-	typedef glm::vec3 vec3;
-	typedef glm::vec4 vec4;
-	typedef glm::mat4 mat4;
 
 	RenderingEngine();
 
-	mat4 projection;
-	mat4 view;
+	
 
 	int height;
 	int width;
 
-	int pass_id;
+
+	bool bloom_enabled = true;
+	bool DOF_enabled = true;
+
+	cGameObject quad;
 
 public:
+
+	mat4 projection;
+	mat4 view;
+
+	cGameObject skyBox;
+	cTexture noise;
+	vec2 screenPos;
+	std::string skyboxName;
+	int pass_id;
 
 	~RenderingEngine();
 
@@ -40,7 +50,18 @@ public:
 
 	void UpdateView();
 	void SetUpTextureBindings(cMaterial& material);
-	void Render(iObject* object);
+	void SetUpTextureBindingsForObject(cGameObject* pCurrentObject);
+	void Render(iObject& object);
 	void Render(cMaterial& material);
+
+
+	// Old methods
+	void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p);
+	void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, mat4 const& v, mat4 const& p);
+	void RenderGO(cGameObject* object, float width, float height, mat4& p, mat4& v, int& lastShader);
+	void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt);
+	void RenderSkybox(float width, float height, mat4 p, mat4 v, float dt);
+	void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO);
+	void RenderQuadToScreen(cFBO& previousFBO);
 
 };
