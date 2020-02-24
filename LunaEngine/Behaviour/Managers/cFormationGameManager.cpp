@@ -163,10 +163,44 @@ void cFormationGameManager::SetSquare()
 
 void cFormationGameManager::SetLine()
 {
-	// TODO
+	vec3 pos = transform.Position();
+
+	float dist = 3.0f;
+
+	char index = 0;
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
+	agents[index]->target = vec3(pos.x + (-6.f + index++) * dist, pos.y, pos.z);
 }
 
 void cFormationGameManager::SetRows()
 {
-	// TODO
+	vec3 pos = transform.Position();
+
+	float dist = 3.0f;
+	char index = 0;
+
+	agents[0u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z);
+	agents[1u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z);
+	agents[2u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z);
+	agents[3u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z);
+	agents[4u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z);
+	agents[5u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z);
+
+	index = 0;
+	agents[6u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z + dist);
+	agents[7u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z + dist);
+	agents[8u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z + dist);
+	agents[9u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z + dist);
+	agents[10u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z + dist);
+	agents[11u]->target = vec3(pos.x + (-3.f + index++) * dist, pos.y, pos.z + dist);
 }
