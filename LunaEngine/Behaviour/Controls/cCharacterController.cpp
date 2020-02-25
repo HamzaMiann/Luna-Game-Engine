@@ -71,14 +71,10 @@ void cCharacterController::update(float dt)
 	previousX = x;
 	previousY = y;
 
-	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_1))
-	{
-		settings.distance_from_object += dt * 10.f;
-	}
-	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_2))
-	{
-		settings.distance_from_object -= dt * 10.f;
-	}
+	// SCROLL ZOOM
+	settings.distance_from_object += Input::GetScrollY() * -1.f;
+	if (settings.distance_from_object < 2.f)
+		settings.distance_from_object = 2.f;
 
 	direction = settings.forward * rotX;
 	direction.y = (settings.forward * rotY).y;

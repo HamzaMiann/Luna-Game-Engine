@@ -16,6 +16,11 @@ void SetKeyCallback(GLFWkeyfun callback)
 	glfwSetKeyCallback(global::window, callback);
 }
 
+void SetScrollCallback(GLFWscrollfun callback)
+{
+	glfwSetScrollCallback(global::window, callback);
+}
+
 void InitGL()
 {
 	if (!glfwInit())

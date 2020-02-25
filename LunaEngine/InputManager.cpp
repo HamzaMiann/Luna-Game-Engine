@@ -8,6 +8,7 @@
 
 std::vector<int> Input::keys_released;
 std::vector<int> Input::keys_pressed;
+Input::Scroll Input::scroll;
 
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -26,6 +27,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		Input::keys_released.push_back(key);
 	}
 
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	Input::scroll.xoffset += xoffset;
+	Input::scroll.yoffset += yoffset;
 }
 
 void error_callback(int error, const char* description)
@@ -119,8 +126,20 @@ bool Input::GetMouseButton(int button)
 	return glfwGetMouseButton(global::window, button);
 }
 
+float Input::GetScrollX()
+{
+	return scroll.xoffset;
+}
+
+float Input::GetScrollY()
+{
+	return scroll.yoffset;
+}
+
 void Input::ClearBuffer()
 {
 	keys_pressed.clear();
 	keys_released.clear();
+	scroll.xoffset = 0.0;
+	scroll.yoffset = 0.0;
 }

@@ -3,8 +3,6 @@
 #include <glm/glm_common.h>
 #include <string>
 
-#include <Physics/Mathf.h>
-#include <Physics/PhysicsEngine.h>
 #include <Scene/Scene.h>
 #include <DebugRenderer/cDebugRenderer.h>
 #include <cGameObject.h>
@@ -13,7 +11,6 @@
 #include <InputHandlers/cPhysicsInputHandler.h>
 #include <InputHandlers/cLayoutController.h>
 #include <InputHandlers/cLightController.h>
-#include <Audio/AudioEngine.hpp>
 #include <Misc/cLowpassFilter.h>
 #include <Lua/cLuaBrain.h>
 #include <FBO/cFBO.h>
@@ -45,6 +42,7 @@ void InitWindow()
 	SetErrorCallback(error_callback);
 	InitGL();
 	SetKeyCallback(key_callback);
+	SetScrollCallback(scroll_callback);
 }
 
 void RunScripts()
@@ -146,7 +144,6 @@ void cApplication::Run()
 		width = newWidth;
 		height = newHeight;
 		glViewport(0, 0, width, height);
-
 
 		renderer.Reset();
 

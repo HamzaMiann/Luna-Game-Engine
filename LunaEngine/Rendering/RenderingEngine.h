@@ -18,14 +18,13 @@ private:
 
 	RenderingEngine();
 
-	
-
 	int height;
 	int width;
 
 
-	bool bloom_enabled = true;
-	bool DOF_enabled = true;
+	bool bloom_enabled;
+	bool DOF_enabled;
+	bool volumetric_enabled;
 
 	cGameObject quad;
 

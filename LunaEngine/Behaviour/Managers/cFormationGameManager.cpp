@@ -10,8 +10,8 @@
 void cFormationGameManager::start()
 {
 	maxVelocity = 5.f;
-	separationRadius = 300.f;
-	alignmentRadius = 300.f;
+	separationRadius = 15.f;
+	alignmentRadius = 30.f;
 	cohesionRadius = 300.f;
 
 	weight.cohesion = 0.7f;

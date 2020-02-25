@@ -16,6 +16,10 @@ RenderingEngine::RenderingEngine()
 	height = 800;
 	pass_id = 1;
 
+	bloom_enabled = true;
+	DOF_enabled = true;
+	volumetric_enabled = true;
+
 	float ratio = width / (float)height;
 
 	projection = glm::perspective(0.6f,		// FOV
@@ -828,6 +832,15 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	else
 	{
 		glUniform1i(shader["DOFEnabled"], (int)GL_FALSE);
+	}
+
+	if (volumetric_enabled)
+	{
+		glUniform1i(shader["volumetricEnabled"], (int)GL_TRUE);
+	}
+	else
+	{
+		glUniform1i(shader["volumetricEnabled"], (int)GL_FALSE);
 	}
 
 	this->DrawObject(&quad, mat4(1.f), p);

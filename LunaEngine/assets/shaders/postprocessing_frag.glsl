@@ -17,6 +17,7 @@ uniform bool isSkybox;
 
 uniform bool bloomEnabled;
 uniform bool DOFEnabled;
+uniform bool volumetricEnabled;
 
 // Texture
 uniform sampler2D textSamp00;	// albedo
@@ -263,7 +264,10 @@ void main()
 			pixelColour.rgb = result;
 		}
 
-		pixelColour.rgb += CalculateVolumetricLightScattering(textSamp02).rgb;
+		if (volumetricEnabled)
+		{
+			pixelColour.rgb += CalculateVolumetricLightScattering(textSamp02).rgb;
+		}
 
 		pixelColour.a = 1.0;
 
