@@ -146,7 +146,7 @@ vec4 circular_blur(sampler2D tex, float offset)
 	float angle_step = 360.0 / num_circle_samples;
 	for (int i = 0; i < num_circle_samples; ++i)
 	{
-		float angle = angle_step * i;
+		float angle = radians(angle_step * i);
 		vec2 uv = fUVx2.xy + vec2(cos(angle), sin(angle)) * pixelSize * offset;
 		colour.rgb += texture(tex, uv).rgb * contribution;
 	}

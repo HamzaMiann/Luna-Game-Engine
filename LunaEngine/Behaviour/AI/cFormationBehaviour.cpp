@@ -1,10 +1,11 @@
 #include "cFormationBehaviour.h"
 #include <Physics/Mathf.h>
 #include <Behaviour/Managers/cFormationGameManager.h>
+#include <DebugRenderer/cDebugRenderer.h>
 
 void AI::cFormationBehaviour::start()
 {
-	maxVelocity = 20.f;
+	maxVelocity = 10.f;
 	slowingRadius = 5.f;
 	rigidBody = parent.GetComponent<nPhysics::iPhysicsComponent>();
 	animator = parent.GetComponent<cAnimationController>();
@@ -14,21 +15,30 @@ void AI::cFormationBehaviour::update(float dt)
 {
 	if (state == AI_STATE::FORMATION)
 	{
+		maxVelocity = 20.f;
 		Seek(dt);
 	}
 	else if (state == AI_STATE::FLOCKING)
 	{
-		if (rigidBody) rigidBody->AddVelocity(Flock(dt) * dt);
-	}
+		maxVelocity = 10.f;
+		if (rigidBody)
+		{
+			vec3 velocity = Flock(dt);
+			rigidBody->AddVelocity(velocity);
 
-	float length = 0.f;
+			if (glm::length(rigidBody->GetVelocity()) > maxVelocity)
+			{
+				rigidBody->SetVelocity(glm::normalize(rigidBody->GetVelocity()) * maxVelocity);
+			}
+		}
+	}
 
 	if (rigidBody)
 	{
 		vec3 velocity = rigidBody->GetVelocity();
 		velocity.y = 0.f;
 		float length = glm::length(velocity);
-		if (length > 0.1)
+		if (length > 0.3)
 		{
 			vec3 direction = glm::normalize(velocity);
 			transform.Rotation(
@@ -100,9 +110,9 @@ void AI::cFormationBehaviour::Animate(float length)
 vec3 AI::cFormationBehaviour::Flock(float dt)
 {
 	return
-		//Separation(dt) * manager->weight.separation
-		//+ Alignment(dt) * manager->weight.alignment
-		Cohesion(dt) * manager->weight.cohesion;
+		Separation(dt) * manager->weight.separation
+		+ Alignment(dt) * manager->weight.alignment
+		+ Cohesion(dt) * manager->weight.cohesion;
 }
 
 vec3 AI::cFormationBehaviour::Separation(float dt)
@@ -119,7 +129,7 @@ vec3 AI::cFormationBehaviour::Separation(float dt)
 		{
 			vec3 fleeVelocity = transform.Position() - boids[i]->transform.Position();
 			fleeVelocity = glm::normalize(fleeVelocity);
-			fleeVelocity /= dist; //scale based on distancetotal
+			fleeVelocity /= dist * 0.02f; //scale based on distancetotal
 			flee += fleeVelocity;
 			neighbourCount++;
 		}
@@ -131,12 +141,20 @@ vec3 AI::cFormationBehaviour::Separation(float dt)
 	if (neighbourCount > 0)
 	{
 		desiredVelocity = flee / (float)neighbourCount;
-		desiredVelocity = glm::normalize(desiredVelocity);
-		desiredVelocity *= maxVelocity;
+
+		//desiredVelocity = glm::normalize(desiredVelocity);
+		//desiredVelocity *= maxVelocity;
+		cDebugRenderer::Instance().addLine(transform.Position(), desiredVelocity * maxForce + transform.Position(), vec3(0.f, 1.f, 0.f), dt);
+
 		steerForce = (desiredVelocity - rigidBody->GetVelocity());
 		steerForce *= maxForce;
+		if (glm::length(steerForce) > maxVelocity)
+		{
+			steerForce = glm::normalize(steerForce) * maxVelocity;
+		}
+		steerForce = desiredVelocity * maxForce;
 	}
-	return steerForce;
+	return steerForce * dt;
 }
 
 vec3 AI::cFormationBehaviour::Alignment(float dt)
@@ -164,11 +182,15 @@ vec3 AI::cFormationBehaviour::Alignment(float dt)
 	{
 		desiredVelocity = totalVelocity / (float)neighbourCount;
 		desiredVelocity = glm::normalize(desiredVelocity);
+
 		desiredVelocity *= maxVelocity;
+
+		//cDebugRenderer::Instance().addLine(transform.Position(), desiredVelocity + transform.Position(), vec3(0.f, 1.f, 1.f), dt);
+
 		steerForce = (desiredVelocity - rigidBody->GetVelocity());
 		steerForce *= maxForce;
 	}
-	return steerForce;
+	return steerForce * dt;
 }
 
 vec3 AI::cFormationBehaviour::Cohesion(float dt)
@@ -192,21 +214,28 @@ vec3 AI::cFormationBehaviour::Cohesion(float dt)
 	if (neighbourCount > 0)
 	{
 		vec3 target = totalPosition / (float)neighbourCount;
+		//target.y = transform.Position().y;
 
 
 		vec3 desiredVelocity = glm::normalize(target - transform.Position());
-		vec3 steer = desiredVelocity - rigidBody->GetVelocity();
+		desiredVelocity *= maxVelocity;
 
-		vec3 velocity = rigidBody->GetVelocity();
-		/* add steering force to current velocity*/
-		velocity += steer * dt;
+		cDebugRenderer::Instance().addLine(transform.Position(), transform.Position() + desiredVelocity, vec3(1.f, 0.f, 0.f), dt);
 
-		if (glm::length(velocity) > maxVelocity)
-		{
-			velocity = glm::normalize(velocity) * maxVelocity;
-		}
+		//vec3 desiredVelocity = glm::normalize(target - transform.Position());
+		//vec3 steer = desiredVelocity - rigidBody->GetVelocity();
 
-		steerForce = velocity;
+		//vec3 velocity = rigidBody->GetVelocity();
+		///* add steering force to current velocity*/
+		//velocity += steer * dt;
+
+		//if (glm::length(velocity) > maxVelocity)
+		//{
+		//	velocity = glm::normalize(velocity) * maxVelocity;
+		//}
+
+		steerForce = (desiredVelocity - rigidBody->GetVelocity());
+		steerForce = desiredVelocity;
 	}
-	return steerForce;
+	return steerForce * dt;
 }

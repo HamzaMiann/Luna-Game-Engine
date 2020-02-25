@@ -6,10 +6,6 @@
 			<Vertex file="basic_vert.glsl"/>
 			<Fragment file="basic_frag.glsl"/>
 		</Shader>
-    <Shader name="pbr">
-      <Vertex file="pbr_vert.glsl"/>
-      <Fragment file="pbr_frag.glsl"/>
-    </Shader>
     <Shader name="blur">
       <Vertex file="postprocessing_vert.glsl"/>
       <Fragment file="blur_frag.glsl"/>
@@ -23,13 +19,9 @@
 	</Shaders>
   
 	<Textures>
-		<Texture name="fx3_Panels_Color.png"/>
 		<Texture name="Grass.png"/>
 		<Texture name="blue.png"/>
 		<Texture name="red.png"/>
-		<Texture name="Cerberus_A.jpg"/>
-		<Texture name="Cerberus_N.jpg"/>
-		<Texture name="Cerberus_M.jpg"/>
 		<Texture name="Ground_Dirt_007_basecolor.png"/>
 		<Texture name="noise.jpg"/>
     <Skybox name="sky">
@@ -40,26 +32,13 @@
       <Front texture="mountains_front.jpg"/>
       <Back texture="mountains_back.jpg"/>
     </Skybox>
-    <Skybox name="pinksky">
-      <Right texture="pink_left.png"/>
-      <Left texture="pink_right.png"/>
-      <Top texture="pink_top.png"/>
-      <Bottom texture="pink_bottom.png"/>
-      <Front texture="pink_front.png"/>
-      <Back texture="pink_back.png"/>
-    </Skybox>
 	</Textures>
   
 	<Models>
     <Model file="RPG-Character.fbx" friendlyName="character" shader="basic"/>
-    <Model file="typhoon.fbx" friendlyName="typhoon" shader="basic"/>
     <Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
     <Model file="cube.ply" friendlyName="cube" shader="basic"/>
     <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
-    <Model file="RetroTV.edited.screenonly.ply" friendlyName="tv_screen" shader="basic"/>
-		<Model file="RetroTV.edited.bodyonly.ply" friendlyName="tv_body" shader="basic"/>
-		<Model file="Cerberus_LP.FBX" friendlyName="gun" shader="basic"/>
-		<Model file="portal.obj" friendlyName="portal" shader="basic"/>
     
     
     <Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen" shader="basic"/>
@@ -505,6 +484,48 @@
         </PlaneBody>
 
       </Components>
+    </GameObject>
+
+    <GameObject mesh="cube" tag="node" shader="basic">
+      <Position x="30.0" y="1.0" z="30.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Texture ratio="1.000000">blue.png</Texture>
+    </GameObject>
+
+    <GameObject mesh="cube" tag="node" shader="basic">
+      <Position x="-30.0" y="1.0" z="30.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Texture ratio="1.000000">blue.png</Texture>
+    </GameObject>
+
+    <GameObject mesh="cube" tag="node" shader="basic">
+      <Position x="-30.0" y="1.0" z="-30.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Texture ratio="1.000000">blue.png</Texture>
+    </GameObject>
+
+    <GameObject mesh="cube" tag="node" shader="basic">
+      <Position x="30.0" y="1.0" z="-30.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Texture ratio="1.000000">blue.png</Texture>
+    </GameObject>
+
+    <GameObject mesh="cube" tag="node" shader="basic">
+      <Position x="15.0" y="1.0" z="15.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Texture ratio="1.000000">blue.png</Texture>
+    </GameObject>
+
+    <GameObject mesh="cube" tag="node" shader="basic">
+      <Position x="0.0" y="1.0" z="-10.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Texture ratio="1.000000">blue.png</Texture>
     </GameObject>
     
 	</Layout>

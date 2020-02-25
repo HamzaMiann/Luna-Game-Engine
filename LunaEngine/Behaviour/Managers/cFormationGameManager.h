@@ -2,6 +2,7 @@
 
 #include <interfaces/Behaviour/iBehaviour.h>
 #include <Behaviour/AI/cFormationBehaviour.h>
+class cGameObject;
 
 class cFormationGameManager : public iBehaviour
 {
@@ -34,8 +35,12 @@ public:
 		TwoRows
 	} formation = FORM::Circle;
 
+	int nodeIndex = 0;
+	int nodeStep = 1;
+
 	std::vector<AI::cFormationBehaviour*> agents;
 	std::vector<vec3> positions;
+	std::vector<cGameObject*> nodes;
 
 	AI::AI_STATE state;
 
@@ -48,10 +53,17 @@ public:
 private:
 
 	float maxVelocity;
+	vec3 velocity;
 
-	void HandleInput();
-	void HandleState();
+	bool screenLocked;
 
+	void IncreaseWeight(float& increased, float& decreased1, float& decreased2, float dt);
+	void DecreaseWeight(float& decreased, float& increased1, float& increased2, float dt);
+
+	void HandleInput(float dt);
+	void HandleState(float dt);
+
+	void DisplayWeights();
 
 	void NotifyStateChange(AI::AI_STATE _state);
 
