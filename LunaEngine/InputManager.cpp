@@ -1,10 +1,16 @@
 
 #include <InputManager.h>
 #include <glm/glm_common.h>
-#include <Physics/Mathf.h>
 #include <Camera.h>
-#include <_GL\Window.h>
-#define CAMERA_CONTROL
+#include <_GL/Window.h>
+#include <string>
+#include <algorithm>
+#include <cGameObject.h>
+#include <Shader/Shader.h>
+#include <EntityManager/cEntityManager.h>
+#include <Mesh/cModelLoader.h>
+#include <Mesh/cVAOManager.h>
+//#define CAMERA_CONTROL
 
 std::vector<int> Input::keys_released;
 std::vector<int> Input::keys_pressed;
@@ -33,6 +39,42 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	Input::scroll.xoffset += xoffset;
 	Input::scroll.yoffset += yoffset;
+}
+
+
+std::string random_string(size_t length)
+{
+	auto randchar = []() -> char
+	{
+		const char charset[] =
+			"0123456789"
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			"abcdefghijklmnopqrstuvwxyz";
+		const size_t max_index = (sizeof(charset) - 1);
+		return charset[rand() % max_index];
+	};
+	std::string str(length, 0);
+	std::generate_n(str.begin(), length, randchar);
+	return str;
+}
+
+void drop_callback(GLFWwindow* window, int count, const char** paths)
+{
+	for (int i = 0; i < count; ++i)
+	{
+		std::string file = paths[i];
+		std::string name = random_string(10);
+		Shader* shader = Shader::FromName("basic");
+		cMesh* mesh = new cMesh;
+		cModelLoader::Instance().LoadModel(file, name, *mesh);
+		sModelDrawInfo* drawInfo = new sModelDrawInfo;
+		cVAOManager::Instance().LoadModelIntoVAO(name, *mesh, *drawInfo, shader->GetID());
+
+		cGameObject* object = new cGameObject;
+		object->shader = shader;
+		object->meshName = name;
+		cEntityManager::Instance().AddEntity(object);
+	}
 }
 
 void error_callback(int error, const char* description)

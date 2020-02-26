@@ -21,6 +21,11 @@ void SetScrollCallback(GLFWscrollfun callback)
 	glfwSetScrollCallback(global::window, callback);
 }
 
+void SetDropCallback(GLFWdropfun callback)
+{
+	glfwSetDropCallback(global::window, callback);
+}
+
 void InitGL()
 {
 	if (!glfwInit())

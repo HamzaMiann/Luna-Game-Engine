@@ -43,6 +43,7 @@ void InitWindow()
 	InitGL();
 	SetKeyCallback(key_callback);
 	SetScrollCallback(scroll_callback);
+	SetDropCallback(drop_callback);
 }
 
 void RunScripts()

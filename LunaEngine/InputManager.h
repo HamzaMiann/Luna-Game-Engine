@@ -37,4 +37,5 @@ public:
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void error_callback(int error, const char* description);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void drop_callback(GLFWwindow* window, int count, const char** paths);
 void HandleInput(GLFWwindow* window);

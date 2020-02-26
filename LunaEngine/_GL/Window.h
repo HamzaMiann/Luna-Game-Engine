@@ -12,4 +12,5 @@ public:
 void SetErrorCallback(GLFWerrorfun callback);
 void SetKeyCallback(GLFWkeyfun callback);
 void SetScrollCallback(GLFWscrollfun callback);
+void SetDropCallback(GLFWdropfun callback);
 void InitGL();
