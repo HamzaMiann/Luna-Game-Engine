@@ -4,11 +4,12 @@
 #include <iObject.h>
 #include <Commands/cCommandGroup.h>
 #include <Texture/cTexture.h>
-#include <Shader/Shader.h>
+
 
 
 class cSimpleAssimpSkinnedMesh;
 class cLuaBrain;
+class Shader;
 
 enum ColliderType
 {

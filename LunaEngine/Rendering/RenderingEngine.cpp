@@ -591,7 +591,6 @@ void RenderingEngine::RenderGO(cGameObject* object, float width, float height, m
 	if (!object->shader) return;
 
 	Shader& shader = *object->shader;
-	GLint shaderProgID = shader.GetID();
 
 	//cMaterial* material = object->GetComponent<cMaterial>();
 	//if (material != nullptr)
@@ -601,26 +600,20 @@ void RenderingEngine::RenderGO(cGameObject* object, float width, float height, m
 
 
 	// Only switch shaders if needed
-	if (lastShader != shaderProgID)
+	if (lastShader != shader.GetID())
 	{
-		glUseProgram(shaderProgID);
-		lastShader = shaderProgID;
+		shader.Use();
+		lastShader = shader.GetID();
 
 		// set time
 		float time = glfwGetTime();
 
-		glUniform1f(shader["iTime"], time);
+		shader.SetFloat("iTime", (float)glfwGetTime());
+		shader.SetVec2("iResolution", vec2(width, height));
+		shader.SetBool("isWater", GL_FALSE);
 
-		// set resolution
-		glUniform2f(shader["iResolution"],
-			width,
-			height);
-
-		glUniform1i(shader["isWater"],
-			false);
-
-		glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
-		glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
+		shader.SetMat4("matProj", p);
+		shader.SetMat4("matView", v);
 	}
 
 	this->DrawObject(object, v, p);
@@ -693,28 +686,14 @@ void RenderingEngine::RenderSkybox(float width, float height, mat4 p, mat4 v, fl
 		// TODO
 	}
 
-	//objPtr->cmd_group->Update(dt);
-	//objPtr->brain->Update(dt);
+	shader.Use();
 
-	GLint shaderProgID = shader.GetID();
+	shader.SetFloat("iTime", (float)glfwGetTime());
+	shader.SetVec2("iResolution", vec2(width, height));
+	shader.SetBool("isWater", GL_FALSE);
 
-	glUseProgram(shaderProgID);
-
-	// set time
-	float time = glfwGetTime();
-
-	glUniform1f(shader["iTime"], time);
-
-	// set resolution
-	glUniform2f(shader["iResolution"],
-		width,
-		height);
-
-	glUniform1i(shader["isWater"],
-		false);
-
-	glUniformMatrix4fv(shader["matView"], 1, GL_FALSE, glm::value_ptr(v));
-	glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
+	shader.SetMat4("matProj", p);
+	shader.SetMat4("matView", v);
 
 	this->DrawObject(objPtr, v, p);
 }
@@ -725,51 +704,31 @@ void RenderingEngine::RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 	float height = previousFBO.height;
 
 	// 1. Disable the FBO
-
 	// Draw to the frame buffer
 	fbo.use();
-	//fbo.clear_all();
 
 	// 2. Clear the ACTUAL screen buffer
 	glViewport(0, 0, width, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// 3. Use the FBO colour texture as the texture on that quad
-	GLint shaderProgID = quad.shader->GetID();
 	Shader& shader = *quad.shader;
-	glUseProgram(shaderProgID);
+	shader.Use();
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_ID);
-	glUniform1i(shader["textSamp00"], 0);	// Texture unit 0		ALBEDO TEXTURE
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.normalTexture_ID);
-	glUniform1i(shader["textSamp01"], 1);	// Texture unit 1		NORMAL TEXTURE
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.positionTexture_ID);
-	glUniform1i(shader["textSamp02"], 2);	// Texture unit 2		POSITION TEXTURE
-
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.bloomTexture_ID);
-	glUniform1i(shader["textSamp03"], 3);	// Texture unit 3		BLOOM TEXTURE (NOT USED ON THIS PASS)
-
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.unlitTexture_ID);
-	glUniform1i(shader["textSamp04"], 4);	// Texture unit 4		TEXTURE INDICATING UNLIT OBJECTS
+	shader.SetTexture(previousFBO.colourTexture_ID, "textSamp00", 0);	// ALBEDO TEXTURE
+	shader.SetTexture(previousFBO.normalTexture_ID, "textSamp01", 1);	// NORMAL TEXTURE
+	shader.SetTexture(previousFBO.positionTexture_ID, "textSamp02", 2);	// POSITION TEXTURE
+	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM TEXTURE (NOT USED ON THIS PASS)
+	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp04", 4);	// TEXTURE INDICATING UNLIT OBJECTS
 
 	// 4. Draw a single object (a triangle or quad)
-	glUniform1i(shader["isFinalPass"], (int)GL_FALSE);
-
-	glUniform2f(shader["iResolution"],
-		width,
-		height);
+	shader.SetBool("isFinalPass", GL_FALSE);
+	shader.SetVec2("iResolution", vec2(width, height));
 
 	mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
 	pass_id = 2;
 
-	glUniformMatrix4fv((*quad.shader)["matProj"], 1, GL_FALSE, glm::value_ptr(p));
+	shader.SetMat4("matProj", p);
 
 	this->DrawObject(&quad, mat4(1.f), p);
 }
@@ -780,68 +739,35 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	float height = previousFBO.height;
 
 	// LAST RENDER PASS
-	GLint shaderProgID = quad.shader->GetID();
 	Shader& shader = *quad.shader;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, width, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(shaderProgID);
+	shader.Use();
 
+	shader.SetFloat("iTime", (float)glfwGetTime());
 
-	glUniform1f(shader["iTime"], (float)glfwGetTime());
+	shader.SetTexture(previousFBO.colourTexture_ID, "textSamp00", 0);	// LIT SCENE TEXTURE
+	shader.SetTexture(previousFBO.positionTexture_ID, "textSamp01", 1);	// POSITION TEXTURE
+	shader.SetTexture(previousFBO.normalTexture_ID, "textSamp02", 2);	// LIGHTING DEPTH BUFFER TEXTURE
+	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM CUTOFF TEXTURE
+	shader.SetTexture(noise, "textSamp04", 4);							// NOISE TEXTURE
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.colourTexture_ID);
-	glUniform1i(shader["textSamp00"], 0);	// Texture unit 0	LIT SCENE TEXTURE
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.positionTexture_ID);
-	glUniform1i(shader["textSamp01"], 1);	// Texture unit 0	POSITION TEXTURE
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.normalTexture_ID);
-	glUniform1i(shader["textSamp02"], 2);	// Texture unit 1	LIGHTING DEPTH BUFFER TEXTURE
-
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, previousFBO.bloomTexture_ID);
-	glUniform1i(shader["textSamp03"], 3);	// Texture unit 3	BLOOM CUTOFF TEXTURE
-
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, noise.GetID());
-	glUniform1i(shader["textSamp04"], 4);	// Texture unit 1	NOISE TEXTURE
-
-	glUniform1i(shader["isFinalPass"], (int)GL_TRUE);
+	shader.SetBool("isFinalPass", GL_TRUE);
 
 	mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
-	glUniformMatrix4fv(shader["matProj"], 1, GL_FALSE, glm::value_ptr(p));
+	shader.SetMat4("matProj", p);
 
-	if (bloom_enabled)
-	{
-		glUniform1i(shader["bloomEnabled"], (int)GL_TRUE);
-	}
-	else
-	{
-		glUniform1i(shader["bloomEnabled"], (int)GL_FALSE);
-	}
+	if (bloom_enabled)	shader.SetBool("bloomEnabled", GL_TRUE);
+	else				shader.SetBool("bloomEnabled", GL_FALSE);
 
-	if (DOF_enabled)
-	{
-		glUniform1i(shader["DOFEnabled"], (int)GL_TRUE);
-	}
-	else
-	{
-		glUniform1i(shader["DOFEnabled"], (int)GL_FALSE);
-	}
+	if (DOF_enabled)	shader.SetBool("DOFEnabled", GL_TRUE);
+	else				shader.SetBool("DOFEnabled", GL_FALSE);
 
-	if (volumetric_enabled)
-	{
-		glUniform1i(shader["volumetricEnabled"], (int)GL_TRUE);
-	}
-	else
-	{
-		glUniform1i(shader["volumetricEnabled"], (int)GL_FALSE);
-	}
+	if (volumetric_enabled)	shader.SetBool("volumetricEnabled", GL_TRUE);
+	else					shader.SetBool("volumetricEnabled", GL_FALSE);
+
 
 	this->DrawObject(&quad, mat4(1.f), p);
 }

@@ -226,7 +226,6 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Texture\cTexture.cpp" />
     <ClCompile Include="_GL\glad.c" />
     <ClCompile Include="Physics\octree.cpp" />
-    <ClCompile Include="Physics\PhysicsEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rendering\RenderingEngine.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
@@ -315,7 +314,6 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Lighting\cLightManager.h" />
     <ClInclude Include="Physics\Mathf.h" />
     <ClInclude Include="Physics\octree.h" />
-    <ClInclude Include="Physics\PhysicsEngine.h" />
     <ClInclude Include="Scene\rapid_definitions.h" />
     <ClInclude Include="Rendering\RenderingEngine.h" />
     <ClInclude Include="Commands\cRotateTo.h" />

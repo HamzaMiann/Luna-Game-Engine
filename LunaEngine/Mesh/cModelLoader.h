@@ -5,6 +5,12 @@
 #include <vector>
 #include <Mesh/cMesh.h>
 
+struct LoadResult
+{
+	bool success = false;
+	std::vector<std::string> textures;
+};
+
 class cModelLoader
 {
 private:
@@ -25,9 +31,9 @@ public:
 
 	// Takes the filename to load
 	// Returns by ref the mesh
-	bool LoadModel(	std::string filename,
-					std::string friendlyName,
-					cMesh &theMesh);		// Note the & (by reference)
+	LoadResult LoadModel(	std::string filename,
+							std::string friendlyName,
+							cMesh &theMesh);		// Note the & (by reference)
 
 	bool LoadAnimation(	std::string filename,
 						std::string friendlyName,

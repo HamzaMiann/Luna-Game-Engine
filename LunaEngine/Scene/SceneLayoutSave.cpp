@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <Components/cRigidBody.h>
+#include <Shader/Shader.h>
 using namespace rapidxml;
 using namespace std;
 using namespace rapidxml;

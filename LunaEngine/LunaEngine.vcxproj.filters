@@ -180,9 +180,6 @@
     <ClCompile Include="Physics\octree.cpp">
       <Filter>Math_Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Physics\PhysicsEngine.cpp">
-      <Filter>Math_Physics</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh\cModelLoader.cpp">
       <Filter>ModelLoading</Filter>
     </ClCompile>
@@ -426,9 +423,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Physics\octree.h">
-      <Filter>Math_Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics\PhysicsEngine.h">
       <Filter>Math_Physics</Filter>
     </ClInclude>
     <ClInclude Include="Mesh\cModelLoader.h">

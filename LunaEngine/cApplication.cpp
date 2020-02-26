@@ -115,7 +115,7 @@ void cApplication::Run()
 	cLowpassFilter& filter = cLowpassFilter::Instance();
 	float current_time = (float)glfwGetTime();
 	float previous_time = (float)glfwGetTime();
-	float delta_time = 0.f;
+	float dt = 0.f;
 
 	sLight* light = cLightManager::Instance()->Lights[0];
 	vec3 origin = vec3(light->position);
@@ -128,8 +128,8 @@ void cApplication::Run()
 		previous_time = current_time;
 		current_time = (float)glfwGetTime();
 
-		if (!is_paused) delta_time = filter.add_time(current_time - previous_time);
-		else delta_time = 0.f;
+		if (!is_paused) dt = filter.add_time(current_time - previous_time);
+		else dt = 0.f;
 
 		int newWidth, newHeight;
 		glfwGetFramebufferSize(global::window, &newWidth, &newHeight);
@@ -148,16 +148,16 @@ void cApplication::Run()
 
 		renderer.Reset();
 
-		behaviour_manager.update(delta_time);
-		entity_manager.Update(delta_time);
+		behaviour_manager.update(dt);
+		entity_manager.Update(dt);
 
-		g_PhysicsWorld->Update(delta_time);
+		g_PhysicsWorld->Update(dt);
 
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
 
 		// Move skybox relative to the camera
-		renderer.skyBox.transform.pos = scene->camera.Eye;
+		renderer.skyBox.transform.pos = Camera::main_camera->Eye;
 
 		mat4 p, v;
 
@@ -168,13 +168,13 @@ void cApplication::Run()
 								1000.f	);		// Far clipping plane
 
 		v = glm::lookAt(
-			scene->camera.Eye,
-			scene->camera.Target,
-			scene->camera.Up
+			Camera::main_camera->Eye,
+			Camera::main_camera->Target,
+			Camera::main_camera->Up
 		);
 
-		renderer.RenderObjectsToFBO(&second_passFBO, width, height, p, v, delta_time);
-		renderer.RenderSkybox(width, height, p, v, delta_time);
+		renderer.RenderObjectsToFBO(&second_passFBO, width, height, p, v, dt);
+		renderer.RenderSkybox(width, height, p, v, dt);
 
 		light->position = vec4(origin + Camera::main_camera->Eye, 1.0f);
 		renderer.screenPos = vec2((p * v * mat4(1.0f)) * light->position);
@@ -182,7 +182,7 @@ void cApplication::Run()
 		renderer.RenderQuadToFBO(finalFBO, second_passFBO);
 		renderer.RenderQuadToScreen(finalFBO);
 
-		debug_renderer.RenderDebugObjects(v, p, delta_time);
+		debug_renderer.RenderDebugObjects(v, p, dt);
 
 		Input::ClearBuffer();
 
@@ -190,6 +190,50 @@ void cApplication::Run()
 		glfwPollEvents();
 	}
 }
+
+//void RenderText(Shader& s, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+//{
+//	// Activate corresponding render state	
+//	s.Use();
+//	glUniform3f(glGetUniformLocation(s.Program, "textColor"), color.x, color.y, color.z);
+//	glActiveTexture(GL_TEXTURE0);
+//	glBindVertexArray(VAO);
+//
+//	// Iterate through all characters
+//	std::string::const_iterator c;
+//	for (c = text.begin(); c != text.end(); c++)
+//	{
+//		Character ch = Characters[*c];
+//
+//		GLfloat xpos = x + ch.Bearing.x * scale;
+//		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+//
+//		GLfloat w = ch.Size.x * scale;
+//		GLfloat h = ch.Size.y * scale;
+//		// Update VBO for each character
+//		GLfloat vertices[6][4] = {
+//			{ xpos,     ypos + h,   0.0, 0.0 },
+//			{ xpos,     ypos,       0.0, 1.0 },
+//			{ xpos + w, ypos,       1.0, 1.0 },
+//
+//			{ xpos,     ypos + h,   0.0, 0.0 },
+//			{ xpos + w, ypos,       1.0, 1.0 },
+//			{ xpos + w, ypos + h,   1.0, 0.0 }
+//		};
+//		// Render glyph texture over quad
+//		glBindTexture(GL_TEXTURE_2D, ch.textureID);
+//		// Update content of VBO memory
+//		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+//		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+//		glBindBuffer(GL_ARRAY_BUFFER, 0);
+//		// Render quad
+//		glDrawArrays(GL_TRIANGLES, 0, 6);
+//		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+//		x += (ch.Advance >> 6)* scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+//	}
+//	glBindVertexArray(0);
+//	glBindTexture(GL_TEXTURE_2D, 0);
+//}
 
 
 

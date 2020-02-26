@@ -1,6 +1,5 @@
 #include "Shader.h"
 #include <Shader/cShaderManager.h>
-#include <_GL/GLCommon.h>
 
 int Shader::last_id = -1;
 

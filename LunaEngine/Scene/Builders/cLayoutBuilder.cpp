@@ -9,6 +9,7 @@
 #include <xml_helper.h>
 #include <EntityManager/cEntityManager.h>
 #include <Animation/cSimpleAssimpSkinnedMeshLoader_OneMesh.h>
+#include <Shader/Shader.h>
 using namespace rapidxml;
 
 std::string trim(std::string& str)

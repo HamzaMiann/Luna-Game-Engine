@@ -6,6 +6,7 @@
 #include <Physics/Mathf.h>
 #include <Components/ComponentFactory.h>
 #include <interfaces/physics/iPhysicsComponent.h>
+#include <Shader/Shader.h>
 
 #pragma warning(disable)
 

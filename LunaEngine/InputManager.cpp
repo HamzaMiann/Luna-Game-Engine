@@ -66,13 +66,22 @@ void drop_callback(GLFWwindow* window, int count, const char** paths)
 		std::string name = random_string(10);
 		Shader* shader = Shader::FromName("basic");
 		cMesh* mesh = new cMesh;
-		cModelLoader::Instance().LoadModel(file, name, *mesh);
+		LoadResult result = cModelLoader::Instance().LoadModel(file, name, *mesh);
 		sModelDrawInfo* drawInfo = new sModelDrawInfo;
 		cVAOManager::Instance().LoadModelIntoVAO(name, *mesh, *drawInfo, shader->GetID());
 
 		cGameObject* object = new cGameObject;
 		object->shader = shader;
 		object->meshName = name;
+		object->transform.scale = vec3(10.f) / glm::distance(mesh->min, mesh->max);
+		if (result.textures.size() > 0)
+		{
+			object->texture[0].SetTexture(result.textures[0], 1.0f);
+		}
+		else
+		{
+			object->texture[0].SetTexture("blue.png", 1.0f);
+		}
 		cEntityManager::Instance().AddEntity(object);
 	}
 }

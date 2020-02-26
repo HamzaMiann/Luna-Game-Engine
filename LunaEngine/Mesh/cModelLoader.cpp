@@ -75,12 +75,12 @@ void PopulateChildren(sHeirarchy& node, std::vector<sBoneInfo>& bones)
 
 // Takes the filename to load
 // Returns by ref the mesh
-bool cModelLoader::LoadModel(
+LoadResult cModelLoader::LoadModel(
 	std::string filename,
 	std::string friendlyName,
 	cMesh &theMesh)				// Note the "&"
 {
-
+	LoadResult result;
 	Assimp::Importer importer;
 	// And have it read the given file with some example postprocessing
 	// Usually - if speed is not the most important aspect for you - you'll 
@@ -103,7 +103,7 @@ bool cModelLoader::LoadModel(
 	if (!scene)
 	{
 		std::cout << "Error while loading model... " << importer.GetErrorString() << std::endl;
-		return false;
+		return result;
 	}
 
 	if (scene->HasMeshes())
@@ -120,14 +120,25 @@ bool cModelLoader::LoadModel(
 			tempVertex.y = vec.y;
 			tempVertex.z = vec.z;
 
+			if (tempVertex.x < theMesh.min.x) theMesh.min.x = tempVertex.x;
+			if (tempVertex.y < theMesh.min.y) theMesh.min.y = tempVertex.y;
+			if (tempVertex.z < theMesh.min.z) theMesh.min.z = tempVertex.z;
+
+			if (tempVertex.x > theMesh.max.x) theMesh.max.x = tempVertex.x;
+			if (tempVertex.y > theMesh.max.y) theMesh.max.y = tempVertex.y;
+			if (tempVertex.z > theMesh.max.z) theMesh.max.z = tempVertex.z;
+
 			aiVector3D normal = mesh.mNormals[i];
 			tempVertex.nx = normal.x;
 			tempVertex.ny = normal.y;
 			tempVertex.nz = normal.z;
 
-			aiVector3D uv = mesh.mTextureCoords[0][i];
-			tempVertex.u = uv.x;
-			tempVertex.v = uv.y;
+			if (mesh.HasTextureCoords(0))
+			{
+				aiVector3D uv = mesh.mTextureCoords[0][i];
+				tempVertex.u = uv.x;
+				tempVertex.v = uv.y;
+			}
 
 			theMesh.vecVertices.push_back(tempVertex);
 		}
@@ -171,17 +182,9 @@ bool cModelLoader::LoadModel(
 				aiTexture& tex = *scene->mTextures[i];
 				std::string filename = tex.mFilename.C_Str();
 				filename = filename.substr(filename.find_last_of('/') + 1);
-				size_t size = sizeof(tex.pcData) / sizeof(aiTexel);
-				std::vector<unsigned char> data;
-				for (unsigned int n = 0; n < size; ++n)
-				{
-					data.push_back(tex.pcData[n].r);
-					data.push_back(tex.pcData[n].g);
-					data.push_back(tex.pcData[n].b);
-					data.push_back(tex.pcData[n].a);
-				}
-				cBasicTextureManager::Instance()->Create2DTexture(filename, true, data, tex.mWidth, tex.mHeight);
+				cBasicTextureManager::Instance()->Create2DTexture(filename, true, tex.pcData, tex.mWidth, tex.mHeight, tex.achFormatHint[0]);
 				std::cout << "ASSIMP TEXTURE LOADED: " << filename << std::endl;
+				result.textures.push_back(filename);
 			}
 		}
 
@@ -261,6 +264,9 @@ bool cModelLoader::LoadModel(
 
 		}
 
+		result.success = true;
+		return result;
+
 		if (scene->HasAnimations())
 		{
 			for (unsigned int i = 0; i < scene->mNumAnimations; ++i)
@@ -337,11 +343,9 @@ bool cModelLoader::LoadModel(
 
 		}
 
-		return true;
-
 	}
 
-	return false;
+	return result;
 
 
 

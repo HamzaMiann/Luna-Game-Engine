@@ -194,7 +194,6 @@ std::string cBasicTextureManager::PickRandomTexture(void)
 
 bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, std::vector<unsigned char>& data, int width, int height)
 {
-
 	unsigned int texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -205,6 +204,46 @@ bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGener
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA8, GL_UNSIGNED_BYTE, &data[0]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
+	if (bGenerateMIPMap)
+	{
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	this->m_map_NameToID[friendlyName] = texture;
+
+	return true;
+}
+
+bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, void* data, int width, int height, char hint)
+{
+	if (!data) return false;
+
+	unsigned char* image_data = nullptr;
+	int components_per_pixel = 4;
+	int newWidth, newHeight;
+
+	if (height == 0)
+	{
+		image_data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(data), width, &newWidth, &newHeight, &components_per_pixel, 0);
+	}
+	else
+	{
+		image_data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(data), width * height, &newWidth, &newHeight, &components_per_pixel, 0);
+	}
+
+	if (!image_data) return false;
+
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, newWidth, newHeight, 0, GL_RGBA8, GL_UNSIGNED_BYTE, image_data);
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
 	//glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
 	if (bGenerateMIPMap)
