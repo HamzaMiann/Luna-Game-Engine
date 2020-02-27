@@ -53,15 +53,15 @@ public:
 	void StencilEnd();
 
 	void SetUpTextureBindings(cMaterial& material);
-	void SetUpTextureBindingsForObject(cGameObject* pCurrentObject);
+	void SetUpTextureBindingsForObject(cGameObject& object);
 	void Render(iObject& object);
 	void Render(cMaterial& material);
 
 
 	// Old methods
-	void DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p);
+	void DrawObject(cGameObject& object, mat4 const& v, mat4 const& p);
 	void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, mat4 const& v, mat4 const& p);
-	void RenderGO(cGameObject* object, float width, float height, mat4& p, mat4& v, int& lastShader);
+	void RenderGO(cGameObject& object, float width, float height, mat4& p, mat4& v, int& lastShader);
 	void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt);
 	void RenderSkybox(float width, float height, mat4 p, mat4 v, float dt);
 	void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO);

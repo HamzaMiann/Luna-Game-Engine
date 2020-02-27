@@ -118,33 +118,18 @@ void RenderingEngine::SetUpTextureBindings(cMaterial& material)
 	Shader& shader = *material.shader;
 	cTexture* textures = material.texture;
 
+	shader.SetTexture(textures[0].GetID(), "textSamp00", 0);
+	shader.SetTexture(textures[1].GetID(), "textSamp01", 1);
+	shader.SetTexture(textures[2].GetID(), "textSamp02", 2);
+	shader.SetTexture(textures[3].GetID(), "textSamp03", 3);
 
-	glActiveTexture(GL_TEXTURE0);						// Texture Unit 0
-	glBindTexture(GL_TEXTURE_2D, textures[0].GetID());	// Texture now assoc with texture unit 0
-
-	glActiveTexture(GL_TEXTURE1);						// Texture Unit 1
-	glBindTexture(GL_TEXTURE_2D, textures[1].GetID());	// Texture now assoc with texture unit 1
-
-	glActiveTexture(GL_TEXTURE2);						// Texture Unit 2
-	glBindTexture(GL_TEXTURE_2D, textures[2].GetID());	// Texture now assoc with texture unit 2
-
-	glActiveTexture(GL_TEXTURE3);						// Texture Unit 3
-	glBindTexture(GL_TEXTURE_2D, textures[3].GetID());	// Texture now assoc with texture unit 3
-
-	glUniform1i(shader["textSamp00"], 0);	// Texture unit 0
-
-	glUniform1i(shader["textSamp01"], 1);	// Texture unit 1
-
-	glUniform1i(shader["textSamp02"], 2);	// Texture unit 2
-
-	glUniform1i(shader["textSamp03"], 3);	// Texture unit 3
-
-
-	glUniform4f(shader["tex_0_3_ratio"],
-		textures[0].GetBlend(),
-		textures[1].GetBlend(),
-		textures[2].GetBlend(),
-		textures[3].GetBlend()
+	shader.SetVec4("tex_0_3_ratio",
+		vec4(
+			textures[0].GetBlend(),
+			textures[1].GetBlend(),
+			textures[2].GetBlend(),
+			textures[3].GetBlend()
+		)
 	);
 
 	return;
@@ -167,17 +152,9 @@ void RenderingEngine::Render(cMaterial& material)
 	cBasicTextureManager* textureManager = cBasicTextureManager::Instance();
 	GLint shaderProgID = shader.GetID();
 
-	GLint scopeUL = shader["isScope"];
-	if (material.layer == "scope")
-	{
-		glUniform1i(scopeUL, (int)GL_TRUE);
-	}
-	else
-	{
-		glUniform1i(scopeUL, (int)GL_FALSE);
-	}
 
-
+	bool isScope = material.layer == "scope";
+	shader.SetBool("isScope", isScope);
 
 	GLint bIsSkyBox_UL = shader["isSkybox"];
 	GLint isReflection = shader["isReflection"];
@@ -327,68 +304,43 @@ void RenderingEngine::Render(cMaterial& material)
 // OLD CALLS
 
 
-void RenderingEngine::SetUpTextureBindingsForObject(cGameObject* pCurrentObject)
+void RenderingEngine::SetUpTextureBindingsForObject(cGameObject& object)
 {
 	if (pass_id != 1) return;
 
-	Shader& shader = *pCurrentObject->shader;
-	GLint shaderProgID = shader.GetID();
+	Shader& shader = *object.shader;
+	cTexture* textures = object.texture;
 
-	// Tie the texture to the texture unit
-	GLuint texSamp0_UL = pCurrentObject->texture[0].GetID();
-	glActiveTexture(GL_TEXTURE0);				// Texture Unit 0
-	glBindTexture(GL_TEXTURE_2D, texSamp0_UL);	// Texture now assoc with texture unit 0
+	shader.SetTexture(textures[0].GetID(), "textSamp00", 0);
+	shader.SetTexture(textures[1].GetID(), "textSamp01", 1);
+	shader.SetTexture(textures[2].GetID(), "textSamp02", 2);
+	shader.SetTexture(textures[3].GetID(), "textSamp03", 3);
 
-	GLuint texSamp1_UL = pCurrentObject->texture[1].GetID();
-	glActiveTexture(GL_TEXTURE1);				// Texture Unit 1
-	glBindTexture(GL_TEXTURE_2D, texSamp1_UL);	// Texture now assoc with texture unit 0
-
-	GLuint texSamp2_UL = pCurrentObject->texture[2].GetID();
-	glActiveTexture(GL_TEXTURE2);				// Texture Unit 2
-	glBindTexture(GL_TEXTURE_2D, texSamp2_UL);	// Texture now assoc with texture unit 0
-
-	GLuint texSamp3_UL = pCurrentObject->texture[3].GetID();
-	glActiveTexture(GL_TEXTURE3);				// Texture Unit 3
-	glBindTexture(GL_TEXTURE_2D, texSamp3_UL);	// Texture now assoc with texture unit 0
-
-	// Tie the texture units to the samplers in the shader
-	GLint textSamp00_UL = shader["textSamp00"];
-	glUniform1i(textSamp00_UL, 0);	// Texture unit 0
-
-	GLint textSamp01_UL = shader["textSamp01"];
-	glUniform1i(textSamp01_UL, 1);	// Texture unit 1
-
-	GLint textSamp02_UL = shader["textSamp02"];
-	glUniform1i(textSamp02_UL, 2);	// Texture unit 2
-
-	GLint textSamp03_UL = shader["textSamp03"];
-	glUniform1i(textSamp03_UL, 3);	// Texture unit 3
-
-
-	GLint tex0_ratio_UL = shader["tex_0_3_ratio"];
-	glUniform4f(tex0_ratio_UL,
-		pCurrentObject->texture[0].GetBlend(),
-		pCurrentObject->texture[1].GetBlend(),
-		pCurrentObject->texture[2].GetBlend(),
-		pCurrentObject->texture[3].GetBlend()
+	shader.SetVec4("tex_0_3_ratio",
+		vec4(
+			textures[0].GetBlend(),
+			textures[1].GetBlend(),
+			textures[2].GetBlend(),
+			textures[3].GetBlend()
+		)
 	);
 
 	return;
 }
 
 
-void RenderingEngine::DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const& p)
+void RenderingEngine::DrawObject(cGameObject& object, mat4 const& v, mat4 const& p)
 {
-	Shader& shader = *objPtr->shader;
-	GLint shaderProgID = shader.GetID();
+	Shader& shader = *object.shader;
+	Camera& camera = *Camera::main_camera;
 
 	/*
 
 	MISC EFFECTS
 
 	*/
-	if (objPtr->tag == "scope") glUniform1i(shader["isScope"], (int)GL_TRUE);
-	else glUniform1i(shader["isScope"], (int)GL_FALSE);
+	bool isScope = object.tag == "scope";
+	shader.SetBool("isScope", (int)isScope);
 
 
 	/*
@@ -396,19 +348,15 @@ void RenderingEngine::DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const&
 	ANIMATION
 
 	*/
-	cAnimationController* animator = objPtr->GetComponent<cAnimationController>();
+	cAnimationController* animator = object.GetComponent<cAnimationController>();
 
 	if (animator)
 	{
-		glUniform1f(shader["isSkinnedMesh"], (float)GL_TRUE);
 		auto& transforms = animator->GetTransformations();
-		GLint matBonesArray_UniLoc = glGetUniformLocation(shaderProgID, "matBonesArray");
-		GLint numBonesUsed = (GLint)transforms.size();
-		glUniformMatrix4fv(matBonesArray_UniLoc, numBonesUsed,
-			GL_FALSE,
-			glm::value_ptr(transforms[0]));
+		shader.SetBool("isSkinnedMesh", (float)GL_TRUE);
+		shader.SetMat4Array("matBonesArray", transforms);
 	}
-	else glUniform1f(shader["isSkinnedMesh"], (float)GL_FALSE);
+	else shader.SetBool("isSkinnedMesh", (float)GL_FALSE);
 
 
 	/*
@@ -416,8 +364,8 @@ void RenderingEngine::DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const&
 	REFLECTION AND REFRACTION
 
 	*/
-	glUniform1f(shader["reflectivity"], objPtr->reflectivity);
-	glUniform1f(shader["refractivity"], objPtr->refractivity);
+	shader.SetBool("reflectivity", object.reflectivity);
+	shader.SetBool("refractivity", object.refractivity);
 
 
 	/*
@@ -425,52 +373,34 @@ void RenderingEngine::DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const&
 	SKYBOX
 
 	*/
-	GLint bIsSkyBox_UL = shader["isSkybox"];
-	if (objPtr->tag != "skybox")
+	if (object.tag != "skybox")
 	{
 		// Don't draw back facing triangles (default)
 		glCullFace(GL_BACK);
-		glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
-
-		GLuint skyBoxTextureID = cBasicTextureManager::Instance()->getTextureIDFromName(skyboxName);
-		glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
-
-		// Tie the texture units to the samplers in the shader
-		GLint skyBoxSampler_UL = shader["skyBox"];
-		glUniform1i(skyBoxSampler_UL, 26);
-
-		SetUpTextureBindingsForObject(objPtr);
+		shader.SetBool("isSkybox", GL_FALSE);
+		shader.SetCubemap("skyBox", cBasicTextureManager::Instance()->getTextureIDFromName(skyboxName));
+		SetUpTextureBindingsForObject(object);
 	}
 	else
 	{
 		// Draw the back facing triangles. 
 		// Because we are inside the object, so it will force a draw on the "back" of the sphere 
 		glCullFace(GL_FRONT);
-		//glCullFace(GL_FRONT_AND_BACK);
-
-		glUniform1f(bIsSkyBox_UL, (float)GL_TRUE);
-
-		GLuint skyBoxTextureID = cBasicTextureManager::Instance()->getTextureIDFromName(skyboxName);
-		glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
-
-		// Tie the texture units to the samplers in the shader
-		GLint skyBoxSampler_UL = shader["skyBox"];
-		glUniform1i(skyBoxSampler_UL, 26);	// Texture unit 26
+		shader.SetBool("isSkybox", GL_TRUE);
+		shader.SetCubemap("skyBox", cBasicTextureManager::Instance()->getTextureIDFromName(skyboxName));
 	}
 
 	mat4 m(1.f);
 
-	if (objPtr->parent)
+	if (object.parent)
 	{
-		m *= objPtr->transform.TranslationMatrix(objPtr->parent->transform);
-		m *= objPtr->transform.RotationMatrix(objPtr->parent->transform);
+		m *= object.transform.TranslationMatrix(object.parent->transform);
+		m *= object.transform.RotationMatrix(object.parent->transform);
 	}
 	else
 	{
-		m *= objPtr->transform.TranslationMatrix();
-		m *= objPtr->transform.RotationMatrix();
+		m *= object.transform.TranslationMatrix();
+		m *= object.transform.RotationMatrix();
 	}
 
 
@@ -479,54 +409,58 @@ void RenderingEngine::DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const&
 	glUniformMatrix4fv(shader["matModelInverTrans"], 1, GL_FALSE, glm::value_ptr(matModelInverseTranspose));
 
 
-	if (objPtr->parent)
-		m *= objPtr->transform.ScaleMatrix(objPtr->parent->transform);
+	if (object.parent)
+		m *= object.transform.ScaleMatrix(object.parent->transform);
 	else
-		m *= objPtr->transform.ScaleMatrix();
+		m *= object.transform.ScaleMatrix();
 
 	if (pass_id != 1) m = mat4(1.f);
 
+	shader.SetMat4("matModel", m);
 
-	glUniformMatrix4fv(shader["matModel"], 1, GL_FALSE, glm::value_ptr(m));
-
-	Camera& camera = *Camera::main_camera;
-
-	glUniform4f(shader["eyeLocation"],
-		camera.Eye.x,
-		camera.Eye.y,
-		camera.Eye.z,
-		1.0f
+	shader.SetVec4("eyeLocation",
+		vec4(
+			camera.Eye.x,
+			camera.Eye.y,
+			camera.Eye.z,
+			1.0f
+		)
 	);
 
-	glUniform4f(shader["eyeTarget"],
-		camera.Target.x,
-		camera.Target.y,
-		camera.Target.z,
-		1.0f
+	shader.SetVec4("eyeTarget",
+		vec4(
+			camera.Target.x,
+			camera.Target.y,
+			camera.Target.z,
+			1.0f
+		)
 	);
 
-
-	glUniform4f(shader["diffuseColour"],
-		objPtr->colour.x,
-		objPtr->colour.y,
-		objPtr->colour.z,
-		objPtr->colour.w
+	shader.SetVec4("diffuseColour",
+		vec4(
+			object.colour.x,
+			object.colour.y,
+			object.colour.z,
+			object.colour.w
+		)
 	);
 
-	glUniform4f(shader["specularColour"],
-		objPtr->specColour.x,
-		objPtr->specColour.y,
-		objPtr->specColour.z,
-		objPtr->specIntensity
+	shader.SetVec4("specularColour",
+		vec4(
+			object.specColour.x,
+			object.specColour.y,
+			object.specColour.z,
+			object.specIntensity
+		)
 	);
 
-	glUniform1i(shader["isUniform"], objPtr->uniformColour);
+	shader.SetBool("isUniform", object.uniformColour);
 
 
 	if (pass_id != 1)
 	{
 		cLightManager::Instance()->Set_Light_Data(shader);
-		glUniform2f(shader["lightPositionOnScreen"], screenPos.x, screenPos.y);
+		shader.SetVec2("lightPositionOnScreen", screenPos);
 	}
 
 
@@ -535,17 +469,12 @@ void RenderingEngine::DrawObject(cGameObject* objPtr, mat4 const& v, mat4 const&
 	//  GL_LINE is "wireframe"
 	//glPointSize(15.0f);
 
-	if (objPtr->isWireframe)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
+	if (object.isWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
-	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
 
 	sModelDrawInfo drawInfo;
-	if (cVAOManager::Instance().FindDrawInfoByModelName(objPtr->meshName, drawInfo))
+	if (cVAOManager::Instance().FindDrawInfoByModelName(object.meshName, drawInfo))
 	{
 		glBindVertexArray(drawInfo.VAO_ID);
 		glDrawElements(
@@ -572,7 +501,7 @@ void RenderingEngine::DrawOctree(cGameObject* obj, octree::octree_node* node, cG
 		objPtr->transform.pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
 		objPtr->transform.scale = vec3(node->AABB->length / 2.f);
 
-		DrawObject(objPtr, v, p);
+		DrawObject(*objPtr, v, p);
 	}
 
 	for (int i = 0; i < 8; ++i)
@@ -580,17 +509,18 @@ void RenderingEngine::DrawOctree(cGameObject* obj, octree::octree_node* node, cG
 
 }
 
-void RenderingEngine::RenderGO(cGameObject* object, float width, float height, mat4& p, mat4& v, int& lastShader)
+void RenderingEngine::RenderGO(cGameObject& object, float width, float height, mat4& p, mat4& v, int& lastShader)
 {
 
-	for (cGameObject*& child : object->children)
+	for (cGameObject*& child : object.children)
 	{
-		this->RenderGO(child, width, height, p, v, lastShader);
+		if (child)
+			this->RenderGO(*child, width, height, p, v, lastShader);
 	}
 
-	if (!object->shader) return;
+	if (!object.shader) return;
 
-	Shader& shader = *object->shader;
+	Shader& shader = *object.shader;
 
 	//cMaterial* material = object->GetComponent<cMaterial>();
 	//if (material != nullptr)
@@ -659,14 +589,14 @@ void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float hei
 		}
 #endif
 
-		cGameObject* objPtr = objects[index];
+		cGameObject& object = *objects[index];
 
 		//objPtr->cmd_group->Update(dt);
 		//objPtr->brain->Update(dt);
 
-		if (objPtr->tag == "portal" || objPtr->tag == "portal2") continue;
+		if (object.tag == "portal" || object.tag == "portal2") continue;
 
-		this->RenderGO(objPtr, width, height, p, v, lastShader);
+		this->RenderGO(object, width, height, p, v, lastShader);
 
 
 	}//for (int index...
@@ -695,7 +625,7 @@ void RenderingEngine::RenderSkybox(float width, float height, mat4 p, mat4 v, fl
 	shader.SetMat4("matProj", p);
 	shader.SetMat4("matView", v);
 
-	this->DrawObject(objPtr, v, p);
+	this->DrawObject(*objPtr, v, p);
 }
 
 void RenderingEngine::RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
@@ -706,10 +636,11 @@ void RenderingEngine::RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 	// 1. Disable the FBO
 	// Draw to the frame buffer
 	fbo.use();
+	fbo.clear_all();
 
 	// 2. Clear the ACTUAL screen buffer
-	glViewport(0, 0, width, height);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	/*glViewport(0, 0, width, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
 
 	// 3. Use the FBO colour texture as the texture on that quad
 	Shader& shader = *quad.shader;
@@ -730,18 +661,22 @@ void RenderingEngine::RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 
 	shader.SetMat4("matProj", p);
 
-	this->DrawObject(&quad, mat4(1.f), p);
+	this->DrawObject(quad, mat4(1.f), p);
 }
 
 void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 {
+	// LAST RENDER PASS
+
 	float width = previousFBO.width;
 	float height = previousFBO.height;
 
-	// LAST RENDER PASS
 	Shader& shader = *quad.shader;
 
+	// 1. Disable the FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// 2. Clear the ACTUAL screen buffer
 	glViewport(0, 0, width, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	shader.Use();
@@ -769,5 +704,5 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	else					shader.SetBool("volumetricEnabled", GL_FALSE);
 
 
-	this->DrawObject(&quad, mat4(1.f), p);
+	this->DrawObject(quad, mat4(1.f), p);
 }

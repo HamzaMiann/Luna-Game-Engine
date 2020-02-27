@@ -205,7 +205,7 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 
 	// clamp the light position so that the delta is not too high
 	vec2 lightPos = lightPositionOnScreen.xy;
-	if (distance(lightPositionOnScreen.xy, vec2(0.0)) > 20)
+	if (distance(lightPositionOnScreen.xy, vec2(0.0)) > 20.0)
 	{
 		lightPos = normalize(lightPositionOnScreen.xy) * 20.0;
 	}
