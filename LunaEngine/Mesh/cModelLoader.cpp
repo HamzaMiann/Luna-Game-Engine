@@ -133,11 +133,15 @@ LoadResult cModelLoader::LoadModel(
 			tempVertex.ny = normal.y;
 			tempVertex.nz = normal.z;
 
-			if (mesh.HasTextureCoords(0))
+			for (int n = 0; n < 8; ++n)
 			{
-				aiVector3D uv = mesh.mTextureCoords[0][i];
-				tempVertex.u = uv.x;
-				tempVertex.v = uv.y;
+				if (mesh.HasTextureCoords(n))
+				{
+					aiVector3D* pUV = mesh.mTextureCoords[n];
+					aiVector3D uv = pUV[i];
+					tempVertex.u = uv.x;
+					tempVertex.v = uv.y;
+				}
 			}
 
 			theMesh.vecVertices.push_back(tempVertex);

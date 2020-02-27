@@ -138,8 +138,8 @@ vec4 BloomCutoff(vec4 colour)
 ///
 vec4 circular_blur(sampler2D tex, float offset)
 {
-	const int num_circle_samples = 10;
-	const float AOE_strength = 0.7;
+	const int num_circle_samples = 15;
+	const float AOE_strength = 0.9;
 	// get the size of each pixel on the screen
 	vec2 pixelSize = vec2(1.0 / iResolution.x, 1.0 / iResolution.y);
 	vec4 colour = vec4(0.0);
@@ -163,7 +163,8 @@ vec4 DOF(sampler2D mainTexture, sampler2D positionTexture)
 {
 	const float near_focus = 10.0;
 	const float focus_length = 60.0;
-	const float blur_scale = 5.0;
+	const float far_blur_scale = 5.0;
+	const float near_blur_scale = 15.0;
 
 	vec4 colour = vec4(0., 0., 0., 1.);
 
@@ -172,12 +173,17 @@ vec4 DOF(sampler2D mainTexture, sampler2D positionTexture)
 	float distance_from_focus = abs(near_focus - z);
 	float ratio = 0.0;
 	if (z < near_focus)
+	{
 		//ratio = clamp(1.0 / (z / 10.), 0.0, 40.0);
 		ratio = smoothstep(0., 1., 1. - (z / near_focus));
+		colour = circular_blur(mainTexture, near_blur_scale * ratio);
+	}
 	else
+	{
 		ratio = clamp((distance_from_focus / focus_length) - 1.0, 0.0, 1.0);
+		colour = circular_blur(mainTexture, far_blur_scale * ratio);
+	}
 
-	colour = circular_blur(mainTexture, blur_scale * ratio);
 
 	return colour;
 }

@@ -355,20 +355,20 @@ void cFormationGameManager::SetSquare()
 
 	float dist= 3.5f;
 
-	agents[0u]->target = vec3(0.f, 0.f, 1.f) * transform.Rotation() + pos;
-	agents[1u]->target = vec3(-1.f, 0.f, 1.f) * transform.Rotation() + pos;
-	agents[2u]->target = vec3(1.f, 0.f, 1.f) * transform.Rotation() + pos;
-	agents[3u]->target = vec3(2.f, 0.f, 1.f) * transform.Rotation() + pos;
+	agents[0u]->target = (vec3(0.f, 0.f, 1.f) * dist) * transform.Rotation() + pos;
+	agents[1u]->target = (vec3(-1.f, 0.f, 1.f) * dist)* transform.Rotation() + pos;
+	agents[2u]->target = (vec3(1.f, 0.f, 1.f) * dist)* transform.Rotation() + pos;
+	agents[3u]->target = (vec3(2.f, 0.f, 1.f) * dist)* transform.Rotation() + pos;
 
-	agents[4u]->target = vec3(2.f, 0.f, 0.f) * transform.Rotation() + pos;
-	agents[5u]->target = vec3(2.f, 0.f, -1.f) * transform.Rotation() + pos;
-	agents[6u]->target = vec3(2.f, 0.f, -2.f) * transform.Rotation() + pos;
-	agents[7u]->target = vec3(1.f, 0.f, -2.f) * transform.Rotation() + pos;
+	agents[4u]->target = (vec3(2.f, 0.f, 0.f) * dist)* transform.Rotation() + pos;
+	agents[5u]->target = (vec3(2.f, 0.f, -1.f) * dist)* transform.Rotation() + pos;
+	agents[6u]->target = (vec3(2.f, 0.f, -2.f) * dist)* transform.Rotation() + pos;
+	agents[7u]->target = (vec3(1.f, 0.f, -2.f) * dist)* transform.Rotation() + pos;
 
-	agents[8u]->target = vec3(0.f, 0.f, -2.f) * transform.Rotation() + pos;
-	agents[9u]->target = vec3(-1.f, 0.f, -2.f) * transform.Rotation() + pos;
-	agents[10u]->target = vec3(-1.f, 0.f, -1.f) * transform.Rotation() + pos;
-	agents[11u]->target = vec3(-1.f, 0.f, 0.f) * transform.Rotation() + pos;
+	agents[8u]->target = (vec3(0.f, 0.f, -2.f) * dist)* transform.Rotation() + pos;
+	agents[9u]->target = (vec3(-1.f, 0.f, -2.f) * dist)* transform.Rotation() + pos;
+	agents[10u]->target = (vec3(-1.f, 0.f, -1.f) * dist)* transform.Rotation() + pos;
+	agents[11u]->target = (vec3(-1.f, 0.f, 0.f) * dist)* transform.Rotation() + pos;
 }
 
 void cFormationGameManager::SetLine()
