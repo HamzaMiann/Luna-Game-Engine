@@ -25,6 +25,9 @@ uniform sampler2D textSamp01;	// normal
 uniform sampler2D textSamp02;	// position
 uniform sampler2D textSamp03;	// bloom
 uniform sampler2D textSamp04;	// unlit
+uniform sampler2D textSamp05;	// REFLECTIVE
+
+uniform samplerCube skyBox;
 
 uniform vec2 lightPositionOnScreen;
 
@@ -246,9 +249,40 @@ void main()
 	{
 		pixelColour.rgb = texture(textSamp00, uv).rgb;
 		
+		
+
 		if (DOFEnabled)
 		{
 			pixelColour.rgb = DOF(textSamp00, textSamp01).rgb;
+		}
+
+		if (false)
+		{
+			if (texture(textSamp05, uv).r > 0.0)
+			{
+				vec3 pos = texture( textSamp01, uv ).rgb;
+				float d = distance(eyeLocation.xyz, pos);
+				vec3 direction = normalize(pos - eyeLocation.xyz);
+				//pixelColour.rgb = texture(skyBox, reflect(direction, vec3(0.0, 1.0, 0.0))).rgb;
+				//pixelColour.rgb = texture( textSamp00, uv ).rgb;
+				const int maxSamples = 500;
+				vec2 current = uv;
+				for (int i = 0; i < maxSamples; ++i)
+				{
+					current.y += 0.001;
+					float r = texture(textSamp05, current).r;
+					if (!(r > 0.0))
+					{
+						float deltaY = current.y - uv.y;
+						pixelColour.rgb = texture(textSamp00, vec2(uv.x, current.y + deltaY)).rgb;
+						float deltaD = d - distance(eyeLocation.xyz, texture(textSamp01, vec2(uv.x, current.y + deltaY)).xyz);
+						if (deltaD < 0.0)
+						{
+						}
+						break;
+					}
+				}
+			}
 		}
 		
 		if (bloomEnabled)
@@ -275,6 +309,8 @@ void main()
 			pixelColour.rgb += CalculateVolumetricLightScattering(textSamp02).rgb;
 		}
 
+		//pixelColour.rgb = texture(textSamp05, uv).xyz;
+
 		pixelColour.a = 1.0;
 
 		return;
@@ -284,17 +320,32 @@ void main()
 	vec3 normal = texture( textSamp01, uv ).rgb - 1.;
 	vec3 pos = texture( textSamp02, uv ).rgb;
 
+	float d = distance(eyeLocation.xyz, pos);
+
 	pixelColour = calcualteLightContrib(col, normal, pos, vec4(0.));
+	
+	if (texture(textSamp05, uv).r > 0.0)
+	{
+		vec3 direction = normalize(pos - eyeLocation.xyz);
+		pixelColour.rgb = texture(skyBox, reflect(direction, vec3(0.0, 1.0, 0.0))).rgb;
+	}
+
+	unlitColour.xyz = texture(textSamp03, uv).xyz;
+	unlitColour.a = 1.0;
+
 	if (texture(textSamp04, uv).r > 0.0)
 	{
 		pixelColour.rgb = col;
 	}
-	bloomColour = BloomCutoff(pixelColour);
 
-	positionColour.rgb = pos;
+	pixelColour.a = 1.0;
+
+	bloomColour = BloomCutoff(pixelColour);	// BLOOM TEXTURE
+
+	positionColour.rgb = pos;	// POSITION TEXTURE, just copy it to the next buffer
 	positionColour.a = 1.;
 
-	normalColour = vec4(distance(pos, eyeLocation.xyz)) / 1000.0;
+	normalColour = vec4(distance(pos, eyeLocation.xyz)) / 1000.0;	// CUSTOM COLOURED DEPTH BUFFER FOR VOLUMETRIC LIGHTING
 	normalColour.r *= theLights[0].diffuse.r;
 	normalColour.g *= theLights[0].diffuse.g;
 	normalColour.b *= theLights[0].diffuse.b;

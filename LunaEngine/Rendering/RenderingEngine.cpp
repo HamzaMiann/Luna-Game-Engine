@@ -339,8 +339,8 @@ void RenderingEngine::DrawObject(cGameObject& object, mat4 const& v, mat4 const&
 	MISC EFFECTS
 
 	*/
-	bool isScope = object.tag == "scope";
-	shader.SetBool("isScope", (int)isScope);
+	bool isUnique = object.tag == "ground";
+	shader.SetBool("isUnique", (float)isUnique);
 
 
 	/*
@@ -373,12 +373,12 @@ void RenderingEngine::DrawObject(cGameObject& object, mat4 const& v, mat4 const&
 	SKYBOX
 
 	*/
+	shader.SetCubemap("skyBox", cBasicTextureManager::Instance()->getTextureIDFromName(skyboxName));
 	if (object.tag != "skybox")
 	{
 		// Don't draw back facing triangles (default)
 		glCullFace(GL_BACK);
 		shader.SetBool("isSkybox", GL_FALSE);
-		shader.SetCubemap("skyBox", cBasicTextureManager::Instance()->getTextureIDFromName(skyboxName));
 		SetUpTextureBindingsForObject(object);
 	}
 	else
@@ -387,7 +387,6 @@ void RenderingEngine::DrawObject(cGameObject& object, mat4 const& v, mat4 const&
 		// Because we are inside the object, so it will force a draw on the "back" of the sphere 
 		glCullFace(GL_FRONT);
 		shader.SetBool("isSkybox", GL_TRUE);
-		shader.SetCubemap("skyBox", cBasicTextureManager::Instance()->getTextureIDFromName(skyboxName));
 	}
 
 	mat4 m(1.f);
@@ -688,6 +687,7 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	shader.SetTexture(previousFBO.normalTexture_ID, "textSamp02", 2);	// LIGHTING DEPTH BUFFER TEXTURE
 	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM CUTOFF TEXTURE
 	shader.SetTexture(noise, "textSamp04", 4);							// NOISE TEXTURE
+	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp05", 5);							// REFLECTIVE SURFACES TEXTURE
 
 	shader.SetBool("isFinalPass", GL_TRUE);
 

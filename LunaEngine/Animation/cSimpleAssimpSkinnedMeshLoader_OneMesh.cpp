@@ -217,9 +217,11 @@ void cSimpleAssimpSkinnedMesh::BoneTransform( float TimeInSeconds,
 {
 	glm::mat4 Identity(1.0f);
 
-	float TicksPerSecond = static_cast<float>(this->pScene->mAnimations[0]->mTicksPerSecond != 0 ?
+	float TicksPerSecond = 0.f;
+	float duration = 0.f;
+	/*float TicksPerSecond = static_cast<float>(this->pScene->mAnimations[0]->mTicksPerSecond != 0 ?
 		this->pScene->mAnimations[0]->mTicksPerSecond : 25.0);
-	float duration = (float)this->pScene->mAnimations[0]->mDuration;
+	float duration = (float)this->pScene->mAnimations[0]->mDuration;*/
 
 	std::map< std::string /*animation FRIENDLY name*/,
 		sAnimationInfo >::iterator itAnimation = this->mapAnimationFriendlyNameTo_pScene.find(animationName);		// Animations

@@ -26,7 +26,7 @@ uniform vec4 tex_0_3_ratio;		// x = 0, y = 1, z = 2, w = 3
 uniform samplerCube skyBox;
 
 
-uniform bool isScope;
+uniform bool isUnique;
 
 // Globals
 in float fiTime;
@@ -85,12 +85,13 @@ void main()
 		return;
 	}
 
-	if (isScope)
+	if (isUnique)
 	{
-		vec3 tex = texture( textSamp00, fUVx2.st ).rgb;
-		tex = mix(tex, GetRandValue().rgb * 0.7, 0.5);
-		pixelColour = vec4(tex, diffuseColour.a);
-		return;
+		bloomColour = vec4(1.0);
+		//vec3 tex = texture( textSamp00, fUVx2.st ).rgb;
+		//tex = mix(tex, GetRandValue().rgb * 0.7, 0.5);
+		//pixelColour = vec4(tex, diffuseColour.a);
+		//return;
 	}
 
 	vec3 tex0_RGB = texture( textSamp00, fUVx2.st ).rgb;
@@ -112,6 +113,7 @@ void main()
 	pixelColour.rgb = mix(pixelColour.rgb, reflectiveColour.rgb, reflectivity);
 	pixelColour.rgb = mix(pixelColour.rgb, refractiveColour.rgb, refractivity);
 	pixelColour.a = 1.0;
+	//pixelColour.xyz = vec3(fUVx2.st, 0.0);
 
 	return;
 

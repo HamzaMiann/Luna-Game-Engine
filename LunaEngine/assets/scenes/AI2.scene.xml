@@ -23,6 +23,9 @@
 		<Texture name="blue.png"/>
 		<Texture name="red.png"/>
 		<Texture name="Ground_Dirt_007_basecolor.png"/>
+		<Texture name="Mutant_diffuse.bmp"/>
+		<Texture name="Mutant_diffuse.png"/>
+		<Texture name="Mutant_diffuse.jpg"/>
 		<Texture name="noise.jpg"/>
     <Skybox name="sky">
       <Right texture="mountains_right.jpg"/>
@@ -39,6 +42,7 @@
     <Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
     <Model file="cube.ply" friendlyName="cube" shader="basic"/>
     <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
+    <Model file="Mutant.fbx" friendlyName="mutant" shader="basic"/>
     
     
     <Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen" shader="basic"/>
@@ -58,6 +62,17 @@
       <Animation file="RPG-Jump.fbx" friendlyName="jump"/>
       <Animation file="RPG-Attack.fbx" friendlyName="attack"/>
       <Animation file="RPG-Run-Jump.fbx" friendlyName="run-jump"/>
+    </AnimationProfile>
+    <AnimationProfile profile="mutant" mesh="Mutant.fbx">
+      <Animation file="Mutant Breathing Idle.fbx" friendlyName="idle"/>
+      <Animation file="Mutant Walking.fbx" friendlyName="walk"/>
+      <Animation file="Mutant Run.fbx" friendlyName="run"/>
+      <Animation file="Mutant Walk Back.fbx" friendlyName="walk-backwards"/>
+      <Animation file="Mutant Right Strafe.fbx" friendlyName="walk-right"/>
+      <Animation file="Mutant Left Strafe.fbx" friendlyName="walk-left"/>
+      <Animation file="Mutant Jump.fbx" friendlyName="jump"/>
+      <Animation file="Mutant Swiping.fbx" friendlyName="attack"/>
+      <Animation file="Mutant Run Jump.fbx" friendlyName="run-jump"/>
     </AnimationProfile>
   </Animations>
 
@@ -236,32 +251,32 @@
       </Components>
     </GameObject>
 
-    <GameObject mesh="character" tag="player" shader="basic">
+    <GameObject mesh="mutant" tag="player" shader="basic">
       <Position x="7.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>0.02</Scale>
+      <Scale>0.04</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">blue.png</Texture>
+      <Texture ratio="1.0">Mutant_diffuse.bmp</Texture>
 
       <Components>
-        <AnimationController profile="character" default="idle"/>
+        <AnimationController profile="mutant" default="idle"/>
         
         <CharacterController>
           <Forward x="0" y="0" z="-1"/>
-          <Offset x="-2.0" y="3.5" z="0"/>
+          <Offset x="-2.5" y="5.0" z="0"/>
           <CameraDistance>6.0</CameraDistance>
-          <Speed>5.0</Speed>
+          <Speed>4.0</Speed>
           <MouseSpeed>0.15</MouseSpeed>
         </CharacterController>
 
         <SphereBody>
           <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-          <Mass>1.0</Mass>
+          <Mass>10.0</Mass>
           <GFactor>1.0</GFactor>
-          <Offset x="0.000000" y="1.000000" z="0.000000"/>
-          <Radius>1.0</Radius>
+          <Offset x="0.000000" y="2.000000" z="0.000000"/>
+          <Radius>2.0</Radius>
         </SphereBody>
         
       </Components>
