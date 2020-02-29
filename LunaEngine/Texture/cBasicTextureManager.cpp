@@ -43,26 +43,41 @@ struct Pixel
 	uchar r;
 	uchar g;
 	uchar b;
-	uchar a = UCHAR_MAX;
+	//uchar a = UCHAR_MAX;
 };
 
 bool cBasicTextureManager::Create2DTextureFromPNGFile(std::string textureFileName, bool bGenerateMIPMap)
 {
 
 	std::string fileToLoadFullPath = this->m_basePath + "/" + textureFileName;
-
-	// TAKEN FROM https://learnopengl.com/Getting-started/Textures
-
-
-	// load and generate the texture
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load(fileToLoadFullPath.c_str(), &width, &height, &nrChannels, 0);
-	if (!data)
+	
+	std::vector<unsigned char> image;
+	unsigned int width, height;
+	unsigned error = lodepng::decode(image, width, height, fileToLoadFullPath);
+	if (error != 0)
 	{
-		stbi_image_free(data);
 		return false;
 	}
+	
 
+	// Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
+	//size_t u2 = 1; while (u2 < width) u2 *= 2;
+	//size_t v2 = 1; while (v2 < height) v2 *= 2;
+	//// Ratio for power of two version compared to actual version, to render the non power of two image with proper size.
+	//double u3 = (double)width / u2;
+	//double v3 = (double)height / v2;
+
+	//std::vector<unsigned char> image2(u2 * v2 * 4);
+	//for (size_t y = 0; y < height; y++)
+	//{
+	//	for (size_t x = 0; x < width; x++)
+	//	{
+	//		for (size_t c = 0; c < 4; c++)
+	//		{
+	//			image2[4 * u2 * y + 4 * x + c] = image[4 * width * y + 4 * x + c];
+	//		}
+	//	}
+	//}
 
 	unsigned int texture;
 	glGenTextures(1, &texture);
@@ -72,97 +87,17 @@ bool cBasicTextureManager::Create2DTextureFromPNGFile(std::string textureFileNam
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, (GL_RGBA - 4 + nrChannels), GL_UNSIGNED_BYTE, data);
 
-
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
 	if (bGenerateMIPMap)
 	{
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	this->m_map_NameToID[textureFileName] = texture;
 
-	stbi_image_free(data);
 	return true;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//std::string fileToLoadFullPath = this->m_basePath + "/" + textureFileName;
-	//
-	//std::vector<unsigned char> image;
-	//unsigned int width, height;
-	//unsigned error = lodepng::decode(image, width, height, fileToLoadFullPath);
-	//if (error != 0)
-	//{
-	//	return false;
-	//}
-
-	//std::vector<Pixel> pixels;
-	//pixels.resize(width * height);
-
-	//for (unsigned int x = 0; x < width; ++x)
-	//{
-	//	for (unsigned int y = 0; y < height; y += 4)
-	//	{
-	//		pixels[width + height + 0].r = 
-	//	}
-	//}
-	//
-
-	//// Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
-	////size_t u2 = 1; while (u2 < width) u2 *= 2;
-	////size_t v2 = 1; while (v2 < height) v2 *= 2;
-	////// Ratio for power of two version compared to actual version, to render the non power of two image with proper size.
-	////double u3 = (double)width / u2;
-	////double v3 = (double)height / v2;
-
-	////std::vector<unsigned char> image2(u2 * v2 * 4);
-	////for (size_t y = 0; y < height; y++)
-	////{
-	////	for (size_t x = 0; x < width; x++)
-	////	{
-	////		for (size_t c = 0; c < 4; c++)
-	////		{
-	////			image2[4 * u2 * y + 4 * x + c] = image[4 * width * y + 4 * x + c];
-	////		}
-	////	}
-	////}
-
-	//unsigned int texture;
-	//glGenTextures(1, &texture);
-	//glBindTexture(GL_TEXTURE_2D, texture);
-	//// set the texture wrapping/filtering options (on the currently bound texture object)
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
-	////glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
-	////glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
-	//if (bGenerateMIPMap)
-	//{
-	//	glGenerateMipmap(GL_TEXTURE_2D);
-	//}
-	//this->m_map_NameToID[textureFileName] = texture;
-
-	//return true;
 }
 
 bool cBasicTextureManager::Create2DTextureFromJPGFile(std::string textureFileName, bool bGenerateMIPMap)
@@ -181,6 +116,19 @@ bool cBasicTextureManager::Create2DTextureFromJPGFile(std::string textureFileNam
 		return false;
 	}
 
+	std::vector<Pixel> pixels;
+	pixels.resize(width * height);
+	for (unsigned int y = 0; y < height; ++y)
+	{
+		for (unsigned int x = 0; x < width; ++x)
+		{
+			unsigned int newY = height - y - 1;
+			uchar* rgb = &data[x * 3u + y * width * 3u];
+			pixels[x + newY * width].r = rgb[0];
+			pixels[x + newY * width].g = rgb[1];
+			pixels[x + newY * width].b = rgb[2];
+		}
+	}
 
 	unsigned int texture;
 	glGenTextures(1, &texture);
@@ -190,7 +138,7 @@ bool cBasicTextureManager::Create2DTextureFromJPGFile(std::string textureFileNam
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, &pixels[0]);
 
 
 	if (bGenerateMIPMap)

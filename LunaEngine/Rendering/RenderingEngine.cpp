@@ -22,22 +22,25 @@ RenderingEngine::RenderingEngine()
 
 	float ratio = width / (float)height;
 
-	projection = glm::perspective(0.6f,		// FOV
-								  ratio,			// Aspect ratio
+	projection = glm::perspective(0.6f,			// FOV
+								  ratio,		// Aspect ratio
 								  0.1f,			// Near clipping plane
-								  100'000.f);		// Far clipping plane
+								  1000.f);	// Far clipping plane
 
 	view = mat4(1.f);
 
 	quad.meshName = "screen_quad";
 	quad.shader = Shader::FromName("post");
+
 	skyBox.transform.pos = vec3(0.f);
 	skyBox.meshName = "sphere";
 	skyBox.shader = Shader::FromName("basic");
 	skyBox.tag = "skybox";
 	skyBox.transform.scale = vec3(900.0f);
+
+	skyboxName = "city";
+
 	screenPos = vec2(0.f, 0.f);
-	skyboxName = "sky";
 	noise.SetTexture("noise.jpg");
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
@@ -683,6 +686,7 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	shader.SetFloat("iTime", (float)glfwGetTime());
 
 	shader.SetTexture(previousFBO.colourTexture_ID, "textSamp00", 0);	// LIT SCENE TEXTURE
+	//shader.SetTexture(noise, "textSamp00", 0);	// LIT SCENE TEXTURE
 	shader.SetTexture(previousFBO.positionTexture_ID, "textSamp01", 1);	// POSITION TEXTURE
 	shader.SetTexture(previousFBO.normalTexture_ID, "textSamp02", 2);	// LIGHTING DEPTH BUFFER TEXTURE
 	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM CUTOFF TEXTURE

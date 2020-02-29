@@ -23,10 +23,16 @@
 		<Texture name="blue.png"/>
 		<Texture name="red.png"/>
 		<Texture name="Ground_Dirt_007_basecolor.png"/>
-		<Texture name="Mutant_diffuse.bmp"/>
-		<Texture name="Mutant_diffuse.png"/>
 		<Texture name="Mutant_diffuse.jpg"/>
 		<Texture name="noise.jpg"/>
+    <Skybox name="city">
+      <Right texture="city_left.jpg"/>
+      <Left texture="city_right.jpg"/>
+      <Top texture="city_up.jpg"/>
+      <Bottom texture="city_down.jpg"/>
+      <Front texture="city_front.jpg"/>
+      <Back texture="city_back.jpg"/>
+    </Skybox>
     <Skybox name="sky">
       <Right texture="mountains_right.jpg"/>
       <Left texture="mountains_left.jpg"/>
@@ -79,7 +85,7 @@
 	<Lights>
 
     <Light>
-      <Position x="-60.000000" y="50" z="-100.000000" w="1.000000"/>
+      <Position x="-100.000000" y="50" z="-60.000000" w="1.000000"/>
       <Diffuse x="0.900000" y="0.800000" z="0.300000" w="1.000000"/>
       <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
       <Atten x="0.900000" y="0.0000000100" z="0.000000020000" w="1000.000000"/>
@@ -258,7 +264,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.0">Mutant_diffuse.bmp</Texture>
+      <Texture ratio="1.0">Mutant_diffuse.jpg</Texture>
 
       <Components>
         <AnimationController profile="mutant" default="idle"/>
