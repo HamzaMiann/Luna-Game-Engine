@@ -27,6 +27,8 @@ uniform sampler2D textSamp03;	// bloom
 uniform sampler2D textSamp04;	// unlit
 uniform sampler2D textSamp05;	// REFLECTIVE
 
+uniform sampler2D worleyTexture;
+
 uniform samplerCube skyBox;
 
 uniform vec2 lightPositionOnScreen;
@@ -165,7 +167,7 @@ vec4 circular_blur(sampler2D tex, float offset)
 vec4 DOF(sampler2D mainTexture, sampler2D positionTexture)
 {
 	const float near_focus = 10.0;
-	const float focus_length = 60.0;
+	const float focus_length = 50.0;
 	const float far_blur_scale = 5.0;
 	const float near_blur_scale = 15.0;
 
@@ -234,13 +236,154 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 
 	float dustAmount = length(colour.rgb);
     colour *= exposure;
-	uv = vec2(fUVx2.x + (fiTime / (15.0)), fUVx2.y + (fiTime / -20.0));
-	colour.rgb += (texture(textSamp04, uv).rgb / 2.0) * exposure * dustAmount;
+	//uv = vec2(fUVx2.x + (fiTime / (15.0)), fUVx2.y + (fiTime / -20.0));
+	//colour.rgb += (texture(textSamp04, uv - lightPositionOnScreen.xy / 400.).rgb / 2.0) * exposure * dustAmount;
 
 	return colour;
 }
 
-void main()  
+struct Ray
+{
+	vec3 ro;
+	vec3 rd;
+};
+
+struct Plane
+{
+	vec3 n;
+	vec3 p;
+	float d;
+};
+
+float intersect(Ray ray, Plane p)
+{
+	if (dot(ray.rd, p.n) >= 0.0)
+	{
+		return 0.0;
+	}
+
+	float t = (-dot(ray.ro, p.n) + p.d) / dot(ray.rd, p.n);
+	return t;
+}
+
+Plane GetPlane1()
+{
+	Plane p;
+	p.n = vec3(0, -1, 0);
+	p.p = vec3(1, 100, 0);
+	p.d = -100;
+	return p;
+}
+
+Plane GetPlane2()
+{
+	Plane p;
+	p.n = vec3(0, -1, 0);
+	p.p = vec3(1, 120, 0);
+	p.d = -120;
+	return p;
+}
+
+float GetDensityAtPosition(vec3 samplePosition)
+{
+	float density = 0.0;
+	vec2 UVxz = (samplePosition.xz) / 20.;
+	vec2 UVxy = (samplePosition.xy) / 20.;
+	vec2 UVyz = (samplePosition.yz) / 50.;
+
+	density += length(texture(worleyTexture, UVxz).rgb);
+	density += length(texture(worleyTexture, UVxy).rgb);
+	density += length(texture(worleyTexture, UVyz).rgb);
+
+	return density / 3.;
+}
+
+float random (in vec2 st) {
+    return fract(sin(dot(st.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+float noise (in vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
+}
+
+#define OCTAVES 6
+float fbm (in vec2 st) {
+    // Initial values
+    float value = 0.0;
+    float amplitude = .5;
+    float frequency = 0.;
+    //
+    // Loop of octaves
+    for (int i = 0; i < OCTAVES; i++) {
+        value += amplitude * noise(st);
+        st *= 2.;
+        amplitude *= .5;
+    }
+    return value;
+}
+
+void RayTracePlane(Ray ray)
+{
+	vec2 uv = fUVx2.st;
+
+	float t = intersect(ray, GetPlane1());
+	if (t > 0.0 && t < distance(texture( textSamp01, uv ).xyz, ray.ro))
+	{
+		vec3 P = ray.ro + ray.rd * t;
+//		Ray ray2;
+//		ray2.ro = P;
+//		ray2.rd = ray.rd;
+//
+//		float t2 = intersect(ray2, GetPlane2());
+//		vec3 P2 = ray2.ro + ray2.rd * t2;
+//
+//		const int MAX_SAMPLES = 10;
+//		vec3 rayStep = (P2 - P) / MAX_SAMPLES;
+//		vec3 ro = P;
+//		float density = 0.;
+//		const float max_density = 100.;
+//
+//		for (int i = 0; i < MAX_SAMPLES; ++i)
+//		{
+//			vec3 samplePosition = ro + rayStep * i;
+//			density += GetDensityAtPosition(samplePosition);
+//		}
+//
+//		density /= MAX_SAMPLES;
+
+		float density = length(1. - texture(worleyTexture, P.xz / 500.));
+		density = fbm((P.xz + fiTime) / 50.);
+
+		//density = clamp(density, 0., max_density) / max_density;
+		float ratio = exp(-density) / (t / 200.);
+		vec3 colour = vec3(ratio);
+		//float len = min(1.0, length(colour));
+		//float ratio = length(colour /  len);
+		pixelColour.rgb = mix(pixelColour.rgb, colour, clamp(ratio - 0.1, 0., 1.));
+
+//		vec3 colour = texture(textSamp04, (P.xz + fiTime) / 100.).rgb;
+//		float len = min(1.0, length(colour));
+//		float ratio = length(colour /  len);
+//		pixelColour.rgb = mix(pixelColour.rgb, colour, ratio / (t / 90.));
+	}
+}
+
+void main()
 {
 	vec2 uv = fUVx2.st;
 	unlitColour = vec4(0.0);
@@ -311,6 +454,10 @@ void main()
 
 		//pixelColour.rgb = texture(textSamp05, uv).xyz;
 
+		Ray ray;
+		ray.ro = eyeLocation.xyz;
+		ray.rd = normalize(texture(textSamp01, uv).xyz - ray.ro);
+		RayTracePlane(ray);
 		pixelColour.a = 1.0;
 
 		return;

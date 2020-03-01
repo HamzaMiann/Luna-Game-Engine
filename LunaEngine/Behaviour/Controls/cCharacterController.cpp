@@ -83,6 +83,7 @@ void cCharacterController::update(float dt)
 	Camera::main_camera->Eye = transform.Position()
 		+ (settings.camera_offset * rotX)
 		+ (direction * settings.distance_from_object);
+
 	Camera::main_camera->Target = transform.Position()
 		+ (settings.camera_offset * rotX)
 		+ direction;

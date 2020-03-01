@@ -24,7 +24,10 @@
 		<Texture name="red.png"/>
 		<Texture name="Ground_Dirt_007_basecolor.png"/>
 		<Texture name="Mutant_diffuse.jpg"/>
+		<Texture name="fx3_Panels_Color.png"/>
 		<Texture name="noise.jpg"/>
+		<Texture name="worley.jpg"/>
+		<Texture name="worley.png"/>
     <Skybox name="city">
       <Right texture="city_left.jpg"/>
       <Left texture="city_right.jpg"/>
@@ -488,7 +491,7 @@
     <GameObject mesh="plane" tag="ground" shader="basic">
       <Position x="0.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>0.5</Scale>
+      <Scale>2.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>

@@ -9,6 +9,8 @@
 #include <Components/cAnimationController.h>
 #include <EntityManager/cEntityManager.h>
 
+cTexture worleyNoise;
+cTexture worleyNoise2;
 
 RenderingEngine::RenderingEngine()
 {
@@ -42,6 +44,9 @@ RenderingEngine::RenderingEngine()
 
 	screenPos = vec2(0.f, 0.f);
 	noise.SetTexture("noise.jpg");
+
+	worleyNoise.SetTexture("worley.png");
+	worleyNoise2.SetTexture("worley.jpg");
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -691,7 +696,8 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	shader.SetTexture(previousFBO.normalTexture_ID, "textSamp02", 2);	// LIGHTING DEPTH BUFFER TEXTURE
 	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM CUTOFF TEXTURE
 	shader.SetTexture(noise, "textSamp04", 4);							// NOISE TEXTURE
-	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp05", 5);							// REFLECTIVE SURFACES TEXTURE
+	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp05", 5);	// REFLECTIVE SURFACES TEXTURE
+	shader.SetTexture(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
 
 	shader.SetBool("isFinalPass", GL_TRUE);
 
