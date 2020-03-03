@@ -60,6 +60,13 @@ namespace nPhysics
 		virtual void UpdateTransform() override;
 		virtual void GetTransform(mat4& transformOut) override;
 
+
+		/*
+
+		COLLISION
+
+		*/
+		void CollidedWith(iPhysicsComponent* other) override;
 		
 	};
 }

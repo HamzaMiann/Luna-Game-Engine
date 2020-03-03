@@ -110,11 +110,13 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>glfw3.lib;fmod_vc.lib;assimp-vc142-mtd.lib;lua5.3.5-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;fmod_vc.lib;steam_api64.lib;assimp-vc142-mtd.lib;lua5.3.5-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y "$(SolutionDir)lib\$(Configuration)64\fmod.dll" "$(OutDir)"
-xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mtd.dll" "$(OutDir)"</Command>
+xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mtd.dll" "$(OutDir)"
+xcopy /y "$(SolutionDir)lib\$(Configuration)64\steam_api64.dll" "$(OutDir)"
+xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -149,11 +151,13 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mtd.dll" "$(OutDir)"
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glfw3.lib;fmod_vc.lib;assimp-vc142-mt.lib;lua5.3.5-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;fmod_vc.lib;steam_api64.lib;assimp-vc142-mt.lib;lua5.3.5-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y "$(SolutionDir)lib\$(Configuration)64\fmod.dll" "$(OutDir)"
-xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"</Command>
+xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"
+xcopy /y "$(SolutionDir)lib\$(Configuration)64\steam_api64.dll" "$(OutDir)"
+xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -223,6 +227,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClCompile Include="Mesh\cVAOManager.cpp" />
     <ClCompile Include="FBO\cFBO.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
+    <ClCompile Include="SteamModule.cpp" />
     <ClCompile Include="Texture\cTexture.cpp" />
     <ClCompile Include="_GL\glad.c" />
     <ClCompile Include="Physics\octree.cpp" />
@@ -304,6 +309,7 @@ xcopy /y "$(SolutionDir)lib\$(Configuration)64\assimp-vc142-mt.dll" "$(OutDir)"<
     <ClInclude Include="Shader\cShaderManager.h" />
     <ClInclude Include="Mesh\cVAOManager.h" />
     <ClInclude Include="Shader\Shader.h" />
+    <ClInclude Include="SteamModule.h" />
     <ClInclude Include="Texture\cTexture.h" />
     <ClInclude Include="Texture\stb_image.h" />
     <ClInclude Include="_GL\GLCommon.h" />

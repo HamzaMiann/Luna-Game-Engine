@@ -366,8 +366,8 @@ void RayTracePlane(Ray ray)
 //
 //		density /= MAX_SAMPLES;
 
-		float density = length(1. - texture(worleyTexture, P.xz / 500.));
-		density = fbm((P.xz + fiTime) / 50.);
+		float density = length(1. - texture(worleyTexture, (P.xz) / 500.));
+		density = fbm((P.xz + fiTime * 10.) / 50.);
 
 		//density = clamp(density, 0., max_density) / max_density;
 		float ratio = exp(-density) / (t / 200.);

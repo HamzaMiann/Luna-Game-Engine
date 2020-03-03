@@ -1,6 +1,6 @@
 #include "cCubeComponent.h"
 #include "cPhysicsFactory.h"
-
+#include <interfaces/Behaviour/iBehaviour.h>
 
 namespace nPhysics
 {
@@ -72,6 +72,18 @@ namespace nPhysics
 		btTransform transform;
 		mBody->getMotionState()->getWorldTransform(transform);
 		nConvert::ToSimple(transform, transformOut);
+	}
+
+	void cCubeComponent::CollidedWith(iPhysicsComponent* other)
+	{
+		for (iComponent* component : parent.Components())
+		{
+			iBehaviour* behaviour = dynamic_cast<iBehaviour*>(component);
+			if (behaviour)
+			{
+				behaviour->OnCollide(&other->parent);
+			}
+		}
 	}
 
 	void cCubeComponent::AddForce(const glm::vec3& force)

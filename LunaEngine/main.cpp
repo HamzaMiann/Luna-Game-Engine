@@ -1,8 +1,12 @@
 
 #include <iApplication.h>
+#include <SteamModule.h>
 
 int main(void)
 {
+	// Initialize Steam
+	InitSteam();
+
 	if (iApplication::_instance)
 	{
 		iApplication::_instance->Init();
@@ -13,6 +17,9 @@ int main(void)
 	{
 		std::cout << "No application found..." << std::endl;
 	}
+
+	// Release Steam
+	ReleaseSteam();
 
 	return 0;
 }

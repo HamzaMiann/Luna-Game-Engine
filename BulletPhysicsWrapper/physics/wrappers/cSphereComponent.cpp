@@ -139,10 +139,13 @@ namespace nPhysics
 
 	void cSphereComponent::CollidedWith(iPhysicsComponent* other)
 	{
-		iBehaviour* behaviour = parent.GetComponent<iBehaviour>();
-		if (behaviour)
+		for (iComponent* component : parent.Components())
 		{
-			behaviour->OnCollide(&other->parent);
+			iBehaviour* behaviour = dynamic_cast<iBehaviour*>(component);
+			if (behaviour)
+			{
+				behaviour->OnCollide(&other->parent);
+			}
 		}
 	}
 }
