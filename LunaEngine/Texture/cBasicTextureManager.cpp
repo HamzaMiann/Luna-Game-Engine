@@ -46,6 +46,14 @@ struct Pixel
 	//uchar a = UCHAR_MAX;
 };
 
+struct PixelA
+{
+	uchar r;
+	uchar g;
+	uchar b;
+	uchar a = UCHAR_MAX;
+};
+
 bool cBasicTextureManager::Create2DTextureFromPNGFile(std::string textureFileName, bool bGenerateMIPMap)
 {
 
@@ -57,6 +65,21 @@ bool cBasicTextureManager::Create2DTextureFromPNGFile(std::string textureFileNam
 	if (error != 0)
 	{
 		return false;
+	}
+
+	std::vector<PixelA> pixels;
+	pixels.resize(width * height);
+	for (unsigned int y = 0; y < height; ++y)
+	{
+		for (unsigned int x = 0; x < width; ++x)
+		{
+			unsigned int newY = height - y - 1;
+			uchar* rgba = &image[x * 4u + y * width * 4u];
+			pixels[x + newY * width].r = rgba[0];
+			pixels[x + newY * width].g = rgba[1];
+			pixels[x + newY * width].b = rgba[2];
+			pixels[x + newY * width].a = rgba[3];
+		}
 	}
 	
 
@@ -88,7 +111,8 @@ bool cBasicTextureManager::Create2DTextureFromPNGFile(std::string textureFileNam
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
 	//glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
 	if (bGenerateMIPMap)

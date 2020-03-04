@@ -75,7 +75,10 @@ void main()
 
 	if ( isSkybox )
 	{
-		vec3 skyColour = texture( skyBox, fNormal.xyz ).rgb;
+		vec3 normal = fNormal.xyz;
+		//normal.x = sin(fiTime);
+		//normal.z = cos(-fiTime);
+		vec3 skyColour = texture( skyBox, normal ).rgb;
 		pixelColour.rgb = skyColour.rgb;
 		pixelColour.a = 1.0;				// NOT transparent
 		
@@ -110,6 +113,10 @@ void main()
 	vec3 refractiveColour = texture(skyBox, refract(direction, fNormal.xyz, 1.0 / 1.52)).rgb;
 
 	pixelColour = vec4(texRGB, diffuseColour.a);
+	if (pixelColour.a < 0.99)
+	{
+		discard;
+	}
 	pixelColour.rgb = mix(pixelColour.rgb, reflectiveColour.rgb, reflectivity);
 	pixelColour.rgb = mix(pixelColour.rgb, refractiveColour.rgb, refractivity);
 	pixelColour.a = 1.0;

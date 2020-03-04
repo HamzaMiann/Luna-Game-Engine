@@ -28,6 +28,8 @@
 		<Texture name="noise.jpg"/>
 		<Texture name="worley.jpg"/>
 		<Texture name="worley.png"/>
+		<Texture name="grass_quad.png"/>
+    
     <Skybox name="city">
       <Right texture="city_left.jpg"/>
       <Left texture="city_right.jpg"/>
@@ -52,6 +54,7 @@
     <Model file="cube.ply" friendlyName="cube" shader="basic"/>
     <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
     <Model file="Mutant.fbx" friendlyName="mutant" shader="basic"/>
+    <Model file="1x1_Star_1_Quad_2_Sided_xyz_n_uv.ply" friendlyName="grass" shader="basic"/>
     
     
     <Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen" shader="basic"/>

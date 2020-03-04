@@ -18,8 +18,8 @@
 #include <EntityManager/cEntityManager.h>
 #include <Physics/global_physics.h>
 #include <InputManager.h>
-#include <Behaviour/Controls/cCharacterController.h>
 #include <Rendering/RenderingEngine.h>
+#include <Physics/Mathf.h>
 
 iApplication* cApplication::app = cApplication::Instance();
 
@@ -89,6 +89,21 @@ void cApplication::Run()
 	cDebugRenderer& debug_renderer = cDebugRenderer::Instance();
 	cEntityManager& entity_manager = cEntityManager::Instance();
 	cBehaviourManager& behaviour_manager = cBehaviourManager::Instance();
+
+	for (unsigned int i = 0; i < 30; ++i)
+	{
+		float x = Mathf::randInRange(-20, 20);
+		float z = Mathf::randInRange(-20, 20);
+
+		vec3 pos(x, 1.f, z);
+		cGameObject* obj = new cGameObject;
+		obj->meshName = "grass";
+		obj->tag = "grass";
+		obj->shader = Shader::FromName("basic");
+		obj->transform.Position(pos);
+		obj->texture[0].SetTexture("grass_quad.png", 1.f);
+		entity_manager.AddEntity(obj);
+	}
 
 
 	int width, height;
