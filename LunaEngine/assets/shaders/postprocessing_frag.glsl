@@ -284,59 +284,6 @@ Plane GetPlane2()
 	return p;
 }
 
-float GetDensityAtPosition(vec3 samplePosition)
-{
-	float density = 0.0;
-	vec2 UVxz = (samplePosition.xz) / 20.;
-	vec2 UVxy = (samplePosition.xy) / 20.;
-	vec2 UVyz = (samplePosition.yz) / 50.;
-
-	density += length(texture(worleyTexture, UVxz).rgb);
-	density += length(texture(worleyTexture, UVxy).rgb);
-	density += length(texture(worleyTexture, UVyz).rgb);
-
-	return density / 3.;
-}
-
-float random (in vec2 st) {
-    return fract(sin(dot(st.xy,
-                         vec2(12.9898,78.233)))*
-        43758.5453123);
-}
-
-float noise (in vec2 st) {
-    vec2 i = floor(st);
-    vec2 f = fract(st);
-
-    // Four corners in 2D of a tile
-    float a = random(i);
-    float b = random(i + vec2(1.0, 0.0));
-    float c = random(i + vec2(0.0, 1.0));
-    float d = random(i + vec2(1.0, 1.0));
-
-    vec2 u = f * f * (3.0 - 2.0 * f);
-
-    return mix(a, b, u.x) +
-            (c - a)* u.y * (1.0 - u.x) +
-            (d - b) * u.x * u.y;
-}
-
-#define OCTAVES 6
-float fbm (in vec2 st) {
-    // Initial values
-    float value = 0.0;
-    float amplitude = .5;
-    float frequency = 0.;
-    //
-    // Loop of octaves
-    for (int i = 0; i < OCTAVES; i++) {
-        value += amplitude * noise(st);
-        st *= 2.;
-        amplitude *= .5;
-    }
-    return value;
-}
-
 #define HASHSCALE1 vec3(.1031)
 
 vec3 hash(vec3 p3)
@@ -397,20 +344,20 @@ void RayTracePlane(Ray ray)
 		float t2 = intersect(ray2, GetPlane2());
 		vec3 P2 = ray2.ro + ray2.rd * t2;
 
-		const int DENSITY_SAMPLES = 10;
+		const int NUM_DENSITY_SAMPLES = 10;
 		vec3 origin = P;
-		vec3 marchStep = (P2 - P) / DENSITY_SAMPLES;
+		vec3 marchStep = (P2 - P) / NUM_DENSITY_SAMPLES;
 
 		float density = 0.;
 
-		for (int i = 0; i < DENSITY_SAMPLES; ++i)
+		for (int i = 0; i < NUM_DENSITY_SAMPLES; ++i)
 		{
 			vec3 uv3 = marchStep * i;
 			uv3.x += fiTime;
-			density += fbm3D(uv3).y / float(DENSITY_SAMPLES);
+			density += clamp(length(fbm3D(uv3)), 0., 1.) / float(NUM_DENSITY_SAMPLES);
 		}
 
-		density *= 1.3;
+		density *= 1.1;
 		density = smoothstep(0., 1., density);
 
 		//density /= float(DENSITY_SAMPLES);

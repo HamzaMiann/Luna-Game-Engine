@@ -14,6 +14,8 @@
 
 std::vector<int> Input::keys_released;
 std::vector<int> Input::keys_pressed;
+std::vector<int> Input::buttons_pressed;
+std::vector<int> Input::buttons_released;
 Input::Scroll Input::scroll;
 
 
@@ -33,6 +35,19 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		Input::keys_released.push_back(key);
 	}
 
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (action == GLFW_PRESS)
+	{
+		Input::buttons_pressed.push_back(button);
+	}
+
+	if (action == GLFW_RELEASE)
+	{
+		Input::buttons_released.push_back(button);
+	}
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -157,6 +172,16 @@ bool Input::GetKey(int key)
 	return glfwGetKey(global::window, key);
 }
 
+bool Input::MouseButtonDown(int button)
+{
+	return buttons_pressed.size() > 0;
+}
+
+bool Input::MouseButtonUp(int button)
+{
+	return buttons_released.size() > 0;
+}
+
 void Input::LockCursor()
 {
 	glfwSetInputMode(global::window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -191,6 +216,8 @@ void Input::ClearBuffer()
 {
 	keys_pressed.clear();
 	keys_released.clear();
+	buttons_pressed.clear();
+	buttons_released.clear();
 	scroll.xoffset = 0.0;
 	scroll.yoffset = 0.0;
 }

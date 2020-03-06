@@ -44,6 +44,7 @@ void InitWindow()
 	SetKeyCallback(key_callback);
 	SetScrollCallback(scroll_callback);
 	SetDropCallback(drop_callback);
+	glfwSetMouseButtonCallback(global::window, mouse_button_callback);
 }
 
 void RunScripts()
@@ -82,6 +83,13 @@ void cApplication::Init()
 	RunScripts();
 
 }
+
+struct plane
+{
+	vec3 normal;
+	vec3 pos;
+	float constant;
+};
 
 void cApplication::Run()
 {
