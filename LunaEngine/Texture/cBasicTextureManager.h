@@ -19,6 +19,7 @@ public:
 	std::string PickRandomTexture(void);
 
 	bool Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, std::vector<unsigned char>& data, int width, int height);
+	bool Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, unsigned char* data, int width, int height);
 	bool Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, void* data, int width, int height, char hint);
 
 	bool CreateCubeTextureFromBMPFiles( std::string cubeMapName, 

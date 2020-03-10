@@ -338,6 +338,13 @@ void RayTracePlane(Ray ray)
 	{
 		vec3 P = ray.ro + ray.rd * t;
 
+		vec3 col = texture(worleyTexture, P.xz / 100.).rgb;
+		pixelColour.rgb = mix(pixelColour.rgb, col, col.r);
+		//pixelColour.rgb = vec3(fbm3D(P.xyz / 20.).r);
+		//pixelColour.rgb = mix(pixelColour.rgb, vec3(fbm3D(P.xyz / 20.).r), 0.3);
+		//pixelColour.rgb = mix(pixelColour.rgb, col, col.r);
+		return;
+
 		Ray ray2;
 		ray2.ro = P;
 		ray2.rd = ray.rd;
@@ -356,8 +363,8 @@ void RayTracePlane(Ray ray)
 			vec3 uv3 = marchStep * i;
 			//uv3.x += fiTime;
 			uv3.y += fiTime / 20.;
-			uv3.z += fiTime / 10.;
-			density += clamp(fbm3D(uv3).r, 0., 1.) / float(NUM_DENSITY_SAMPLES);
+			uv3.z += fiTime / 5.;
+			density += fbm3D(uv3).r / float(NUM_DENSITY_SAMPLES);
 		}
 
 		density = smoothstep(0., 1., density);
@@ -418,7 +425,7 @@ void main()
 		if (true)
 		{
 			float d = distance(vec2(0.5), fUVx2.st);
-			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 1.12);
+			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 0.85);
 		}
 
 

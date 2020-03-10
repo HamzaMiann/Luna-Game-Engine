@@ -266,6 +266,29 @@ bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGener
 	return true;
 }
 
+bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, unsigned char* data, int width, int height)
+{
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
+	if (bGenerateMIPMap)
+	{
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	this->m_map_NameToID[friendlyName] = texture;
+
+	return true;
+}
+
 bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, void* data, int width, int height, char hint)
 {
 	if (!data) return false;

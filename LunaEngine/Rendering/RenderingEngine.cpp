@@ -8,9 +8,11 @@
 #include <cGameObject.h>
 #include <Components/cAnimationController.h>
 #include <EntityManager/cEntityManager.h>
+#include <Texture/cWorleyTexture.h>
 
 cTexture worleyNoise;
 cTexture worleyNoise2;
+cWorleyTexture* worleyTexture;
 
 RenderingEngine::RenderingEngine()
 {
@@ -45,8 +47,14 @@ RenderingEngine::RenderingEngine()
 	screenPos = vec2(0.f, 0.f);
 	noise.SetTexture("noise.jpg");
 
-	worleyNoise.SetTexture("worley.png");
-	worleyNoise2.SetTexture("worley.jpg");
+
+	size_t width, height;
+	unsigned char* data;
+	worleyTexture = cWorleyTexture::Generate(256u, 3u);
+	data = worleyTexture->GetDataRGB(width, height);
+	cBasicTextureManager::Instance()->Create2DTexture("worley", true, data, width, height);
+	worleyNoise.SetTexture("worley");
+	worleyNoise2.SetTexture("worley");
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
