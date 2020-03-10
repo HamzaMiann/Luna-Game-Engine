@@ -4,7 +4,7 @@
 
 #include <steam/steam_api.h>
 
-#define USE_STEAM
+//#define USE_STEAM
 
 namespace steam_api
 {

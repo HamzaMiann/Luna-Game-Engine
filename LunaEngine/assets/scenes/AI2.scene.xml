@@ -30,7 +30,7 @@
 		<Texture name="worley.png"/>
 		<Texture name="grass_quad.png"/>
     
-    <Skybox name="city">
+    <Skybox name="city_">
       <Right texture="city_left.jpg"/>
       <Left texture="city_right.jpg"/>
       <Top texture="city_up.jpg"/>
@@ -38,13 +38,29 @@
       <Front texture="city_front.jpg"/>
       <Back texture="city_back.jpg"/>
     </Skybox>
-    <Skybox name="sky">
+    <!--<Skybox name="sky">
       <Right texture="mountains_right.jpg"/>
       <Left texture="mountains_left.jpg"/>
       <Top texture="mountains_top.jpg"/>
       <Bottom texture="mountains_bottom.jpg"/>
       <Front texture="mountains_front.jpg"/>
       <Back texture="mountains_back.jpg"/>
+    </Skybox>-->
+    <!--<Skybox name="city">
+      <Right texture="black.png"/>
+      <Left texture="black.png"/>
+      <Top texture="black.png"/>
+      <Bottom texture="black.png"/>
+      <Front texture="black.png"/>
+      <Back texture="black.png"/>
+    </Skybox>-->
+    <Skybox name="city">
+      <Right texture="night_left.png"/>
+      <Left texture="night_right.png"/>
+      <Top texture="night_up.png"/>
+      <Bottom texture="night_down.png"/>
+      <Front texture="night_front.png"/>
+      <Back texture="night_back.png"/>
     </Skybox>
 	</Textures>
   
@@ -91,8 +107,8 @@
 	<Lights>
 
     <Light>
-      <Position x="-100.000000" y="50" z="-60.000000" w="1.000000"/>
-      <Diffuse x="0.900000" y="0.800000" z="0.300000" w="1.000000"/>
+      <Position x="0.000000" y="50" z="100.000000" w="1.000000"/>
+      <Diffuse x="0.700000" y="0.700000" z="0.800000" w="1.000000"/>
       <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
       <Atten x="0.900000" y="0.0000000100" z="0.000000020000" w="1000.000000"/>
       <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>

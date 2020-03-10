@@ -270,8 +270,8 @@ Plane GetPlane1()
 {
 	Plane p;
 	p.n = vec3(0, -1, 0);
-	p.p = vec3(1, 20, 0);
-	p.d = -20;
+	p.p = vec3(1, 100, 0);
+	p.d = -100;
 	return p;
 }
 
@@ -279,8 +279,8 @@ Plane GetPlane2()
 {
 	Plane p;
 	p.n = vec3(0, -1, 0);
-	p.p = vec3(1, 30, 0);
-	p.d = -30;
+	p.p = vec3(1, 120, 0);
+	p.d = -120;
 	return p;
 }
 
@@ -292,6 +292,8 @@ vec3 hash(vec3 p3)
 	p3 += dot(p3, p3.yxz+19.19);
 	return fract((p3.xxy + p3.yxx)*p3.zyx);
 }
+
+
 
 vec3 noise3D( in vec3 x )
 {
@@ -309,6 +311,7 @@ vec3 noise3D( in vec3 x )
 						hash(p+vec3(1,1,1)),f.x),f.y),f.z);
 }
 
+
 const mat3 m3 = mat3( 0.00,  0.80,  0.60,
 					-0.80,  0.36, -0.48,
 					-0.60, -0.48,  0.64 );
@@ -319,12 +322,10 @@ vec3 fbm3D(in vec3 q)
 	f += 0.2500*noise3D( q ); q = m3*q*2.02;
 	f += 0.1250*noise3D( q ); q = m3*q*2.03;
 	f += 0.0625*noise3D( q ); q = m3*q*2.04;
-#if 1
 	f += 0.03125*noise3D( q ); q = m3*q*2.05; 
 	f += 0.015625*noise3D( q ); q = m3*q*2.06; 
 	f += 0.0078125*noise3D( q ); q = m3*q*2.07; 
 	f += 0.00390625*noise3D( q ); q = m3*q*2.08;  
-#endif
 	return vec3(f);
 }
 
@@ -353,26 +354,16 @@ void RayTracePlane(Ray ray)
 		for (int i = 0; i < NUM_DENSITY_SAMPLES; ++i)
 		{
 			vec3 uv3 = marchStep * i;
-			uv3.x += fiTime;
-			density += clamp(length(fbm3D(uv3)), 0., 1.) / float(NUM_DENSITY_SAMPLES);
+			//uv3.x += fiTime;
+			uv3.y += fiTime / 20.;
+			uv3.z += fiTime / 10.;
+			density += clamp(fbm3D(uv3).r, 0., 1.) / float(NUM_DENSITY_SAMPLES);
 		}
 
-		density *= 1.1;
 		density = smoothstep(0., 1., density);
 
-		//density /= float(DENSITY_SAMPLES);
-
-		//density /= t;
-		//density = length(1. - texture(worleyTexture, (P.xz) / 500.));
-		//density = fbm((P.xz + fiTime * 10.) / 50.);
-
-		//density = fbm3D(P).z;
-
-
-		//density = clamp(density, 0., max_density) / max_density;
-		float ratio = exp(-density) / (t / (2. * 20.));
-		vec3 colour = vec3(ratio);
-		//pixelColour.rgb = colour;
+		float ratio = exp(-density);//(t / (3. * 20.));
+		vec3 colour = vec3(ratio) * 5. / (t / (1.5 * 20.));
 		pixelColour.rgb = mix(pixelColour.rgb, colour, smoothstep(0., 1., clamp(ratio, 0., 1.)));
 	}
 }
@@ -391,35 +382,6 @@ void main()
 		if (DOFEnabled)
 		{
 			pixelColour.rgb = DOF(textSamp00, textSamp01).rgb;
-		}
-
-		if (false)
-		{
-			if (texture(textSamp05, uv).r > 0.0)
-			{
-				vec3 pos = texture( textSamp01, uv ).rgb;
-				float d = distance(eyeLocation.xyz, pos);
-				vec3 direction = normalize(pos - eyeLocation.xyz);
-				//pixelColour.rgb = texture(skyBox, reflect(direction, vec3(0.0, 1.0, 0.0))).rgb;
-				//pixelColour.rgb = texture( textSamp00, uv ).rgb;
-				const int maxSamples = 500;
-				vec2 current = uv;
-				for (int i = 0; i < maxSamples; ++i)
-				{
-					current.y += 0.001;
-					float r = texture(textSamp05, current).r;
-					if (!(r > 0.0))
-					{
-						float deltaY = current.y - uv.y;
-						pixelColour.rgb = texture(textSamp00, vec2(uv.x, current.y + deltaY)).rgb;
-						float deltaD = d - distance(eyeLocation.xyz, texture(textSamp01, vec2(uv.x, current.y + deltaY)).xyz);
-						if (deltaD < 0.0)
-						{
-						}
-						break;
-					}
-				}
-			}
 		}
 		
 		if (bloomEnabled)
@@ -446,12 +408,20 @@ void main()
 			pixelColour.rgb += CalculateVolumetricLightScattering(textSamp02).rgb;
 		}
 
-		//pixelColour.rgb = texture(textSamp05, uv).xyz;
-
+		// clouds
 		Ray ray;
 		ray.ro = eyeLocation.xyz;
 		ray.rd = normalize(texture(textSamp01, uv).xyz - ray.ro);
 		RayTracePlane(ray);
+
+		// Vignette
+		if (true)
+		{
+			float d = distance(vec2(0.5), fUVx2.st);
+			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 1.12);
+		}
+
+
 		pixelColour.a = 1.0;
 
 		return;
