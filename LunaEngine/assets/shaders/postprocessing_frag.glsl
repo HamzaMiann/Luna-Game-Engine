@@ -339,6 +339,8 @@ float GetDensityAt(vec3 position)
 	return density;
 }
 
+const vec3 lightDirection = normalize(vec3(1., 1., 0.));
+
 void RayTracePlane(Ray ray)
 {
 	vec2 uv = fUVx2.st;
@@ -358,7 +360,7 @@ void RayTracePlane(Ray ray)
 		float t2 = intersect(ray, GetPlane2());
 		vec3 P2 = (ray.ro + ray.rd * t2);
 
-		const int NUM_DENSITY_SAMPLES = 30;
+		const int NUM_DENSITY_SAMPLES = 20;
 		vec3 origin = P;
 		vec3 marchStep = (P2 - P) / NUM_DENSITY_SAMPLES;
 
@@ -368,7 +370,7 @@ void RayTracePlane(Ray ray)
 		{
 			vec3 uv3 = (origin + marchStep * i).xzy;
 			uv3.xy /= 200.;
-			uv3 += fiTime / 20.;
+			uv3 += fiTime / 40.;
 			density += GetDensityAt(uv3);
 			//density += fbm3D(uv3).r / float(NUM_DENSITY_SAMPLES);
 		}
@@ -379,6 +381,42 @@ void RayTracePlane(Ray ray)
 		vec3 colour = vec3(ratio) * 5. / (t / (1.5 * 20.));
 		//vec3 colour = vec3(ratio);
 		pixelColour.rgb = mix(pixelColour.rgb, colour, smoothstep(0., 1., clamp(ratio, 0., 1.)));
+	}
+}
+
+void RayTraceShadows(Ray ray)
+{
+	vec2 uv = fUVx2.st;
+
+	float t = intersect(ray, GetPlane1());
+
+	if (t > 0.0)
+	{
+		vec3 P = (ray.ro + ray.rd * t);
+
+		ray.ro = P;
+
+		float t2 = intersect(ray, GetPlane2());
+		vec3 P2 = (ray.ro + ray.rd * t2);
+
+		const int NUM_DENSITY_SAMPLES = 10;
+		vec3 origin = P;
+		vec3 marchStep = (P2 - P) / NUM_DENSITY_SAMPLES;
+
+		float density = 0.;
+
+		for (int i = 0; i < NUM_DENSITY_SAMPLES; ++i)
+		{
+			vec3 uv3 = (origin + marchStep * i).xzy;
+			uv3.xy /= 200.;
+			uv3 += fiTime / 40.;
+			density += GetDensityAt(uv3);
+		}
+		const float densityStrength = 10.;
+
+		float ratio = exp(-density);
+		vec3 colour =  ratio * pixelColour.rgb;
+		pixelColour.rgb = mix(pixelColour.rgb, colour, 0.3);
 	}
 }
 
@@ -427,6 +465,10 @@ void main()
 		ray.ro = eyeLocation.xyz;
 		ray.rd = normalize(texture(textSamp01, uv).xyz - ray.ro);
 		RayTracePlane(ray);
+
+		ray.ro = texture(textSamp01, uv).xyz;
+		ray.rd = lightDirection;
+		RayTraceShadows(ray);
 
 		// Vignette
 		if (false)

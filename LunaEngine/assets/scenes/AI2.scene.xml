@@ -6,9 +6,9 @@
 			<Vertex file="basic_vert.glsl"/>
 			<Fragment file="basic_frag.glsl"/>
 		</Shader>
-    <Shader name="blur">
-      <Vertex file="postprocessing_vert.glsl"/>
-      <Fragment file="blur_frag.glsl"/>
+    <Shader name="pbr">
+      <Vertex file="basic_vert.glsl"/>
+      <Fragment file="pbr_frag.glsl"/>
     </Shader>
     
     <!-- MUST ALWAYS BE HERE -->
@@ -24,6 +24,7 @@
 		<Texture name="red.png"/>
 		<Texture name="Ground_Dirt_007_basecolor.png"/>
 		<Texture name="Mutant_diffuse.jpg"/>
+		<Texture name="Mutant_normal.jpg"/>
 		<Texture name="fx3_Panels_Color.png"/>
 		<Texture name="noise.jpg"/>
 		<Texture name="worley.jpg"/>
@@ -279,7 +280,7 @@
       </Components>
     </GameObject>
 
-    <GameObject mesh="mutant" tag="player" shader="basic">
+    <GameObject mesh="mutant" tag="player" shader="pbr">
       <Position x="7.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
       <Scale>0.04</Scale>
@@ -287,6 +288,7 @@
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
       <Texture ratio="1.0">Mutant_diffuse.jpg</Texture>
+      <Texture ratio="0.0">Mutant_normal.jpg</Texture>
 
       <Components>
         <AnimationController profile="mutant" default="idle"/>

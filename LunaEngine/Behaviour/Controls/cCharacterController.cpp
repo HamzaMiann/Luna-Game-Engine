@@ -218,7 +218,6 @@ void cCharacterController::update(float dt)
 			movement *= settings.speed;
 			movement.y = velocity.y;
 			rigidBody->SetVelocity(movement);
-			
 		}
 	}
 
