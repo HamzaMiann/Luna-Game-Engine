@@ -1,11 +1,13 @@
 #include "cWorleyTexture.h"
+#include <_GL/GLCommon.h>
+#include <iostream>
 #include <Physics/Mathf.h>
 
 // FROM https://github.com/Reputeless/PerlinNoise/blob/master/PerlinNoise.hpp
-#include <Texture/PerlinNoise.hpp>
+//#include <Texture/PerlinNoise.hpp>
 
 
-#define SEPARATION 1.f
+#define SEPARATION 1.5f
 
 cWorleyTexture::cWorleyTexture(size_t width, size_t redChannelSize, size_t greenChannelSize, size_t blueChannelSize):
 	mWidth(width),
@@ -13,6 +15,7 @@ cWorleyTexture::cWorleyTexture(size_t width, size_t redChannelSize, size_t green
 	GridB(greenChannelSize),
 	GridC(blueChannelSize)
 {
+	srand((int)(glfwGetTime() * 10.f));
 	GenerateGrids();
 	GeneratePixels();
 }
@@ -32,44 +35,31 @@ void cWorleyTexture::GenerateGrids()
 
 void cWorleyTexture::GeneratePixels()
 {
-	mPixels.resize(mWidth * mWidth);
-	siv::BasicPerlinNoise<float> perlin;
+	mPixels.resize(mWidth * mWidth * mWidth);
+	//siv::BasicPerlinNoise<float> perlin;
 
-	for (size_t y = 0; y < mWidth; ++y)
+	for (size_t z = 0; z < mWidth; ++z)
 	{
-		for (size_t x = 0; x < mWidth; ++x)
+		for (size_t y = 0; y < mWidth; ++y)
 		{
-			//float gridX = (x / (float)mWidth) * mGridWidth;
-			//float gridY = (y / (float)mWidth) * mGridWidth;
-			//vec2 pos(gridX, gridY);
+			for (size_t x = 0; x < mWidth; ++x)
+			{
+				size_t pixelIndex = (z * mWidth * mWidth) + (y * mWidth) + x;
 
-
-			//float d = 1.f - GetClosestDistance(pos) * 1.1f;
-
-			////float noise = perlin.noise2D_0_1(gridX * 10.f, gridY * 10.f);
-
-			////d = glm::mix(d, noise, 0.3f);
-
-			//float colour = glm::clamp(d, 0.f, 1.f) * 255;
-
-			size_t pixelIndex = (y * mWidth) + x;
-			//mPixels[pixelIndex].r = colour;
-			//mPixels[pixelIndex].g = colour;
-			//mPixels[pixelIndex].b = colour;
-
-			mPixels[pixelIndex].r = glm::clamp(1.f - GetClosestDistance(GridA, x, y) * SEPARATION, 0.f, 1.f) * 255;
-			mPixels[pixelIndex].g = glm::clamp(1.f - GetClosestDistance(GridB, x, y) * SEPARATION, 0.f, 1.f) * 255;
-			mPixels[pixelIndex].b = glm::clamp(1.f - GetClosestDistance(GridC, x, y) * SEPARATION, 0.f, 1.f) * 255;
-
+				mPixels[pixelIndex].r = glm::clamp(1.f - GetClosestDistance(GridA, x, y, z) * SEPARATION, 0.f, 1.f) * 255;
+				mPixels[pixelIndex].g = glm::clamp(1.f - GetClosestDistance(GridB, x, y, z) * SEPARATION, 0.f, 1.f) * 255;
+				mPixels[pixelIndex].b = glm::clamp(1.f - GetClosestDistance(GridC, x, y, z) * SEPARATION, 0.f, 1.f) * 255;
+			}
 		}
 	}
 }
 
-float cWorleyTexture::GetClosestDistance(const Grid& grid, float x, float y)
+float cWorleyTexture::GetClosestDistance(const Grid& grid, float x, float y, float z)
 {
 	float gridX = (x / (float)mWidth) * grid.mGridWidth;
 	float gridY = (y / (float)mWidth) * grid.mGridWidth;
-	vec2 position(gridX, gridY);
+	float gridZ = (z / (float)mWidth) * grid.mGridWidth;
+	vec3 position(gridX, gridY, gridZ);
 
 	float max = FLT_MAX;
 	for (size_t i = 0; i < grid.mGridPositions.size(); ++i)
@@ -87,41 +77,74 @@ float cWorleyTexture::GetClosestDistance(const Grid& grid, float x, float y)
 
 void cWorleyTexture::Grid::Generate()
 {
-	mGridPositions.resize(mGridWidth * mGridWidth);
+	mGridPositions.resize(mGridWidth * mGridWidth * mGridWidth);
 
-	for (size_t y = 0; y < mGridWidth; ++y)
+	for (size_t z = 0; z < mGridWidth; ++z)
 	{
-		for (size_t x = 0; x < mGridWidth; ++x)
+		for (size_t y = 0; y < mGridWidth; ++y)
 		{
-			size_t index = (y * mGridWidth) + x;
-			mGridPositions[index].x = Mathf::randInRange(0.f, 1.f) + x;
-			mGridPositions[index].y = Mathf::randInRange(0.f, 1.f) + y;
+			for (size_t x = 0; x < mGridWidth; ++x)
+			{
+				size_t index = (z * mGridWidth * mGridWidth) + (y * mGridWidth) + x;
+				mGridPositions[index].x = Mathf::randInRange(0.f, 1.f) + x;
+				mGridPositions[index].y = Mathf::randInRange(0.f, 1.f) + y;
+				mGridPositions[index].z = Mathf::randInRange(0.f, 1.f) + z;
+			}
 		}
 	}
 
-	for (size_t x = 0; x < mGridWidth; ++x)
+	for (size_t z = 0; z < mGridWidth; ++z)
 	{
-		size_t index = x;
-		vec2 pos = mGridPositions[index];
+		for (size_t x = 0; x < mGridWidth; ++x)
+		{
+			size_t index = x + (z * mGridWidth * mGridWidth);
+			vec3 pos = mGridPositions[index];
+			pos.y += mGridWidth;
+			mEdgePositions.push_back(pos);
+
+			index = ((mGridWidth - 1) * mGridWidth) + x + (z * mGridWidth * mGridWidth);
+			pos = mGridPositions[index];
+			pos.y -= mGridWidth;
+			mEdgePositions.push_back(pos);
+		}
+	}
+
+	for (size_t z = 0; z < mGridWidth; ++z)
+	{
+		for (size_t y = 0; y < mGridWidth; ++y)
+		{
+			size_t index = y * mGridWidth + (z * mGridWidth * mGridWidth);
+			vec3 pos = mGridPositions[index];
+			pos.x += mGridWidth;
+			mEdgePositions.push_back(pos);
+
+			index = (y * mGridWidth) + (mGridWidth - 1) + (z * mGridWidth * mGridWidth);
+			pos = mGridPositions[index];
+			pos.x -= mGridWidth;
+			mEdgePositions.push_back(pos);
+		}
+	}
+
+	for (size_t z = 0; z < mGridWidth; ++z)
+	{
+		vec3 pos = mGridPositions[0 + z * mGridWidth * mGridWidth];
+		pos.x += mGridWidth;
 		pos.y += mGridWidth;
 		mEdgePositions.push_back(pos);
 
-		index = ((mGridWidth - 1) * mGridWidth) + x;
-		pos = mGridPositions[index];
+		pos = mGridPositions[mGridWidth - 1 + (z * mGridWidth * mGridWidth)];
+		pos.x -= mGridWidth;
+		pos.y += mGridWidth;
+		mEdgePositions.push_back(pos);
+
+		pos = mGridPositions[mGridWidth * (mGridWidth - 1) + (z * mGridWidth * mGridWidth)];
+		pos.x += mGridWidth;
 		pos.y -= mGridWidth;
 		mEdgePositions.push_back(pos);
-	}
 
-	for (size_t y = 0; y < mGridWidth; ++y)
-	{
-		size_t index = y * mGridWidth;
-		vec2 pos = mGridPositions[index];
-		pos.x += mGridWidth;
-		mEdgePositions.push_back(pos);
-
-		index = (y * mGridWidth) + (mGridWidth - 1);
-		pos = mGridPositions[index];
+		pos = mGridPositions[mGridWidth * (mGridWidth - 1) + (mGridWidth - 1) + (z * mGridWidth * mGridWidth)];
 		pos.x -= mGridWidth;
+		pos.y -= mGridWidth;
 		mEdgePositions.push_back(pos);
 	}
 }

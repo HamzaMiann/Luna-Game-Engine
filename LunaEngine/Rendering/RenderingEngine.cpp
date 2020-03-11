@@ -50,9 +50,9 @@ RenderingEngine::RenderingEngine()
 
 	size_t width, height;
 	unsigned char* data;
-	worleyTexture = cWorleyTexture::Generate(256, 3u, 10u, 20u);
+	worleyTexture = cWorleyTexture::Generate(32u, 3u, 10u, 20u);
 	data = worleyTexture->GetDataRGB(width, height);
-	cBasicTextureManager::Instance()->Create2DTexture("worley", true, data, width, height);
+	cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
 	worleyNoise.SetTexture("worley");
 	worleyNoise2.SetTexture("worley");
 
@@ -703,8 +703,8 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM CUTOFF TEXTURE
 	shader.SetTexture(noise, "textSamp04", 4);							// NOISE TEXTURE
 	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp05", 5);	// REFLECTIVE SURFACES TEXTURE
-	shader.SetTexture(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
-	//shader.SetTexture3D(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
+	//shader.SetTexture(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
+	shader.SetTexture3D(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
 
 	shader.SetBool("isFinalPass", GL_TRUE);
 

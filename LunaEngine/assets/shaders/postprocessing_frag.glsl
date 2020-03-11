@@ -27,7 +27,7 @@ uniform sampler2D textSamp03;	// bloom
 uniform sampler2D textSamp04;	// unlit
 uniform sampler2D textSamp05;	// REFLECTIVE
 
-uniform sampler2D worleyTexture;
+uniform sampler3D worleyTexture;
 
 uniform samplerCube skyBox;
 
@@ -329,6 +329,16 @@ vec3 fbm3D(in vec3 q)
 	return vec3(f);
 }
 
+float GetDensityAt(vec3 position)
+{
+	float density = 0.;
+	vec3 col = texture(worleyTexture, position).rgb;
+	density = col.r;
+	density = mix(density, col.g, 0.2);
+	density = mix(density, col.b, 0.1);
+	return density;
+}
+
 void RayTracePlane(Ray ray)
 {
 	vec2 uv = fUVx2.st;
@@ -336,28 +346,19 @@ void RayTracePlane(Ray ray)
 	float t = intersect(ray, GetPlane1());
 	if (t > 0.0 && t < distance(texture( textSamp01, uv ).xyz, ray.ro))
 	{
-		vec3 P = ray.ro + ray.rd * t;
+		vec3 P = (ray.ro + ray.rd * t);
+//		vec3 col = texture(worleyTexture, P.xyz/ 200.).rgb;
+//		vec3 colA = vec3(col.r);
+//		colA = mix(colA, vec3(col.g), 0.2);
+//		colA = mix(colA, vec3(col.b), 0.1);
+		//pixelColour.rgb = mix(pixelColour.rgb, colA, colA.r);
 
-		vec3 col = texture(worleyTexture, P.xz / 100.).rgb;
-		vec3 colA = vec3(col.r);
-		colA = mix(colA, vec3(col.g), 0.2);
-		colA = mix(colA, vec3(col.b), 0.1);
-		pixelColour.rgb = mix(pixelColour.rgb, colA, colA.r);
-		//pixelColour.rgb = colA;
-		//pixelColour.rgb = mix(pixelColour.rgb, col, col.r);
-		//pixelColour.rgb = vec3(fbm3D(P.xyz / 20.).r);
-		//pixelColour.rgb = mix(pixelColour.rgb, vec3(fbm3D(P.xyz / 20.).r), 0.3);
-		//pixelColour.rgb = mix(pixelColour.rgb, col, col.r);
-		return;
+		ray.ro = P;
 
-		Ray ray2;
-		ray2.ro = P;
-		ray2.rd = ray.rd;
+		float t2 = intersect(ray, GetPlane2());
+		vec3 P2 = (ray.ro + ray.rd * t2);
 
-		float t2 = intersect(ray2, GetPlane2());
-		vec3 P2 = ray2.ro + ray2.rd * t2;
-
-		const int NUM_DENSITY_SAMPLES = 10;
+		const int NUM_DENSITY_SAMPLES = 30;
 		vec3 origin = P;
 		vec3 marchStep = (P2 - P) / NUM_DENSITY_SAMPLES;
 
@@ -365,17 +366,18 @@ void RayTracePlane(Ray ray)
 
 		for (int i = 0; i < NUM_DENSITY_SAMPLES; ++i)
 		{
-			vec3 uv3 = marchStep * i;
-			//uv3.x += fiTime;
-			uv3.y += fiTime / 20.;
-			uv3.z += fiTime / 5.;
-			density += fbm3D(uv3).r / float(NUM_DENSITY_SAMPLES);
+			vec3 uv3 = (origin + marchStep * i).xzy;
+			uv3.xy /= 200.;
+			uv3 += fiTime / 20.;
+			density += GetDensityAt(uv3);
+			//density += fbm3D(uv3).r / float(NUM_DENSITY_SAMPLES);
 		}
+		const float densityStrength = 10.;
+		//density = smoothstep(0., 1., density);
 
-		density = smoothstep(0., 1., density);
-
-		float ratio = exp(-density);//(t / (3. * 20.));
+		float ratio = exp(-density / densityStrength);//(t / (3. * 20.));
 		vec3 colour = vec3(ratio) * 5. / (t / (1.5 * 20.));
+		//vec3 colour = vec3(ratio);
 		pixelColour.rgb = mix(pixelColour.rgb, colour, smoothstep(0., 1., clamp(ratio, 0., 1.)));
 	}
 }
@@ -427,7 +429,7 @@ void main()
 		RayTracePlane(ray);
 
 		// Vignette
-		if (true)
+		if (false)
 		{
 			float d = distance(vec2(0.5), fUVx2.st);
 			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 0.85);

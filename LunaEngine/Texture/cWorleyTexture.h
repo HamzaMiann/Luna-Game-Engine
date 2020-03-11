@@ -30,8 +30,8 @@ private:
 
 		size_t mGridWidth;
 
-		std::vector<vec2> mEdgePositions;
-		std::vector<vec2> mGridPositions;
+		std::vector<vec3> mEdgePositions;
+		std::vector<vec3> mGridPositions;
 
 	} GridA, GridB, GridC;
 
@@ -41,7 +41,7 @@ private:
 
 	void GenerateGrids();
 	void GeneratePixels();
-	float GetClosestDistance(const Grid& grid, float x, float y);
+	float GetClosestDistance(const Grid& grid, float x, float y, float z);
 
 public:
 	
