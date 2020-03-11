@@ -22,6 +22,8 @@ public:
 	bool Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, unsigned char* data, int width, int height);
 	bool Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, void* data, int width, int height, char hint);
 
+	bool Create3DTexture(std::string friendlyName, bool bGenerateMIPMap, unsigned char* data, int width, int height, int depth);
+
 	bool CreateCubeTextureFromBMPFiles( std::string cubeMapName, 
 		                                std::string posX_fileName, std::string negX_fileName, 
 		                                std::string posY_fileName, std::string negY_fileName, 

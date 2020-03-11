@@ -339,7 +339,12 @@ void RayTracePlane(Ray ray)
 		vec3 P = ray.ro + ray.rd * t;
 
 		vec3 col = texture(worleyTexture, P.xz / 100.).rgb;
-		pixelColour.rgb = mix(pixelColour.rgb, col, col.r);
+		vec3 colA = vec3(col.r);
+		colA = mix(colA, vec3(col.g), 0.2);
+		colA = mix(colA, vec3(col.b), 0.1);
+		pixelColour.rgb = mix(pixelColour.rgb, colA, colA.r);
+		//pixelColour.rgb = colA;
+		//pixelColour.rgb = mix(pixelColour.rgb, col, col.r);
 		//pixelColour.rgb = vec3(fbm3D(P.xyz / 20.).r);
 		//pixelColour.rgb = mix(pixelColour.rgb, vec3(fbm3D(P.xyz / 20.).r), 0.3);
 		//pixelColour.rgb = mix(pixelColour.rgb, col, col.r);

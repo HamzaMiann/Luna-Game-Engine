@@ -329,6 +329,27 @@ bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGener
 	return true;
 }
 
+bool cBasicTextureManager::Create3DTexture(std::string friendlyName, bool bGenerateMIPMap, unsigned char* data, int width, int height, int depth)
+{
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_3D, texture);
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, width, height, depth, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	if (bGenerateMIPMap)
+	{
+		glGenerateMipmap(GL_TEXTURE_3D);
+	}
+	this->m_map_NameToID[friendlyName] = texture;
+
+	return true;
+}
+
 
 bool cBasicTextureManager::CreateCubeTextureFromBMPFiles( 
                                     std::string cubeMapName, 

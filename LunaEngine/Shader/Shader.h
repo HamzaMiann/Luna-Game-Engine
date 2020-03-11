@@ -146,6 +146,20 @@ public:
 		glUniform1i((*this)[uniform], textureUnit);
 	}
 
+	void SetTexture3D(int textureID, const std::string& uniform, int textureUnit)
+	{
+		glActiveTexture(GL_TEXTURE0 + textureUnit);
+		glBindTexture(GL_TEXTURE_3D, textureID);
+		glUniform1i((*this)[uniform], textureUnit);
+	}
+
+	void SetTexture3D(cTexture& texture, const std::string& uniform, int textureUnit)
+	{
+		glActiveTexture(GL_TEXTURE0 + textureUnit);
+		glBindTexture(GL_TEXTURE_3D, texture.GetID());
+		glUniform1i((*this)[uniform], textureUnit);
+	}
+
 	/*
 	Binds the cubemap to texture unit number 26 for the given uniform
 	(Texture unit must be unique for each texture that is set)
