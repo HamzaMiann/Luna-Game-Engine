@@ -32,7 +32,7 @@ uniform sampler3D worleyTexture;
 uniform samplerCube skyBox;
 
 uniform vec2 lightPositionOnScreen;
-
+uniform float cloudDensityFactor;
 
 // Globals
 in float fiTime;
@@ -67,6 +67,7 @@ struct sLight
 const int POINT_LIGHT_TYPE = 0;
 const int SPOT_LIGHT_TYPE = 1;
 const int DIRECTIONAL_LIGHT_TYPE = 2;
+const int DIRECTIONAL_POSITIONED_LIGHT = 3;
 
 // Lights
 const int LIGHT_BUFFER = 24;
@@ -228,6 +229,7 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
     for(int i=0; i < NUM_SAMPLES && distance(origin, uv) < distance(origin, lightPos)  ; i++)
     {
             uv -= deltaTextCoord;
+			if (uv. x < 0. || uv. y < 0. || uv.x > 1. || uv.y > 1.) break;
             vec4 samp = texture2D(tex, uv);
             samp *= illuminationDecay * weight;
             colour += samp;
@@ -349,11 +351,6 @@ void RayTracePlane(Ray ray)
 	if (t > 0.0 && t < distance(texture( textSamp01, uv ).xyz, ray.ro))
 	{
 		vec3 P = (ray.ro + ray.rd * t);
-//		vec3 col = texture(worleyTexture, P.xyz/ 200.).rgb;
-//		vec3 colA = vec3(col.r);
-//		colA = mix(colA, vec3(col.g), 0.2);
-//		colA = mix(colA, vec3(col.b), 0.1);
-		//pixelColour.rgb = mix(pixelColour.rgb, colA, colA.r);
 
 		ray.ro = P;
 
@@ -369,17 +366,14 @@ void RayTracePlane(Ray ray)
 		for (int i = 0; i < NUM_DENSITY_SAMPLES; ++i)
 		{
 			vec3 uv3 = (origin + marchStep * i).xzy;
-			uv3.xy /= 200.;
+			uv3.xy /= 500.;
 			uv3 += fiTime / 40.;
 			density += GetDensityAt(uv3);
 			//density += fbm3D(uv3).r / float(NUM_DENSITY_SAMPLES);
 		}
-		const float densityStrength = 10.;
-		//density = smoothstep(0., 1., density);
 
-		float ratio = exp(-density / densityStrength);//(t / (3. * 20.));
-		vec3 colour = vec3(ratio) * 5. / (t / (1.5 * 20.));
-		//vec3 colour = vec3(ratio);
+		float ratio = exp(-density / cloudDensityFactor);//(t / (3. * 20.));
+		vec3 colour = vec3(ratio) * 5. / (t / (1.5 * 10.));
 		pixelColour.rgb = mix(pixelColour.rgb, colour, smoothstep(0., 1., clamp(ratio, 0., 1.)));
 	}
 }
@@ -408,15 +402,17 @@ void RayTraceShadows(Ray ray)
 		for (int i = 0; i < NUM_DENSITY_SAMPLES; ++i)
 		{
 			vec3 uv3 = (origin + marchStep * i).xzy;
-			uv3.xy /= 200.;
+			uv3.xy /= 500.;
 			uv3 += fiTime / 40.;
 			density += GetDensityAt(uv3);
 		}
-		const float densityStrength = 10.;
 
-		float ratio = exp(-density);
-		vec3 colour =  ratio * pixelColour.rgb;
-		pixelColour.rgb = mix(pixelColour.rgb, colour, 0.3);
+		float ratio = exp(-density / cloudDensityFactor);
+		vec3 colour =  (1. - ratio) * pixelColour.rgb;
+		//pixelColour.rgb = vec3(ratio) * 0.88;
+		//pixelColour.rgb = colour;
+		//pixelColour.rgb = mix(pixelColour.rgb, colour, 0.3);
+		pixelColour.rgb = mix(pixelColour.rgb, colour, 0.8);
 	}
 }
 
@@ -467,8 +463,12 @@ void main()
 		RayTracePlane(ray);
 
 		ray.ro = texture(textSamp01, uv).xyz;
-		ray.rd = lightDirection;
-		RayTraceShadows(ray);
+		if (distance(ray.ro, eyeLocation.xyz) < 200.)
+		{
+			vec3 lDir = eyeLocation.xyz - theLights[0].position.xyz;
+			ray.rd = -lDir;
+			RayTraceShadows(ray);
+		}
 
 		// Vignette
 		if (false)
@@ -540,6 +540,22 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 		
 		// Cast to an int (note with c'tor)
 		int intLightType = int(theLights[index].param1.x);
+
+		if ( intLightType == DIRECTIONAL_POSITIONED_LIGHT )
+		{
+			vec3 lightContrib = theLights[index].diffuse.rgb;
+			vec3 dir = eyeLocation.xyz - theLights[index].position.xyz;
+			// Get the dot product of the light and normalize
+			float dotProduct = dot( -dir,  
+									   normalize(norm.xyz) );	// -1 to 1
+
+			dotProduct = max( 0.0f, dotProduct );		// 0 to 1
+		
+			lightContrib *= dotProduct;		
+			
+			finalObjectColour.rgb += (vertexMaterialColour.rgb * theLights[index].diffuse.rgb * lightContrib)  * theLights[index].atten.r; 
+			continue;
+		}
 		
 		// We will do the directional light here... 
 		// (BEFORE the attenuation, since sunlight has no attenuation, really)

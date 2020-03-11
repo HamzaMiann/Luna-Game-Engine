@@ -7,7 +7,7 @@
 //#include <Texture/PerlinNoise.hpp>
 
 
-#define SEPARATION 1.5f
+#define SEPARATION 1.f
 
 cWorleyTexture::cWorleyTexture(size_t width, size_t redChannelSize, size_t greenChannelSize, size_t blueChannelSize):
 	mWidth(width),

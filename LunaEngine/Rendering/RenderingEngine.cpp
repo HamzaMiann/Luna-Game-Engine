@@ -9,10 +9,12 @@
 #include <Components/cAnimationController.h>
 #include <EntityManager/cEntityManager.h>
 #include <Texture/cWorleyTexture.h>
+#include <InputManager.h>
 
 cTexture worleyNoise;
 cTexture worleyNoise2;
 cWorleyTexture* worleyTexture;
+float cloudDensityFactor = 1.f;
 
 RenderingEngine::RenderingEngine()
 {
@@ -50,7 +52,7 @@ RenderingEngine::RenderingEngine()
 
 	size_t width, height;
 	unsigned char* data;
-	worleyTexture = cWorleyTexture::Generate(32u, 3u, 10u, 20u);
+	worleyTexture = cWorleyTexture::Generate(16u, 3u, 10u, 20u);
 	data = worleyTexture->GetDataRGB(width, height);
 	cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
 	worleyNoise.SetTexture("worley");
@@ -78,6 +80,17 @@ void RenderingEngine::Reset()
 	glDepthMask(GL_TRUE);								// Enable writing to the depth buffer
 	glEnable(GL_DEPTH_TEST);							// Enable depth testing
 	glDisable(GL_STENCIL_TEST);							// Disable stencil test
+
+	if (Input::GetKey(GLFW_KEY_RIGHT_BRACKET))
+	{
+		cloudDensityFactor += 0.1f;
+	}
+	if (Input::GetKey(GLFW_KEY_LEFT_BRACKET))
+	{
+		cloudDensityFactor -= 0.1f;
+		if (cloudDensityFactor < 0.f)
+			cloudDensityFactor = 0.f;
+	}
 }
 
 void RenderingEngine::StencilInit()
@@ -705,6 +718,7 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp05", 5);	// REFLECTIVE SURFACES TEXTURE
 	//shader.SetTexture(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
 	shader.SetTexture3D(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
+	shader.SetFloat("cloudDensityFactor", cloudDensityFactor);
 
 	shader.SetBool("isFinalPass", GL_TRUE);
 
