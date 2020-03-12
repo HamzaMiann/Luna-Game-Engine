@@ -49,8 +49,8 @@ void InitWindow()
 
 void RunScripts()
 {
-	cLuaBrain::SetObjectVector(&scene->vecGameObjects);
-	cLuaBrain::SetCamera(Camera::main_camera);
+	//cLuaBrain::SetObjectVector(&scene->vecGameObjects);
+	/*cLuaBrain::SetCamera(Camera::main_camera);
 
 	for (int index = 0; index != scene->vecGameObjects.size(); index++)
 	{
@@ -59,7 +59,7 @@ void RunScripts()
 		{
 			objPtr->brain->RunScriptImmediately(objPtr->lua_script);
 		}
-	}
+	}*/
 }
 
 void cApplication::Init()

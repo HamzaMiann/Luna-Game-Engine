@@ -33,6 +33,7 @@ uniform samplerCube skyBox;
 
 uniform vec2 lightPositionOnScreen;
 uniform float cloudDensityFactor;
+uniform float cloudDensityCutoff;
 
 // Globals
 in float fiTime;
@@ -336,12 +337,12 @@ float GetDensityAt(vec3 position)
 	float density = 0.;
 	vec3 col = texture(worleyTexture, position).rgb;
 	density = col.r;
-	density = mix(density, col.g, 0.2);
-	density = mix(density, col.b, 0.1);
+	density = mix(density, col.g, 0.3);
+	density = mix(density, col.b, 0.2);
+	density = max(0., density - cloudDensityCutoff);
 	return density;
 }
 
-const vec3 lightDirection = normalize(vec3(1., 1., 0.));
 
 void RayTracePlane(Ray ray)
 {
@@ -366,15 +367,22 @@ void RayTracePlane(Ray ray)
 		for (int i = 0; i < NUM_DENSITY_SAMPLES; ++i)
 		{
 			vec3 uv3 = (origin + marchStep * i).xzy;
-			uv3.xy /= 500.;
-			uv3 += fiTime / 40.;
+			ray.ro = uv3.xzy;
+			ray.rd = normalize(eyeLocation.xyz - theLights[0].position.xyz);
+
+			// TODO: ray march from position to the light source
+
+			uv3.xy /= 400.;
+			uv3.xy += fiTime / 40.;
+			uv3.z += fiTime / 100.;
 			density += GetDensityAt(uv3);
 			//density += fbm3D(uv3).r / float(NUM_DENSITY_SAMPLES);
 		}
 
 		float ratio = exp(-density / cloudDensityFactor);//(t / (3. * 20.));
-		vec3 colour = vec3(ratio) * 5. / (t / (1.5 * 10.));
-		pixelColour.rgb = mix(pixelColour.rgb, colour, smoothstep(0., 1., clamp(ratio, 0., 1.)));
+		pixelColour.rgb *= ratio;
+		//vec3 colour = vec3(ratio) * 5. / (t / (1.5 * 10.));
+		//pixelColour.rgb = mix(pixelColour.rgb, colour, smoothstep(0., 1., clamp(ratio, 0., 1.)));
 	}
 }
 
@@ -402,7 +410,7 @@ void RayTraceShadows(Ray ray)
 		for (int i = 0; i < NUM_DENSITY_SAMPLES; ++i)
 		{
 			vec3 uv3 = (origin + marchStep * i).xzy;
-			uv3.xy /= 500.;
+			uv3.xy /= 400.;
 			uv3 += fiTime / 40.;
 			density += GetDensityAt(uv3);
 		}
@@ -412,7 +420,7 @@ void RayTraceShadows(Ray ray)
 		//pixelColour.rgb = vec3(ratio) * 0.88;
 		//pixelColour.rgb = colour;
 		//pixelColour.rgb = mix(pixelColour.rgb, colour, 0.3);
-		pixelColour.rgb = mix(pixelColour.rgb, colour, 0.8);
+		pixelColour.rgb = mix(pixelColour.rgb, colour, 0.5);
 	}
 }
 
@@ -426,12 +434,13 @@ void main()
 		pixelColour.rgb = texture(textSamp00, uv).rgb;
 		
 		
-
+		// DOF effect
 		if (DOFEnabled)
 		{
 			pixelColour.rgb = DOF(textSamp00, textSamp01).rgb;
 		}
 		
+		// bloom effect
 		if (bloomEnabled)
 		{
 			vec3 bloom = circular_blur(textSamp03, 10.0).rgb * 1.0;
@@ -451,26 +460,30 @@ void main()
 			pixelColour.rgb = result;
 		}
 
+		// volumetric light scattering effect
 		if (volumetricEnabled)
 		{
 			pixelColour.rgb += CalculateVolumetricLightScattering(textSamp02).rgb;
 		}
 
-		// clouds
+		// clouds effect
 		Ray ray;
 		ray.ro = eyeLocation.xyz;
 		ray.rd = normalize(texture(textSamp01, uv).xyz - ray.ro);
 		RayTracePlane(ray);
 
-		ray.ro = texture(textSamp01, uv).xyz;
-		if (distance(ray.ro, eyeLocation.xyz) < 200.)
-		{
-			vec3 lDir = eyeLocation.xyz - theLights[0].position.xyz;
-			ray.rd = -lDir;
-			RayTraceShadows(ray);
+		// cloud shadows effect
+		if (false) {
+			ray.ro = texture(textSamp01, uv).xyz;
+			if (distance(ray.ro, eyeLocation.xyz) < 200.)
+			{
+				vec3 lDir = normalize(eyeLocation.xyz - theLights[0].position.xyz);
+				ray.rd = -lDir;
+				RayTraceShadows(ray);
+			}
 		}
 
-		// Vignette
+		// vignette effect
 		if (false)
 		{
 			float d = distance(vec2(0.5), fUVx2.st);

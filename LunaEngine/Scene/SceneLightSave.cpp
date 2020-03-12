@@ -60,13 +60,14 @@ bool Scene::SaveLights()
 	doc.parse<0>(&buffer[0]);
 
 	root_node = doc.first_node("Scene");
+	auto pLightManager = cLightManager::Instance();
 
 	xml_node<>* light_node = root_node->first_node("Lights");
 	if (light_node)
 	{
 		light_node->remove_all_nodes();
 
-		for (unsigned int i = 0; i < this->pLightManager->Lights.size(); ++i)
+		for (unsigned int i = 0; i < pLightManager->Lights.size(); ++i)
 		{
 			sLight* light = pLightManager->Lights[i];
 			xml_node<>* node = new xml_node<>(node_type::node_element);

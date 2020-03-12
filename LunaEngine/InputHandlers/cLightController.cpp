@@ -1,6 +1,7 @@
 
 #include "cLightController.h"
 #include <Lighting/cLightManager.h>
+#include <EntityManager/cEntityManager.h>
 #include <cGameObject.h>
 #include <iostream>
 #include <sstream>
@@ -19,55 +20,56 @@ cLightController::cLightController(Scene& scene) : _scene(scene)
 		cRigidBody* body = dbg_object->AddComponent<cRigidBody>();
 		body->inverseMass = 0.f;
 		dbg_object->uniformColour = true;
-		_scene.vecGameObjects.push_back(dbg_object);
+		cEntityManager::Instance().AddEntity(dbg_object);
 	}
-	property = &_scene.pLightManager->Lights[index]->diffuse;
+	property = &cLightManager::Instance()->Lights[index]->diffuse;
 }
 
 cLightController::~cLightController()
 {
 	if (dbg_object)
 	{
-		_scene.vecGameObjects.erase(
+		cEntityManager::Instance().RemoveEntity(dbg_object);
+		/*_scene.vecGameObjects.erase(
 			std::find(_scene.vecGameObjects.begin(),
 					  _scene.vecGameObjects.end(),
 					  dbg_object
 			)
-		);
-		delete dbg_object;
-		dbg_object = nullptr;
+		);*/
+		//delete dbg_object;
+		//dbg_object = nullptr;
 	}
 }
 
 void cLightController::HandleInput(GLFWwindow * window)
 {
-	if (this->_scene.pLightManager->Lights.size() == 0) return;
+	if (cLightManager::Instance()->Lights.size() == 0) return;
 
 	if (glfwGetKey(window, GLFW_KEY_UP))
 	{
-		this->_scene.pLightManager->Lights[index]->position.z += 0.1f;
+		cLightManager::Instance()->Lights[index]->position.z += 0.1f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN))
 	{
-		this->_scene.pLightManager->Lights[index]->position.z -= 0.1f;
+		cLightManager::Instance()->Lights[index]->position.z -= 0.1f;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT))
 	{
-		this->_scene.pLightManager->Lights[index]->position.x += 0.1f;
+		cLightManager::Instance()->Lights[index]->position.x += 0.1f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT))
 	{
-		this->_scene.pLightManager->Lights[index]->position.x -= 0.1f;
+		cLightManager::Instance()->Lights[index]->position.x -= 0.1f;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_U))
 	{
-		this->_scene.pLightManager->Lights[index]->position.y += 0.1f;
+		cLightManager::Instance()->Lights[index]->position.y += 0.1f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_O))
 	{
-		this->_scene.pLightManager->Lights[index]->position.y -= 0.1f;
+		cLightManager::Instance()->Lights[index]->position.y -= 0.1f;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_1))
@@ -121,27 +123,27 @@ void cLightController::HandleInput(GLFWwindow * window)
 	glfwSetWindowTitle(window, oss.str().c_str());
 
 	if (dbg_object)
-		dbg_object->transform.pos = this->_scene.pLightManager->Lights[index]->position;
+		dbg_object->transform.pos = cLightManager::Instance()->Lights[index]->position;
 }
 
 void cLightController::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
-	if (this->_scene.pLightManager->Lights.size() == 0) return;
+	if (cLightManager::Instance()->Lights.size() == 0) return;
 
 	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
 	{
 		index++;
-		if (index >= this->_scene.pLightManager->Lights.size())
+		if (index >= cLightManager::Instance()->Lights.size())
 		{
 			index = 0;
 		}
 		switch (property_index)
 		{
-		case 0: property = &_scene.pLightManager->Lights[index]->diffuse;  break;
-		case 1: property = &_scene.pLightManager->Lights[index]->specular;  break;
-		case 2: property = &_scene.pLightManager->Lights[index]->atten;  break;
-		case 3: property = &_scene.pLightManager->Lights[index]->direction;  break;
-		case 4: property = &_scene.pLightManager->Lights[index]->param1;  break;
+		case 0: property = &cLightManager::Instance()->Lights[index]->diffuse;  break;
+		case 1: property = &cLightManager::Instance()->Lights[index]->specular;  break;
+		case 2: property = &cLightManager::Instance()->Lights[index]->atten;  break;
+		case 3: property = &cLightManager::Instance()->Lights[index]->direction;  break;
+		case 4: property = &cLightManager::Instance()->Lights[index]->param1;  break;
 		}
 	}
 
@@ -151,23 +153,23 @@ void cLightController::key_callback(GLFWwindow * window, int key, int scancode, 
 		property_index %= 5;
 		switch (property_index)
 		{
-		case 0: property = &_scene.pLightManager->Lights[index]->diffuse;  break;
-		case 1: property = &_scene.pLightManager->Lights[index]->specular;  break;
-		case 2: property = &_scene.pLightManager->Lights[index]->atten;  break;
-		case 3: property = &_scene.pLightManager->Lights[index]->direction;  break;
-		case 4: property = &_scene.pLightManager->Lights[index]->param1;  break;
+		case 0: property = &cLightManager::Instance()->Lights[index]->diffuse;  break;
+		case 1: property = &cLightManager::Instance()->Lights[index]->specular;  break;
+		case 2: property = &cLightManager::Instance()->Lights[index]->atten;  break;
+		case 3: property = &cLightManager::Instance()->Lights[index]->direction;  break;
+		case 4: property = &cLightManager::Instance()->Lights[index]->param1;  break;
 		}
 	}
 
 	if (key == GLFW_KEY_Y && action == GLFW_PRESS)
 	{
-		if (_scene.pLightManager->Lights[index]->param2.x == 1.f)
+		if (cLightManager::Instance()->Lights[index]->param2.x == 1.f)
 		{
-			_scene.pLightManager->Lights[index]->param2.x = 0.f;
+			cLightManager::Instance()->Lights[index]->param2.x = 0.f;
 		}
 		else
 		{
-			_scene.pLightManager->Lights[index]->param2.x = 1.f;
+			cLightManager::Instance()->Lights[index]->param2.x = 1.f;
 		}
 	}
 

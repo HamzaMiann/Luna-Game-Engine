@@ -9,6 +9,7 @@
 #include <iostream>
 #include <Components/cRigidBody.h>
 #include <Shader/Shader.h>
+#include <EntityManager/cEntityManager.h>
 using namespace rapidxml;
 using namespace std;
 using namespace rapidxml;
@@ -91,8 +92,9 @@ bool Scene::SaveLayout()
 	{
 		layout_node->remove_all_nodes();
 
+		auto& vecGameObjects = cEntityManager::Instance().GetEntities();
 
-		for (unsigned int i = 0; i < this->vecGameObjects.size(); ++i)
+		for (unsigned int i = 0; i < vecGameObjects.size(); ++i)
 		{
 			cGameObject* obj = vecGameObjects[i];
 			xml_node<>* node = new xml_node<>(node_type::node_element);

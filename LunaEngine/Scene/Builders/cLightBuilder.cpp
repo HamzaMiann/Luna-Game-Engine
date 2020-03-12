@@ -18,7 +18,7 @@ void cLightBuilder::Build(Scene& scene, xml_node<>* node)
 {
 	printf("Building Lights...\n");
 
-	scene.pLightManager = cLightManager::Instance();
+	auto pLightManager = cLightManager::Instance();
 	for (xml_node<>* light_node = node->first_node("Light"); light_node; light_node = light_node->next_sibling("Light"))
 	{
 		sLight* light = new sLight();
@@ -54,6 +54,6 @@ void cLightBuilder::Build(Scene& scene, xml_node<>* node)
 				_setXYZW(light->param2, attr);
 			}
 		}
-		scene.pLightManager->Lights.push_back(light);
+		pLightManager->Lights.push_back(light);
 	}
 }

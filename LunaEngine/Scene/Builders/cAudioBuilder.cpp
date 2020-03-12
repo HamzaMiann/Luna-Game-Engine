@@ -2,14 +2,17 @@
 #include "cAudioBuilder.h"
 #include <Audio/AudioEngine.hpp>
 #include <cGameObject.h>
+#include <EntityManager/cEntityManager.h>
 using namespace rapidxml;
 
 void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
 {
 	printf("Building Audio Engine...\n");
 
-	scene.pAudioEngine = AudioEngine::Instance();
-	scene.pAudioEngine->Init();
+	auto& vecGameObjects = cEntityManager::Instance().GetEntities();
+	auto pAudioEngine = AudioEngine::Instance();
+
+	pAudioEngine->Init();
 
 	for (xml_node<>* sound_node = node->first_node(); sound_node; sound_node = sound_node->next_sibling())
 	{
@@ -38,22 +41,22 @@ void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
 			{
 				if (!groupAttr)
 				{
-					id = scene.pAudioEngine->Create_Sound(file->value(), friendlyName, streamed);
+					id = pAudioEngine->Create_Sound(file->value(), friendlyName, streamed);
 				}
 				else
 				{
-					id = scene.pAudioEngine->Create_Sound_Group(file->value(), friendlyName, groupAttr->value());
+					id = pAudioEngine->Create_Sound_Group(file->value(), friendlyName, groupAttr->value());
 				}
 			}
 			else if (node_name == "Sound3D")
 			{
 				std::string tag = attachAttr->value();
 				bool found = false;
-				for (unsigned int i = 0; i < scene.vecGameObjects.size(); ++i)
+				for (unsigned int i = 0; i < vecGameObjects.size(); ++i)
 				{
-					if (scene.vecGameObjects[i]->tag == tag)
+					if (vecGameObjects[i]->tag == tag)
 					{
-						id = scene.pAudioEngine->Create_Sound_3d(file->value(), friendlyName, scene.vecGameObjects[i]);
+						id = pAudioEngine->Create_Sound_3d(file->value(), friendlyName, vecGameObjects[i]);
 						found = true;
 						break;
 					}
@@ -61,7 +64,7 @@ void cAudioBuilder::Build(Scene& scene, xml_node<>* node)
 				if (!found) continue;
 			}
 			else continue;
-			AudioEngine::Sound* sound = scene.pAudioEngine->GetSound(id);
+			AudioEngine::Sound* sound = pAudioEngine->GetSound(id);
 			if (sound)
 			{
 				for (xml_attribute<>* attribute = sound_node->first_attribute();

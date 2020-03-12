@@ -15,7 +15,8 @@ void cShaderBuilder::Build(Scene& scene, xml_node<>* node)
 		std::string name = shader_node->first_attribute("name")->value();
 		try
 		{
-			scene.Shaders[name] = cShaderHelper::BuildShaderProgram(name, vertShaderFile, fragShaderFile);
+			//scene.Shaders[name] = cShaderHelper::BuildShaderProgram(name, vertShaderFile, fragShaderFile);
+			cShaderHelper::BuildShaderProgram(name, vertShaderFile, fragShaderFile);
 		}
 		catch (std::exception& err)
 		{

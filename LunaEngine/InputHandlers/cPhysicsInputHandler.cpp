@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <Misc/cLowpassFilter.h>
 #include <Components/cRigidBody.h>
+#include <EntityManager/cEntityManager.h>
 
 glm::vec3 originalBallPosition = glm::vec3(0.0f, 6.0f, 0.0f);
 float ychange = 0.f, xchange = 0.f, zchange = 0.f;
@@ -18,11 +19,12 @@ cPhysicsInputHandler::cPhysicsInputHandler(Scene& scene, GLFWwindow* window) : _
 	this->_window = window;
 	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	player = nullptr;
-	for (int i = 0; i < scene.vecGameObjects.size(); ++i)
+	auto& vecGameObjects = cEntityManager::Instance().GetEntities();
+	for (int i = 0; i < vecGameObjects.size(); ++i)
 	{
-		if (scene.vecGameObjects[i]->tag == "player")
+		if (vecGameObjects[i]->tag == "player")
 		{
-			player = _scene.vecGameObjects[i];
+			player = vecGameObjects[i];
 			break;
 		}
 	}

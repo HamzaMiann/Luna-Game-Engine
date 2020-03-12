@@ -3,6 +3,7 @@
 #include "cModelBuilder.h"
 #include <Mesh/cVAOManager.h>
 #include <Mesh/cModelLoader.h>
+#include <Shader/Shader.h>
 #include <iostream>
 using namespace rapidxml;
 
@@ -35,7 +36,7 @@ void cModelBuilder::Build(Scene& scene, xml_node<>* node)
 					friendlyName,
 					*pMesh,
 					*pDrawInfo,
-					scene.Shaders[shader->value()]);
+					Shader::FromName(shader->value())->GetID());
 			}
 			else
 			{
