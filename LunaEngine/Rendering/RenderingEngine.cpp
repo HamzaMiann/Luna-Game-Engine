@@ -702,6 +702,11 @@ void RenderingEngine::RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM TEXTURE (NOT USED ON THIS PASS)
 	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp04", 4);	// TEXTURE INDICATING UNLIT OBJECTS
 
+	shader.SetTexture3D(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
+	shader.SetFloat("cloudDensityFactor", cloudDensityFactor);
+	shader.SetFloat("cloudDensityCutoff", cloudDensityCutoff);
+	shader.SetFloat("cloudLightScattering", cloudLightScattering);
+
 	// 4. Draw a single object (a triangle or quad)
 	shader.SetBool("isFinalPass", GL_FALSE);
 	shader.SetVec2("iResolution", vec2(width, height));

@@ -345,12 +345,13 @@ float GetDensityAt(vec3 position)
 }
 
 
-void RayTracePlane(Ray ray)
+vec4 RayTracePlane(Ray ray, vec4 previousColour)
 {
+	vec4 col = previousColour.rgba;
 	vec2 uv = fUVx2.st;
 
 	float t = intersect(ray, GetPlane1());
-	if (t > 0.0 && t < distance(texture( textSamp01, uv ).xyz, ray.ro))
+	if (t > 0.0 && t < distance(texture( textSamp02, uv ).xyz, ray.ro))
 	{
 		vec3 P = (ray.ro + ray.rd * t);
 
@@ -387,8 +388,6 @@ void RayTracePlane(Ray ray)
 				}
 			}
 
-			// TODO: ray march from position to the light source
-
 			uv3.xy /= 400.;
 			uv3.xy += fiTime / 40.;
 			uv3.z += fiTime / 100.;
@@ -398,14 +397,18 @@ void RayTracePlane(Ray ray)
 
 		float ratio = exp(-density / cloudDensityFactor);//(t / (3. * 20.));
 		float lightRatio = exp(-lightDensity / cloudDensityFactor) * cloudLightScattering;
-		pixelColour.rgb *= ratio;
-		pixelColour.rgb += (1. - ratio) * (lightRatio * theLights[0].diffuse.rgb);
+		col.rgb *= ratio;
+		col.rgb += (1. - ratio) * (lightRatio * theLights[0].diffuse.rgb);
 	}
+
+	return col;
 }
 
-void RayTraceShadows(Ray ray)
+float RayTraceShadows(Ray ray)
 {
+	vec4 col = pixelColour.rgba;
 	vec2 uv = fUVx2.st;
+	float ratio = 1.;
 
 	float t = intersect(ray, GetPlane1());
 
@@ -428,17 +431,18 @@ void RayTraceShadows(Ray ray)
 		{
 			vec3 uv3 = (origin + marchStep * i).xzy;
 			uv3.xy /= 400.;
-			uv3 += fiTime / 40.;
+			uv3.xy += fiTime / 40.;
+			uv3.z += fiTime / 100.;
 			density += GetDensityAt(uv3);
 		}
 
-		float ratio = exp(-density / cloudDensityFactor);
-		vec3 colour =  (1. - ratio) * pixelColour.rgb;
-		//pixelColour.rgb = vec3(ratio) * 0.88;
-		//pixelColour.rgb = colour;
-		//pixelColour.rgb = mix(pixelColour.rgb, colour, 0.3);
-		pixelColour.rgb = mix(pixelColour.rgb, colour, 0.5);
+		ratio = exp(-density / cloudDensityFactor);
+		//vec3 colour =  (ratio) * col.rgb;
+		//col.rgb = mix(pixelColour.rgb, colour, 0.5);
 	}
+
+	//return col;
+	return ratio;
 }
 
 void main()
@@ -483,25 +487,9 @@ void main()
 			pixelColour.rgb += CalculateVolumetricLightScattering(textSamp02).rgb;
 		}
 
-		// clouds effect
-		Ray ray;
-		ray.ro = eyeLocation.xyz;
-		ray.rd = normalize(texture(textSamp01, uv).xyz - ray.ro);
-		RayTracePlane(ray);
-
-		// cloud shadows effect
-		if (false) {
-			ray.ro = texture(textSamp01, uv).xyz;
-			if (distance(ray.ro, eyeLocation.xyz) < 200.)
-			{
-				vec3 lDir = normalize(eyeLocation.xyz - theLights[0].position.xyz);
-				ray.rd = -lDir;
-				RayTraceShadows(ray);
-			}
-		}
 
 		// vignette effect
-		if (false)
+		if (true)
 		{
 			float d = distance(vec2(0.5), fUVx2.st);
 			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 0.85);
@@ -519,8 +507,10 @@ void main()
 
 	float d = distance(eyeLocation.xyz, pos);
 
+	// calculate lighting
 	pixelColour = calcualteLightContrib(col, normal, pos, vec4(0.));
 	
+	// calculate reflections
 	if (texture(textSamp05, uv).r > 0.0)
 	{
 		vec3 direction = normalize(pos - eyeLocation.xyz);
@@ -530,22 +520,48 @@ void main()
 	unlitColour.xyz = texture(textSamp03, uv).xyz;
 	unlitColour.a = 1.0;
 
+	// remove lighting if the pixel is part of the skybox
 	if (texture(textSamp04, uv).r > 0.0)
 	{
 		pixelColour.rgb = col;
 	}
 
+	// clouds effect
+	Ray ray;
+	ray.ro = eyeLocation.xyz;
+	ray.rd = normalize(texture(textSamp02, uv).xyz - ray.ro);
+	pixelColour = RayTracePlane(ray, pixelColour);
+
+	// cloud shadows
+	if (true) {
+		ray.ro = texture(textSamp02, uv).xyz;
+		if (distance(ray.ro, eyeLocation.xyz) < 800.)
+		{
+			vec3 lDir = normalize(eyeLocation.xyz - theLights[0].position.xyz);
+			ray.rd = -lDir;
+			pixelColour *= RayTraceShadows(ray);
+		}
+	}
+
 	pixelColour.a = 1.0;
 
+	// calculate bloom from given lighting
 	bloomColour = BloomCutoff(pixelColour);	// BLOOM TEXTURE
 
-	positionColour.rgb = pos;	// POSITION TEXTURE, just copy it to the next buffer
+	// set the position buffer for next pass
+	positionColour.rgb = pos;				// POSITION TEXTURE, just copy it to the next buffer
 	positionColour.a = 1.;
 
+	// volumetric lighting buffer calculation
 	normalColour = vec4(distance(pos, eyeLocation.xyz)) / 1000.0;	// CUSTOM COLOURED DEPTH BUFFER FOR VOLUMETRIC LIGHTING
 	normalColour.r *= theLights[0].diffuse.r;
 	normalColour.g *= theLights[0].diffuse.g;
 	normalColour.b *= theLights[0].diffuse.b;
+
+	// add clouds to the volumetric lighting buffer
+	ray.ro = eyeLocation.xyz;
+	ray.rd = normalize(texture(textSamp02, uv).xyz - ray.ro);
+	normalColour = RayTracePlane(ray, normalColour);
 
 	return;
 	
