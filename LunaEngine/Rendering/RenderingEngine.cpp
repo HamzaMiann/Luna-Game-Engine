@@ -16,6 +16,7 @@ cTexture worleyNoise2;
 cWorleyTexture* worleyTexture;
 float cloudDensityFactor = 1.f;
 float cloudDensityCutoff = 0.1f;
+float cloudLightScattering = 2.f;
 
 RenderingEngine::RenderingEngine()
 {
@@ -53,7 +54,7 @@ RenderingEngine::RenderingEngine()
 
 	size_t width, height;
 	unsigned char* data;
-	worleyTexture = cWorleyTexture::Generate(64u, 4u, 15u, 30u);
+	worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
 	data = worleyTexture->GetDataRGB(width, height);
 	cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
 	worleyNoise.SetTexture("worley");
@@ -102,6 +103,17 @@ void RenderingEngine::Reset()
 		cloudDensityCutoff -= 0.01f;
 		if (cloudDensityCutoff < 0.f)
 			cloudDensityCutoff = 0.f;
+	}
+
+	if (Input::GetKey(GLFW_KEY_UP))
+	{
+		cloudLightScattering += 0.1f;
+	}
+	if (Input::GetKey(GLFW_KEY_DOWN))
+	{
+		cloudLightScattering -= 0.1f;
+		if (cloudLightScattering < 0.f)
+			cloudLightScattering = 0.f;
 	}
 }
 
@@ -732,6 +744,7 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	shader.SetTexture3D(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
 	shader.SetFloat("cloudDensityFactor", cloudDensityFactor);
 	shader.SetFloat("cloudDensityCutoff", cloudDensityCutoff);
+	shader.SetFloat("cloudLightScattering", cloudLightScattering);
 
 	shader.SetBool("isFinalPass", GL_TRUE);
 

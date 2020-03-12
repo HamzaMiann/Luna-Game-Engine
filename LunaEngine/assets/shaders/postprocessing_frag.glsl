@@ -34,6 +34,7 @@ uniform samplerCube skyBox;
 uniform vec2 lightPositionOnScreen;
 uniform float cloudDensityFactor;
 uniform float cloudDensityCutoff;
+uniform float cloudLightScattering;
 
 // Globals
 in float fiTime;
@@ -358,17 +359,33 @@ void RayTracePlane(Ray ray)
 		float t2 = intersect(ray, GetPlane2());
 		vec3 P2 = (ray.ro + ray.rd * t2);
 
+		const int LIGHT_SAMPLES = 5;
 		const int NUM_DENSITY_SAMPLES = 20;
 		vec3 origin = P;
 		vec3 marchStep = (P2 - P) / NUM_DENSITY_SAMPLES;
 
 		float density = 0.;
+		float lightDensity = 0.;
 
 		for (int i = 0; i < NUM_DENSITY_SAMPLES; ++i)
 		{
 			vec3 uv3 = (origin + marchStep * i).xzy;
 			ray.ro = uv3.xzy;
-			ray.rd = normalize(eyeLocation.xyz - theLights[0].position.xyz);
+			ray.rd = normalize(theLights[0].position.xyz - eyeLocation.xyz);
+
+			float t3 = intersect(ray, GetPlane2());
+			if (t3 > 0.)
+			{
+				vec3 mStep = ((ray.ro + ray.rd * t3) - ray.ro) / LIGHT_SAMPLES;
+				for (int n = 0; n < LIGHT_SAMPLES; ++n)
+				{
+					vec3 uv4 = (ray.ro + mStep * n).xzy;
+					uv4.xy /= 400.;
+					uv4.xy += fiTime / 40.;
+					uv4.z += fiTime / 100.;
+					lightDensity += GetDensityAt(uv4);
+				}
+			}
 
 			// TODO: ray march from position to the light source
 
@@ -380,9 +397,9 @@ void RayTracePlane(Ray ray)
 		}
 
 		float ratio = exp(-density / cloudDensityFactor);//(t / (3. * 20.));
+		float lightRatio = exp(-lightDensity / cloudDensityFactor) * cloudLightScattering;
 		pixelColour.rgb *= ratio;
-		//vec3 colour = vec3(ratio) * 5. / (t / (1.5 * 10.));
-		//pixelColour.rgb = mix(pixelColour.rgb, colour, smoothstep(0., 1., clamp(ratio, 0., 1.)));
+		pixelColour.rgb += (1. - ratio) * (lightRatio * theLights[0].diffuse.rgb);
 	}
 }
 
