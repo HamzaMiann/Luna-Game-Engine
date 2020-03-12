@@ -230,6 +230,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClCompile Include="SteamModule.cpp" />
     <ClCompile Include="Texture\cTexture.cpp" />
     <ClCompile Include="Texture\cWorleyTexture.cpp" />
+    <ClCompile Include="threading.cpp" />
     <ClCompile Include="_GL\glad.c" />
     <ClCompile Include="Physics\octree.cpp" />
     <ClCompile Include="main.cpp" />
@@ -316,6 +317,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="Texture\PerlinNoise.hpp" />
     <ClInclude Include="Texture\stb_image.h" />
     <ClInclude Include="Texture\cWorleyTexture.h" />
+    <ClInclude Include="threading.h" />
     <ClInclude Include="_GL\GLCommon.h" />
     <ClInclude Include="Commands\iCommand.h" />
     <ClInclude Include="DebugRenderer\iDebugRenderer.h" />

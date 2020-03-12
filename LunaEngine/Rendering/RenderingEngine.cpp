@@ -12,6 +12,8 @@
 #include <InputManager.h>
 #include <thread>
 #include <safe_promise.h>
+#include <threading.h>
+#include <iostream>
 
 cTexture worleyNoise;
 cTexture worleyNoise2;
@@ -69,7 +71,6 @@ RenderingEngine::RenderingEngine()
 	future = promise.get_future();
 
 	new std::thread(cWorleyTexture::GenerateAsyncPromise, &promise, 64u, 4u, 15u, 30u);
-
 	
 	//worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
 
