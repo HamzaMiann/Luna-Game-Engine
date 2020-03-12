@@ -587,6 +587,9 @@
     <ClInclude Include="Texture\PerlinNoise.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="safe_promise.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">

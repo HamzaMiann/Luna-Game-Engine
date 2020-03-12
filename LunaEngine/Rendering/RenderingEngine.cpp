@@ -10,6 +10,8 @@
 #include <EntityManager/cEntityManager.h>
 #include <Texture/cWorleyTexture.h>
 #include <InputManager.h>
+#include <thread>
+#include <safe_promise.h>
 
 cTexture worleyNoise;
 cTexture worleyNoise2;
@@ -17,6 +19,11 @@ cWorleyTexture* worleyTexture;
 float cloudDensityFactor = 1.f;
 float cloudDensityCutoff = 0.1f;
 float cloudLightScattering = 2.f;
+
+std::promise<cWorleyTexture*> promise;
+std::future<cWorleyTexture*> future;
+
+//safe_promise<cWorleyTexture*> promise;
 
 RenderingEngine::RenderingEngine()
 {
@@ -51,14 +58,20 @@ RenderingEngine::RenderingEngine()
 	screenPos = vec2(0.f, 0.f);
 	noise.SetTexture("noise.jpg");
 
-
+	worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
 	size_t width, height;
 	unsigned char* data;
-	worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
 	data = worleyTexture->GetDataRGB(width, height);
 	cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
 	worleyNoise.SetTexture("worley");
 	worleyNoise2.SetTexture("worley");
+	delete worleyTexture; worleyTexture = 0;
+	future = promise.get_future();
+
+	new std::thread(cWorleyTexture::GenerateAsyncPromise, &promise, 64u, 4u, 15u, 30u);
+
+	
+	//worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -114,6 +127,20 @@ void RenderingEngine::Reset()
 		cloudLightScattering -= 0.1f;
 		if (cloudLightScattering < 0.f)
 			cloudLightScattering = 0.f;
+	}
+
+	if (!worleyTexture)
+	{
+		if (future.wait_for(std::chrono::duration<float>(0.f)) == std::future_status::ready)
+		{
+			worleyTexture = future.get();
+			size_t width, height;
+			unsigned char* data;
+			data = worleyTexture->GetDataRGB(width, height);
+			cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
+			worleyNoise.SetTexture("worley");
+			worleyNoise2.SetTexture("worley");
+		}
 	}
 }
 

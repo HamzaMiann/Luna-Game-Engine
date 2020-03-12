@@ -2,12 +2,12 @@
 
 #include <vector>
 #include <glm/glm_common.h>
+#include <safe_promise.h>
 
 class cWorleyTexture
 {
 private:
 	cWorleyTexture(size_t width, size_t redChannelSize, size_t greenChannelSize, size_t blueChannelSize);
-	~cWorleyTexture();
 
 	struct Pixel
 	{
@@ -41,14 +41,30 @@ private:
 
 	void GenerateGrids();
 	void GeneratePixels();
-	float GetClosestDistance(const Grid& grid, float x, float y, float z);
+	void GeneratePixelsThreaded();
+
+	static void _Generate(cWorleyTexture* texture, unsigned int zMin, unsigned int zMax);
+	static float GetClosestDistance(const Grid& grid, float x, float y, float z, unsigned int mWidth);
 
 public:
 	
+	~cWorleyTexture();
 
 	inline static cWorleyTexture* Generate(size_t pixelWidth, size_t redChannelSize, size_t greenChannelSize, size_t blueChannelSize)
 	{
 		return new cWorleyTexture(pixelWidth, redChannelSize, greenChannelSize, blueChannelSize);
+	}
+
+	static void GenerateAsyncPromise(std::promise<cWorleyTexture*>* promise, size_t pixelWidth, size_t redChannelSize, size_t greenChannelSize, size_t blueChannelSize)
+	{
+		cWorleyTexture* tex = new cWorleyTexture(pixelWidth, redChannelSize, greenChannelSize, blueChannelSize);
+		promise->set_value(tex);
+	}
+
+	static void GenerateAsync(safe_promise<cWorleyTexture*>* promise, size_t pixelWidth, size_t redChannelSize, size_t greenChannelSize, size_t blueChannelSize)
+	{
+		cWorleyTexture* tex = new cWorleyTexture(pixelWidth, redChannelSize, greenChannelSize, blueChannelSize);
+		promise->set_value(tex);
 	}
 
 	inline unsigned char* GetDataRGB(size_t& width, size_t& height)

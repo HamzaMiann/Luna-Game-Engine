@@ -8,6 +8,7 @@
 
 
 #define SEPARATION 1.f
+#define THREADED
 
 cWorleyTexture::cWorleyTexture(size_t width, size_t redChannelSize, size_t greenChannelSize, size_t blueChannelSize):
 	mWidth(width),
@@ -15,9 +16,35 @@ cWorleyTexture::cWorleyTexture(size_t width, size_t redChannelSize, size_t green
 	GridB(greenChannelSize),
 	GridC(blueChannelSize)
 {
-	srand((int)(glfwGetTime() * 10.f));
+	srand(23);
 	GenerateGrids();
+
+#ifdef THREADED
+	GeneratePixelsThreaded();
+#else
 	GeneratePixels();
+#endif
+}
+
+void cWorleyTexture::_Generate(cWorleyTexture* texture, unsigned int zMin, unsigned int zMax)
+{
+	float mWidth = texture->mWidth;
+	auto& mPixels = texture->mPixels;
+
+	for (size_t z = zMin; z < zMax; ++z)
+	{
+		for (size_t y = 0; y < mWidth; ++y)
+		{
+			for (size_t x = 0; x < mWidth; ++x)
+			{
+				size_t pixelIndex = (z * mWidth * mWidth) + (y * mWidth) + x;
+
+				mPixels[pixelIndex].r = glm::clamp(1.f - GetClosestDistance(texture->GridA, x, y, z, mWidth) * SEPARATION, 0.f, 1.f) * 255;
+				mPixels[pixelIndex].g = glm::clamp(1.f - GetClosestDistance(texture->GridB, x, y, z, mWidth) * SEPARATION, 0.f, 1.f) * 255;
+				mPixels[pixelIndex].b = glm::clamp(1.f - GetClosestDistance(texture->GridC, x, y, z, mWidth) * SEPARATION, 0.f, 1.f) * 255;
+			}
+		}
+	}
 }
 
 cWorleyTexture::~cWorleyTexture()
@@ -38,23 +65,22 @@ void cWorleyTexture::GeneratePixels()
 	mPixels.resize(mWidth * mWidth * mWidth);
 	//siv::BasicPerlinNoise<float> perlin;
 
-	for (size_t z = 0; z < mWidth; ++z)
-	{
-		for (size_t y = 0; y < mWidth; ++y)
-		{
-			for (size_t x = 0; x < mWidth; ++x)
-			{
-				size_t pixelIndex = (z * mWidth * mWidth) + (y * mWidth) + x;
+	_Generate(this, 0, mWidth);
 
-				mPixels[pixelIndex].r = glm::clamp(1.f - GetClosestDistance(GridA, x, y, z) * SEPARATION, 0.f, 1.f) * 255;
-				mPixels[pixelIndex].g = glm::clamp(1.f - GetClosestDistance(GridB, x, y, z) * SEPARATION, 0.f, 1.f) * 255;
-				mPixels[pixelIndex].b = glm::clamp(1.f - GetClosestDistance(GridC, x, y, z) * SEPARATION, 0.f, 1.f) * 255;
-			}
-		}
-	}
 }
 
-float cWorleyTexture::GetClosestDistance(const Grid& grid, float x, float y, float z)
+void cWorleyTexture::GeneratePixelsThreaded()
+{
+	mPixels.resize(mWidth * mWidth * mWidth);
+
+	std::thread* thread1 = new std::thread(_Generate, this, 0, (mWidth / 2));
+	std::thread* thread2 = new std::thread(_Generate, this, (mWidth / 2) + 1u, mWidth);
+
+	thread1->join();
+	thread2->join();
+}
+
+float cWorleyTexture::GetClosestDistance(const Grid& grid, float x, float y, float z, unsigned int mWidth)
 {
 	float gridX = (x / (float)mWidth) * grid.mGridWidth;
 	float gridY = (y / (float)mWidth) * grid.mGridWidth;

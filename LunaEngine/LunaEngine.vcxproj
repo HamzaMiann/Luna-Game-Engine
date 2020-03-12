@@ -284,6 +284,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="Commands\cMoveTo.h" />
     <ClInclude Include="Particles\cParticleEffect.h" />
     <ClInclude Include="Physics\global_physics.h" />
+    <ClInclude Include="safe_promise.h" />
     <ClInclude Include="Scene\Builders\cAnimationBuilder.h" />
     <ClInclude Include="Scene\Builders\cTextureBuilder.h" />
     <ClInclude Include="Commands\cTrigger.h" />
