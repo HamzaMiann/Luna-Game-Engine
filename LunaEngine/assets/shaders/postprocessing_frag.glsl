@@ -351,7 +351,7 @@ vec4 RayTracePlane(Ray ray, vec4 previousColour)
 	vec2 uv = fUVx2.st;
 
 	float t = intersect(ray, GetPlane1());
-	if (t > 0.0 && t < distance(texture( textSamp02, uv ).xyz, ray.ro))
+	if (t > 0.0 && (t < distance(texture( textSamp02, uv ).xyz, ray.ro)))
 	{
 		vec3 P = (ray.ro + ray.rd * t);
 
@@ -532,16 +532,7 @@ void main()
 	ray.rd = normalize(texture(textSamp02, uv).xyz - ray.ro);
 	pixelColour = RayTracePlane(ray, pixelColour);
 
-	// cloud shadows
-	if (true) {
-		ray.ro = texture(textSamp02, uv).xyz;
-		if (distance(ray.ro, eyeLocation.xyz) < 800.)
-		{
-			vec3 lDir = normalize(eyeLocation.xyz - theLights[0].position.xyz);
-			ray.rd = -lDir;
-			pixelColour *= RayTraceShadows(ray);
-		}
-	}
+	
 
 	pixelColour.a = 1.0;
 
@@ -597,7 +588,19 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 
 			dotProduct = max( 0.0f, dotProduct );		// 0 to 1
 		
-			lightContrib *= dotProduct;		
+			lightContrib *= dotProduct;
+
+			// cloud shadows
+			if (true) {
+				Ray ray;
+				ray.ro = texture(textSamp02, fUVx2.st).xyz;
+				if (distance(ray.ro, eyeLocation.xyz) < 800.)
+				{
+					vec3 lDir = normalize(eyeLocation.xyz - theLights[index].position.xyz);
+					ray.rd = -lDir;
+					lightContrib *= RayTraceShadows(ray);
+				}
+			}
 			
 			finalObjectColour.rgb += (vertexMaterialColour.rgb * theLights[index].diffuse.rgb * lightContrib)  * theLights[index].atten.r; 
 			continue;
