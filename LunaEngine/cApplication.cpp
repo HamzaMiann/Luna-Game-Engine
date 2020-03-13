@@ -98,21 +98,6 @@ void cApplication::Run()
 	cEntityManager& entity_manager = cEntityManager::Instance();
 	cBehaviourManager& behaviour_manager = cBehaviourManager::Instance();
 
-	for (unsigned int i = 0; i < 30; ++i)
-	{
-		float x = Mathf::randInRange(-20, 20);
-		float z = Mathf::randInRange(-20, 20);
-
-		vec3 pos(x, 1.f, z);
-		cGameObject* obj = new cGameObject;
-		obj->meshName = "grass";
-		obj->tag = "grass";
-		obj->shader = Shader::FromName("basic");
-		obj->transform.Position(pos);
-		obj->texture[0].SetTexture("grass_quad.png", 1.f);
-		entity_manager.AddEntity(obj);
-	}
-
 
 	int width, height;
 	glfwGetFramebufferSize(global::window, &width, &height);
@@ -132,8 +117,11 @@ void cApplication::Run()
 
 	// Run the start method on all behaviour components
 	behaviour_manager.start();
+	// Initialize renderer
+	renderer.Init();
 	// Initialize debug renderer
 	debug_renderer.initialize();
+	
 
 	cLowpassFilter& filter = cLowpassFilter::Instance();
 	float current_time = (float)glfwGetTime();

@@ -23,6 +23,7 @@ uniform sampler2D textSamp01;
 uniform sampler2D textSamp02;
 uniform sampler2D textSamp03;
 uniform vec4 tex_0_3_ratio;		// x = 0, y = 1, z = 2, w = 3
+uniform vec4 tex_tiling;
 uniform samplerCube skyBox;
 
 
@@ -97,10 +98,10 @@ void main()
 		//return;
 	}
 
-	vec3 tex0_RGB = texture( textSamp00, fUVx2.st ).rgb;
-	vec3 tex1_RGB = texture( textSamp01, fUVx2.st ).rgb;
-	vec3 tex2_RGB = texture( textSamp02, fUVx2.st ).rgb;
-	vec3 tex3_RGB = texture( textSamp03, fUVx2.st ).rgb;
+	vec3 tex0_RGB = texture( textSamp00, fUVx2.st * tex_tiling.x ).rgb;
+	vec3 tex1_RGB = texture( textSamp01, fUVx2.st * tex_tiling.y ).rgb;
+	vec3 tex2_RGB = texture( textSamp02, fUVx2.st * tex_tiling.z ).rgb;
+	vec3 tex3_RGB = texture( textSamp03, fUVx2.st * tex_tiling.w ).rgb;
 		
 	vec3 texRGB =   ( tex_0_3_ratio.x * tex0_RGB ) 
 				  + ( tex_0_3_ratio.y * tex1_RGB )

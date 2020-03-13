@@ -8,6 +8,7 @@ class cTexture
 	std::string filename;
 	unsigned int ID;
 	float blend;
+	float tiling;
 
 public:
 	~cTexture() {}
@@ -30,5 +31,9 @@ public:
 	inline void SetBlend(float amount) { blend = amount; }
 
 	inline float GetBlend() { return blend; }
+
+	inline void SetTiling(float value) { tiling = value; }
+
+	inline float GetTiling() { return tiling; }
 	
 };

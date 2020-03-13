@@ -175,7 +175,12 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 		else if (propName == "Texture")
 		{
 			ptr->texture[texture_id].SetBlend(strtof(property_node->first_attribute("ratio")->value(), 0));
-			ptr->texture[texture_id++].SetTexture(property_node->value());
+			ptr->texture[texture_id].SetTexture(property_node->value());
+			if (property_node->first_attribute("tiling"))
+			{
+				ptr->texture[texture_id].SetTiling(strtof(property_node->first_attribute("tiling")->value(), 0));
+			}
+			texture_id++;
 		}
 		else if (propName == "Animations")
 		{

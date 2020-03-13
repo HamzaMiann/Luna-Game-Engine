@@ -18,6 +18,8 @@ uniform bool isSkybox;
 uniform bool bloomEnabled;
 uniform bool DOFEnabled;
 uniform bool volumetricEnabled;
+uniform bool cloudsEnabled;
+uniform bool cloudShadowsEnabled;
 
 // Texture
 uniform sampler2D textSamp00;	// albedo
@@ -221,7 +223,7 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 	float density = 0.97;
 	float weight = 0.5;
 	float exposure = 0.1 * exposureRatio;
-	float decay = 0.9;
+	float decay = 0.94;
 	int NUM_SAMPLES = 100;
 
 	vec2 deltaTextCoord = vec2( uv - lightPos.xy ) * 0.02;
@@ -527,11 +529,12 @@ void main()
 	}
 
 	// clouds effect
-	Ray ray;
-	ray.ro = eyeLocation.xyz;
-	ray.rd = normalize(texture(textSamp02, uv).xyz - ray.ro);
-	pixelColour = RayTracePlane(ray, pixelColour);
-
+	if (cloudsEnabled) {
+		Ray ray;
+		ray.ro = eyeLocation.xyz;
+		ray.rd = normalize(texture(textSamp02, uv).xyz - ray.ro);
+		pixelColour = RayTracePlane(ray, pixelColour);
+	}
 	
 
 	pixelColour.a = 1.0;
@@ -550,9 +553,12 @@ void main()
 	normalColour.b *= theLights[0].diffuse.b;
 
 	// add clouds to the volumetric lighting buffer
-	ray.ro = eyeLocation.xyz;
-	ray.rd = normalize(texture(textSamp02, uv).xyz - ray.ro);
-	normalColour = RayTracePlane(ray, normalColour);
+	if (cloudsEnabled) {
+		Ray ray;
+		ray.ro = eyeLocation.xyz;
+		ray.rd = normalize(texture(textSamp02, uv).xyz - ray.ro);
+		normalColour = RayTracePlane(ray, normalColour);
+	}
 
 	return;
 	
@@ -591,7 +597,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 			lightContrib *= dotProduct;
 
 			// cloud shadows
-			if (true) {
+			if (cloudsEnabled && cloudShadowsEnabled) {
 				Ray ray;
 				ray.ro = texture(textSamp02, fUVx2.st).xyz;
 				if (distance(ray.ro, eyeLocation.xyz) < 800.)

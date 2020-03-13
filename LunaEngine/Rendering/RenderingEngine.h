@@ -25,6 +25,8 @@ private:
 	bool bloom_enabled;
 	bool DOF_enabled;
 	bool volumetric_enabled;
+	bool clouds_enabled;
+	bool clouds_shadows_enabled;
 
 	cGameObject quad;
 
@@ -39,6 +41,7 @@ public:
 	std::string skyboxName;
 	int pass_id;
 
+	void Init();
 	~RenderingEngine();
 
 	static RenderingEngine& Instance()

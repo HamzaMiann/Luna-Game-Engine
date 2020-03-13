@@ -5,7 +5,8 @@ cTexture::cTexture() :
 	ID(0),
 	filename(""),
 	initialized(false),
-	blend(0.f)
+	blend(0.f),
+	tiling(1.f)
 {
 }
 
@@ -13,7 +14,8 @@ cTexture::cTexture(int ID) :
 	ID(ID),
 	filename(""),
 	initialized(true),
-	blend(0.f)
+	blend(0.f),
+	tiling(1.f)
 {
 }
 
@@ -21,7 +23,8 @@ cTexture::cTexture(std::string name) :
 	filename(name),
 	ID(cBasicTextureManager::Instance()->getTextureIDFromName(name)),
 	initialized(true),
-	blend(0.f)
+	blend(0.f),
+	tiling(1.f)
 {
 }
 

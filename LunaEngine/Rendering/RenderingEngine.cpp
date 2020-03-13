@@ -29,6 +29,10 @@ std::future<cWorleyTexture*> future;
 
 RenderingEngine::RenderingEngine()
 {
+}
+
+void RenderingEngine::Init()
+{
 	width = 600;
 	height = 800;
 	pass_id = 1;
@@ -36,13 +40,15 @@ RenderingEngine::RenderingEngine()
 	bloom_enabled = true;
 	DOF_enabled = true;
 	volumetric_enabled = true;
+	clouds_enabled = true;
+	clouds_shadows_enabled = true;
 
 	float ratio = width / (float)height;
 
 	projection = glm::perspective(0.6f,			// FOV
-								  ratio,		// Aspect ratio
-								  0.1f,			// Near clipping plane
-								  1000.f);	// Far clipping plane
+		ratio,		// Aspect ratio
+		0.1f,			// Near clipping plane
+		1000.f);	// Far clipping plane
 
 	view = mat4(1.f);
 
@@ -55,28 +61,30 @@ RenderingEngine::RenderingEngine()
 	skyBox.tag = "skybox";
 	skyBox.transform.scale = vec3(900.0f);
 
-	skyboxName = "city";
+	skyboxName = "default";
 
 	screenPos = vec2(0.f, 0.f);
 	noise.SetTexture("noise.jpg");
 
-	worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
-	size_t width, height;
-	unsigned char* data;
-	data = worleyTexture->GetDataRGB(width, height);
-	cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
-	worleyNoise.SetTexture("worley");
-	worleyNoise2.SetTexture("worley");
-	delete worleyTexture; worleyTexture = 0;
-	future = promise.get_future();
+	if (clouds_enabled)
+	{
+		worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
+		size_t width, height;
+		unsigned char* data;
+		data = worleyTexture->GetDataRGB(width, height);
+		cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
+		worleyNoise.SetTexture("worley");
+		worleyNoise2.SetTexture("worley");
+		delete worleyTexture; worleyTexture = 0;
+		future = promise.get_future();
 
-	new std::thread(cWorleyTexture::GenerateAsyncPromise, &promise, 64u, 4u, 15u, 30u);
-	
+		new std::thread(cWorleyTexture::GenerateAsyncPromise, &promise, 64u, 4u, 15u, 30u);
+	}
+
 	//worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
-
 }
 
 RenderingEngine::~RenderingEngine() {}
@@ -130,7 +138,7 @@ void RenderingEngine::Reset()
 			cloudLightScattering = 0.f;
 	}
 
-	if (!worleyTexture)
+	if (clouds_enabled && !worleyTexture)
 	{
 		if (future.wait_for(std::chrono::duration<float>(0.f)) == std::future_status::ready)
 		{
@@ -394,6 +402,15 @@ void RenderingEngine::SetUpTextureBindingsForObject(cGameObject& object)
 	shader.SetTexture(textures[1].GetID(), "textSamp01", 1);
 	shader.SetTexture(textures[2].GetID(), "textSamp02", 2);
 	shader.SetTexture(textures[3].GetID(), "textSamp03", 3);
+
+	shader.SetVec4("tex_tiling",
+		vec4(
+			textures[0].GetTiling(),
+			textures[1].GetTiling(),
+			textures[2].GetTiling(),
+			textures[3].GetTiling()
+		)
+	);
 
 	shader.SetVec4("tex_0_3_ratio",
 		vec4(
@@ -792,6 +809,12 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 
 	if (volumetric_enabled)	shader.SetBool("volumetricEnabled", GL_TRUE);
 	else					shader.SetBool("volumetricEnabled", GL_FALSE);
+
+	if (clouds_enabled)	shader.SetBool("cloudsEnabled", GL_TRUE);
+	else					shader.SetBool("cloudsEnabled", GL_FALSE);
+
+	if (clouds_shadows_enabled)	shader.SetBool("cloudShadowsEnabled", GL_TRUE);
+	else					shader.SetBool("cloudShadowsEnabled", GL_FALSE);
 
 
 	this->DrawObject(quad, mat4(1.f), p);

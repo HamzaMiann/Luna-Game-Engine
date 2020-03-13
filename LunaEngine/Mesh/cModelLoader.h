@@ -5,6 +5,9 @@
 #include <vector>
 #include <Mesh/cMesh.h>
 
+struct aiScene;
+struct aiMesh;
+
 struct LoadResult
 {
 	bool success = false;
@@ -15,6 +18,11 @@ class cModelLoader
 {
 private:
 	cModelLoader();			// constructor
+
+	void LoadMeshes(const aiScene* scene, cMesh& theMesh);
+	void LoadTextures(const aiScene* scene, cMesh& theMesh, LoadResult& result);
+	void LoadBones(const aiScene* scene, aiMesh& mesh, cMesh& theMesh);
+	void LoadAnimations(const aiScene* scene, cMesh& theMesh);
 
 public:
 
@@ -35,9 +43,6 @@ public:
 							std::string friendlyName,
 							cMesh &theMesh);		// Note the & (by reference)
 
-	bool LoadAnimation(	std::string filename,
-						std::string friendlyName,
-						std::string meshName);
 
 };
 
