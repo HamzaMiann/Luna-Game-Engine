@@ -17,9 +17,10 @@
 
 cTexture worleyNoise;
 cTexture worleyNoise2;
+cTexture perlinNoise;
 cWorleyTexture* worleyTexture;
 float cloudDensityFactor = 1.f;
-float cloudDensityCutoff = 0.1f;
+float cloudDensityCutoff = 0.5f;
 float cloudLightScattering = 2.f;
 
 std::promise<cWorleyTexture*> promise;
@@ -78,9 +79,10 @@ void RenderingEngine::Init()
 		delete worleyTexture; worleyTexture = 0;
 		future = promise.get_future();
 
-		new std::thread(cWorleyTexture::GenerateAsyncPromise, &promise, 64u, 4u, 15u, 30u);
+		(new std::thread(cWorleyTexture::GenerateAsyncPromise, &promise, 64u, 4u, 15u, 30u))->detach();
 	}
 
+	perlinNoise.SetTexture("perlin.png");
 	//worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
@@ -197,198 +199,6 @@ void RenderingEngine::StencilEnd()
 {
 	glDisable(GL_STENCIL_TEST);
 }
-
-void RenderingEngine::SetUpTextureBindings(cMaterial& material)
-{
-	if (pass_id != 1) return;
-
-	Shader& shader = *material.shader;
-	cTexture* textures = material.texture;
-
-	shader.SetTexture(textures[0].GetID(), "textSamp00", 0);
-	shader.SetTexture(textures[1].GetID(), "textSamp01", 1);
-	shader.SetTexture(textures[2].GetID(), "textSamp02", 2);
-	shader.SetTexture(textures[3].GetID(), "textSamp03", 3);
-
-	shader.SetVec4("tex_0_3_ratio",
-		vec4(
-			textures[0].GetBlend(),
-			textures[1].GetBlend(),
-			textures[2].GetBlend(),
-			textures[3].GetBlend()
-		)
-	);
-
-	return;
-}
-
-void RenderingEngine::Render(iObject& object)
-{
-	cMaterial* material = object.GetComponent<cMaterial>();
-	if (material != nullptr)
-	{
-		Render(*material);
-	}
-}
-
-void RenderingEngine::Render(cMaterial& material)
-{
-	Shader& shader = *material.shader;
-	sTransform& transform = material.transform;
-	Camera& camera = *Camera::main_camera;
-	cBasicTextureManager* textureManager = cBasicTextureManager::Instance();
-	GLint shaderProgID = shader.GetID();
-
-
-	bool isScope = material.layer == "scope";
-	shader.SetBool("isScope", isScope);
-
-	GLint bIsSkyBox_UL = shader["isSkybox"];
-	GLint isReflection = shader["isReflection"];
-	GLint isRefraction = shader["isRefraction"];
-
-	// Set Skybox
-	GLuint skyBoxTextureID = textureManager->getTextureIDFromName("space");
-	glActiveTexture(GL_TEXTURE26);				// Texture Unit 26
-	glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
-	glUniform1i(shader["skyBox"], 26);
-
-	if (material.isSkybox)
-	{
-		// Draw the back facing triangles. 
-		// Because we are inside the object, so it will force a draw on the "back" of the sphere 
-		glCullFace(GL_FRONT);
-		//glCullFace(GL_FRONT_AND_BACK);
-		glUniform1i(shader["isReflection"], (int)GL_FALSE);
-
-		glUniform1f(bIsSkyBox_UL, (float)GL_TRUE);
-		glUniform1i(isReflection, (int)GL_FALSE);
-		glUniform1i(isRefraction, (int)GL_FALSE);
-
-	}
-	else
-	{
-		if (material.layer == "reflect")
-		{
-			glCullFace(GL_BACK);
-			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
-			glUniform1i(isReflection, (int)GL_TRUE);
-			glUniform1i(isRefraction, (int)GL_FALSE);
-
-		}
-		else if (material.layer == "refract")
-		{
-			glCullFace(GL_BACK);
-			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
-			glUniform1i(isReflection, (int)GL_FALSE);
-			glUniform1i(isRefraction, (int)GL_TRUE);
-
-		}
-		else
-		{
-			glUniform1i(isReflection, (int)GL_FALSE);
-			glUniform1i(isRefraction, (int)GL_FALSE);
-			glUniform1f(bIsSkyBox_UL, (float)GL_FALSE);
-			// Don't draw back facing triangles (default)
-			glCullFace(GL_BACK);
-			SetUpTextureBindings(material);
-		}
-	}
-
-	mat4 m(1.f);
-
-
-	// ******* TRANSLATION TRANSFORM *********
-	mat4 matTrans
-		= glm::translate(mat4(1.0f),
-			vec3(
-				transform.pos.x,
-				transform.pos.y,
-				transform.pos.z)
-		);
-	m = m * matTrans;
-	// ******* TRANSLATION TRANSFORM *********
-
-
-	// ******* ROTATION TRANSFORM *********
-	m = m * mat4(transform.rotation);
-	// ******* ROTATION TRANSFORM *********
-
-	if (pass_id != 1) m = mat4(1.f);
-
-	GLint matModelIT_UL = shader["matModelInverTrans"];
-	mat4 matModelInverseTranspose = glm::inverse(glm::transpose(m));
-	glUniformMatrix4fv(matModelIT_UL, 1, GL_FALSE, glm::value_ptr(matModelInverseTranspose));
-
-
-	// ******* SCALE TRANSFORM *********
-	/*mat4 scale = glm::scale(mat4(1.0f),
-								 vec3(objPtr->scale,
-										   objPtr->scale,
-										   objPtr->scale));
-	m = m * scale;*/
-	// ******* SCALE TRANSFORM *********
-
-
-
-
-	GLint matModel_UL = shader["matModel"];
-	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(transform.ModelMatrix()));
-
-
-
-
-	glUniform4f(shader["eyeLocation"],
-		camera.Eye.x,
-		camera.Eye.y,
-		camera.Eye.z,
-		1.0f
-	);
-
-	/*glUniform4f(shader["diffuseColour"],
-		objPtr->colour.x,
-		objPtr->colour.y,
-		objPtr->colour.z,
-		objPtr->colour.w
-	);*/
-
-	glUniform4f(shader["specularColour"],
-		material.specColour.x,
-		material.specColour.y,
-		material.specColour.z,
-		material.specColour.w
-	);
-
-	glUniform1i(shader["isUniform"], material.isUniformColour);
-
-
-	if (pass_id != 1)
-	{
-		cLightManager::Instance()->Set_Light_Data(shader);
-	}
-
-	if (material.isWireframe)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-	else
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-
-	sModelDrawInfo& drawInfo = *material.drawInfo;
-	glBindVertexArray(drawInfo.VAO_ID);
-	glDrawElements(
-		GL_TRIANGLES,
-		drawInfo.numberOfIndices,
-		GL_UNSIGNED_INT,
-		0);
-	glBindVertexArray(0);
-}
-
-
-
-// OLD CALLS
 
 
 void RenderingEngine::SetUpTextureBindingsForObject(cGameObject& object)
@@ -607,10 +417,10 @@ void RenderingEngine::DrawOctree(cGameObject* obj, octree::octree_node* node, cG
 void RenderingEngine::RenderGO(cGameObject& object, float width, float height, mat4& p, mat4& v, int& lastShader)
 {
 
-	for (cGameObject*& child : object.children)
+	for (iObject* child : object.Children)
 	{
 		if (child)
-			this->RenderGO(*child, width, height, p, v, lastShader);
+			this->RenderGO(*reinterpret_cast<cGameObject*>(child), width, height, p, v, lastShader);
 	}
 
 	if (!object.shader) return;
@@ -705,12 +515,6 @@ void RenderingEngine::RenderSkybox(float width, float height, mat4 p, mat4 v, fl
 	cGameObject* objPtr = &skyBox;
 	Shader& shader = *objPtr->shader;
 
-	cMaterial* material = objPtr->GetComponent<cMaterial>();
-	if (material != nullptr)
-	{
-		// TODO
-	}
-
 	shader.Use();
 
 	shader.SetFloat("iTime", (float)glfwGetTime());
@@ -748,6 +552,8 @@ void RenderingEngine::RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp04", 4);	// TEXTURE INDICATING UNLIT OBJECTS
 
 	shader.SetTexture3D(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
+	shader.SetTexture3D(perlinNoise, "perlinTexture", 7);					// WORLEY NOISE TEXTURE
+
 	shader.SetFloat("cloudDensityFactor", cloudDensityFactor);
 	shader.SetFloat("cloudDensityCutoff", cloudDensityCutoff);
 	shader.SetFloat("cloudLightScattering", cloudLightScattering);

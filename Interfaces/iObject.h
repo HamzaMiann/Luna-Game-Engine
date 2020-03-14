@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#define SAFE_DELETE(x) if (x) { delete x; x = 0; }
+
 class iObject : public iSerializable
 {
 private:
@@ -15,19 +17,46 @@ public:
 	sTransform transform;
 	std::string tag = "";
 
+	iObject* parent = 0;
 	std::vector<iObject*> Children;
 
 	inline void AddChild(iObject* child) { Children.push_back(child); }
 	inline void RemoveChild(iObject* child) { Children.erase(std::find(Children.begin(), Children.end(), child)); }
 
-
 	virtual ~iObject()
 	{
 		for (unsigned int i = 0; i < _components.size(); ++i)
 		{
-			delete _components[i];
+			SAFE_DELETE(_components[i])
 		}
 		_components.clear();
+	}
+
+	mat4 TranslationMatrix()
+	{
+		if (parent)
+		{
+			return parent->TranslationMatrix()* parent->RotationMatrix() * transform.TranslationMatrix();
+		}
+		else return transform.ModelMatrix();
+	}
+
+	mat4 RotationMatrix()
+	{
+		if (parent)
+		{
+			return parent->RotationMatrix() * transform.RotationMatrix();
+		}
+		else return transform.RotationMatrix();
+	}
+
+	mat4 ScaleMatrix()
+	{
+		if (parent)
+		{
+			return parent->ScaleMatrix() * transform.ScaleMatrix();
+		}
+		else return transform.ScaleMatrix();
 	}
 
 	template<typename T>
@@ -67,7 +96,7 @@ public:
 			T* ptr = dynamic_cast<T*>(comp);
 			if (ptr != nullptr)
 			{
-				delete (*it);
+				SAFE_DELETE(*it)
 				_components.erase(it);
 				return;
 			}
@@ -75,7 +104,7 @@ public:
 		}
 	}
 
-	const std::vector<iComponent*>& Components()
+	inline const std::vector<iComponent*>& Components()
 	{
 		return _components;
 	}

@@ -514,12 +514,12 @@
     <GameObject mesh="plane" tag="ground" shader="basic">
       <Position x="0.0" y="0.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
-      <Scale>2.0</Scale>
+      <Scale>10.0</Scale>
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.0" tiling="40.0">Ground_Dirt_007_basecolor.png</Texture>
-      <Texture ratio="0.0" tiling="40.0">Snow_004_COLOR.jpg</Texture>
+      <Texture ratio="1.0" tiling="100.0">Ground_Dirt_007_basecolor.png</Texture>
+      <Texture ratio="0.0" tiling="100.0">Snow_004_COLOR.jpg</Texture>
       
       <Components>
         

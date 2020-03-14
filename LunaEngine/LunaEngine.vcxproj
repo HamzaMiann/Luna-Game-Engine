@@ -181,7 +181,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cApplication.cpp" />
     <ClCompile Include="Components\cAnimationController.cpp" />
-    <ClCompile Include="Components\cMaterial.cpp" />
+    <ClCompile Include="Components\cRenderMesh.cpp" />
     <ClCompile Include="Components\ComponentFactory.cpp" />
     <ClCompile Include="Components\cRigidBody.cpp" />
     <ClCompile Include="EntityManager\cEntityManager.cpp" />
@@ -265,8 +265,9 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="cApplication.h" />
     <ClInclude Include="Components\cAnimationController.h" />
     <ClInclude Include="Components\ComponentFactory.h" />
-    <ClInclude Include="Components\cMaterial.h" />
+    <ClInclude Include="Components\cRenderMesh.h" />
     <ClInclude Include="Components\cRigidBody.h" />
+    <ClInclude Include="Components\iRenderMesh.h" />
     <ClInclude Include="EntityManager\cEntityManager.h" />
     <ClInclude Include="FBO\cSimpleFBO.h" />
     <ClInclude Include="iEngine.h" />
@@ -364,6 +365,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <Xml Include="assets\scenes\physics.scene.xml">
       <SubType>Designer</SubType>
     </Xml>
+    <Xml Include="assets\scenes\sandbox2.scene.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

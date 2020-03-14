@@ -50,6 +50,7 @@ namespace nPhysics
 
 		iPhysicsComponent(iObject* parent, eComponentType componentType)
 			: mComponentType(componentType)
+			, iComponent(ComponentType::Physics)
 			, parent(*parent)
 			, transform(parent->transform)
 			, _rotateable(true)

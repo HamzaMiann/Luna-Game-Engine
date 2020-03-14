@@ -54,10 +54,6 @@ public:
 	bool isCollided = false;
 
 	cTexture texture[4];
-
-	cGameObject* parent;
-	std::vector<cGameObject*> children;
-
 	cCommandGroup* cmd_group;
 
 

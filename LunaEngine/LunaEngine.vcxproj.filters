@@ -279,9 +279,6 @@
     <ClCompile Include="FBO\cSimpleFBO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\cMaterial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Behaviour\Controls\cFPSController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -325,6 +322,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="threading.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\cRenderMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -476,9 +476,6 @@
     <ClInclude Include="iEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Components\cMaterial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="InputHandlers\cCameraInputHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -596,6 +593,12 @@
     <ClInclude Include="threading.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Components\iRenderMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\cRenderMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">
@@ -657,5 +660,6 @@
     <Xml Include="assets\scenes\sandbox.scene.xml" />
     <Xml Include="assets\scenes\AI.scene.xml" />
     <Xml Include="assets\scenes\AI2.scene.xml" />
+    <Xml Include="assets\scenes\sandbox2.scene.xml" />
   </ItemGroup>
 </Project>

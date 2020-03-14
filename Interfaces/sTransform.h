@@ -1,16 +1,9 @@
 #pragma once
 
-#include <glm/vec3.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm_common.h>
 
 struct sTransform
 {
-private:
-	typedef glm::vec3 vec3;
-	typedef glm::vec4 vec4;
-	typedef glm::quat quat;
-	typedef glm::mat4 mat4;
 
 public:
 	quat rotation;

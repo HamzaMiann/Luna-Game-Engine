@@ -9,7 +9,7 @@ class cAnimationController : public iBehaviour
 {
 public:
 	cAnimationController(iObject* parent) :
-		iBehaviour(parent)
+		iBehaviour(parent, ComponentType::Animation)
 	{
 	}
 

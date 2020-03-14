@@ -12,7 +12,7 @@ namespace nPhysics
 
 		btTransform transform;
 		transform.setIdentity();
-		transform.setOrigin(nConvert::ToBullet(this->transform.pos + def.Offset));
+		transform.setOrigin(nConvert::ToBullet(this->transform.Position() + def.Offset));
 		offset = def.Offset;
 
 		/// Create Dynamic Objects

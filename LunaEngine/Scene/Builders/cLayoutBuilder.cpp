@@ -199,7 +199,7 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 			cGameObject* newPtr = new cGameObject;
 			MakeGO(property_node, newPtr);
 			newPtr->parent = ptr;
-			ptr->children.push_back(newPtr);
+			ptr->AddChild(newPtr);
 		}
 	}
 }

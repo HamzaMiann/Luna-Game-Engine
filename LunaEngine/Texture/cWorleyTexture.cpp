@@ -4,7 +4,7 @@
 #include <Physics/Mathf.h>
 
 // FROM https://github.com/Reputeless/PerlinNoise/blob/master/PerlinNoise.hpp
-//#include <Texture/PerlinNoise.hpp>
+#include <Texture/PerlinNoise.hpp>
 
 
 #define SEPARATION 1.f
@@ -28,6 +28,8 @@ cWorleyTexture::cWorleyTexture(size_t width, size_t redChannelSize, size_t green
 
 void cWorleyTexture::_Generate(cWorleyTexture* texture, unsigned int zMin, unsigned int zMax)
 {
+	siv::BasicPerlinNoise<float> perlin;
+
 	float mWidth = texture->mWidth;
 	auto& mPixels = texture->mPixels;
 
@@ -39,7 +41,10 @@ void cWorleyTexture::_Generate(cWorleyTexture* texture, unsigned int zMin, unsig
 			{
 				size_t pixelIndex = (z * mWidth * mWidth) + (y * mWidth) + x;
 
-				mPixels[pixelIndex].r = glm::clamp(1.f - GetClosestDistance(texture->GridA, x, y, z, mWidth) * SEPARATION, 0.f, 1.f) * 255;
+				float rColour = glm::clamp(1.f - GetClosestDistance(texture->GridA, x, y, z, mWidth) * SEPARATION, 0.f, 1.f);
+				//float rColour = perlin.noise2D_0_1(x / (float)mWidth, y / (float)mWidth);
+				//rColour = perlin.noise3D_0_1(x / (float)mWidth, y / (float)mWidth, z / (float)mWidth);
+				mPixels[pixelIndex].r = rColour * 255;
 				mPixels[pixelIndex].g = glm::clamp(1.f - GetClosestDistance(texture->GridB, x, y, z, mWidth) * SEPARATION, 0.f, 1.f) * 255;
 				mPixels[pixelIndex].b = glm::clamp(1.f - GetClosestDistance(texture->GridC, x, y, z, mWidth) * SEPARATION, 0.f, 1.f) * 255;
 			}
@@ -63,7 +68,6 @@ void cWorleyTexture::GenerateGrids()
 void cWorleyTexture::GeneratePixels()
 {
 	mPixels.resize(mWidth * mWidth * mWidth);
-	//siv::BasicPerlinNoise<float> perlin;
 
 	_Generate(this, 0, mWidth);
 

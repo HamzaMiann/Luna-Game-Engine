@@ -2,14 +2,36 @@
 
 #include <interfaces/iSerializable.h>
 
+enum class ComponentType
+{
+	Physics,
+	Rendering,
+	Animation,
+	Other
+};
+
 class iComponent : public iSerializable
 {
 public:
 	
-	iComponent() {}
 	virtual ~iComponent() {}
 
 	virtual bool serialize(rapidxml::xml_node<>* root_node) = 0;
 	virtual bool deserialize(rapidxml::xml_node<>* root_node) = 0;
 
+	inline const ComponentType& GetComponentType() { return _type; }
+	inline bool IsType(const ComponentType& type) { return type == _type; }
+
+protected:
+	ComponentType _type;
+
+	iComponent() :
+		_type(ComponentType::Other)
+	{
+	}
+
+	iComponent(ComponentType type) :
+		_type(type)
+	{
+	}
 };

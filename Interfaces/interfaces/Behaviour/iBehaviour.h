@@ -21,8 +21,9 @@ public:
 	iObject& parent;
 
 protected:
+	iBehaviour(iObject* root, ComponentType type);
 	iBehaviour(iObject* root);
-	
+
 private:
 	bool _initialized;
 	iBehaviour() = delete;

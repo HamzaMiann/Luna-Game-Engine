@@ -4,7 +4,6 @@
 #include <string>
 #include <Camera.h>
 #include <iObject.h>
-#include <Components/cMaterial.h>
 #include <Physics/octree.h>
 #include <FBO/cFBO.h>
 #include <cGameObject.h>
@@ -55,10 +54,8 @@ public:
 	void StencilBegin();
 	void StencilEnd();
 
-	void SetUpTextureBindings(cMaterial& material);
 	void SetUpTextureBindingsForObject(cGameObject& object);
 	void Render(iObject& object);
-	void Render(cMaterial& material);
 
 
 	// Old methods

@@ -30,6 +30,7 @@ uniform sampler2D textSamp04;	// unlit
 uniform sampler2D textSamp05;	// REFLECTIVE
 
 uniform sampler3D worleyTexture;
+uniform sampler2D perlinTexture;
 
 uniform samplerCube skyBox;
 
@@ -223,7 +224,7 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 	float density = 0.97;
 	float weight = 0.5;
 	float exposure = 0.1 * exposureRatio;
-	float decay = 0.94;
+	float decay = 0.9;
 	int NUM_SAMPLES = 100;
 
 	vec2 deltaTextCoord = vec2( uv - lightPos.xy ) * 0.02;
@@ -290,55 +291,21 @@ Plane GetPlane2()
 	return p;
 }
 
-#define HASHSCALE1 vec3(.1031)
-
-vec3 hash(vec3 p3)
-{
-	p3 = fract(p3 * HASHSCALE1);
-	p3 += dot(p3, p3.yxz+19.19);
-	return fract((p3.xxy + p3.yxx)*p3.zyx);
-}
-
-
-
-vec3 noise3D( in vec3 x )
-{
-	vec3 p = floor(x);
-	vec3 f = fract(x);
-	f = f*f*(3.0-2.0*f);
-	
-	return mix(	mix(mix( hash(p+vec3(0,0,0)), 
-						hash(p+vec3(1,0,0)),f.x),
-					mix( hash(p+vec3(0,1,0)), 
-						hash(p+vec3(1,1,0)),f.x),f.y),
-				mix(mix( hash(p+vec3(0,0,1)), 
-						hash(p+vec3(1,0,1)),f.x),
-					mix( hash(p+vec3(0,1,1)), 
-						hash(p+vec3(1,1,1)),f.x),f.y),f.z);
-}
-
-
-const mat3 m3 = mat3( 0.00,  0.80,  0.60,
-					-0.80,  0.36, -0.48,
-					-0.60, -0.48,  0.64 );
-
-vec3 fbm3D(in vec3 q)
-{
-	vec3 f  = 0.5000*noise3D( q ); q = m3*q*2.01;
-	f += 0.2500*noise3D( q ); q = m3*q*2.02;
-	f += 0.1250*noise3D( q ); q = m3*q*2.03;
-	f += 0.0625*noise3D( q ); q = m3*q*2.04;
-	f += 0.03125*noise3D( q ); q = m3*q*2.05; 
-	f += 0.015625*noise3D( q ); q = m3*q*2.06; 
-	f += 0.0078125*noise3D( q ); q = m3*q*2.07; 
-	f += 0.00390625*noise3D( q ); q = m3*q*2.08;  
-	return vec3(f);
-}
-
 float GetDensityAt(vec3 position)
 {
 	float density = 0.;
 	vec3 col = texture(worleyTexture, position).rgb;
+	density = col.r;
+	density = mix(density, col.g, 0.3);
+	density = mix(density, col.b, 0.2);
+	density = max(0., density - cloudDensityCutoff);
+	return density;
+}
+
+float GetDensityPerlinAt(vec3 position)
+{
+	float density = 0.;
+	vec3 col = mix(texture(worleyTexture, position).rgb, texture(perlinTexture, position.xy + position.z).rgb, 0.5);
 	density = col.r;
 	density = mix(density, col.g, 0.3);
 	density = mix(density, col.b, 0.2);
