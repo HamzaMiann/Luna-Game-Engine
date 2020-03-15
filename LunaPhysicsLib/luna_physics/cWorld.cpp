@@ -19,11 +19,15 @@ namespace phys
 		size_t numBodies = mBodies.size();
 
 		if (numBodies == 0) return;
+
 		// Step 1: Integrate
 		for (size_t c = 0; c < numBodies; c++)
 		{
+			// integrate rigid body
 			if (mBodies[c]->GetBodyType() == eBodyType::rigid)
 				Integrate(reinterpret_cast<cRigidBody*>(mBodies[c]), dt);
+
+			// self-integrate soft body
 			else if (mBodies[c]->GetBodyType() == eBodyType::soft)
 				reinterpret_cast<cSoftBody*>(mBodies[c])->Integrate(dt, mGravity);
 		}
@@ -36,26 +40,8 @@ namespace phys
 				iBody* A = mBodies[idxA];
 				iBody* B = mBodies[idxB];
 
-				if (	A->GetBodyType() == eBodyType::soft &&
-						B->GetBodyType() == eBodyType::rigid)
-				{
-					reinterpret_cast<cSoftBody*>(A)->CollideWith(reinterpret_cast<cRigidBody*>(B));
-				}
-				else if (	B->GetBodyType() == eBodyType::soft &&
-							A->GetBodyType() == eBodyType::rigid)
-				{
-					reinterpret_cast<cSoftBody*>(B)->CollideWith(reinterpret_cast<cRigidBody*>(A));
-				}
-				else
-				{
-					cRigidBody* rA = reinterpret_cast<cRigidBody*>(A);
-					cRigidBody* rB = reinterpret_cast<cRigidBody*>(B);
-					if (Collide(rA, rB))
-					{
-						rA->Collided(rB);
-						rB->Collided(rA);
-					}
-				}
+				// Collide bodies
+				Collide(A, B);
 			}
 		}
 		// Step 3: Clear the accelerations!
@@ -67,25 +53,26 @@ namespace phys
 
 		// Step 4: Tell everyone about all the collisions!
 
+		// set the previous time (for RK4 integration next frame)
 		T += dt;
 	}
 
-	bool cWorld::AddRigidBody(iBody* rigidBody)
+	bool cWorld::AddBody(iBody* Body)
 	{
-		if (!rigidBody) return false;
-		auto itbody = FIND(mBodies, rigidBody);
+		if (!Body) return false;
+		auto itbody = FIND(mBodies, Body);
 		if (itbody == mBodies.end())
 		{
-			mBodies.push_back(rigidBody);
+			mBodies.push_back(Body);
 			return true;
 		}
 		return false;
 	}
 
-	bool cWorld::RemoveRigidBody(iBody* rigidBody)
+	bool cWorld::RemoveBody(iBody* Body)
 	{
-		if (!rigidBody) return false;
-		auto itbody = FIND(mBodies, rigidBody);
+		if (!Body) return false;
+		auto itbody = FIND(mBodies, Body);
 		if (itbody == mBodies.end()) return false; // wasn't removed
 		mBodies.erase(itbody);
 		return true;
@@ -100,6 +87,33 @@ namespace phys
 
 		// RK4 integration
 		mIntegrator.RK4(body->mPosition, body->mVelocity, body->mAcceleration, mGravity, body->mGravityFactor, dt, T);
+	}
+
+	void cWorld::Collide(iBody* A, iBody* B)
+	{
+		// SOFT BODY COLLISIONS
+		if (A->GetBodyType() == eBodyType::soft &&
+			B->GetBodyType() == eBodyType::rigid)
+		{
+			reinterpret_cast<cSoftBody*>(A)->CollideWith(reinterpret_cast<cRigidBody*>(B));
+		}
+		else if (B->GetBodyType() == eBodyType::soft &&
+			A->GetBodyType() == eBodyType::rigid)
+		{
+			reinterpret_cast<cSoftBody*>(B)->CollideWith(reinterpret_cast<cRigidBody*>(A));
+		}
+
+		// RIGID BODY COLLISIONS
+		else
+		{
+			cRigidBody* rA = reinterpret_cast<cRigidBody*>(A);
+			cRigidBody* rB = reinterpret_cast<cRigidBody*>(B);
+			if (Collide(rA, rB))
+			{
+				rA->Collided(rB);
+				rB->Collided(rA);
+			}
+		}
 	}
 
 	bool cWorld::Collide(cRigidBody* bodyA, cRigidBody* bodyB)
@@ -147,8 +161,6 @@ namespace phys
 		// page 127 closest point on plane
 		// intersect moving sphere
 
-		float collisionValue = 0.3f;// IntersectMovingSpherePlane(...); // TODO
-
 		glm::vec3 c = sphereBody->mPreviousPosition;
 		float r = sphereShape->GetRadius();
 		glm::vec3 v = sphereBody->mPosition - sphereBody->mPreviousPosition;
@@ -166,8 +178,6 @@ namespace phys
 		if (result == -1)
 		{
 			// already colliding at the beginning of the timestep
-			//sphereBody->mPosition = sphereBody->mPreviousPosition;
-			// TODO: STUFF
 
 			glm::vec3 pointOnPlane = nCollide::closest_point_on_plane(sphereBody->mPreviousPosition,
 																	  planeShape->GetNormal(),
@@ -236,8 +246,6 @@ namespace phys
 		{
 			// already colliding at the beginning of the timestep
 			// use an impulse to push them apart
-
-			// TODO: STUFF
 
 			float initialDistance = glm::distance(bodyA->mPreviousPosition + offsetA,
 												  bodyB->mPreviousPosition + offsetB);

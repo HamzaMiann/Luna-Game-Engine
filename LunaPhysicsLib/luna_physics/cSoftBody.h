@@ -61,21 +61,49 @@ namespace phys
 		cSoftBody(const sSoftBodyDef& def);
 		virtual ~cSoftBody();
 
-		virtual void ClearAccelerations();
+		/*
+		SET ACCELERATIONS FOR ALL NODES TO ZERO
+		*/
+		void ClearAccelerations();
+
+		/*
+		INTEGRATE ALL NODES USING EULER INTEGRATION
+		*/
 		void Integrate(float dt, const vec3& gravity);
 
+		/*
+		COLLIDE WITH A GIVEN RIGID-BODY
+		*/
 		void CollideWith(cRigidBody* body);
 
+		/*
+		GET SIZE OF NODE VECTOR (num nodes)
+		*/
 		size_t size();
+
 		bool NodeRadius(size_t index, float& radiusOut);
 		bool NodePosition(size_t index, vec3& positionOut);
 
 	protected:
+
+		/*
+		INTEGRATE A SPECIFIC NODE USING EULER INTEGRATION
+		*/
 		void IntegrateNode(cNode* node, float dt);
 
+		/*
+		COLLIDE SPHERE BODY WITH ALL NODES
+		*/
 		bool CollideSphere(cRigidBody* body, cSphere* shape);
 
+		/*
+		COLLIDE PLANE BODY WITH ALL NODES
+		*/
 		bool CollidePlane(cRigidBody* body, cPlane* shape);
+
+		/*
+		COLLIDE PLANE BODY WITH A SPECIFIC NODE
+		*/
 		bool CollidePlane(cNode* node, cPlane* shape);
 
 		float PercentOfGravityApplied;

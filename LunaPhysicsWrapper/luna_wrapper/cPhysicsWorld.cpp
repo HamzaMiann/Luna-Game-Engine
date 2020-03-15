@@ -23,7 +23,7 @@ void nPhysics::cPhysicsWorld::Update(float dt)
 bool nPhysics::cPhysicsWorld::AddComponent(iPhysicsComponent* component)
 {
 	components.push_back(component);
-	return mWorld->AddRigidBody(dynamic_cast<iBody*>(component));
+	return mWorld->AddBody(dynamic_cast<iBody*>(component));
 }
 
 bool nPhysics::cPhysicsWorld::RemoveComponent(iPhysicsComponent* component)
@@ -33,5 +33,5 @@ bool nPhysics::cPhysicsWorld::RemoveComponent(iPhysicsComponent* component)
 	{
 		components.erase(i);
 	}
-	return mWorld->RemoveRigidBody(dynamic_cast<iBody*>(component));
+	return mWorld->RemoveBody(dynamic_cast<iBody*>(component));
 }

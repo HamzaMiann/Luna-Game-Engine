@@ -19,14 +19,14 @@ namespace phys
 
 		void Update(float dt);
 
-		bool AddRigidBody(iBody* rigidBody);
-		// what does the return bool mean?
-		bool RemoveRigidBody(iBody* rigidBody);
+		bool AddBody(iBody* rigidBody);
+		bool RemoveBody(iBody* rigidBody);
 
 	protected:
 
 		void Integrate(cRigidBody* body, float dt);
 
+		void Collide(iBody* A, iBody* B);
 		bool Collide(cRigidBody* bodyA, cRigidBody* bodyB);
 		bool CollideSpherePlane(cRigidBody* sphereBody, cSphere* sphereShape,
 								cRigidBody* planeBody,  cPlane* planeShape);
@@ -38,7 +38,6 @@ namespace phys
 		glm::vec3 mGravity = glm::vec3(0.f, -9.8f, 0.f);
 		std::vector<iBody*> mBodies;
 		float mDt;
-		float mT;
 		float T;
 		cIntegrator mIntegrator;
 	};
