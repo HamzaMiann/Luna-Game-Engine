@@ -149,6 +149,7 @@
     <ClInclude Include="interfaces\iSerializable.h" />
     <ClInclude Include="interfaces\physics\eComponentType.h" />
     <ClInclude Include="interfaces\physics\iCapsuleComponent.h" />
+    <ClInclude Include="interfaces\physics\iClothComponent.h" />
     <ClInclude Include="interfaces\physics\iCubeComponent.h" />
     <ClInclude Include="interfaces\physics\iEmptyComponent.h" />
     <ClInclude Include="interfaces\physics\iSphereComponent.h" />

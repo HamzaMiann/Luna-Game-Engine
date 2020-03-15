@@ -4,6 +4,7 @@
 
 phys::cRigidBody::cRigidBody(const sRigidBodyDef& def, iShape* shape)
 	: mShape(shape),
+	iBody(eBodyType::rigid),
 	mPosition(def.Position),
 	mPreviousPosition(def.Position),
 	mVelocity(def.Velocity),

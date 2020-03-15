@@ -7,14 +7,12 @@ namespace nPhysics
 		: cRigidBody(def, shape)
 		, iPlaneComponent(parent)
 	{
-		cPhysicsFactory factory;
-		factory.GetWorld()->AddComponent(this);
+		cPhysicsFactory().GetWorld()->AddComponent(this);
 	}
 
 	cPlaneComponent::~cPlaneComponent()
 	{
-		cPhysicsFactory factory;
-		factory.GetWorld()->RemoveComponent(this);
+		cPhysicsFactory().GetWorld()->RemoveComponent(this);
 	}
 
 	bool cPlaneComponent::serialize(rapidxml::xml_node<>* root_node)

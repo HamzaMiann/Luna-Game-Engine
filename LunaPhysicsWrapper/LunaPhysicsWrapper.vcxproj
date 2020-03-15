@@ -146,12 +146,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="luna_wrapper\cClothComponent.h" />
     <ClInclude Include="luna_wrapper\cPhysicsFactory.h" />
     <ClInclude Include="luna_wrapper\cPhysicsWorld.h" />
     <ClInclude Include="luna_wrapper\cPlaneComponent.h" />
     <ClInclude Include="luna_wrapper\cSphereComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="luna_wrapper\cClothComponent.cpp" />
     <ClCompile Include="luna_wrapper\cPhysicsFactory.cpp" />
     <ClCompile Include="luna_wrapper\cPhysicsWorld.cpp" />
     <ClCompile Include="luna_wrapper\cPlaneComponent.cpp" />

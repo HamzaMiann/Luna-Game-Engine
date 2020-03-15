@@ -8,6 +8,7 @@ namespace nPhysics
 		sphere,
 		plane,
 		cube,
+		cloth,
 		capsule
 	};
 }

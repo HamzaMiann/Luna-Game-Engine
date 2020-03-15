@@ -4,7 +4,7 @@
 #include "global_physics.h"
 typedef nPhysics::iPhysicsFactory* (*func_createPhysicsFactory)();
 
-//#define MY_PHYSICS
+#define MY_PHYSICS
 
 #ifdef MY_PHYSICS
 #define LIBRARY_NAME "LunaPhysicsWrapper.dll"

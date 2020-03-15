@@ -72,5 +72,8 @@
     <ClInclude Include="interfaces\physics\iEmptyComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="interfaces\physics\iClothComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

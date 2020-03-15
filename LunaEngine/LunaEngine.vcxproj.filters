@@ -661,5 +661,6 @@
     <Xml Include="assets\scenes\AI.scene.xml" />
     <Xml Include="assets\scenes\AI2.scene.xml" />
     <Xml Include="assets\scenes\sandbox2.scene.xml" />
+    <Xml Include="assets\scenes\physics2.scene.xml" />
   </ItemGroup>
 </Project>

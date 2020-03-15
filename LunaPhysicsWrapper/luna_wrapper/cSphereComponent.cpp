@@ -8,14 +8,12 @@ namespace nPhysics
 		: cRigidBody(def, shape)
 		, iSphereComponent(parent)
 	{
-		cPhysicsFactory factory;
-		factory.GetWorld()->AddComponent(this);
+		cPhysicsFactory().GetWorld()->AddComponent(this);
 	}
 
 	cSphereComponent::~cSphereComponent()
 	{
-		cPhysicsFactory factory;
-		factory.GetWorld()->RemoveComponent(this);
+		cPhysicsFactory().GetWorld()->RemoveComponent(this);
 	}
 
 	bool cSphereComponent::serialize(rapidxml::xml_node<>* root_node)

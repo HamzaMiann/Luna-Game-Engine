@@ -2,6 +2,8 @@
 
 #include "shapes.h"
 #include "cIntegrator.h"
+#include "iBody.h"
+#include "cSoftBody.h"
 #include "cRigidBody.h"
 #include <vector>
 
@@ -17,9 +19,10 @@ namespace phys
 
 		void Update(float dt);
 
-		bool AddRigidBody(cRigidBody* rigidBody);
+		bool AddRigidBody(iBody* rigidBody);
 		// what does the return bool mean?
-		bool RemoveRigidBody(cRigidBody* rigidBody);
+		bool RemoveRigidBody(iBody* rigidBody);
+
 	protected:
 
 		void Integrate(cRigidBody* body, float dt);
@@ -33,7 +36,7 @@ namespace phys
 
 	private:
 		glm::vec3 mGravity = glm::vec3(0.f, -9.8f, 0.f);
-		std::vector<cRigidBody*> mBodies;
+		std::vector<iBody*> mBodies;
 		float mDt;
 		float mT;
 		float T;

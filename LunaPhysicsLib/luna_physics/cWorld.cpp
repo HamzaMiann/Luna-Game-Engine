@@ -22,7 +22,10 @@ namespace phys
 		// Step 1: Integrate
 		for (size_t c = 0; c < numBodies; c++)
 		{
-			if (!mBodies[c]->IsStatic()) Integrate(mBodies[c], dt);
+			if (mBodies[c]->GetBodyType() == eBodyType::rigid)
+				Integrate(reinterpret_cast<cRigidBody*>(mBodies[c]), dt);
+			else if (mBodies[c]->GetBodyType() == eBodyType::soft)
+				reinterpret_cast<cSoftBody*>(mBodies[c])->Integrate(dt, mGravity);
 		}
 
 		// Step 2: Handle Collisions
@@ -30,19 +33,36 @@ namespace phys
 		{
 			for (size_t idxB = idxA + 1; idxB < numBodies; idxB++)
 			{
-				auto A = mBodies[idxA];
-				auto B = mBodies[idxB];
-				if (Collide(A, B))
+				iBody* A = mBodies[idxA];
+				iBody* B = mBodies[idxB];
+
+				if (	A->GetBodyType() == eBodyType::soft &&
+						B->GetBodyType() == eBodyType::rigid)
 				{
-					A->Collided(B);
-					B->Collided(A);
+					reinterpret_cast<cSoftBody*>(A)->CollideWith(reinterpret_cast<cRigidBody*>(B));
+				}
+				else if (	B->GetBodyType() == eBodyType::soft &&
+							A->GetBodyType() == eBodyType::rigid)
+				{
+					reinterpret_cast<cSoftBody*>(B)->CollideWith(reinterpret_cast<cRigidBody*>(A));
+				}
+				else
+				{
+					cRigidBody* rA = reinterpret_cast<cRigidBody*>(A);
+					cRigidBody* rB = reinterpret_cast<cRigidBody*>(B);
+					if (Collide(rA, rB))
+					{
+						rA->Collided(rB);
+						rB->Collided(rA);
+					}
 				}
 			}
 		}
 		// Step 3: Clear the accelerations!
 		for (size_t i = 0; i < numBodies; i++)
 		{
-			mBodies[i]->mAcceleration = glm::vec3(0.f, 0.f, 0.f);
+			if (mBodies[i]->GetBodyType() == eBodyType::rigid)
+				reinterpret_cast<cRigidBody*>(mBodies[i])->mAcceleration = glm::vec3(0.f, 0.f, 0.f);
 		}
 
 		// Step 4: Tell everyone about all the collisions!
@@ -50,7 +70,7 @@ namespace phys
 		T += dt;
 	}
 
-	bool cWorld::AddRigidBody(cRigidBody* rigidBody)
+	bool cWorld::AddRigidBody(iBody* rigidBody)
 	{
 		if (!rigidBody) return false;
 		auto itbody = FIND(mBodies, rigidBody);
@@ -62,7 +82,7 @@ namespace phys
 		return false;
 	}
 
-	bool cWorld::RemoveRigidBody(cRigidBody* rigidBody)
+	bool cWorld::RemoveRigidBody(iBody* rigidBody)
 	{
 		if (!rigidBody) return false;
 		auto itbody = FIND(mBodies, rigidBody);
@@ -74,6 +94,8 @@ namespace phys
 
 	void cWorld::Integrate(cRigidBody* body, float dt)
 	{
+		if (body->IsStatic()) return;
+
 		body->mPreviousPosition = body->mPosition;
 
 		// RK4 integration
@@ -93,8 +115,8 @@ namespace phys
 			}
 			if (shapeB == eShapeType::sphere)
 			{
-				return CollideSpherePlane(bodyB, dynamic_cast<cSphere*>(bodyB->GetShape()),
-										  bodyA, dynamic_cast<cPlane*>(bodyA->GetShape()));
+				return CollideSpherePlane(bodyB, reinterpret_cast<cSphere*>(bodyB->GetShape()),
+										  bodyA, reinterpret_cast<cPlane*>(bodyA->GetShape()));
 			}
 		}
 		if (shapeA == eShapeType::sphere)
@@ -102,13 +124,13 @@ namespace phys
 			if (shapeB == eShapeType::sphere)
 			{
 				// sphere-sphere collision
-				return CollideSphereSphere(bodyA, dynamic_cast<cSphere*>(bodyA->GetShape()),
-										   bodyB, dynamic_cast<cSphere*>(bodyB->GetShape()));
+				return CollideSphereSphere(bodyA, reinterpret_cast<cSphere*>(bodyA->GetShape()),
+										   bodyB, reinterpret_cast<cSphere*>(bodyB->GetShape()));
 			}
 			if (shapeB == eShapeType::plane)
 			{
-				return CollideSpherePlane(bodyA, dynamic_cast<cSphere*>(bodyA->GetShape()),
-										  bodyB, dynamic_cast<cPlane*>(bodyB->GetShape()));
+				return CollideSpherePlane(bodyA, reinterpret_cast<cSphere*>(bodyA->GetShape()),
+										  bodyB, reinterpret_cast<cPlane*>(bodyB->GetShape()));
 			}
 		}
 

@@ -361,6 +361,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
   <ItemGroup>
     <Xml Include="assets\scenes\AI.scene.xml" />
     <Xml Include="assets\scenes\AI2.scene.xml" />
+    <Xml Include="assets\scenes\physics2.scene.xml" />
     <Xml Include="assets\scenes\sandbox.scene.xml" />
     <Xml Include="assets\scenes\physics.scene.xml">
       <SubType>Designer</SubType>

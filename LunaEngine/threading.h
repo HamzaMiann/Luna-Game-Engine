@@ -2,10 +2,10 @@
 
 #include <safe_promise.h>
 
-class iAction
+class iThreadable
 {
 public:
-	virtual ~iAction() {}
+	virtual ~iThreadable() {}
 	virtual void execute() = 0;
 };
 

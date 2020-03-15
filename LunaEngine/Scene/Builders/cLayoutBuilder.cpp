@@ -124,6 +124,23 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 
 					ptr->AddComponent(component);
 				}
+				else if (n == "ClothBody")
+				{
+					nPhysics::sClothDef def;
+					def.CornerA = XML_Helper::AsVec3(component_node->first_node("CornerA"));
+					def.CornerB = XML_Helper::AsVec3(component_node->first_node("CornerB"));
+					def.DownDirection = XML_Helper::AsVec3(component_node->first_node("Down"));
+					def.NodeMass = XML_Helper::AsFloat(component_node->first_node("NodeMass"));
+					def.NodeRadius = XML_Helper::AsFloat(component_node->first_node("NodeRadius"));
+					def.NumNodesAcross = (size_t)XML_Helper::AsFloat(component_node->first_node("NodesAcross"));
+					def.NumNodesDown = (size_t)XML_Helper::AsFloat(component_node->first_node("NodesDown"));
+					def.springConstant = XML_Helper::AsFloat(component_node->first_node("Constant"));
+					def.PercentOfGravityApplied = XML_Helper::AsFloat(component_node->first_node("PercentOfGravityApplied"));
+
+					nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateCloth(ptr, def);
+
+					ptr->AddComponent(component);
+				}
 				else
 				{
 					iComponent* comp = ComponentFactory::GetComponent(n, ptr);

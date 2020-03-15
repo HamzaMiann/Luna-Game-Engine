@@ -78,7 +78,7 @@ void cWorleyTexture::GeneratePixelsThreaded()
 	mPixels.resize(mWidth * mWidth * mWidth);
 
 	std::thread* thread1 = new std::thread(_Generate, this, 0, (mWidth / 2));
-	std::thread* thread2 = new std::thread(_Generate, this, (mWidth / 2) + 1u, mWidth);
+	std::thread* thread2 = new std::thread(_Generate, this, (mWidth / 2), mWidth);
 
 	thread1->join();
 	thread2->join();

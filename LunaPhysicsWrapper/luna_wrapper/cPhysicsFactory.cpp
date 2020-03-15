@@ -2,6 +2,7 @@
 #include "cPhysicsWorld.h"
 #include "cSphereComponent.h"
 #include "cPlaneComponent.h"
+#include "cClothComponent.h"
 #include <luna_physics/shapes.h>
 
 namespace nPhysics
@@ -32,6 +33,11 @@ namespace nPhysics
 		df.Position = parent->transform.pos;
 		df.GravityFactor = def.gravity_factor;
 		return new cPlaneComponent(parent, df, shape);
+	}
+
+	iClothComponent* cPhysicsFactory::CreateCloth(iObject* parent, const sClothDef& def)
+	{
+		return new cClothComponent(parent, def);
 	}
 
 }

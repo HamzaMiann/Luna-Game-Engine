@@ -14,6 +14,7 @@
 #include <safe_promise.h>
 #include <threading.h>
 #include <iostream>
+#include <interfaces/physics/iClothComponent.h>
 
 cTexture worleyNoise;
 cTexture worleyNoise2;
@@ -26,10 +27,14 @@ float cloudLightScattering = 2.f;
 std::promise<cWorleyTexture*> promise;
 std::future<cWorleyTexture*> future;
 
-//safe_promise<cWorleyTexture*> promise;
 
 RenderingEngine::RenderingEngine()
 {
+	bloom_enabled = true;
+	DOF_enabled = false;
+	volumetric_enabled = false;
+	clouds_enabled = false;
+	clouds_shadows_enabled = false;
 }
 
 void RenderingEngine::Init()
@@ -37,12 +42,6 @@ void RenderingEngine::Init()
 	width = 600;
 	height = 800;
 	pass_id = 1;
-
-	bloom_enabled = true;
-	DOF_enabled = true;
-	volumetric_enabled = true;
-	clouds_enabled = true;
-	clouds_shadows_enabled = true;
 
 	float ratio = width / (float)height;
 
@@ -66,6 +65,7 @@ void RenderingEngine::Init()
 
 	screenPos = vec2(0.f, 0.f);
 	noise.SetTexture("noise.jpg");
+
 
 	if (clouds_enabled)
 	{
@@ -427,13 +427,6 @@ void RenderingEngine::RenderGO(cGameObject& object, float width, float height, m
 
 	Shader& shader = *object.shader;
 
-	//cMaterial* material = object->GetComponent<cMaterial>();
-	//if (material != nullptr)
-	//{
-	//	// TODO
-	//}
-
-
 	// Only switch shaders if needed
 	if (lastShader != shader.GetID())
 	{
@@ -451,7 +444,20 @@ void RenderingEngine::RenderGO(cGameObject& object, float width, float height, m
 		shader.SetMat4("matView", v);
 	}
 
-	this->DrawObject(object, v, p);
+	nPhysics::iClothComponent* cloth = object.GetComponent<nPhysics::iClothComponent>();
+	if (cloth)
+	{
+		for (size_t i = 0; i < cloth->NumNodes(); ++i)
+		{
+			cloth->GetNodePosition(i, object.transform.pos);
+			float radius;
+			cloth->GetNodeRadius(i, radius);
+			object.transform.Scale(vec3(radius));
+			DrawObject(object, v, p);
+		}
+	}
+	else
+		this->DrawObject(object, v, p);
 }
 
 void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt)
