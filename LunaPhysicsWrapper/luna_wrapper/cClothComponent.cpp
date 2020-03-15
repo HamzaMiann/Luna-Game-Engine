@@ -33,11 +33,32 @@ namespace nPhysics
 		NodePosition(index, positionOut);
 	}
 
+	size_t cClothComponent::NumSprings()
+	{
+		return mSprings.size();
+	}
+
+	bool cClothComponent::GetSpring(size_t index, std::pair<size_t, size_t>& springOut)
+	{
+		if (index >= NumSprings()) return false;
+
+		size_t index1;
+		size_t index2;
+		for (unsigned int i = 0; i < NumNodes(); ++i)
+		{
+			if (mNodes[i] == mSprings[index]->NodeA) index1 = i;
+			if (mNodes[i] == mSprings[index]->NodeB) index2 = i;
+		}
+		
+		springOut = std::make_pair(index1, index2);
+	}
+
 	phys::sSoftBodyDef cClothComponent::ClothToSoftBodyDef(const sClothDef& def)
 	{
 		phys::sSoftBodyDef physDef;
 		physDef.SpringConstant = def.springConstant;
 		physDef.PercentOfGravityApplied = def.PercentOfGravityApplied;
+		physDef.windForce = def.windForce;
 
 		vec3 directionAcross = (def.CornerB - def.CornerA) / (float)def.NumNodesAcross;
 		vec3 directionDown = def.DownDirection;
@@ -59,6 +80,19 @@ namespace nPhysics
 			}
 		}
 
+		/*for (size_t y = 0; y < def.NumNodesDown - 1; ++y)
+		{
+			for (size_t x = 0; x < def.NumNodesAcross - 1; ++x)
+			{
+				size_t index1 = y * def.NumNodesAcross + x;
+				size_t index2 = index1 + 1;
+				physDef.Springs.push_back(std::make_pair(index1, index2));
+
+				index2 = index1 + def.NumNodesAcross;
+				physDef.Springs.push_back(std::make_pair(index1, index2));
+			}
+		}*/
+
 
 		for (size_t y = 0; y < def.NumNodesDown; ++y)
 		{
@@ -78,6 +112,11 @@ namespace nPhysics
 				size_t index2 = index1 + def.NumNodesAcross;
 				physDef.Springs.push_back(std::make_pair(index1, index2));
 			}
+		}
+
+		for (auto i : physDef.Springs)
+		{
+			printf("{ %d, %d }\n", i.first, i.second);
 		}
 
 		return physDef;

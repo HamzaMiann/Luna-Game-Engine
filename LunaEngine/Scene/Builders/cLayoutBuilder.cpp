@@ -136,6 +136,7 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 					def.NumNodesDown = (size_t)XML_Helper::AsFloat(component_node->first_node("NodesDown"));
 					def.springConstant = XML_Helper::AsFloat(component_node->first_node("Constant"));
 					def.PercentOfGravityApplied = XML_Helper::AsFloat(component_node->first_node("PercentOfGravityApplied"));
+					def.windForce = XML_Helper::AsVec3(component_node->first_node("WindForce"));
 
 					nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateCloth(ptr, def);
 

@@ -15,6 +15,8 @@
 #include <threading.h>
 #include <iostream>
 #include <interfaces/physics/iClothComponent.h>
+#include <DebugRenderer\cDebugRenderer.h>
+#include <Misc\cLowpassFilter.h>
 
 cTexture worleyNoise;
 cTexture worleyNoise2;
@@ -455,6 +457,19 @@ void RenderingEngine::RenderGO(cGameObject& object, float width, float height, m
 			object.transform.Scale(vec3(radius));
 			DrawObject(object, v, p);
 		}
+
+#ifdef _DEBUG
+		float t = cLowpassFilter::Instance().delta_time();
+		for (size_t i = 0; i < cloth->NumSprings(); ++i)
+		{
+			std::pair<size_t, size_t> pair;
+			cloth->GetSpring(i, pair);
+			vec3 first, second;
+			cloth->GetNodePosition(pair.first, first);
+			cloth->GetNodePosition(pair.second, second);
+			cDebugRenderer::Instance().addLine(first, second, vec3(1.f, 0.f, 1.f), t);
+		}
+#endif
 	}
 	else
 		this->DrawObject(object, v, p);

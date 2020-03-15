@@ -14,6 +14,7 @@ namespace nPhysics
 		float NodeRadius;
 		float springConstant;
 		float PercentOfGravityApplied;
+		vec3 windForce;
 	};
 
 	class iClothComponent : public iPhysicsComponent
@@ -24,6 +25,8 @@ namespace nPhysics
 		virtual size_t NumNodes() = 0;
 		virtual bool GetNodeRadius(size_t index, float& radiusOut) = 0;
 		virtual bool GetNodePosition(size_t index, vec3& positionOut) = 0;
+		virtual size_t NumSprings() = 0;
+		virtual bool GetSpring(size_t index, std::pair<size_t, size_t>& springOut) = 0;
 
 		/*
 

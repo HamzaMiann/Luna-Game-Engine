@@ -1,5 +1,10 @@
 #include "cSoftBody.h"
 #include <numeric>
+#include "nCollide.h"
+#include <glm\gtx\projection.hpp>
+
+//#define MAX_VELOCITY 5.f
+//#define MAX_FORCE 3.f
 
 namespace phys
 {
@@ -18,6 +23,12 @@ namespace phys
 		float dist = glm::length(sep);
 		float x = dist - RestingLength;
 		SpringForceAtoB = -glm::normalize(sep) * x * SpringConstant;
+#ifdef MAX_FORCE
+		if (SpringForceAtoB.length() > MAX_FORCE)
+		{
+			SpringForceAtoB = glm::normalize(SpringForceAtoB) * MAX_FORCE;
+		}
+#endif
 	}
 
 	void cSoftBody::cSpring::ApplyForceToNodes()
@@ -30,7 +41,7 @@ namespace phys
 		{
 			NodeA->Acceleration -= SpringForceAtoB / NodeA->Mass;
 		}
-		NodeA->Acceleration -= SpringForceAtoB / NodeA->Mass;
+		//NodeA->Acceleration -= SpringForceAtoB / NodeA->Mass;
 	}
 
 	cSoftBody::cNode* cSoftBody::cSpring::GetOther(cNode* node)
@@ -39,7 +50,9 @@ namespace phys
 	}
 
 	cSoftBody::cSoftBody(const sSoftBodyDef& def)
-		: iBody(eBodyType::soft)
+		: iBody(eBodyType::soft),
+		T(0.f),
+		windForce(def.windForce)
 	{
 		size_t numNodes = def.Nodes.size();
 		mNodes.resize(numNodes);
@@ -88,12 +101,14 @@ namespace phys
 
 	void cSoftBody::Integrate(float dt, const glm::vec3& gravity)
 	{
+		mDt = dt;
 		ClearAccelerations();
 
 		// Step 1: start with gravity
 		for (size_t i = 0; i < size(); ++i)
 		{
 			mNodes[i]->Acceleration = gravity * PercentOfGravityApplied;
+			mNodes[i]->Acceleration += windForce * (sin(T + sin(T)) + 0.5f);
 		}
 
 		// Step 2: Accumulate spring forces based on current positions
@@ -107,16 +122,9 @@ namespace phys
 		for (size_t i = 0; i < size(); i++)
 		{
 			cNode* node = mNodes[i];
-			//IntegrateNode(node, dt);
-			if (node->isFixed()) continue;
-
-			node->Velocity += node->Acceleration * dt;
-			// dampen the velocity
-			node->Velocity *= glm::pow(0.4f, dt);
-			node->Position += node->Velocity * dt;
+			IntegrateNode(node, dt);
 		}
-
-		// Step 4: DO INTERNAL COLLISIONS
+		T += dt;
 	}
 
 	void cSoftBody::CollideWith(cRigidBody* body)
@@ -150,10 +158,20 @@ namespace phys
 	void cSoftBody::IntegrateNode(cNode* node, float dt)
 	{
 		if (node->isFixed()) return;
-		
+
+		node->Previous = node->Position;
+
 		node->Velocity += node->Acceleration * dt;
 		// dampen the velocity
-		node->Velocity *= glm::pow(0.6f, dt);
+		node->Velocity *= glm::pow(0.4f, dt);
+
+#ifdef MAX_VELOCITY
+		if (node->Velocity.length() > MAX_VELOCITY)
+		{
+			node->Velocity = glm::normalize(node->Velocity) * MAX_VELOCITY;
+		}
+#endif
+
 		node->Position += node->Velocity * dt;
 	}
 	bool cSoftBody::CollideSphere(cRigidBody* body, cSphere* shape)
@@ -191,17 +209,82 @@ namespace phys
 		}
 		return false;
 	}
+
 	bool cSoftBody::CollidePlane(cRigidBody* body, cPlane* shape)
 	{
-		// TODO
+		for (auto node : mNodes)
+		{
+			CollidePlane(node, shape);
+		}
 		return false;
+	}
+
+	bool cSoftBody::CollidePlane(cNode* node, cPlane* shape)
+	{
+		float collisionValue = 0.3f;// IntersectMovingSpherePlane(...); // TODO
+
+		glm::vec3 c = node->Previous;
+		float r = node->radius;
+		glm::vec3 v = node->Position - node->Previous;
+		glm::vec3 n = shape->GetNormal();
+		float d = shape->GetConstant();
+		float t(0.f);
+		glm::vec3 q;
+		int result = nCollide::intersect_moving_sphere_plane(c, r, v, n, d, t, q);
+
+		if (result == 0)
+		{
+			// no collision!
+			return false;
+		}
+		if (result == -1)
+		{
+			// already colliding at the beginning of the timestep
+			//sphereBody->mPosition = sphereBody->mPreviousPosition;
+			// TODO: STUFF
+
+			glm::vec3 pointOnPlane = nCollide::closest_point_on_plane(node->Previous, n, d);
+
+			// figure out an impulse that should have the sphere escape the plane
+			float distance = glm::distance(node->Previous, pointOnPlane);
+
+			float targetDistance = r;
+			glm::vec3 impulse = n * (targetDistance - distance) / mDt;
+
+			// reset
+			node->Position = node->Previous;
+
+			// apply impulse
+			node->Velocity += impulse;
+
+			// re-integrate
+			IntegrateNode(node, mDt);
+
+			return true;
+		}
+		// collided!
+
+		// REFLECT!
+		node->Velocity = glm::reflect(node->Velocity, n);
+
+		// Lose some energy
+		glm::vec3 nComponent = glm::proj(node->Velocity, n);
+		node->Velocity -= nComponent * 0.2f;
+
+		// rewind
+		node->Position = (c + v * t);
+
+		// integrate
+		IntegrateNode(node, mDt * (1.f - t));
+		return true;
 	}
 	cSoftBody::cNode::cNode(const sSoftBodyNodeDef& nodeDef)
 		: Position(nodeDef.Position),
 		Mass(nodeDef.Mass),
 		Velocity(0.f, 0.0f, 0.f),
 		Acceleration(0.f, 0.f, 0.f),
-		radius(nodeDef.Radius)
+		radius(nodeDef.Radius),
+		Previous(nodeDef.Position)
 	{
 	}
 	void cSoftBody::cNode::CalculateRadius()

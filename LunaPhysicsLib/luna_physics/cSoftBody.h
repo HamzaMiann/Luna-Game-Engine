@@ -18,6 +18,7 @@ namespace phys
 		std::vector<std::pair<size_t, size_t>> Springs;
 		float SpringConstant;
 		float PercentOfGravityApplied;
+		vec3 windForce;
 	};
 
 	class cSoftBody : public iBody
@@ -37,6 +38,7 @@ namespace phys
 			std::vector<cSpring*> Springs;
 			float Mass;
 			float radius;
+			vec3 Previous;
 			vec3 Position;
 			vec3 Velocity;
 			vec3 Acceleration;
@@ -74,9 +76,12 @@ namespace phys
 		bool CollideSphere(cRigidBody* body, cSphere* shape);
 
 		bool CollidePlane(cRigidBody* body, cPlane* shape);
+		bool CollidePlane(cNode* node, cPlane* shape);
 
-	private:
 		float PercentOfGravityApplied;
+		float T;
+		float mDt;
+		vec3 windForce;
 		std::vector<cNode*> mNodes;
 		std::vector<cSpring*> mSprings;
 	};

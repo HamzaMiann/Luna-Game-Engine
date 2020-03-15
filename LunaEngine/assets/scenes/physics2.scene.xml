@@ -197,7 +197,13 @@
 		</GameObject>
 
     
+    
+
+    <!--________________________________-->
+    <!--________________________________-->
     <!-- GAME OBJECT WITH CLOTH PHYSICS -->
+    <!--________________________________-->
+    <!--________________________________-->
     <GameObject mesh="sphere" tag="cloth" shader="basic">
       <Position x="0.0" y="2.0" z="0.0"/>
       <Rotation x="0" y="0" z="0.0"/>
@@ -208,19 +214,24 @@
 
          <!-- CLOTH COMPONENT CONFIGURATION-->
         <ClothBody>
-          <CornerA x="-6" y="7" z="0"/>
-          <CornerB x="6" y="7" z="0"/>
+          <CornerB x="-8" y="7" z="0"/>
+          <CornerA x="8" y="7" z="0"/>
           <Down x="0" y="-1.0" z="0"/>
-          <NodeMass>0.1</NodeMass>
+          <NodeMass>0.5</NodeMass>
           <NodeRadius>0.5</NodeRadius>
-          <NodesAcross>10</NodesAcross>
+          <NodesAcross>15</NodesAcross>
           <NodesDown>6</NodesDown>
-          <Constant>30.3</Constant>
-          <PercentOfGravityApplied>0.5</PercentOfGravityApplied>
+          <Constant>20.3</Constant>
+          <PercentOfGravityApplied>0.7</PercentOfGravityApplied>
+          <WindForce x="1" y="1" z="3"/> 
         </ClothBody>
 
       </Components>
     </GameObject>
+    
+    
+    
+    
 
     <GameObject mesh="sphere" tag="ball" shader="basic">
       <Position x="10.0" y="5.0" z="-10.0"/>
