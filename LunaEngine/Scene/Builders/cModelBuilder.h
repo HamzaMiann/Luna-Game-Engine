@@ -3,6 +3,28 @@
 
 #include "iSceneBuilder.h"
 
+struct ModelLoadInfo
+{
+	ModelLoadInfo() :
+		fileName(""),
+		friendlyName(""),
+		next(0)
+	{
+	}
+	~ModelLoadInfo()
+	{
+		if (next)
+		{
+			delete next;
+			next = 0;
+		}
+	}
+
+	std::string fileName;
+	std::string friendlyName;
+	ModelLoadInfo* next;
+};
+
 class cModelBuilder : public iSceneBuilder
 {
 public:

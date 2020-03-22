@@ -12,11 +12,10 @@
 #include <InputManager.h>
 #include <thread>
 #include <safe_promise.h>
-#include <threading.h>
 #include <iostream>
 #include <interfaces/physics/iClothComponent.h>
-#include <DebugRenderer\cDebugRenderer.h>
-#include <Misc\cLowpassFilter.h>
+#include <DebugRenderer/cDebugRenderer.h>
+#include <Misc/cLowpassFilter.h>
 
 cTexture worleyNoise;
 cTexture worleyNoise2;
@@ -26,17 +25,20 @@ float cloudDensityFactor = 1.f;
 float cloudDensityCutoff = 0.5f;
 float cloudLightScattering = 2.f;
 
-std::promise<cWorleyTexture*> promise;
-std::future<cWorleyTexture*> future;
+//std::promise<cWorleyTexture*> promise;
+//std::future<cWorleyTexture*> future;
+
+safe_promise<cWorleyTexture*>* promise;
 
 
 RenderingEngine::RenderingEngine()
 {
 	bloom_enabled = true;
-	DOF_enabled = false;
-	volumetric_enabled = false;
-	clouds_enabled = false;
-	clouds_shadows_enabled = false;
+	DOF_enabled = true;
+	volumetric_enabled = true;
+	clouds_enabled = true;
+	clouds_shadows_enabled = true;
+	vignette_enabled = true;
 }
 
 void RenderingEngine::Init()
@@ -71,7 +73,7 @@ void RenderingEngine::Init()
 
 	if (clouds_enabled)
 	{
-		worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
+		worleyTexture = cWorleyTexture::Generate(16u, 4u, 15u, 30u);
 		size_t width, height;
 		unsigned char* data;
 		data = worleyTexture->GetDataRGB(width, height);
@@ -79,13 +81,23 @@ void RenderingEngine::Init()
 		worleyNoise.SetTexture("worley");
 		worleyNoise2.SetTexture("worley");
 		delete worleyTexture; worleyTexture = 0;
-		future = promise.get_future();
 
-		(new std::thread(cWorleyTexture::GenerateAsyncPromise, &promise, 64u, 4u, 15u, 30u))->detach();
+		promise = new safe_promise<cWorleyTexture*>([]()
+			{
+				worleyTexture = promise->get();
+				size_t width, height;
+				unsigned char* data;
+				data = worleyTexture->GetDataRGB(width, height);
+				cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
+				worleyNoise.SetTexture("worley");
+				worleyNoise2.SetTexture("worley");
+			}
+		);
+		Thread::PushJob(promise);
+		(new std::thread(cWorleyTexture::GenerateAsync, promise, 64u, 4u, 15u, 30u))->detach();
 	}
 
 	perlinNoise.SetTexture("perlin.png");
-	//worleyTexture = cWorleyTexture::Generate(32u, 4u, 15u, 30u);
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -140,20 +152,6 @@ void RenderingEngine::Reset()
 		cloudLightScattering -= 0.1f;
 		if (cloudLightScattering < 0.f)
 			cloudLightScattering = 0.f;
-	}
-
-	if (clouds_enabled && !worleyTexture)
-	{
-		if (future.wait_for(std::chrono::duration<float>(0.f)) == std::future_status::ready)
-		{
-			worleyTexture = future.get();
-			size_t width, height;
-			unsigned char* data;
-			data = worleyTexture->GetDataRGB(width, height);
-			cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
-			worleyNoise.SetTexture("worley");
-			worleyNoise2.SetTexture("worley");
-		}
 	}
 }
 
@@ -642,6 +640,9 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 
 	if (clouds_shadows_enabled)	shader.SetBool("cloudShadowsEnabled", GL_TRUE);
 	else					shader.SetBool("cloudShadowsEnabled", GL_FALSE);
+
+	if (vignette_enabled)	shader.SetBool("vignetteEnabled", GL_TRUE);
+	else					shader.SetBool("vignetteEnabled", GL_FALSE);
 
 
 	this->DrawObject(quad, mat4(1.f), p);

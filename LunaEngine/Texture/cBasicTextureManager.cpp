@@ -1,3 +1,6 @@
+
+#pragma warning(disable)
+
 #include <Texture/cBasicTextureManager.h>
 #include <sstream>
 #include <LodePNG/lodepng.h>
@@ -5,7 +8,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#pragma warning(disable)
 
 
 void cBasicTextureManager::SetBasePath(std::string basepath)
@@ -43,7 +45,6 @@ struct Pixel
 	uchar r;
 	uchar g;
 	uchar b;
-	//uchar a = UCHAR_MAX;
 };
 
 struct PixelA
@@ -56,69 +57,20 @@ struct PixelA
 
 bool cBasicTextureManager::Create2DTextureFromPNGFile(std::string textureFileName, bool bGenerateMIPMap)
 {
-
 	std::string fileToLoadFullPath = this->m_basePath + "/" + textureFileName;
-	
-	std::vector<unsigned char> image;
-	unsigned int width, height;
-	unsigned error = lodepng::decode(image, width, height, fileToLoadFullPath);
-	if (error != 0)
+
+	sTextureData tex;
+	if (!LoadPNGFromFile(fileToLoadFullPath, tex))
 	{
 		return false;
 	}
 
-	std::vector<PixelA> pixels;
-	pixels.resize(width * height);
-	for (unsigned int y = 0; y < height; ++y)
-	{
-		for (unsigned int x = 0; x < width; ++x)
-		{
-			unsigned int newY = height - y - 1;
-			uchar* rgba = &image[x * 4u + y * width * 4u];
-			pixels[x + newY * width].r = rgba[0];
-			pixels[x + newY * width].g = rgba[1];
-			pixels[x + newY * width].b = rgba[2];
-			pixels[x + newY * width].a = rgba[3];
-		}
-	}
-	
+	unsigned int texture = GenerateTexture();
+	BindTexture(texture);
+	SetStandardTextureParameters();
+	SetTextureDataRGBA(&tex.data[0], tex.width, tex.height);
+	GenerateMipmaps(bGenerateMIPMap);
 
-	// Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
-	//size_t u2 = 1; while (u2 < width) u2 *= 2;
-	//size_t v2 = 1; while (v2 < height) v2 *= 2;
-	//// Ratio for power of two version compared to actual version, to render the non power of two image with proper size.
-	//double u3 = (double)width / u2;
-	//double v3 = (double)height / v2;
-
-	//std::vector<unsigned char> image2(u2 * v2 * 4);
-	//for (size_t y = 0; y < height; y++)
-	//{
-	//	for (size_t x = 0; x < width; x++)
-	//	{
-	//		for (size_t c = 0; c < 4; c++)
-	//		{
-	//			image2[4 * u2 * y + 4 * x + c] = image[4 * width * y + 4 * x + c];
-	//		}
-	//	}
-	//}
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
-	//glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
-	if (bGenerateMIPMap)
-	{
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
 	this->m_map_NameToID[textureFileName] = texture;
 
 	return true;
@@ -128,50 +80,20 @@ bool cBasicTextureManager::Create2DTextureFromJPGFile(std::string textureFileNam
 {
 	std::string fileToLoadFullPath = this->m_basePath + "/" + textureFileName;
 
-	// TAKEN FROM https://learnopengl.com/Getting-started/Textures
-
-	
-	// load and generate the texture
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load(fileToLoadFullPath.c_str(), &width, &height, &nrChannels, 0);
-	if (!data)
+	sTextureData tex;
+	if (!LoadJPGFromFile(fileToLoadFullPath, tex))
 	{
-		stbi_image_free(data);
 		return false;
 	}
 
-	std::vector<Pixel> pixels;
-	pixels.resize(width * height);
-	for (unsigned int y = 0; y < height; ++y)
-	{
-		for (unsigned int x = 0; x < width; ++x)
-		{
-			unsigned int newY = height - y - 1;
-			uchar* rgb = &data[x * 3u + y * width * 3u];
-			pixels[x + newY * width].r = rgb[0];
-			pixels[x + newY * width].g = rgb[1];
-			pixels[x + newY * width].b = rgb[2];
-		}
-	}
+	unsigned int texture = GenerateTexture();
+	BindTexture(texture);
+	SetStandardTextureParameters();
+	SetTextureDataRGB(&tex.data[0], tex.width, tex.height);
+	GenerateMipmaps(bGenerateMIPMap);
 
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, &pixels[0]);
-
-
-	if (bGenerateMIPMap)
-	{
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
 	this->m_map_NameToID[textureFileName] = texture;
 
-	stbi_image_free(data);
 	return true;
 
 }
@@ -187,18 +109,6 @@ void cBasicTextureManager::m_appendErrorString( std::string nextErrorText )
 
 GLuint cBasicTextureManager::getTextureIDFromName( std::string textureFileName )
 {
-	//std::map< std::string, CTextureFromBMP* >::iterator itTexture
-	//	= this->m_map_TexNameToTexture.find( textureFileName );
-	//// Found it?
-	//if ( itTexture == this->m_map_TexNameToTexture.end() )
-	//{
-	//	return 0;
-	//}
-	//// Reutrn texture number (from OpenGL genTexture)
-	//return itTexture->second->getTextureNumber();
-
-
-
 	std::map< std::string, GLuint >::iterator itTexture
 		= this->m_map_NameToID.find(textureFileName);
 	// Found it?
@@ -243,87 +153,92 @@ std::string cBasicTextureManager::PickRandomTexture(void)
 	return itTex->second->getTextureName();
 }
 
-bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, std::vector<unsigned char>& data, int width, int height)
+bool cBasicTextureManager::LoadPNGFromFile(std::string textureFileName, sTextureData& textureData)
 {
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA8, GL_UNSIGNED_BYTE, &data[0]);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
-	//glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
-	if (bGenerateMIPMap)
+	std::vector<unsigned char> image;
+	unsigned int width, height;
+	unsigned error = lodepng::decode(image, width, height, textureFileName);
+	if (error != 0)
 	{
-		glGenerateMipmap(GL_TEXTURE_2D);
+		return false;
 	}
-	this->m_map_NameToID[friendlyName] = texture;
+
+	std::vector<PixelA> pixels;
+	pixels.resize(width * height);
+	for (unsigned int y = 0; y < height; ++y)
+	{
+		for (unsigned int x = 0; x < width; ++x)
+		{
+			unsigned int newY = height - y - 1;
+			uchar* rgba = &image[x * 4u + y * width * 4u];
+			pixels[x + newY * width].r = rgba[0];
+			pixels[x + newY * width].g = rgba[1];
+			pixels[x + newY * width].b = rgba[2];
+			pixels[x + newY * width].a = rgba[3];
+		}
+	}
+
+	textureData.width = width;
+	textureData.height = height;
+	for (unsigned int i = 0; i < pixels.size(); ++i)
+	{
+		textureData.data.push_back(pixels[i].r);
+		textureData.data.push_back(pixels[i].g);
+		textureData.data.push_back(pixels[i].b);
+		textureData.data.push_back(pixels[i].a);
+	}
+
+	return true;
+}
+
+bool cBasicTextureManager::LoadJPGFromFile(std::string textureFileName, sTextureData& textureData)
+{
+	// TAKEN FROM https://learnopengl.com/Getting-started/Textures
+	// load the texture
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(textureFileName.c_str(), &width, &height, &nrChannels, 0);
+	if (!data)
+	{
+		stbi_image_free(data);
+		return false;
+	}
+
+	std::vector<Pixel> pixels;
+	pixels.resize(width * height);
+	for (unsigned int y = 0; y < height; ++y)
+	{
+		for (unsigned int x = 0; x < width; ++x)
+		{
+			unsigned int newY = height - y - 1;
+			uchar* rgb = &data[x * 3u + y * width * 3u];
+			pixels[x + newY * width].r = rgb[0];
+			pixels[x + newY * width].g = rgb[1];
+			pixels[x + newY * width].b = rgb[2];
+		}
+	}
+
+	textureData.width = width;
+	textureData.height = height;
+	for (unsigned int i = 0; i < pixels.size(); ++i)
+	{
+		textureData.data.push_back(pixels[i].r);
+		textureData.data.push_back(pixels[i].g);
+		textureData.data.push_back(pixels[i].b);
+	}
+
+	stbi_image_free(data);
 
 	return true;
 }
 
 bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, unsigned char* data, int width, int height)
 {
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	unsigned int texture = GenerateTexture();
+	BindTexture(texture);
+	SetStandardTextureParameters();
+	SetTextureDataBGRA(data, width, height);
+	GenerateMipmaps(bGenerateMIPMap);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
-	//glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
-	if (bGenerateMIPMap)
-	{
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	this->m_map_NameToID[friendlyName] = texture;
-
-	return true;
-}
-
-bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, void* data, int width, int height, char hint)
-{
-	if (!data) return false;
-
-	unsigned char* image_data = nullptr;
-	int components_per_pixel = 4;
-	int newWidth, newHeight;
-
-	if (height == 0)
-	{
-		image_data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(data), width, &newWidth, &newHeight, &components_per_pixel, 0);
-	}
-	else
-	{
-		image_data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(data), width * height, &newWidth, &newHeight, &components_per_pixel, 0);
-	}
-
-	if (!image_data) return false;
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, newWidth, newHeight, 0, GL_RGBA8, GL_UNSIGNED_BYTE, image_data);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
-	//glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
-	if (bGenerateMIPMap)
-	{
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
 	this->m_map_NameToID[friendlyName] = texture;
 
 	return true;
@@ -331,20 +246,12 @@ bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGener
 
 bool cBasicTextureManager::Create3DTexture(std::string friendlyName, bool bGenerateMIPMap, unsigned char* data, int width, int height, int depth)
 {
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_3D, texture);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	unsigned int texture = GenerateTexture();
+	BindTexture(texture, GL_TEXTURE_3D);
+	SetStandardTextureParameters(GL_TEXTURE_3D);
 
 	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, width, height, depth, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	if (bGenerateMIPMap)
-	{
-		glGenerateMipmap(GL_TEXTURE_3D);
-	}
+	GenerateMipmaps(bGenerateMIPMap, GL_TEXTURE_3D);
 	this->m_map_NameToID[friendlyName] = texture;
 
 	return true;
@@ -478,5 +385,49 @@ bool cBasicTextureManager::CreateCubeTextureFromJPGFiles(	std::string cubeMapNam
 	m_map_NameToID[cubeMapName] = textureID;
 
 	return true;
+}
+
+unsigned int cBasicTextureManager::GenerateTexture()
+{
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	return texture;
+}
+
+void cBasicTextureManager::BindTexture(unsigned int texture, int type)
+{
+	glBindTexture(type, texture);
+}
+
+void cBasicTextureManager::SetStandardTextureParameters(int type)
+{
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
+void cBasicTextureManager::SetTextureDataRGB(unsigned char* data, size_t width, size_t height, int type)
+{
+	glTexImage2D(type, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+}
+
+void cBasicTextureManager::SetTextureDataRGBA(unsigned char* data, size_t width, size_t height, int type)
+{
+	glTexImage2D(type, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+}
+
+void cBasicTextureManager::SetTextureDataBGRA(unsigned char* data, size_t width, size_t height, int type)
+{
+	glTexImage2D(type, 0, GL_BGRA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
+}
+
+void cBasicTextureManager::GenerateMipmaps(bool bGenerateMIPMap, int type)
+{
+	if (bGenerateMIPMap)
+	{
+		glGenerateMipmap(type);
+	}
 }
 

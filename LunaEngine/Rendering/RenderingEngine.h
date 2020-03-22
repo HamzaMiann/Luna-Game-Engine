@@ -26,6 +26,7 @@ private:
 	bool volumetric_enabled;
 	bool clouds_enabled;
 	bool clouds_shadows_enabled;
+	bool vignette_enabled;
 
 	cGameObject quad;
 

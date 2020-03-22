@@ -69,6 +69,11 @@ public:
 		return instance;
 	}
 
+	static cVAOManager* InstancePtr()
+	{
+		return &Instance();
+	}
+
 	// Takes a cMesh object and copies it into the GPU (as a VOA)
 	bool LoadModelIntoVAO(std::string fileName, 
 						  cMesh &theMesh,				// NEW

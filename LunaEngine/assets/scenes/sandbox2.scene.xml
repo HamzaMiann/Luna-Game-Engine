@@ -70,17 +70,20 @@
 	</Textures>
   
 	<Models>
-    <Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
-    <Model file="cube.ply" friendlyName="cube" shader="basic"/>
-    <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
-    <Model file="Mutant.fbx" friendlyName="mutant" shader="basic"/>
-    <Model file="hatka_local.fbx" friendlyName="house" shader="basic"/>
-    
-    
-    <Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen" shader="basic"/>
 
-    <!-- MUST ALWAYS BE HERE -->
+		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen" shader="basic"/>
+
+		<!-- MUST ALWAYS BE HERE -->
 		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen_quad" shader="post"/>
+		
+		
+        <Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
+        <Model file="cube.ply" friendlyName="cube" shader="basic"/>
+        <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
+        <Model file="Mutant.fbx" friendlyName="mutant" shader="basic"/>
+        <Model file="hatka_local.fbx" friendlyName="house" shader="basic"/>
+        <Model file="Terrain_XYZ_N_UV.ply" friendlyName="terrain" shader="basic"/>
+    
 	</Models>
 
   <Animations>
@@ -280,6 +283,27 @@
       <Rotation x="-90" y="0" z="0.0"/>
       <Scale>0.03</Scale>
       <Texture ratio="1.0">home_hatka_Base_Color.png</Texture>
+    </GameObject>
+		
+	<GameObject mesh="terrain" tag="terrain" shader="basic">
+      <Position x="300.0" y="-8.0" z="0.0"/>
+      <Rotation x="0" y="0" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Texture ratio="1.0" tiling="100.0">Ground_Dirt_007_basecolor.png</Texture>
+    </GameObject>
+		
+	<GameObject mesh="terrain" tag="terrain" shader="basic">
+      <Position x="300.0" y="-7.0" z="300.0"/>
+      <Rotation x="0" y="40" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Texture ratio="1.0" tiling="100.0">Ground_Dirt_007_basecolor.png</Texture>
+    </GameObject>
+		
+	<GameObject mesh="terrain" tag="terrain" shader="basic">
+      <Position x="0.0" y="-7.0" z="300.0"/>
+      <Rotation x="0" y="20" z="0.0"/>
+      <Scale>1.0</Scale>
+      <Texture ratio="1.0" tiling="100.0">Ground_Dirt_007_basecolor.png</Texture>
     </GameObject>
 
     

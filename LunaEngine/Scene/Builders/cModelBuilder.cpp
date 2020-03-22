@@ -5,14 +5,59 @@
 #include <Mesh/cModelLoader.h>
 #include <Shader/Shader.h>
 #include <iostream>
+#include <threading.h>
 using namespace rapidxml;
+
+#define THREADED
+
+void LoadModel(ModelLoadInfo* info)
+{
+	cModelLoader& ModelLoader = cModelLoader::Instance();
+
+	cMesh* pMesh = new cMesh();
+	if (ModelLoader.LoadModel("assets/models/" + info->fileName, info->friendlyName, *pMesh).success)
+	{
+#ifdef THREADED
+		Thread::Dispatch([&]()
+			{
+				sModelDrawInfo* pDrawInfo = new sModelDrawInfo();
+				cVAOManager::Instance()
+					.LoadModelIntoVAO(
+						info->friendlyName,
+						*pMesh,
+						*pDrawInfo,
+						Shader::FromName("basic")->GetID()
+					);
+			}
+		);
+		std::this_thread::sleep_for(std::chrono::duration<float>(0.2f));
+#else
+		sModelDrawInfo* pDrawInfo = new sModelDrawInfo();
+		std::cout << info->fileName << std::endl;
+		cVAOManager::Instance()
+			.LoadModelIntoVAO(
+				info->friendlyName,
+				*pMesh,
+				*pDrawInfo,
+				Shader::FromName("basic")->GetID()
+			);
+#endif
+	}
+
+	if (info->next != nullptr)
+	{
+		LoadModel(info->next);
+	}
+}
 
 void cModelBuilder::Build(Scene& scene, xml_node<>* node)
 {
 	printf("Loading models...\n");
 
-	cVAOManager& VAOManager = cVAOManager::Instance();
-	cModelLoader& ModelLoader = cModelLoader::Instance();
+	
+
+	ModelLoadInfo* first = 0;
+	ModelLoadInfo* previous = 0;
 
 	for (xml_node<>* model_node = node->first_node("Model"); model_node; model_node = model_node->next_sibling("Model"))
 	{
@@ -22,27 +67,32 @@ void cModelBuilder::Build(Scene& scene, xml_node<>* node)
 		if (file)
 		{
 			std::string fileName = file->value();
-			std::string friendlyName = "";
+			std::string friendlyName = friendly->value();
 
-			if (friendly)
-				friendlyName = friendly->value();
-
-			cMesh* pMesh = new cMesh();
-			if (ModelLoader.LoadModel("assets/models/" + fileName, friendlyName, *pMesh).success)
+			ModelLoadInfo* info = new ModelLoadInfo;
+			info->friendlyName = friendlyName;
+			info->fileName = fileName;
+			if (previous)
 			{
-
-				sModelDrawInfo* pDrawInfo = new sModelDrawInfo();
-				VAOManager.LoadModelIntoVAO(
-					friendlyName,
-					*pMesh,
-					*pDrawInfo,
-					Shader::FromName(shader->value())->GetID());
+				previous->next = info;
+				previous = info;
 			}
 			else
 			{
-				std::cout << "Model builder could not find/load file: " << fileName << std::endl;
+				first = info;
+				previous = first;
 			}
-		
 		}
+
+	}
+
+	if (first)
+	{
+#ifdef THREADED
+		(new std::thread(LoadModel, first))->detach();
+#else
+		LoadModel(first);
+		delete first; first = 0;
+#endif
 	}
 }

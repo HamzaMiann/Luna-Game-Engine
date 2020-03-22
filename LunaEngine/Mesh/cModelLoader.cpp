@@ -280,7 +280,7 @@ LoadResult cModelLoader::LoadModel(	std::string filename,
 
 		LoadMeshes(scene, theMesh);
 
-		LoadTextures(scene, theMesh, result);
+		//LoadTextures(scene, theMesh, result);
 
 		result.success = true;
 	}

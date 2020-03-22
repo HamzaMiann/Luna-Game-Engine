@@ -1,38 +1,30 @@
 #pragma once
 
-#include <safe_promise.h>
+#include <vector>
+#include <thread>
+#include <functional>
 
-class iThreadable
+class iJob
 {
 public:
-	virtual ~iThreadable() {}
-	virtual void execute() = 0;
+	virtual ~iJob() {}
+	virtual bool IsDone() = 0;
+	virtual std::function<void()> GetDispatchedFunction() = 0;
 };
 
 
-class thread_manager
+class Thread
 {
-	struct thread_item
-	{
-		
-	};
-
-	thread_manager() {}
+private:
+	static std::vector<iJob*> jobs;
+	static std::vector<std::function<void()>> dispatched;
 
 public:
-	~thread_manager() {}
 
-	static thread_manager& Instance()
-	{
-		static thread_manager instance;
-		return instance;
-	}
+	Thread() = delete;
 
-	template <typename T>
-	void RunThreaded()
-	{
+	static void PushJob(iJob* job);
+	static void Dispatch(std::function<void()> func);
 
-	}
-
-	void update();
+	static void Update(float dt);
 };

@@ -6,6 +6,12 @@
 #include <vector>
 #include <Texture/CTextureFromBMP.h>
 
+struct sTextureData
+{
+	unsigned int width, height;
+	std::vector<unsigned char> data;
+};
+
 class cBasicTextureManager
 {
 private:
@@ -18,9 +24,10 @@ public:
 	// Picks a random texture from the textures loaded
 	std::string PickRandomTexture(void);
 
-	bool Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, std::vector<unsigned char>& data, int width, int height);
+	bool LoadPNGFromFile(std::string textureFileName, sTextureData& textureData);
+	bool LoadJPGFromFile(std::string textureFileName, sTextureData& textureData);
+
 	bool Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, unsigned char* data, int width, int height);
-	bool Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, void* data, int width, int height, char hint);
 
 	bool Create3DTexture(std::string friendlyName, bool bGenerateMIPMap, unsigned char* data, int width, int height, int depth);
 
@@ -42,6 +49,14 @@ public:
 										std::string posZ_fileName, std::string negZ_fileName,
 										bool bIsSeamless, std::string& errorString);
 
+	unsigned int GenerateTexture();
+	void BindTexture(unsigned int texture, int type = GL_TEXTURE_2D);
+	void SetStandardTextureParameters(int type = GL_TEXTURE_2D);
+
+	void SetTextureDataRGB(unsigned char* data, size_t width, size_t height, int type = GL_TEXTURE_2D);
+	void SetTextureDataRGBA(unsigned char* data, size_t width, size_t height, int type = GL_TEXTURE_2D);
+	void SetTextureDataBGRA(unsigned char* data, size_t width, size_t height, int type = GL_TEXTURE_2D);
+	void GenerateMipmaps(bool bGenerateMIPMap, int type = GL_TEXTURE_2D);
 
 	// returns 0 on error
 	GLuint getTextureIDFromName( std::string textureFileName );

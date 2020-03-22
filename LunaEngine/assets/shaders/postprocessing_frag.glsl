@@ -20,6 +20,7 @@ uniform bool DOFEnabled;
 uniform bool volumetricEnabled;
 uniform bool cloudsEnabled;
 uniform bool cloudShadowsEnabled;
+uniform bool vignetteEnabled;
 
 // Texture
 uniform sampler2D textSamp00;	// albedo
@@ -294,7 +295,7 @@ Plane GetPlane2()
 float GetDensityAt(vec3 position)
 {
 	float density = 0.;
-	vec3 col = texture(worleyTexture, position).rgb;
+	vec3 col = textureLod(worleyTexture, position, 0.).rgb;
 	density = col.r;
 	density = mix(density, col.g, 0.3);
 	density = mix(density, col.b, 0.2);
@@ -458,10 +459,10 @@ void main()
 
 
 		// vignette effect
-		if (true)
+		if (vignetteEnabled)
 		{
-			float d = distance(vec2(0.5), fUVx2.st);
-			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 0.85);
+			float d = smoothstep(0., 1., distance(vec2(0.5), fUVx2.st));
+			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 1.2);
 		}
 
 
@@ -515,6 +516,7 @@ void main()
 
 	// volumetric lighting buffer calculation
 	normalColour = vec4(distance(pos, eyeLocation.xyz)) / 1000.0;	// CUSTOM COLOURED DEPTH BUFFER FOR VOLUMETRIC LIGHTING
+	normalColour.rgb = clamp(normalColour.rgb, vec3(0.), vec3(1.));
 	normalColour.r *= theLights[0].diffuse.r;
 	normalColour.g *= theLights[0].diffuse.g;
 	normalColour.b *= theLights[0].diffuse.b;
@@ -527,7 +529,14 @@ void main()
 		normalColour = RayTracePlane(ray, normalColour);
 	}
 
-	return;
+
+//	vec3 norm = texture(textSamp00, uv).rgb;
+//	vec3 offset = texture(textSamp00, uv - 0.002).rgb;
+//
+//	if (distance(norm, offset) > 0.07)
+//	{
+//		pixelColour.rgb = vec3(0.);
+//	}
 	
 } // end main
 

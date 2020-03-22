@@ -1,19 +1,28 @@
 #pragma once
 
 #include <future>
+#include <threading.h>
 
 
-template <class T>
-class safe_promise
+template <typename T>
+class safe_promise : public iJob
 {
 	std::promise<T> promise;
-	std::future<T>* future;
+	std::future<T> future;
+	std::function<void()> func;
 
 public:
 
-	safe_promise()
+	safe_promise():
+		future(promise.get_future()),
+		func([]() {})
 	{
-		future = &promise.get_future();
+	}
+
+	safe_promise(std::function<void()> function) :
+		future(promise.get_future()),
+		func(function)
+	{
 	}
 
 	~safe_promise()
@@ -27,16 +36,26 @@ public:
 
 	inline std::future_status wait_for(float time)
 	{
-		return future->wait_for(std::chrono::duration<float>(time));
+		return future.wait_for(std::chrono::duration<float>(time));
 	}
 
 	inline bool is_ready()
 	{
-		return future->wait_for(std::chrono::duration<float>(0.f)) == std::future_status::ready;
+		return future.wait_for(std::chrono::duration<float>(0.f)) == std::future_status::ready;
+	}
+
+	virtual inline bool IsDone() override
+	{
+		return is_ready();
+	}
+
+	virtual inline std::function<void()> GetDispatchedFunction() override
+	{
+		return func;
 	}
 
 	inline T get()
 	{
-		return future->get();
+		return future.get();
 	}
 };

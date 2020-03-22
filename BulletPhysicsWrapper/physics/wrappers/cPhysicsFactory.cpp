@@ -27,6 +27,11 @@ namespace nPhysics
 		return new cCubeComponent(parent, def);
 	}
 
+	iClothComponent* cPhysicsFactory::CreateCloth(iObject* parent, const sClothDef& def)
+	{
+		return nullptr;
+	}
+
 	iCapsuleComponent* cPhysicsFactory::CreateCapsule(iObject* parent, const sCapsuleDef& def)
 	{
 		return nullptr;
