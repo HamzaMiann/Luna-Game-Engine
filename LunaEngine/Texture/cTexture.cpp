@@ -21,23 +21,27 @@ cTexture::cTexture(int ID) :
 
 cTexture::cTexture(std::string name) :
 	filename(name),
-	ID(cBasicTextureManager::Instance()->getTextureIDFromName(name)),
+	//ID(cBasicTextureManager::Instance()->getTextureIDFromName(name)),
+	ID(0),
 	initialized(true),
 	blend(0.f),
 	tiling(1.f)
 {
+	cBasicTextureManager::Instance()->GetTextureIDAsync(name, &ID);
 }
 
 void cTexture::SetTexture(std::string name)
 {
-	ID = cBasicTextureManager::Instance()->getTextureIDFromName(name);
+	cBasicTextureManager::Instance()->GetTextureIDAsync(name, &ID);
+	//ID = cBasicTextureManager::Instance()->getTextureIDFromName(name);
 	filename = name;
 	initialized = true;
 }
 
 void cTexture::SetTexture(std::string name, float blend)
 {
-	ID = cBasicTextureManager::Instance()->getTextureIDFromName(name);
+	//ID = cBasicTextureManager::Instance()->getTextureIDFromName(name);
+	cBasicTextureManager::Instance()->GetTextureIDAsync(name, &ID);
 	filename = name;
 	this->blend = blend;
 	initialized = true;
@@ -60,10 +64,10 @@ void cTexture::SetTexture(int ID, float blend)
 
 int cTexture::GetID()
 {
-	if (!initialized)
+	/*if (!initialized)
 	{
 		cBasicTextureManager::Instance()->getTextureIDFromName(filename);
 		initialized = true;
-	}
+	}*/
 	return ID;
 }

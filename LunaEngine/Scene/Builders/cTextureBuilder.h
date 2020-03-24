@@ -8,4 +8,6 @@ public:
 	cTextureBuilder() {}
 	virtual ~cTextureBuilder() {}
 	virtual void Build(Scene& scene, rapidxml::xml_node<>* node);
+
+	void LoadSkyboxTextures(rapidxml::xml_node<>* tex_node);
 };

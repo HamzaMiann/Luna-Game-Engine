@@ -18,7 +18,7 @@ void LoadModel(ModelLoadInfo* info)
 	if (ModelLoader.LoadModel("assets/models/" + info->fileName, info->friendlyName, *pMesh).success)
 	{
 #ifdef THREADED
-		Thread::Dispatch([&]()
+		Thread::Dispatch([info, pMesh]()
 			{
 				sModelDrawInfo* pDrawInfo = new sModelDrawInfo();
 				cVAOManager::Instance()
@@ -30,10 +30,9 @@ void LoadModel(ModelLoadInfo* info)
 					);
 			}
 		);
-		std::this_thread::sleep_for(std::chrono::duration<float>(0.2f));
+		std::this_thread::sleep_for(std::chrono::duration<float>(0.1f));
 #else
 		sModelDrawInfo* pDrawInfo = new sModelDrawInfo();
-		std::cout << info->fileName << std::endl;
 		cVAOManager::Instance()
 			.LoadModelIntoVAO(
 				info->friendlyName,

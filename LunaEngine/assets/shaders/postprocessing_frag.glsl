@@ -217,6 +217,9 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 
 	// clamp the light position so that the delta is not too high
 	vec2 lightPos = lightPositionOnScreen.xy;
+	//lightPos.x /= iResolution.x;
+	//lightPos.y /= iResolution.y;
+
 	if (distance(lightPositionOnScreen.xy, vec2(0.0)) > 20.0)
 	{
 		lightPos = normalize(lightPositionOnScreen.xy) * 20.0;
@@ -465,6 +468,11 @@ void main()
 			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 1.2);
 		}
 
+		// cinematic black bars
+		if (abs(uv.y - 0.5) > 0.4)
+		{
+			pixelColour.rgb = vec3(0.);
+		}
 
 		pixelColour.a = 1.0;
 

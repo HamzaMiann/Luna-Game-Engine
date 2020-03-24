@@ -65,15 +65,7 @@ bool cBasicTextureManager::Create2DTextureFromPNGFile(std::string textureFileNam
 		return false;
 	}
 
-	unsigned int texture = GenerateTexture();
-	BindTexture(texture);
-	SetStandardTextureParameters();
-	SetTextureDataRGBA(&tex.data[0], tex.width, tex.height);
-	GenerateMipmaps(bGenerateMIPMap);
-
-	this->m_map_NameToID[textureFileName] = texture;
-
-	return true;
+	return Create2DTextureRGBA(textureFileName, tex, bGenerateMIPMap);
 }
 
 bool cBasicTextureManager::Create2DTextureFromJPGFile(std::string textureFileName, bool bGenerateMIPMap)
@@ -86,15 +78,7 @@ bool cBasicTextureManager::Create2DTextureFromJPGFile(std::string textureFileNam
 		return false;
 	}
 
-	unsigned int texture = GenerateTexture();
-	BindTexture(texture);
-	SetStandardTextureParameters();
-	SetTextureDataRGB(&tex.data[0], tex.width, tex.height);
-	GenerateMipmaps(bGenerateMIPMap);
-
-	this->m_map_NameToID[textureFileName] = texture;
-
-	return true;
+	return Create2DTextureRGB(textureFileName, tex, bGenerateMIPMap);
 
 }
 
@@ -109,6 +93,8 @@ void cBasicTextureManager::m_appendErrorString( std::string nextErrorText )
 
 GLuint cBasicTextureManager::getTextureIDFromName( std::string textureFileName )
 {
+	auto_lock lock(mtx);
+
 	std::map< std::string, GLuint >::iterator itTexture
 		= this->m_map_NameToID.find(textureFileName);
 	// Found it?
@@ -118,6 +104,35 @@ GLuint cBasicTextureManager::getTextureIDFromName( std::string textureFileName )
 	}
 	// Reutrn texture number (from OpenGL genTexture)
 	return itTexture->second;
+}
+
+void cBasicTextureManager::GetTextureIDAsync(std::string textureFileName, unsigned int* texture)
+{
+	auto_lock lock(mtx);
+	auto itTexture = this->m_map_NameToID.find(textureFileName);
+	if (itTexture == this->m_map_NameToID.end())
+	{
+		async_queue[textureFileName].push_back(texture);
+	}
+	else
+		*texture = itTexture->second;
+}
+
+
+void cBasicTextureManager::SetTextureIDForName(std::string textureFileName, unsigned int texture)
+{
+	auto_lock lock(mtx);
+	m_map_NameToID[textureFileName] = texture;
+	UpdateTextureRequests(textureFileName, texture);
+}
+
+void cBasicTextureManager::UpdateTextureRequests(std::string textureFileName, unsigned int texture)
+{
+	for (auto tex : async_queue[textureFileName])
+	{
+		*tex = texture;
+	}
+	async_queue[textureFileName].clear();
 }
 
 
@@ -239,7 +254,33 @@ bool cBasicTextureManager::Create2DTexture(std::string friendlyName, bool bGener
 	SetTextureDataBGRA(data, width, height);
 	GenerateMipmaps(bGenerateMIPMap);
 
-	this->m_map_NameToID[friendlyName] = texture;
+	SetTextureIDForName(friendlyName, texture);
+
+	return true;
+}
+
+bool cBasicTextureManager::Create2DTextureRGB(std::string friendlyName, sTextureData& texData, bool bGenerateMIPMap)
+{
+	unsigned int texture = GenerateTexture();
+	BindTexture(texture);
+	SetStandardTextureParameters();
+	SetTextureDataRGB(&texData.data[0], texData.width, texData.height);
+	GenerateMipmaps(bGenerateMIPMap);
+
+	SetTextureIDForName(friendlyName, texture);
+
+	return true;
+}
+
+bool cBasicTextureManager::Create2DTextureRGBA(std::string friendlyName, sTextureData& texData, bool bGenerateMIPMap)
+{
+	unsigned int texture = GenerateTexture();
+	BindTexture(texture);
+	SetStandardTextureParameters();
+	SetTextureDataRGBA(&texData.data[0], texData.width, texData.height);
+	GenerateMipmaps(bGenerateMIPMap);
+
+	SetTextureIDForName(friendlyName, texture);
 
 	return true;
 }
@@ -252,7 +293,7 @@ bool cBasicTextureManager::Create3DTexture(std::string friendlyName, bool bGener
 
 	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, width, height, depth, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	GenerateMipmaps(bGenerateMIPMap, GL_TEXTURE_3D);
-	this->m_map_NameToID[friendlyName] = texture;
+	SetTextureIDForName(friendlyName, texture);
 
 	return true;
 }
@@ -338,7 +379,7 @@ bool cBasicTextureManager::CreateCubeTextureFromPNGFiles(	std::string cubeMapNam
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	m_map_NameToID[cubeMapName] = textureID;
+	SetTextureIDForName(cubeMapName, textureID);
 
 	return true;
 }
@@ -382,7 +423,8 @@ bool cBasicTextureManager::CreateCubeTextureFromJPGFiles(	std::string cubeMapNam
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	m_map_NameToID[cubeMapName] = textureID;
+	SetTextureIDForName(cubeMapName, textureID);
+
 
 	return true;
 }

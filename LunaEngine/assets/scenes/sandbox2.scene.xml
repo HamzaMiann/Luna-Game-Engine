@@ -261,8 +261,9 @@
         
         <CharacterController>
           <Forward x="0" y="0" z="-1"/>
-          <Offset x="-2.5" y="5.0" z="0"/>
-          <CameraDistance>6.0</CameraDistance>
+          <Offset x="0" y="5.0" z="0"/>
+          <!--<Offset x="-2.5" y="5.0" z="0"/>-->
+          <CameraDistance>1.0</CameraDistance>
           <Speed>5.0</Speed>
           <MouseSpeed>0.15</MouseSpeed>
         </CharacterController>
