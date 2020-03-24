@@ -1,8 +1,9 @@
 #include <_GL/Window.h>
 #include <stdlib.h>
 
-#define WINDOW_WIDTH 1600
-#define WINDOW_HEIGHT 900
+#define WINDOW_WIDTH 1280
+#define WINDOW_HEIGHT 720
+//#define FULL_SCREEN
 
 GLFWwindow* global::window = 0;
 
@@ -40,14 +41,16 @@ void InitGL()
 	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
 	// FOR FULL SCREEN WINDOWED
-	/*glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+#ifdef FULL_SCREEN
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
 	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	global::window = glfwCreateWindow(mode->width, mode->height, "GLEngine", monitor, NULL);
-	glfwSetWindowMonitor(global::window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);*/
-
+	glfwSetWindowMonitor(global::window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+#else
 	global::window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "GLEngine", NULL, NULL);
+#endif
 	
 
 	if (!global::window)

@@ -27,21 +27,22 @@ cTexture::cTexture(std::string name) :
 	blend(0.f),
 	tiling(1.f)
 {
-	cBasicTextureManager::Instance()->GetTextureIDAsync(name, &ID);
+	ID = cBasicTextureManager::Instance()->getTextureIDFromName(filename);
+	//cBasicTextureManager::Instance()->GetTextureIDAsync(name, &ID);
 }
 
 void cTexture::SetTexture(std::string name)
 {
-	cBasicTextureManager::Instance()->GetTextureIDAsync(name, &ID);
-	//ID = cBasicTextureManager::Instance()->getTextureIDFromName(name);
+	//cBasicTextureManager::Instance()->GetTextureIDAsync(name, &ID);
+	ID = cBasicTextureManager::Instance()->getTextureIDFromName(name);
 	filename = name;
 	initialized = true;
 }
 
 void cTexture::SetTexture(std::string name, float blend)
 {
-	//ID = cBasicTextureManager::Instance()->getTextureIDFromName(name);
-	cBasicTextureManager::Instance()->GetTextureIDAsync(name, &ID);
+	ID = cBasicTextureManager::Instance()->getTextureIDFromName(name);
+	//cBasicTextureManager::Instance()->GetTextureIDAsync(name, &ID);
 	filename = name;
 	this->blend = blend;
 	initialized = true;
@@ -64,6 +65,10 @@ void cTexture::SetTexture(int ID, float blend)
 
 int cTexture::GetID()
 {
+	if (ID == 0)
+	{
+		ID = cBasicTextureManager::Instance()->getTextureIDFromName(filename);
+	}
 	/*if (!initialized)
 	{
 		cBasicTextureManager::Instance()->getTextureIDFromName(filename);

@@ -23,6 +23,7 @@ uniform sampler2D textSamp01;
 uniform sampler2D textSamp02;
 uniform sampler2D textSamp03;
 uniform vec4 tex_0_3_ratio;		// x = 0, y = 1, z = 2, w = 3
+uniform vec4 tex_tiling;
 uniform samplerCube skyBox;
 
 
@@ -48,10 +49,10 @@ void main()
 	bloomColour = vec4(0.0);
 	positionColour = vec4(fVertWorldLocation.xyz, 1.0);
 
-	vec3 tex0_RGB = texture( textSamp00, fUVx2.st * 20. ).rgb;
-	vec3 tex1_RGB = texture( textSamp01, fUVx2.st * 20. ).rgb;
-	vec3 tex2_RGB = texture( textSamp02, fUVx2.st * 20. ).rgb;
-	vec3 tex3_RGB = texture( textSamp03, fUVx2.st * 20. ).rgb;
+	vec3 tex0_RGB = texture( textSamp00, fUVx2.st * tex_tiling.x ).rgb;
+	vec3 tex1_RGB = texture( textSamp01, fUVx2.st * tex_tiling.y ).rgb;
+	vec3 tex2_RGB = texture( textSamp02, fUVx2.st * tex_tiling.z ).rgb;
+	vec3 tex3_RGB = texture( textSamp03, fUVx2.st * tex_tiling.w ).rgb;
 		
 	
 	vec3 albedo = tex0_RGB;

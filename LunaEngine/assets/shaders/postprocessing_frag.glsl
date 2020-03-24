@@ -216,29 +216,22 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 	vec4 colour = vec4(texture(tex, uv).rgb, 1);
 
 	// clamp the light position so that the delta is not too high
-	vec2 lightPos = lightPositionOnScreen.xy;
-	//lightPos.x /= iResolution.x;
-	//lightPos.y /= iResolution.y;
-
-	if (distance(lightPositionOnScreen.xy, vec2(0.0)) > 20.0)
-	{
-		lightPos = normalize(lightPositionOnScreen.xy) * 20.0;
-	}
+	vec2 lightPos = (lightPositionOnScreen.xy + 1.) / 2.;
 
 	float density = 0.97;
 	float weight = 0.5;
-	float exposure = 0.1 * exposureRatio;
-	float decay = 0.9;
+	float exposure = 0.2 * exposureRatio;
+	float decay = 0.98;
 	int NUM_SAMPLES = 100;
 
-	vec2 deltaTextCoord = vec2( uv - lightPos.xy ) * 0.02;
+	vec2 deltaTextCoord = vec2( uv - lightPos.xy );// * 0.02;
     deltaTextCoord *= 1.0 /  float(NUM_SAMPLES) * density;
     float illuminationDecay = 1.0;
 
-    for(int i=0; i < NUM_SAMPLES && distance(origin, uv) < distance(origin, lightPos)  ; i++)
+    for(int i=0; i < NUM_SAMPLES  ; i++)
     {
             uv -= deltaTextCoord;
-			if (uv. x < 0. || uv. y < 0. || uv.x > 1. || uv.y > 1.) break;
+			//if (uv. x < 0. || uv. y < 0. || uv.x > 1. || uv.y > 1.) break;
             vec4 samp = texture2D(tex, uv);
             samp *= illuminationDecay * weight;
             colour += samp;
@@ -247,7 +240,9 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 
 	float dustAmount = length(colour.rgb);
     colour *= exposure;
-	//uv = vec2(fUVx2.x + (fiTime / (15.0)), fUVx2.y + (fiTime / -20.0));
+	//colour *= texture(textSamp04, fUVx2.st + fiTime).r;
+	uv = origin - vec2(lightPos.x + (fiTime / (30.0)), lightPos.y + (fiTime / -40.0));
+	colour *= 1. - texture(textSamp04, uv).r;
 	//colour.rgb += (texture(textSamp04, uv - lightPositionOnScreen.xy / 400.).rgb / 2.0) * exposure * dustAmount;
 
 	return colour;
@@ -443,7 +438,7 @@ void main()
 			pixelColour = clamp(pixelColour, 0.0, 1.0);
 
 			float exposure = 2.0;
-			float gamma = 0.6;
+			float gamma = 0.7;
 
 			// tone mapping
 			vec3 result = vec3(1.0) - exp(-pixelColour.rgb * exposure);
@@ -485,6 +480,11 @@ void main()
 
 	float d = distance(eyeLocation.xyz, pos);
 
+	vec2 lpos = (lightPositionOnScreen.xy + 1.) / 2.;
+	//vec2 lpos = lightPositionOnScreen.xy;
+	//lpos.x /= iResolution.x;
+	//lpos.y /= iResolution.y;
+
 	// calculate lighting
 	pixelColour = calcualteLightContrib(col, normal, pos, vec4(0.));
 	
@@ -502,6 +502,10 @@ void main()
 	if (texture(textSamp04, uv).r > 0.0)
 	{
 		pixelColour.rgb = col;
+		if (distance(uv, lpos) < 0.03)
+		{
+			pixelColour.rgb = theLights[0].diffuse.rgb;
+		}
 	}
 
 	// clouds effect
@@ -523,11 +527,20 @@ void main()
 	positionColour.a = 1.;
 
 	// volumetric lighting buffer calculation
-	normalColour = vec4(distance(pos, eyeLocation.xyz)) / 1000.0;	// CUSTOM COLOURED DEPTH BUFFER FOR VOLUMETRIC LIGHTING
-	normalColour.rgb = clamp(normalColour.rgb, vec3(0.), vec3(1.));
+	//normalColour = vec4(distance(pos, eyeLocation.xyz)) / 1000.0;	// CUSTOM COLOURED DEPTH BUFFER FOR VOLUMETRIC LIGHTING
+	//normalColour.rgb = clamp(normalColour.rgb, vec3(0.), vec3(1.));
 	normalColour.r *= theLights[0].diffuse.r;
 	normalColour.g *= theLights[0].diffuse.g;
 	normalColour.b *= theLights[0].diffuse.b;
+	normalColour.rgba = vec4(0., 0. ,0., 1.);
+
+	if (texture(textSamp04, uv).r > 0.0)
+	{
+		if (distance(uv, lpos) < 0.03)
+		{
+			normalColour.rgb = theLights[0].diffuse.rgb;
+		}
+	}
 
 	// add clouds to the volumetric lighting buffer
 	if (cloudsEnabled) {
@@ -672,7 +685,6 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 		if ( intLightType == SPOT_LIGHT_TYPE )		// = 1
 		{	
 		
-
 			// Yes, it's a spotlight
 			// Calcualate light vector (light to vertex, in world)
 			vec3 vertexToLight = vertexWorldPos.xyz - theLights[index].position.xyz;

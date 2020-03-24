@@ -480,7 +480,7 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.000000">Ground_Dirt_007_basecolor.png</Texture>
+      <Texture ratio="1.000000" tiling="10.0">Ground_Dirt_007_basecolor.png</Texture>
       
       <Components>
         

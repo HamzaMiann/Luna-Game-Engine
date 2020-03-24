@@ -103,7 +103,7 @@
 	<Lights>
 
     <Light>
-      <Position x="-10.000000" y="30" z="100.000000" w="1.000000"/>
+      <Position x="0.000000" y="30" z="100.000000" w="1.000000"/>
       <Diffuse x="0.700000" y="0.700000" z="0.800000" w="1.000000"/>
       <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
       <Atten x="0.0300000" y="0.0000000100" z="0.000000020000" w="1000.000000"/>
@@ -315,8 +315,8 @@
       <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
       <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
       <SpecIntensity>10.000000</SpecIntensity>
-      <Texture ratio="1.0" tiling="100.0">Ground_Dirt_007_basecolor.png</Texture>
-      <Texture ratio="0.0" tiling="100.0">Snow_004_COLOR.jpg</Texture>
+      <Texture ratio="0.0" tiling="100.0">Ground_Dirt_007_basecolor.png</Texture>
+      <Texture ratio="1.0" tiling="100.0">Snow_004_COLOR.jpg</Texture>
       
       <Components>
         

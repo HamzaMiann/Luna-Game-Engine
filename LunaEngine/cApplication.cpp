@@ -192,7 +192,9 @@ void cApplication::Run()
 		renderer.RenderSkybox(width, height, p, v, dt);
 
 		light->position = vec4(origin + Camera::main_camera->Eye, 1.0f);
-		renderer.screenPos = vec2((p * v * mat4(1.0f)) * light->position);
+		vec4 homogenous = (p * v * mat4(1.0f)) * light->position;
+		vec3 cube = vec3(homogenous.x / homogenous.w, homogenous.y / homogenous.w, homogenous.z / homogenous.w);
+		renderer.screenPos = vec2(cube);
 
 		renderer.RenderQuadToFBO(finalFBO, second_passFBO);
 		renderer.RenderQuadToScreen(finalFBO);
