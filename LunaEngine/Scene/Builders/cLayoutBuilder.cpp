@@ -200,16 +200,13 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 			}
 			texture_id++;
 		}
-		else if (propName == "Animations")
+		else if (propName == "BlendMap")
 		{
-			std::string meshFile = property_node->first_attribute("file")->value();
-			ptr->animation = new cSimpleAssimpSkinnedMesh;
-			ptr->animation->LoadMeshFromFile("animation", "assets/models/" + meshFile);
-			for (xml_node<>* animation_node = property_node->first_node("Animation"); animation_node; animation_node = animation_node->next_sibling("Animation"))
+			ptr->shouldBlend = true;
+			ptr->blendMap.SetTexture(property_node->value());
+			if (property_node->first_attribute("tiling"))
 			{
-				std::string file = animation_node->first_attribute("file")->value();
-				std::string name = animation_node->first_attribute("friendlyName")->value();
-				ptr->animation->LoadMeshAnimation(name, "assets/models/" + file);
+				ptr->blendMap.SetTiling(strtof(property_node->first_attribute("tiling")->value(), 0));
 			}
 		}
 		else if (propName == "GameObject")

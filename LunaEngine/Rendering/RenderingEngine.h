@@ -27,6 +27,7 @@ private:
 	bool clouds_enabled;
 	bool clouds_shadows_enabled;
 	bool vignette_enabled;
+	bool lens_dirt_enabled;
 
 	cGameObject quad;
 
@@ -60,10 +61,11 @@ public:
 
 
 	// Old methods
-	void DrawObject(cGameObject& object, mat4 const& v, mat4 const& p);
+	void DrawObject(cGameObject& object, mat4 const& v, mat4 const& p, Shader* s = nullptr);
 	void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, mat4 const& v, mat4 const& p);
 	void RenderGO(cGameObject& object, float width, float height, mat4& p, mat4& v, int& lastShader);
 	void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt);
+	void RenderShadowmapToFBO(cSimpleFBO* fbo, float width, float height);
 	void RenderSkybox(float width, float height, mat4 p, mat4 v, float dt);
 	void RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO);
 	void RenderQuadToScreen(cFBO& previousFBO);

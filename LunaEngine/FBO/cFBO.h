@@ -19,8 +19,8 @@ public:
 
 	GLuint normalTexture_ID;		// = 0;
 	GLuint positionTexture_ID;		// = 0;
-	GLuint bloomTexture_ID;		// = 0;
-	GLuint unlitTexture_ID;		// = 0;
+	GLuint bloomTexture_ID;			// = 0;
+	GLuint unlitTexture_ID;			// = 0;
 
 	// Inits the FBP
 	virtual bool init(int width, int height, std::string &error) override;

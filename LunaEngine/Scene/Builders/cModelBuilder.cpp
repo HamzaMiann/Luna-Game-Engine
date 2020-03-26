@@ -30,7 +30,7 @@ void LoadModel(ModelLoadInfo* info)
 					);
 			}
 		);
-		std::this_thread::sleep_for(std::chrono::duration<float>(0.1f));
+		//std::this_thread::sleep_for(std::chrono::duration<float>(0.1f));
 #else
 		sModelDrawInfo* pDrawInfo = new sModelDrawInfo();
 		cVAOManager::Instance()

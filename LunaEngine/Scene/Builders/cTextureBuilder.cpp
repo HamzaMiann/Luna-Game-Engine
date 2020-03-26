@@ -27,7 +27,7 @@ void LoadTextures(std::vector<std::string> texturesToLoad)
 						delete data;
 					}
 				);
-				std::this_thread::sleep_for(std::chrono::duration<float>(0.1f));
+				//std::this_thread::sleep_for(std::chrono::duration<float>(0.1f));
 #else
 				cBasicTextureManager::Instance()->Create2DTextureRGBA(texture, *data, true);
 				delete data; data = 0;
@@ -49,7 +49,7 @@ void LoadTextures(std::vector<std::string> texturesToLoad)
 						delete data;
 					}
 				);
-				std::this_thread::sleep_for(std::chrono::duration<float>(0.1f));
+				//std::this_thread::sleep_for(std::chrono::duration<float>(0.1f));
 #else
 				cBasicTextureManager::Instance()->Create2DTextureRGB(texture, *data, true);
 				delete data; data = 0;

@@ -10,6 +10,7 @@ uniform vec4 diffuseColour;
 uniform vec4 specularColour;
 uniform vec4 eyeLocation;
 uniform vec4 eyeTarget;
+uniform mat4 shadowMVP;
 
 // Used to draw debug (or unlit) objects
 uniform bool isUniform;
@@ -21,6 +22,7 @@ uniform bool volumetricEnabled;
 uniform bool cloudsEnabled;
 uniform bool cloudShadowsEnabled;
 uniform bool vignetteEnabled;
+uniform bool lensDirtEnabled;
 
 // Texture
 uniform sampler2D textSamp00;	// albedo
@@ -32,6 +34,8 @@ uniform sampler2D textSamp05;	// REFLECTIVE
 
 uniform sampler3D worleyTexture;
 uniform sampler2D perlinTexture;
+uniform sampler2D lensTexture;
+uniform sampler2D shadowTexture;
 
 uniform samplerCube skyBox;
 
@@ -39,6 +43,8 @@ uniform vec2 lightPositionOnScreen;
 uniform float cloudDensityFactor;
 uniform float cloudDensityCutoff;
 uniform float cloudLightScattering;
+
+uniform float bloomScale;
 
 // Globals
 in float fiTime;
@@ -132,14 +138,21 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 
 vec4 BloomCutoff(vec4 colour)
 {
-	vec4 BrightColor = vec4(colour.rgb, 1.0);
+	vec4 BrightColour = vec4(0.2126, 0.5152, 0.522, 1.0);
 
-	float brightness = dot(colour.rgb, vec3(0.2126, 0.6152, 0.522));
-	brightness = dot(colour.rgb, vec3(0.2126, 0.7152, 0.0722));
-    if(brightness <= 1.0)
-        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+	colour.r = (colour.r + BrightColour.r) * colour.r;
+	colour.g = (colour.r + BrightColour.g) * colour.g;
+	colour.b = (colour.r + BrightColour.b) * colour.b;
+	colour.rgb = clamp(colour.rgb, 0., 1.) * bloomScale;
 
-	return BrightColor;
+	return colour;
+
+//	float brightness = dot(colour.rgb, vec3(0.2126, 0.6152, 0.522));
+//	brightness = dot(colour.rgb, vec3(0.2126, 0.7152, 0.0722));
+//    if(brightness <= 1.0)
+//        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+//
+//	return BrightColor;
 }
 
 
@@ -174,8 +187,8 @@ vec4 circular_blur(sampler2D tex, float offset)
 vec4 DOF(sampler2D mainTexture, sampler2D positionTexture)
 {
 	const float near_focus = 10.0;
-	const float focus_length = 50.0;
-	const float far_blur_scale = 5.0;
+	const float focus_length = 70.0;
+	const float far_blur_scale = 2.0;
 	const float near_blur_scale = 15.0;
 
 	vec4 colour = vec4(0., 0., 0., 1.);
@@ -215,12 +228,12 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 	vec2 origin = uv;
 	vec4 colour = vec4(texture(tex, uv).rgb, 1);
 
-	// clamp the light position so that the delta is not too high
+	// get the UV position of the light
 	vec2 lightPos = (lightPositionOnScreen.xy + 1.) / 2.;
 
 	float density = 0.97;
 	float weight = 0.5;
-	float exposure = 0.2 * exposureRatio;
+	float exposure = 0.3 * exposureRatio;
 	float decay = 0.98;
 	int NUM_SAMPLES = 100;
 
@@ -231,7 +244,6 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
     for(int i=0; i < NUM_SAMPLES  ; i++)
     {
             uv -= deltaTextCoord;
-			//if (uv. x < 0. || uv. y < 0. || uv.x > 1. || uv.y > 1.) break;
             vec4 samp = texture2D(tex, uv);
             samp *= illuminationDecay * weight;
             colour += samp;
@@ -240,7 +252,6 @@ vec4 CalculateVolumetricLightScattering(sampler2D tex)
 
 	float dustAmount = length(colour.rgb);
     colour *= exposure;
-	//colour *= texture(textSamp04, fUVx2.st + fiTime).r;
 	uv = origin - vec2(lightPos.x + (fiTime / (30.0)), lightPos.y + (fiTime / -40.0));
 	colour *= 1. - texture(textSamp04, uv).r;
 	//colour.rgb += (texture(textSamp04, uv - lightPositionOnScreen.xy / 400.).rgb / 2.0) * exposure * dustAmount;
@@ -452,7 +463,14 @@ void main()
 		// volumetric light scattering effect
 		if (volumetricEnabled)
 		{
-			pixelColour.rgb += CalculateVolumetricLightScattering(textSamp02).rgb;
+			vec3 scatter = CalculateVolumetricLightScattering(textSamp02).rgb;
+			pixelColour.rgb += scatter;
+			// lens dirt
+			if (lensDirtEnabled) {
+				vec3 dirt = vec3(texture(lensTexture, uv).r);
+				float dist = exp(-distance((lightPositionOnScreen + 1.) / 2., uv) * 10.);
+				pixelColour.rgb += dirt * dist * length(scatter * 2.);
+			}
 		}
 
 
@@ -462,6 +480,7 @@ void main()
 			float d = smoothstep(0., 1., distance(vec2(0.5), fUVx2.st));
 			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 1.2);
 		}
+
 
 		// cinematic black bars
 		if (abs(uv.y - 0.5) > 0.4)
@@ -502,10 +521,6 @@ void main()
 	if (texture(textSamp04, uv).r > 0.0)
 	{
 		pixelColour.rgb = col;
-		if (distance(uv, lpos) < 0.03)
-		{
-			pixelColour.rgb = theLights[0].diffuse.rgb;
-		}
 	}
 
 	// clouds effect
@@ -536,7 +551,7 @@ void main()
 
 	if (texture(textSamp04, uv).r > 0.0)
 	{
-		if (distance(uv, lpos) < 0.03)
+		if (distance(uv * vec2(16., 9.), lpos  * vec2(16., 9.)) < 0.2)
 		{
 			normalColour.rgb = theLights[0].diffuse.rgb;
 		}

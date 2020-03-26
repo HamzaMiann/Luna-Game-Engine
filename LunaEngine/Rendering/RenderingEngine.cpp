@@ -20,16 +20,15 @@
 cTexture worleyNoise;
 cTexture worleyNoise2;
 cTexture perlinNoise;
+cTexture lens;
+cTexture blendMap;
 cWorleyTexture* worleyTexture;
 float cloudDensityFactor = 1.f;
 float cloudDensityCutoff = 0.5f;
 float cloudLightScattering = 2.f;
-
-//std::promise<cWorleyTexture*> promise;
-//std::future<cWorleyTexture*> future;
+float bloomScale = 0.3f;
 
 safe_promise<cWorleyTexture*>* promise;
-
 
 RenderingEngine::RenderingEngine()
 {
@@ -39,6 +38,7 @@ RenderingEngine::RenderingEngine()
 	clouds_enabled = true;
 	clouds_shadows_enabled = true;
 	vignette_enabled = true;
+	lens_dirt_enabled = true;
 }
 
 void RenderingEngine::Init()
@@ -69,6 +69,10 @@ void RenderingEngine::Init()
 
 	screenPos = vec2(0.f, 0.f);
 	noise.SetTexture("noise.jpg");
+
+	lens.SetTexture("lens_dust.jpg");
+
+	blendMap.SetTexture("WATER_BUMP.png", 1.f);
 
 
 	if (clouds_enabled)
@@ -107,6 +111,8 @@ RenderingEngine::~RenderingEngine() {}
 
 void RenderingEngine::Reset()
 {
+	//pass_id = 1;
+
 	view = glm::lookAt(
 		Camera::main_camera->Eye,
 		Camera::main_camera->Target,
@@ -213,6 +219,18 @@ void RenderingEngine::SetUpTextureBindingsForObject(cGameObject& object)
 	shader.SetTexture(textures[2].GetID(), "textSamp02", 2);
 	shader.SetTexture(textures[3].GetID(), "textSamp03", 3);
 
+	
+	if (object.shouldBlend)
+	{
+		shader.SetBool("useBlendMap", true);
+		shader.SetTexture(object.blendMap, "blendMap", 4);
+		shader.SetFloat("blendTiling", object.blendMap.GetTiling());
+	}
+	else
+	{
+		shader.SetBool("useBlendMap", false);
+	}
+
 	shader.SetVec4("tex_tiling",
 		vec4(
 			textures[0].GetTiling(),
@@ -235,9 +253,12 @@ void RenderingEngine::SetUpTextureBindingsForObject(cGameObject& object)
 }
 
 
-void RenderingEngine::DrawObject(cGameObject& object, mat4 const& v, mat4 const& p)
+void RenderingEngine::DrawObject(cGameObject& object, mat4 const& v, mat4 const& p, Shader* s)
 {
 	Shader& shader = *object.shader;
+	if (s) {
+		shader = *s;
+	}
 	Camera& camera = *Camera::main_camera;
 
 	/*
@@ -366,6 +387,25 @@ void RenderingEngine::DrawObject(cGameObject& object, mat4 const& v, mat4 const&
 	{
 		cLightManager::Instance()->Set_Light_Data(shader);
 		shader.SetVec2("lightPositionOnScreen", screenPos);
+
+		/*mat4 depthProjectionMatrix = glm::ortho<float>(-100.f, 100.f, -100.f, 100.f, -1000.f, 1000.f);
+		mat4 depthViewMatrix = glm::lookAt(
+			vec3(cLightManager::Instance()->Lights[0]->position),
+			Camera::main_camera->Target,
+			vec3(0, 1, 0)
+			);
+		mat4 depthModelMatrix = mat4(1.0);
+		mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+
+		glm::mat4 biasMatrix(
+			0.5, 0.0, 0.0, 0.0,
+			0.0, 0.5, 0.0, 0.0,
+			0.0, 0.0, 0.5, 0.0,
+			0.5, 0.5, 0.5, 1.0
+			);
+		glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
+
+		shader.SetMat4("shadowMVP", depthBiasMVP);*/
 	}
 
 
@@ -416,7 +456,6 @@ void RenderingEngine::DrawOctree(cGameObject* obj, octree::octree_node* node, cG
 
 void RenderingEngine::RenderGO(cGameObject& object, float width, float height, mat4& p, mat4& v, int& lastShader)
 {
-
 	for (iObject* child : object.Children)
 	{
 		if (child)
@@ -515,17 +554,46 @@ void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float hei
 
 		cGameObject& object = *objects[index];
 
-		//objPtr->cmd_group->Update(dt);
-		//objPtr->brain->Update(dt);
-
-		if (object.tag == "portal" || object.tag == "portal2") continue;
-
 		this->RenderGO(object, width, height, p, v, lastShader);
 
 
 	}//for (int index...
 	// **************************************************
 
+}
+
+void RenderingEngine::RenderShadowmapToFBO(cSimpleFBO* fbo, float width, float height)
+{
+	// Draw to the frame buffer
+	fbo->use();
+	fbo->clear_all();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+	auto& objects = cEntityManager::Instance().GetEntities();
+
+	Shader& shader = *Shader::FromName("shadow");
+	shader.Use();
+
+	mat4 depthProjectionMatrix = glm::ortho<float>(-100.f, 100.f, -100.f, 100.f, -1000.f, 1000.f);
+	mat4 depthViewMatrix = glm::lookAt(
+			vec3(cLightManager::Instance()->Lights[0]->position),
+			Camera::main_camera->Target,
+			vec3(0, 1, 0)
+		);
+	//mat4 depthModelMatrix = mat4(1.0);
+	//mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+
+	shader.SetMat4("matProj", depthProjectionMatrix);
+	shader.SetMat4("matView", depthViewMatrix);
+
+	// Loop to draw everything in the scene
+	for (int index = 0; index != objects.size(); index++)
+	{
+		DrawObject(*objects[index], depthViewMatrix, depthProjectionMatrix, &shader);
+	}
 }
 
 void RenderingEngine::RenderSkybox(float width, float height, mat4 p, mat4 v, float dt)
@@ -570,8 +638,8 @@ void RenderingEngine::RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM TEXTURE (NOT USED ON THIS PASS)
 	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp04", 4);	// TEXTURE INDICATING UNLIT OBJECTS
 
-	shader.SetTexture3D(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
-	shader.SetTexture3D(perlinNoise, "perlinTexture", 7);					// WORLEY NOISE TEXTURE
+	shader.SetTexture3D(worleyNoise, "worleyTexture", 6);				// WORLEY NOISE TEXTURE
+	shader.SetTexture(perlinNoise, "perlinTexture", 7);					// PERLIN NOISE TEXTURE
 
 	shader.SetFloat("cloudDensityFactor", cloudDensityFactor);
 	shader.SetFloat("cloudDensityCutoff", cloudDensityCutoff);
@@ -615,11 +683,13 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM CUTOFF TEXTURE
 	shader.SetTexture(noise, "textSamp04", 4);							// NOISE TEXTURE
 	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp05", 5);	// REFLECTIVE SURFACES TEXTURE
-	//shader.SetTexture(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
-	shader.SetTexture3D(worleyNoise, "worleyTexture", 6);					// WORLEY NOISE TEXTURE
+
+	shader.SetTexture(lens, "lensTexture", 8);					// LENS NOISE TEXTURE
+
 	shader.SetFloat("cloudDensityFactor", cloudDensityFactor);
 	shader.SetFloat("cloudDensityCutoff", cloudDensityCutoff);
 	shader.SetFloat("cloudLightScattering", cloudLightScattering);
+	shader.SetFloat("bloomScale", bloomScale);
 
 	shader.SetBool("isFinalPass", GL_TRUE);
 
@@ -643,6 +713,9 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 
 	if (vignette_enabled)	shader.SetBool("vignetteEnabled", GL_TRUE);
 	else					shader.SetBool("vignetteEnabled", GL_FALSE);
+
+	if (lens_dirt_enabled)	shader.SetBool("lensDirtEnabled", GL_TRUE);
+	else					shader.SetBool("lensDirtEnabled", GL_FALSE);
 
 
 	this->DrawObject(quad, mat4(1.f), p);

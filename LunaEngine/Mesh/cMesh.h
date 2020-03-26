@@ -85,6 +85,13 @@ public:
 	std::vector<sTriangle> vecTriangles;
 	std::vector<sMeshTriangle> vecMeshTriangles;
 
+	std::vector<std::string> textures;
+
+};
+
+struct cModel
+{
+	std::vector<cMesh*> meshes;
 };
 
 #endif 

@@ -12,13 +12,13 @@ cGameObject::cGameObject()
 	shader = 0;
 	parent = 0;
 	cmd_group = new cCommandGroup;
+	shouldBlend = false;
 }
 
 cGameObject::~cGameObject()
 {
 	delete brain;
-	if (animation) delete animation;
-	animation = 0;
+	brain = 0;
 }
 std::string cGameObject::ObjectName()
 {

@@ -32,8 +32,6 @@ public:
 	unsigned int id;
 	Shader* shader;
 
-	cSimpleAssimpSkinnedMesh* animation = 0;
-
 	cLuaBrain* brain;
 	std::string lua_script;
 
@@ -55,6 +53,9 @@ public:
 
 	cTexture texture[4];
 	cCommandGroup* cmd_group;
+
+	bool shouldBlend;
+	cTexture blendMap;
 
 
 	// Inherited via iObject

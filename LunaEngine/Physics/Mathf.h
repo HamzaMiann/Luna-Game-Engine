@@ -5,6 +5,7 @@
 #include <glm/vec3.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <math.h>
+#include <threading.h>
 #define PI 3.14159265f
 #define DEGREE_TO_RAD (PI / 180.f);
 

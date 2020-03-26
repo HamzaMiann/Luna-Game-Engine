@@ -20,7 +20,6 @@ const int MAXNUMBEROFBONES = 100;
 uniform mat4 matBonesArray[MAXNUMBEROFBONES];
 uniform bool isSkinnedMesh;
 
-
 out vec4 fVertWorldLocation;
 out vec4 fNormal;
 out vec4 fUVx2;

@@ -68,76 +68,78 @@ cModelLoader::cModelLoader()
 
 void cModelLoader::LoadMeshes(const aiScene* scene, cMesh& theMesh)
 {
-	aiMesh& mesh = *scene->mMeshes[0];
+	for (unsigned int m = 0; m < scene->mNumMeshes; ++m) {
+		aiMesh& mesh = *scene->mMeshes[m];
 
-	for (unsigned int i = 0; i < mesh.mNumVertices; ++i)
-	{
-		sMeshVertex tempVertex;
-
-		aiVector3D vec = mesh.mVertices[i];
-		tempVertex.x = vec.x;
-		tempVertex.y = vec.y;
-		tempVertex.z = vec.z;
-
-		if (tempVertex.x < theMesh.min.x) theMesh.min.x = tempVertex.x;
-		if (tempVertex.y < theMesh.min.y) theMesh.min.y = tempVertex.y;
-		if (tempVertex.z < theMesh.min.z) theMesh.min.z = tempVertex.z;
-
-		if (tempVertex.x > theMesh.max.x) theMesh.max.x = tempVertex.x;
-		if (tempVertex.y > theMesh.max.y) theMesh.max.y = tempVertex.y;
-		if (tempVertex.z > theMesh.max.z) theMesh.max.z = tempVertex.z;
-
-		aiVector3D normal = mesh.mNormals[i];
-		tempVertex.nx = normal.x;
-		tempVertex.ny = normal.y;
-		tempVertex.nz = normal.z;
-
-		for (int n = 0; n < 8; ++n)
+		for (unsigned int i = 0; i < mesh.mNumVertices; ++i)
 		{
-			if (mesh.HasTextureCoords(n))
+			sMeshVertex tempVertex;
+
+			aiVector3D vec = mesh.mVertices[i];
+			tempVertex.x = vec.x;
+			tempVertex.y = vec.y;
+			tempVertex.z = vec.z;
+
+			if (tempVertex.x < theMesh.min.x) theMesh.min.x = tempVertex.x;
+			if (tempVertex.y < theMesh.min.y) theMesh.min.y = tempVertex.y;
+			if (tempVertex.z < theMesh.min.z) theMesh.min.z = tempVertex.z;
+
+			if (tempVertex.x > theMesh.max.x) theMesh.max.x = tempVertex.x;
+			if (tempVertex.y > theMesh.max.y) theMesh.max.y = tempVertex.y;
+			if (tempVertex.z > theMesh.max.z) theMesh.max.z = tempVertex.z;
+
+			aiVector3D normal = mesh.mNormals[i];
+			tempVertex.nx = normal.x;
+			tempVertex.ny = normal.y;
+			tempVertex.nz = normal.z;
+
+			for (int n = 0; n < 8; ++n)
 			{
-				aiVector3D* pUV = mesh.mTextureCoords[n];
-				aiVector3D uv = pUV[i];
-				tempVertex.u = uv.x;
-				tempVertex.v = uv.y;
+				if (mesh.HasTextureCoords(n))
+				{
+					aiVector3D* pUV = mesh.mTextureCoords[n];
+					aiVector3D uv = pUV[i];
+					tempVertex.u = uv.x;
+					tempVertex.v = uv.y;
+				}
 			}
+
+			theMesh.vecVertices.push_back(tempVertex);
 		}
 
-		theMesh.vecVertices.push_back(tempVertex);
+		for (unsigned int i = 0; i < mesh.mNumFaces; ++i)
+		{
+			sTriangle tempTriangle;
+			sMeshTriangle tempMeshTriangle;
+
+			aiFace face = mesh.mFaces[i];
+
+			tempTriangle.vert_index_1 = face.mIndices[0];
+			tempTriangle.vert_index_2 = face.mIndices[1];
+			tempTriangle.vert_index_3 = face.mIndices[2];
+
+			sMeshVertex first = theMesh.vecVertices[tempTriangle.vert_index_1];
+			sMeshVertex second = theMesh.vecVertices[tempTriangle.vert_index_2];
+			sMeshVertex third = theMesh.vecVertices[tempTriangle.vert_index_3];
+			tempMeshTriangle.first = vec3(first.x, first.y, first.z);
+			tempMeshTriangle.second = vec3(second.x, second.y, second.z);
+			tempMeshTriangle.third = vec3(third.x, third.y, third.z);
+			tempMeshTriangle.normal.x = (first.nx + second.nx + third.nx) / 3.f;
+			tempMeshTriangle.normal.y = (first.ny + second.ny + third.ny) / 3.f;
+			tempMeshTriangle.normal.z = (first.nz + second.nz + third.nz) / 3.f;
+
+			tempMeshTriangle.m1 = (tempMeshTriangle.first + tempMeshTriangle.second) / 2.f;
+			tempMeshTriangle.m2 = (tempMeshTriangle.first + tempMeshTriangle.third) / 2.f;
+			tempMeshTriangle.m3 = (tempMeshTriangle.second + tempMeshTriangle.second) / 2.f;
+			tempMeshTriangle.m1 = (tempMeshTriangle.m1 + tempMeshTriangle.m2 + tempMeshTriangle.m3) / 3.f;
+
+			theMesh.vecTriangles.push_back(tempTriangle);
+
+			theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
+		}
+
+		LoadBones(scene, mesh, theMesh);
 	}
-
-	for (unsigned int i = 0; i < mesh.mNumFaces; ++i)
-	{
-		sTriangle tempTriangle;
-		sMeshTriangle tempMeshTriangle;
-
-		aiFace face = mesh.mFaces[i];
-
-		tempTriangle.vert_index_1 = face.mIndices[0];
-		tempTriangle.vert_index_2 = face.mIndices[1];
-		tempTriangle.vert_index_3 = face.mIndices[2];
-
-		sMeshVertex first = theMesh.vecVertices[tempTriangle.vert_index_1];
-		sMeshVertex second = theMesh.vecVertices[tempTriangle.vert_index_2];
-		sMeshVertex third = theMesh.vecVertices[tempTriangle.vert_index_3];
-		tempMeshTriangle.first = vec3(first.x, first.y, first.z);
-		tempMeshTriangle.second = vec3(second.x, second.y, second.z);
-		tempMeshTriangle.third = vec3(third.x, third.y, third.z);
-		tempMeshTriangle.normal.x = (first.nx + second.nx + third.nx) / 3.f;
-		tempMeshTriangle.normal.y = (first.ny + second.ny + third.ny) / 3.f;
-		tempMeshTriangle.normal.z = (first.nz + second.nz + third.nz) / 3.f;
-
-		tempMeshTriangle.m1 = (tempMeshTriangle.first + tempMeshTriangle.second) / 2.f;
-		tempMeshTriangle.m2 = (tempMeshTriangle.first + tempMeshTriangle.third) / 2.f;
-		tempMeshTriangle.m3 = (tempMeshTriangle.second + tempMeshTriangle.second) / 2.f;
-		tempMeshTriangle.m1 = (tempMeshTriangle.m1 + tempMeshTriangle.m2 + tempMeshTriangle.m3) / 3.f;
-
-		theMesh.vecTriangles.push_back(tempTriangle);
-
-		theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
-	}
-
-	LoadBones(scene, mesh, theMesh);
 }
 
 void cModelLoader::LoadTextures(const aiScene* scene, cMesh& theMesh, LoadResult& result)

@@ -217,6 +217,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClCompile Include="Particles\cParticleEffect.cpp" />
     <ClCompile Include="InputHandlers\cPhysicsInputHandler.cpp" />
     <ClCompile Include="Commands\cRotateTo.cpp" />
+    <ClCompile Include="Scene\Builders\cSettingsBuilder.cpp" />
     <ClCompile Include="Scene\cSceneFactory.cpp" />
     <ClCompile Include="Shader\cShader.cpp" />
     <ClCompile Include="Scene\Builders\cShaderBuilder.cpp" />
@@ -288,6 +289,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="Physics\global_physics.h" />
     <ClInclude Include="safe_promise.h" />
     <ClInclude Include="Scene\Builders\cAnimationBuilder.h" />
+    <ClInclude Include="Scene\Builders\cSettingsBuilder.h" />
     <ClInclude Include="Scene\Builders\cTextureBuilder.h" />
     <ClInclude Include="Commands\cTrigger.h" />
     <ClInclude Include="FBO\cFBO.h" />
@@ -350,6 +352,8 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <None Include="assets\shaders\pbr_vert.glsl" />
     <None Include="assets\shaders\postprocessing_frag.glsl" />
     <None Include="assets\shaders\postprocessing_vert.glsl" />
+    <None Include="assets\shaders\shadow_frag.glsl" />
+    <None Include="assets\shaders\shadow_vert.glsl" />
     <None Include="assets\shaders\skybox_frag.glsl" />
     <None Include="assets\shaders\skybox_vert.glsl" />
     <None Include="assets\shaders\specular_frag.glsl" />

@@ -32,10 +32,9 @@ bool is_paused = false;
 Scene* scene;
 iInputHandler* pInputHandler;
 
-cFBO albedoFBO;
+cSimpleFBO albedoFBO;
 cFBO second_passFBO;
 cFBO finalFBO;
-cFBO blur_fbo;
 
 void InitWindow()
 {
@@ -122,6 +121,29 @@ void cApplication::Run()
 	renderer.Init();
 	// Initialize debug renderer
 	debug_renderer.initialize();
+
+	/*for (int i = 0; i < 10; ++i)
+	{
+		cGameObject* obj = new cGameObject;
+		obj->meshName = "screen";
+		obj->shader = Shader::FromName("basic");
+		obj->transform.Position(
+			vec3(
+				Mathf::randInRange(-100.f, 100.f),
+				0.5f,
+				Mathf::randInRange(-100.f, 100.f)
+				)
+			);
+		obj->transform.UpdateEulerRotation(
+			vec3(
+				0.f,
+				Mathf::randInRange(0.f, 360.f),
+				0.f
+				)
+			);
+		obj->texture[0].SetTexture("grass_tex.png", 1.0f);
+		entity_manager.AddEntity(obj);
+	}*/
 	
 
 	cLowpassFilter& filter = cLowpassFilter::Instance();
@@ -188,6 +210,8 @@ void cApplication::Run()
 			Camera::main_camera->Up
 		);
 
+		//renderer.RenderShadowmapToFBO(&albedoFBO, width, height);
+
 		renderer.RenderObjectsToFBO(&second_passFBO, width, height, p, v, dt);
 		renderer.RenderSkybox(width, height, p, v, dt);
 
@@ -195,6 +219,7 @@ void cApplication::Run()
 		vec4 homogenous = (p * v * mat4(1.0f)) * light->position;
 		vec3 cube = vec3(homogenous.x / homogenous.w, homogenous.y / homogenous.w, homogenous.z / homogenous.w);
 		renderer.screenPos = vec2(cube);
+
 
 		renderer.RenderQuadToFBO(finalFBO, second_passFBO);
 		renderer.RenderQuadToScreen(finalFBO);
@@ -217,7 +242,6 @@ void cApplication::End()
 	albedoFBO.shutdown();
 	second_passFBO.shutdown();
 	finalFBO.shutdown();
-	blur_fbo.shutdown();
 
 	cEntityManager::Instance().Release();
 

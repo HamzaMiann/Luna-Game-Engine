@@ -327,6 +327,9 @@
     <ClCompile Include="Components\cRenderMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\Builders\cSettingsBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cGameObject.h">
@@ -599,6 +602,9 @@
     <ClInclude Include="Components\cRenderMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\Builders\cSettingsBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">
@@ -652,6 +658,8 @@
     <None Include="assets\shaders\pbr_vert.glsl" />
     <None Include="assets\shaders\pbr_frag.glsl" />
     <None Include="assets\shaders\blur_frag.glsl" />
+    <None Include="assets\shaders\shadow_vert.glsl" />
+    <None Include="assets\shaders\shadow_frag.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\scenes\physics.scene.xml">

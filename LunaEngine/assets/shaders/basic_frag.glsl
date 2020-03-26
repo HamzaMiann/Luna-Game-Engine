@@ -26,6 +26,9 @@ uniform vec4 tex_0_3_ratio;		// x = 0, y = 1, z = 2, w = 3
 uniform vec4 tex_tiling;
 uniform samplerCube skyBox;
 
+uniform sampler2D blendMap;
+uniform bool useBlendMap;
+uniform float blendTiling;
 
 uniform bool isUnique;
 
@@ -59,6 +62,11 @@ float noise (in vec2 st);
 
 void main()  
 {
+	if (texture( textSamp00, fUVx2.st * tex_tiling.x ).a < 1.0)
+	{
+		discard;
+	}
+
 	unlitColour = vec4(0.0);
 	bloomColour = vec4(0.0);
 	depthColour = vec4(vec3(distance(fVertWorldLocation.xyz, eyeLocation.xyz) / 1000.0), 1.0);
@@ -77,13 +85,11 @@ void main()
 	if ( isSkybox )
 	{
 		vec3 normal = fNormal.xyz;
-		//normal.x = sin(fiTime);
-		//normal.z = cos(-fiTime);
 		vec3 skyColour = texture( skyBox, normal ).rgb;
 		pixelColour.rgb = skyColour.rgb;
 		pixelColour.a = 1.0;				// NOT transparent
 		
-		pixelColour.rgb *= 1.0;		// Make it a little brighter
+		//pixelColour.rgb *= 1.0;		// Make it a little brighter
 		unlitColour += 1.0;
 
 		return;
@@ -92,10 +98,6 @@ void main()
 	if (isUnique)
 	{
 		bloomColour = vec4(1.0);
-		//vec3 tex = texture( textSamp00, fUVx2.st ).rgb;
-		//tex = mix(tex, GetRandValue().rgb * 0.7, 0.5);
-		//pixelColour = vec4(tex, diffuseColour.a);
-		//return;
 	}
 
 	vec3 tex0_RGB = texture( textSamp00, fUVx2.st * tex_tiling.x ).rgb;
@@ -113,15 +115,17 @@ void main()
 	vec3 reflectiveColour = texture(skyBox, reflect(direction, fNormal.xyz)).rgb;
 	vec3 refractiveColour = texture(skyBox, refract(direction, fNormal.xyz, 1.0 / 1.52)).rgb;
 
-	pixelColour = vec4(texRGB, diffuseColour.a);
-	if (pixelColour.a < 0.99)
-	{
-		discard;
+	if (useBlendMap) {
+		float ratio = smoothstep(0., 1., texture(blendMap, fUVx2.st * blendTiling).r);
+		texRGB = (tex_0_3_ratio.x * ratio * tex0_RGB) + (tex_0_3_ratio.y * (1. - ratio) * tex1_RGB).rgb;
 	}
+
+	pixelColour = vec4(texRGB, diffuseColour.a);
+
 	pixelColour.rgb = mix(pixelColour.rgb, reflectiveColour.rgb, reflectivity);
 	pixelColour.rgb = mix(pixelColour.rgb, refractiveColour.rgb, refractivity);
+
 	pixelColour.a = 1.0;
-	//pixelColour.xyz = vec3(fUVx2.st, 0.0);
 
 	return;
 

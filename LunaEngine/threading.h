@@ -3,6 +3,7 @@
 #include <vector>
 #include <thread>
 #include <functional>
+#include <mutex>
 
 class iJob
 {
@@ -18,6 +19,11 @@ class Thread
 private:
 	static std::vector<iJob*> jobs;
 	static std::vector<std::function<void()>> dispatched;
+
+	typedef std::lock_guard<std::mutex> auto_lock;
+	static std::mutex mtx;
+
+	static void _dispatch(std::function<void()> func);
 
 public:
 
