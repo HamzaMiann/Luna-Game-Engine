@@ -97,9 +97,9 @@ bool nPhysics::cPhysicsWorld::RemoveComponent(iPhysicsComponent* component)
 	return false;
 }
 
-std::vector<nPhysics::iPhysicsComponent*> nPhysics::cPhysicsWorld::RayCastAll(vec3 ro, vec3 rd, float t)
+std::vector<nPhysics::RayCastResult> nPhysics::cPhysicsWorld::RayCastAll(vec3 ro, vec3 rd, float t)
 {
-	std::vector<iPhysicsComponent*> hits;
+	std::vector<RayCastResult> hits;
 
 	btVector3 from = nConvert::ToBullet(ro);
 	btVector3 to = nConvert::ToBullet(ro + rd * t);
@@ -118,16 +118,18 @@ std::vector<nPhysics::iPhysicsComponent*> nPhysics::cPhysicsWorld::RayCastAll(ve
 		void* userpointer = allResults.m_collisionObjects[i]->getUserPointer();
 		if (userpointer != 0)
 		{
-			//iPhysicsComponent* body = reinterpret_cast<iPhysicsComponent*>(userpointer);
-			iPhysicsComponent* body = (iPhysicsComponent*)userpointer;
-			hits.push_back(body);
+			nPhysics::RayCastResult result;
+			result.object = (iPhysicsComponent*)userpointer;
+			result.hitPoint = nConvert::ToGLM(allResults.m_hitPointWorld[i]);
+			result.hitNormal = nConvert::ToGLM(allResults.m_hitNormalWorld[i]);
+			hits.push_back(result);
 		}
 	}
 
 	return hits;
 }
 
-nPhysics::iPhysicsComponent* nPhysics::cPhysicsWorld::RayCast(vec3 ro, vec3 rd, float t)
+nPhysics::RayCastResult* nPhysics::cPhysicsWorld::RayCast(vec3 ro, vec3 rd, float t)
 {
 	btVector3 from = nConvert::ToBullet(ro);
 	btVector3 to = nConvert::ToBullet(ro + rd * t);
@@ -142,7 +144,9 @@ nPhysics::iPhysicsComponent* nPhysics::cPhysicsWorld::RayCast(vec3 ro, vec3 rd, 
 		void* userpointer = closestResults.m_collisionObject->getUserPointer();
 		if (userpointer != 0)
 		{
-			return (iPhysicsComponent*)userpointer;
+			nPhysics::RayCastResult& result = *new nPhysics::RayCastResult;
+			result.object = (iPhysicsComponent*)userpointer;
+			return &result;
 		}
 	}
 

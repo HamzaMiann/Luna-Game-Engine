@@ -356,6 +356,7 @@ vec4 RayTracePlane(Ray ray, vec4 previousColour)
 			float t3 = intersect(ray, GetPlane2());
 			if (t3 > 0.)
 			{
+				if (t3 > 20.) t3 = 20.;
 				vec3 mStep = ((ray.ro + ray.rd * t3) - ray.ro) / LIGHT_SAMPLES;
 				for (int n = 0; n < LIGHT_SAMPLES; ++n)
 				{

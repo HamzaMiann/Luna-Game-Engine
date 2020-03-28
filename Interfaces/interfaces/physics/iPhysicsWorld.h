@@ -5,6 +5,13 @@
 
 namespace nPhysics
 {
+	struct RayCastResult
+	{
+		vec3 hitPoint;
+		vec3 hitNormal;
+		iPhysicsComponent* object;
+	};
+
 	class iPhysicsWorld
 	{
 	public:
@@ -23,7 +30,7 @@ namespace nPhysics
 			@returns
 				- vector of iPhysicsComponents that were hit by the ray
 		*/
-		virtual std::vector<iPhysicsComponent*> RayCastAll(vec3 ro, vec3 rd, float t) = 0;
+		virtual std::vector<RayCastResult> RayCastAll(vec3 ro, vec3 rd, float t) = 0;
 
 		/*
 			@params
@@ -33,7 +40,7 @@ namespace nPhysics
 			@returns
 				- iPhysicsComponent of the first collider that was hit
 		*/
-		virtual iPhysicsComponent* RayCast(vec3 ro, vec3 rd, float t) = 0;
+		virtual RayCastResult* RayCast(vec3 ro, vec3 rd, float t) = 0;
 
 	};
 }

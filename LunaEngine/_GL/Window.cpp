@@ -3,7 +3,7 @@
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
-#define FULL_SCREEN
+//#define FULL_SCREEN
 
 GLFWwindow* global::window = 0;
 

@@ -4,6 +4,9 @@
 #include <xml_helper.h>
 #include <Physics\Mathf.h>
 #include <EntityManager\cEntityManager.h>
+#include <Physics/global_physics.h>
+#include <cGameObject.h>
+#include <Shader/Shader.h>
 using namespace rapidxml;
 
 bool cFPSController::deserialize(rapidxml::xml_node<>* root_node)
@@ -92,6 +95,25 @@ void cFPSController::update(float dt)
 	previousX = x;
 	previousY = y;
 
+	if (Input::MouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
+	{
+		vec3 ro = Camera::main_camera->Eye;
+		vec3 rd = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
+		auto hits = g_PhysicsWorld->RayCastAll(ro, rd, 300.f);
+		for (auto& hit : hits)
+		{
+			cGameObject* obj = new cGameObject;
+			obj->transform.Position(hit.hitPoint);
+			obj->meshName = "sphere";
+			obj->shader = Shader::FromName("basic");
+			obj->texture[0].SetTexture("blue.png", 1.f);
+			cEntityManager::Instance().AddEntity(obj);
+		}
+		rotY *= quat(vec3(0.1f, 0.f, 0.f));
+		rotYi *= quat(vec3(-0.1f, 0.f, 0.f));
+		rotX *= quat(vec3(0.f, 0.05f, 0.f));
+	}
+
 	
 	// SCROLL ZOOM
 	settings.distance_from_object += Input::GetScrollY() * -1.f;
@@ -102,15 +124,17 @@ void cFPSController::update(float dt)
 	direction.y = (settings.forward * rotY).y;
 	direction = glm::normalize(direction);
 
-	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_2))
+	if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_RIGHT))
 	{
 		offset2.y = settings.camera_offset.y;
 		targetOffset = offset2;
 	}
-	else {
+	else
+	{
 		targetOffset = settings.camera_offset;
 	}
 
+	
 	float timeSpeed = 8.f;
 	if (Input::GetKey(GLFW_KEY_LEFT_SHIFT))
 	{
@@ -121,7 +145,8 @@ void cFPSController::update(float dt)
 
 	
 
-	if (Input::GetKey(GLFW_KEY_W) || Input::GetKey(GLFW_KEY_A) || Input::GetKey(GLFW_KEY_D) || Input::GetKey(GLFW_KEY_S)) {
+	if (Input::GetKey(GLFW_KEY_W) || Input::GetKey(GLFW_KEY_A) || Input::GetKey(GLFW_KEY_D) || Input::GetKey(GLFW_KEY_S))
+	{
 		targetOffset.y = sinY;
 	}
 

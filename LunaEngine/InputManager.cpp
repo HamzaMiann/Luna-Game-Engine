@@ -174,12 +174,12 @@ bool Input::GetKey(int key)
 
 bool Input::MouseButtonDown(int button)
 {
-	return buttons_pressed.size() > 0;
+	return buttons_pressed.size() > 0 && std::find(buttons_pressed.begin(), buttons_pressed.end(), button) != buttons_pressed.end();
 }
 
 bool Input::MouseButtonUp(int button)
 {
-	return buttons_released.size() > 0;
+	return buttons_released.size() > 0 && std::find(buttons_released.begin(), buttons_released.end(), button) != buttons_released.end();
 }
 
 void Input::LockCursor()
