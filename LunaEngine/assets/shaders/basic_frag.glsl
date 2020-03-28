@@ -62,10 +62,7 @@ float noise (in vec2 st);
 
 void main()  
 {
-	if (texture( textSamp00, fUVx2.st * tex_tiling.x ).a < 1.0)
-	{
-		discard;
-	}
+	
 
 	unlitColour = vec4(0.0);
 	bloomColour = vec4(0.0);
@@ -93,6 +90,11 @@ void main()
 		unlitColour += 1.0;
 
 		return;
+	}
+
+	if (texture( textSamp00, fUVx2.st * tex_tiling.x ).a < 1.0)
+	{
+		discard;
 	}
 
 	if (isUnique)

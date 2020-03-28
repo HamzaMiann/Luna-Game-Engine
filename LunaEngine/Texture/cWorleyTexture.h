@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <glm/glm_common.h>
-#include <safe_promise.h>
+#include <Threading/safe_promise.h>
 
 class cWorleyTexture
 {

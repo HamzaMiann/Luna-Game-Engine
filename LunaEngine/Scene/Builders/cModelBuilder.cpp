@@ -5,7 +5,7 @@
 #include <Mesh/cModelLoader.h>
 #include <Shader/Shader.h>
 #include <iostream>
-#include <threading.h>
+#include <Threading/threading.h>
 using namespace rapidxml;
 
 #define THREADED
@@ -30,7 +30,6 @@ void LoadModel(ModelLoadInfo* info)
 					);
 			}
 		);
-		//std::this_thread::sleep_for(std::chrono::duration<float>(0.1f));
 #else
 		sModelDrawInfo* pDrawInfo = new sModelDrawInfo();
 		cVAOManager::Instance()

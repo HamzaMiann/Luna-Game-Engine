@@ -1,6 +1,6 @@
 
 #include <iApplication.h>
-#include <SteamModule.h>
+#include <Steam/SteamModule.h>
 
 int main(void)
 {

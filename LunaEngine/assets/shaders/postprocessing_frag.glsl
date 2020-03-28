@@ -186,10 +186,10 @@ vec4 circular_blur(sampler2D tex, float offset)
 ///
 vec4 DOF(sampler2D mainTexture, sampler2D positionTexture)
 {
-	const float near_focus = 10.0;
+	const float near_focus = 3.0;
 	const float focus_length = 70.0;
 	const float far_blur_scale = 2.0;
-	const float near_blur_scale = 15.0;
+	const float near_blur_scale = 10.0;
 
 	vec4 colour = vec4(0., 0., 0., 1.);
 
@@ -469,7 +469,7 @@ void main()
 			if (lensDirtEnabled) {
 				vec3 dirt = vec3(texture(lensTexture, uv).r);
 				float dist = exp(-distance((lightPositionOnScreen + 1.) / 2., uv) * 10.);
-				pixelColour.rgb += dirt * dist * length(scatter * 2.);
+				pixelColour.rgb += dirt * dist * length(scatter * 4.);
 			}
 		}
 
@@ -565,7 +565,8 @@ void main()
 		normalColour = RayTracePlane(ray, normalColour);
 	}
 
-
+	//pixelColour *= 0.0001;
+	//pixelColour.rgb = textureLod(worleyTexture, vec3(uv + fiTime, fiTime), 0.0).rgb;
 //	vec3 norm = texture(textSamp00, uv).rgb;
 //	vec3 offset = texture(textSamp00, uv - 0.002).rgb;
 //

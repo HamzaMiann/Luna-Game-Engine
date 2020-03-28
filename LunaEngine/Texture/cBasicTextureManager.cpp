@@ -4,6 +4,7 @@
 #include <Texture/cBasicTextureManager.h>
 #include <sstream>
 #include <LodePNG/lodepng.h>
+#include <fstream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -242,6 +243,35 @@ bool cBasicTextureManager::LoadJPGFromFile(std::string textureFileName, sTexture
 	}
 
 	stbi_image_free(data);
+
+	return true;
+}
+
+bool cBasicTextureManager::LoadWorleyFromFile(std::string textureFileName, sTextureData& textureData)
+{
+	std::ifstream inFile(textureFileName, std::ios::binary);
+	if (!inFile.is_open())
+	{
+		return false;
+	}
+
+	size_t width;
+	inFile >> width;
+
+	size_t cube = width * width * width * 3u;
+	textureData.data.resize(cube);
+	char* data = new char[cube];
+	inFile.read(data, cube);
+	for (size_t i = 0; i < cube; ++i)
+	{
+		unsigned char c = (unsigned char)(data[i]);
+		textureData.data[i] = c;
+	}
+
+	inFile.close();
+
+	textureData.height = width;
+	textureData.width = width;
 
 	return true;
 }

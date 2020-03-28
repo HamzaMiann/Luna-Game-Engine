@@ -10,8 +10,7 @@
 #include <EntityManager/cEntityManager.h>
 #include <Texture/cWorleyTexture.h>
 #include <InputManager.h>
-#include <thread>
-#include <safe_promise.h>
+#include <Threading/safe_promise.h>
 #include <iostream>
 #include <interfaces/physics/iClothComponent.h>
 #include <DebugRenderer/cDebugRenderer.h>
@@ -77,16 +76,22 @@ void RenderingEngine::Init()
 
 	if (clouds_enabled)
 	{
-		worleyTexture = cWorleyTexture::Generate(16u, 4u, 15u, 30u);
+		sTextureData tex;
+		cBasicTextureManager::Instance()->LoadWorleyFromFile("assets/textures/clouds256.matrix", tex);
+		cBasicTextureManager::Instance()->Create3DTexture("worley", true, &tex.data[0], tex.width, tex.height, tex.width);
+		worleyNoise.SetTexture("worley");
+		worleyNoise2.SetTexture("worley");
+
+		/*worleyTexture = cWorleyTexture::Generate(32u, 3u, 20u, 45u);
 		size_t width, height;
 		unsigned char* data;
 		data = worleyTexture->GetDataRGB(width, height);
 		cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
 		worleyNoise.SetTexture("worley");
 		worleyNoise2.SetTexture("worley");
-		delete worleyTexture; worleyTexture = 0;
+		delete worleyTexture; worleyTexture = 0;*/
 
-		promise = new safe_promise<cWorleyTexture*>([]()
+		/*promise = new safe_promise<cWorleyTexture*>([]()
 			{
 				worleyTexture = promise->get();
 				size_t width, height;
@@ -98,7 +103,7 @@ void RenderingEngine::Init()
 			}
 		);
 		Thread::PushJob(promise);
-		(new std::thread(cWorleyTexture::GenerateAsync, promise, 64u, 4u, 15u, 30u))->detach();
+		(new std::thread(cWorleyTexture::GenerateAsync, promise, 64u, 4u, 15u, 30u))->detach();*/
 	}
 
 	perlinNoise.SetTexture("perlin.png");
@@ -521,7 +526,7 @@ void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float hei
 		//  depth (or z) buffer.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
+	glDisable(GL_BLEND);      // Enable blend or "alpha" transparency
 	//glDisable( GL_BLEND );
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -568,7 +573,7 @@ void RenderingEngine::RenderShadowmapToFBO(cSimpleFBO* fbo, float width, float h
 	fbo->use();
 	fbo->clear_all();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_BLEND);
+	glDisable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 

@@ -68,8 +68,11 @@ cModelLoader::cModelLoader()
 
 void cModelLoader::LoadMeshes(const aiScene* scene, cMesh& theMesh)
 {
+	int start = 0;
 	for (unsigned int m = 0; m < scene->mNumMeshes; ++m) {
 		aiMesh& mesh = *scene->mMeshes[m];
+
+		start = theMesh.vecVertices.size();
 
 		for (unsigned int i = 0; i < mesh.mNumVertices; ++i)
 		{
@@ -114,9 +117,9 @@ void cModelLoader::LoadMeshes(const aiScene* scene, cMesh& theMesh)
 
 			aiFace face = mesh.mFaces[i];
 
-			tempTriangle.vert_index_1 = face.mIndices[0];
-			tempTriangle.vert_index_2 = face.mIndices[1];
-			tempTriangle.vert_index_3 = face.mIndices[2];
+			tempTriangle.vert_index_1 = face.mIndices[0] + start;
+			tempTriangle.vert_index_2 = face.mIndices[1] + start;
+			tempTriangle.vert_index_3 = face.mIndices[2] + start;
 
 			sMeshVertex first = theMesh.vecVertices[tempTriangle.vert_index_1];
 			sMeshVertex second = theMesh.vecVertices[tempTriangle.vert_index_2];
@@ -138,7 +141,8 @@ void cModelLoader::LoadMeshes(const aiScene* scene, cMesh& theMesh)
 			theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
 		}
 
-		LoadBones(scene, mesh, theMesh);
+		if (m == 0)
+			LoadBones(scene, mesh, theMesh);
 	}
 }
 

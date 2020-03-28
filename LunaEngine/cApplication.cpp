@@ -20,7 +20,7 @@
 #include <InputManager.h>
 #include <Rendering/RenderingEngine.h>
 #include <Physics/Mathf.h>
-#include <threading.h>
+#include <Threading/threading.h>
 
 iApplication* cApplication::app = cApplication::Instance();
 
@@ -32,7 +32,7 @@ bool is_paused = false;
 Scene* scene;
 iInputHandler* pInputHandler;
 
-cSimpleFBO albedoFBO;
+cFBO albedoFBO;
 cFBO second_passFBO;
 cFBO finalFBO;
 
@@ -122,16 +122,16 @@ void cApplication::Run()
 	// Initialize debug renderer
 	debug_renderer.initialize();
 
-	/*for (int i = 0; i < 10; ++i)
+	/*for (int i = 0; i < 10000; ++i)
 	{
 		cGameObject* obj = new cGameObject;
 		obj->meshName = "screen";
 		obj->shader = Shader::FromName("basic");
 		obj->transform.Position(
 			vec3(
-				Mathf::randInRange(-100.f, 100.f),
+				Mathf::randInRange(-50.f, 50.f),
 				0.5f,
-				Mathf::randInRange(-100.f, 100.f)
+				Mathf::randInRange(-50.f, 50.f)
 				)
 			);
 		obj->transform.UpdateEulerRotation(
@@ -141,7 +141,8 @@ void cApplication::Run()
 				0.f
 				)
 			);
-		obj->texture[0].SetTexture("grass_tex.png", 1.0f);
+		obj->texture[0].SetTexture("grass_tex.png", 0.7f);
+		obj->texture[1].SetTexture("Snow_004_COLOR.jpg", 0.3f);
 		entity_manager.AddEntity(obj);
 	}*/
 	

@@ -94,6 +94,7 @@
         <Model file="Terrain_XYZ_N_UV.ply" friendlyName="terrain" shader="basic"/>
         <Model file="statue.obj" friendlyName="statue" shader="basic"/>
         <Model file="Tree.fbx" friendlyName="tree" shader="basic"/>
+        <Model file="Ottoman Mauser.obj" friendlyName="gun" shader="basic"/>
     
 	</Models>
 
@@ -271,7 +272,7 @@
         <GameObject mesh="none" tag="player" shader="basic">
           <Position x="20.0" y="0.0" z="-30.0"/>
           <Rotation x="0" y="0" z="0.0"/>
-          <Scale>0.04</Scale>
+          <Scale>1</Scale>
           <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
           <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
           <SpecIntensity>10.000000</SpecIntensity>
@@ -279,16 +280,14 @@
           <Texture ratio="0.0">Mutant_normal.jpg</Texture>
 
           <Components>
-            <AnimationController profile="mutant" default="idle"/>
-        
-            <CharacterController>
+
+		    <FPSBehaviour>
                 <Forward x="0" y="0" z="-1"/>
-                <Offset x="0" y="5.0" z="0"/>
-                <!--<Offset x="-2.5" y="5.0" z="0"/>-->
-                <CameraDistance>1.0</CameraDistance>
+                <Offset x="0.3" y="5.0" z="0"/>
+                <CameraDistance>0</CameraDistance>
                 <Speed>5.0</Speed>
                 <MouseSpeed>0.15</MouseSpeed>
-            </CharacterController>
+            </FPSBehaviour>
 
             <SphereBody>
                 <Velocity x="0.000000" y="0.000000" z="0.000000"/>
@@ -299,14 +298,16 @@
             </SphereBody>
         
           </Components>
+
         </GameObject>
 
-		<GameObject mesh="screen" tag="grass" shader="basic">
-			<Position x="0" y="0.0" z="0.0"/>
+		<GameObject mesh="gun" tag="gun" shader="basic">
+			<Position x="20.0" y="0.0" z="-30.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
-			<Scale>1.0</Scale>
-			<Texture ratio="1.0">grass_tex.png</Texture>
+			<Scale>5.0</Scale>
+			<Texture ratio="1.0">bark_0021.jpg</Texture>
 		</GameObject>
+		
 
 		<GameObject mesh="tree" tag="tree" shader="basic">
 			<Position x="60.0" y="0.0" z="0.0"/>
@@ -346,7 +347,7 @@
 
         <GameObject mesh="statue" tag="statue" shader="basic">
             <Position x="40.0" y="30.0" z="70.0"/>
-            <Rotation x="0" y="0" z="0.0"/>
+            <Rotation x="0" y="180" z="0.0"/>
             <Scale>0.3</Scale>
             <Texture ratio="1.0">fx3_Panels_Color.png</Texture>
 			<Texture ratio="0.6">Snow_004_COLOR.jpg</Texture>
@@ -354,7 +355,7 @@
         </GameObject>
 		
 	    <GameObject mesh="house" tag="house" shader="basic">
-            <Position x="0.0" y="11.0" z="0.0"/>
+            <Position x="0.0" y="13.0" z="0.0"/>
             <Rotation x="-90" y="0" z="0.0"/>
             <Scale>0.03</Scale>
 			<Texture ratio="1.0">home_hatka_Base_Color.png</Texture>
@@ -389,7 +390,8 @@
 			<BlendMap tiling="1.0">perlin.png</BlendMap>
         </GameObject>
 
-    
+		
+		
         <GameObject mesh="plane" tag="ground" shader="basic">
             <Position x="0.0" y="0.0" z="0.0"/>
             <Rotation x="0" y="0" z="0.0"/>
@@ -413,7 +415,7 @@
 
             </Components>
         </GameObject>
-    
+
 	</Layout>
   
 	<Audio API="FMOD"/>

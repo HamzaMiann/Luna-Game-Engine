@@ -315,19 +315,19 @@
     <ClCompile Include="Behaviour\AI\cFormationBehaviour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SteamModule.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Texture\cWorleyTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="threading.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Components\cRenderMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Scene\Builders\cSettingsBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Threading\threading.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Steam\SteamModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -581,19 +581,10 @@
     <ClInclude Include="Behaviour\AI\cFormationBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SteamModule.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Texture\cWorleyTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Texture\PerlinNoise.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="safe_promise.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="threading.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Components\iRenderMesh.h">
@@ -603,6 +594,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scene\Builders\cSettingsBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Threading\threading.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Threading\safe_promise.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Steam\SteamModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
