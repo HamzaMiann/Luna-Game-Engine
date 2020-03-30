@@ -14,9 +14,9 @@ Graph::Graph(sTextureData& source)
 {
 	vec3 start(-(float)source.width / 2.f, 0.f, -(float)source.height / 2.f);
 	unsigned int index = 0;
-	for (unsigned long x = 0.f; x < source.width; ++x)
+	for (unsigned long x = 0.f; x < source.height; ++x)
 	{
-		for (unsigned long y = 0; y < source.height; ++y)
+		for (unsigned long y = 0; y < source.width; ++y)
 		{
 			vec3 pos(0.f);
 			pos.x = (start.x + x * 2.f);
@@ -39,39 +39,46 @@ Graph::Graph(sTextureData& source)
 		}
 	}
 
-	for (unsigned long x = 0.f; x < source.width - 1; ++x)
+	for (unsigned long x = 0.f; x < source.height - 1; ++x)
 	{
-		for (unsigned long y = 0; y < source.height - 1; ++y)
+		for (unsigned long y = 0; y < source.width - 1; ++y)
 		{
 			unsigned int index1 = x * source.width + y;
 			unsigned int index2 = index1 + 1;
 			GraphEdge* edge = new GraphEdge;
 			edge->A = nodes[index1];
 			edge->B = nodes[index2];
-			edges.push_back(edge);
-			nodes[index1]->children.push_back(edge);
-			nodes[index2]->children.push_back(edge);
+			
+			if (nodes[index1]->isTraversable() && nodes[index2]->isTraversable()) {
+				nodes[index1]->children.push_back(edge);
+				nodes[index2]->children.push_back(edge);
+				edges.push_back(edge);
+			}
 
 			index2 = (x + 1) * source.width + y;
 			edge = new GraphEdge;
 			edge->A = nodes[index1];
 			edge->B = nodes[index2];
-			edges.push_back(edge);
-			nodes[index1]->children.push_back(edge);
-			nodes[index2]->children.push_back(edge);
+			if (nodes[index1]->isTraversable() && nodes[index2]->isTraversable()) {
+				nodes[index1]->children.push_back(edge);
+				nodes[index2]->children.push_back(edge);
+				edges.push_back(edge);
+			}
 
 			index2++;
 			edge = new GraphEdge;
 			edge->weightFactor = 1.4f;
 			edge->A = nodes[index1];
 			edge->B = nodes[index2];
-			edges.push_back(edge);
-			nodes[index1]->children.push_back(edge);
-			nodes[index2]->children.push_back(edge);
+			if (nodes[index1]->isTraversable() && nodes[index2]->isTraversable()) {
+				nodes[index1]->children.push_back(edge);
+				nodes[index2]->children.push_back(edge);
+				edges.push_back(edge);
+			}
 		}
 	}
 
-	for (unsigned long x = 0.f; x < source.width - 1; ++x)
+	for (unsigned long x = 0.f; x < source.height - 1; ++x)
 	{
 		unsigned long y = source.height - 1;
 		unsigned int index1 = x * source.width + y;
@@ -79,27 +86,31 @@ Graph::Graph(sTextureData& source)
 		GraphEdge* edge = new GraphEdge;
 		edge->A = nodes[index1];
 		edge->B = nodes[index2];
-		edges.push_back(edge);
-		nodes[index1]->children.push_back(edge);
-		nodes[index2]->children.push_back(edge);
+		if (nodes[index1]->isTraversable() && nodes[index2]->isTraversable()) {
+			nodes[index1]->children.push_back(edge);
+			nodes[index2]->children.push_back(edge);
+			edges.push_back(edge);
+		}
 	}
 
-	for (unsigned long y = 0.f; y < source.height - 1; ++y)
+	for (unsigned long y = 0.f; y < source.width - 1; ++y)
 	{
-		unsigned long x = source.width - 1;
+		unsigned long x = source.height - 1;
 		unsigned int index1 = x * source.width + y;
 		unsigned int index2 = index1 + 1;
 		GraphEdge* edge = new GraphEdge;
 		edge->A = nodes[index1];
 		edge->B = nodes[index2];
-		edges.push_back(edge);
-		nodes[index1]->children.push_back(edge);
-		nodes[index2]->children.push_back(edge);
+		if (nodes[index1]->isTraversable() && nodes[index2]->isTraversable()) {
+			nodes[index1]->children.push_back(edge);
+			nodes[index2]->children.push_back(edge);
+			edges.push_back(edge);
+		}
 	}
 
-	for (unsigned long x = 0.f; x < source.width - 1; ++x)
+	for (unsigned long x = 0.f; x < source.height - 1; ++x)
 	{
-		for (unsigned long y = source.height - 1; y > 0; --y)
+		for (unsigned long y = source.width - 1; y > 0; --y)
 		{
 			unsigned int index1 = x * source.width + y;
 			unsigned int index2 = (x + 1) * source.width + y - 1;
@@ -108,9 +119,11 @@ Graph::Graph(sTextureData& source)
 			edge->weightFactor = 1.4f;
 			edge->A = nodes[index1];
 			edge->B = nodes[index2];
-			edges.push_back(edge);
-			nodes[index1]->children.push_back(edge);
-			nodes[index2]->children.push_back(edge);
+			if (nodes[index1]->isTraversable() && nodes[index2]->isTraversable()) {
+				nodes[index1]->children.push_back(edge);
+				nodes[index2]->children.push_back(edge);
+				edges.push_back(edge);
+			}
 		}
 	}
 }

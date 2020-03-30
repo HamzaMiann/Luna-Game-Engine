@@ -27,6 +27,7 @@ public:
 
 	bool LoadPNGFromFile(std::string textureFileName, sTextureData& textureData);
 	bool LoadJPGFromFile(std::string textureFileName, sTextureData& textureData);
+	bool LoadBMPFromFile(std::string textureFileName, sTextureData& textureData);
 	bool LoadWorleyFromFile(std::string textureFileName, sTextureData& textureData);
 
 	bool Create2DTexture(std::string friendlyName, bool bGenerateMIPMap, unsigned char* data, int width, int height);

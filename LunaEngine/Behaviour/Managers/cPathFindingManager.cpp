@@ -1,3 +1,4 @@
+#include <Behaviour/AI/cPathFollowingBehaviour.h>
 #include "cPathFindingManager.h"
 #include <iostream>
 #include <cGameObject.h>
@@ -23,89 +24,172 @@ namespace AI {
 		GraphNode* previous = nullptr;
 	};
 
-
-	std::vector<GraphNode*> closedList;
-	std::mutex mtx;
-
-	std::vector<GraphNode*> Dijkstra(GraphNode* root, GraphNode* target, Graph& graph)
+	std::vector<GraphNode*> AStar(GraphNode* root, GraphNode* target, Graph& graph)
 	{
 		std::vector<GraphNode*> path;
-
 		std::vector<GraphNode*> openList;
+		std::vector<GraphNode*> closedList;
 		openList.push_back(root);
 
-		std::map<GraphNode*, TableRow> rows;
+		std::map<GraphNode*, TableRow*> rows;
 		for (auto& node : graph.nodes) {
-			rows[node] = TableRow(node);
+			if (node->isTraversable())
+				rows[node] = new TableRow(node);
 			node->visited = false;
+			node->gCostSoFar = FLT_MAX;
+			node->hDist = glm::distance(node->position, target->position);
 		}
 
-		rows[root].distance = 0.f;
+		rows[root]->distance = 0.f;
+		root->gCostSoFar = 0.f;
 
 		while (!openList.empty())
 		{
 			float dist = FLT_MAX;
 			GraphNode* current = 0;
-			for (auto& node : openList)
+			auto currentIT = openList.begin();
+			for (auto it = openList.begin(); it != openList.end(); it++)
 			{
-				auto& row = rows[node];
-				if (row.distance < dist)
+				auto node = *it;
+				float fCost = node->gCostSoFar + node->hDist;
+				if (fCost < dist)
 				{
-					dist = row.distance;
+					dist = fCost;
 					current = node;
+					currentIT = it;
 				}
 			}
 
-			if (current == target) break;
+			if (current == target)
+			{
+				break;
+			}
 
 			current->visited = true;
+			openList.erase(currentIT);
 
 			for (auto& edge : current->children)
 			{
 				GraphNode* childNode = edge->GetOther(current);
-				vec3 dir = glm::normalize(childNode->position - current->position);
-				vec3 targetDir = glm::normalize(target->position - current->position);
-				if (!childNode->visited && glm::dot(targetDir, dir) >= 0.f)
+				if (!childNode->visited)
 				{
-					rows[childNode].previous = current;
-					rows[childNode].distance = dist + edge->GetDistanceToOther(current);
-					openList.push_back(childNode);
+					if (current->gCostSoFar + edge->GetDistanceToOther(current) < childNode->gCostSoFar) 
+					{
+						rows[childNode]->previous = current;
+						childNode->gCostSoFar = current->gCostSoFar + edge->GetDistanceToOther(current);
+					}
+					//rows[childNode]->distance = childNode->gCostSoFar;
+					if (FIND(childNode, openList) == openList.end())
+						openList.push_back(childNode);
 				}
 			}
 
-			openList.erase(FIND(current, openList));
-			mtx.lock();
 			closedList.push_back(current);
-			mtx.unlock();
 		}
 
-		TableRow& end = rows[target];
-		while (end.previous != nullptr)
+		TableRow* end = rows[target];
+		while (end->previous != nullptr)
 		{
-			path.insert(path.begin(), end.vertex);
-			end = rows[end.previous];
+			path.insert(path.begin(), end->vertex);
+			end = rows[end->previous];
 		}
 
-		path.insert(path.begin(), end.vertex);
+		path.insert(path.begin(), end->vertex);
 
-		mtx.lock();
 		closedList.clear();
-		mtx.unlock();
 
 		return path;
 	}
 
-	void DijkstraThreaded(GraphNode* root, GraphNode* target, Graph* graph)
+
+	std::vector<GraphNode*> Dijkstra(GraphNode* root, Graph& graph)
 	{
-		Dijkstra(root, target, *graph);
+		std::vector<GraphNode*> path;
+		std::vector<GraphNode*> openList;
+		std::vector<GraphNode*> closedList;
+		openList.push_back(root);
+
+		std::map<GraphNode*, TableRow*> rows;
+		for (auto& node : graph.nodes) {
+			if (node->isTraversable())
+				rows[node] = new TableRow(node);
+			node->visited = false;
+			node->gCostSoFar = FLT_MAX;
+		}
+
+		rows[root]->distance = 0.f;
+		root->gCostSoFar = 0.f;
+
+		GraphNode* target = 0;
+
+		while (!openList.empty())
+		{
+			float dist = FLT_MAX;
+			GraphNode* current = 0;
+			auto currentIT = openList.begin();
+			for (auto it = openList.begin(); it != openList.end(); it++)
+			{
+				auto node = *it;
+				if (node->gCostSoFar < dist)
+				{
+					dist = node->gCostSoFar;
+					current = node;
+					currentIT = it;
+				}
+			}
+
+			if (current->tag == 'r')
+			{
+				target = current;
+				target->tag = 'w';
+				break;
+			}
+
+			current->visited = true;
+			openList.erase(currentIT);
+
+			for (auto& edge : current->children)
+			{
+				GraphNode* childNode = edge->GetOther(current);
+				if (!childNode->visited)
+				{
+					if (childNode->gCostSoFar > dist + edge->GetDistanceToOther(current)) {
+						rows[childNode]->previous = current;
+						childNode->gCostSoFar = dist + edge->GetDistanceToOther(current);
+						//rows[childNode]->distance = childNode->gCostSoFar;
+					}
+					if (FIND(childNode, openList) == openList.end())
+						openList.push_back(childNode);
+				}
+			}
+
+			closedList.push_back(current);
+		}
+
+		if (target != nullptr)
+		{
+			TableRow* end = rows[target];
+			while (end->previous != nullptr)
+			{
+				path.insert(path.begin(), end->vertex);
+				end = rows[end->previous];
+			}
+
+			path.insert(path.begin(), end->vertex);
+		}
+
+		closedList.clear();
+
+		return path;
 	}
 
 	void cPathFindingManager::start()
 	{
 		sTextureData texture;
-		if (!cBasicTextureManager::Instance()->LoadJPGFromFile("assets/resourceMap.bmp", texture))
+		if (!cBasicTextureManager::Instance()->LoadBMPFromFile("assets/resourceMap.bmp", texture))
 		{
 			printf("Couldn't load bmp\n");
+			return;
 		}
 
 		graph = new Graph(texture);
@@ -129,14 +213,9 @@ namespace AI {
 			if (node->tag == 'g')
 			{
 				obj->texture[0].SetTexture("lens_dust.jpg", 1.f);
-				cGameObject* player = new cGameObject;
-				player->shader = obj->shader;
-				player->meshName = "sphere";
-				player->texture[0].SetTexture("blue.png", 1.f);
-				player->transform.Position(obj->transform.Position() + vec3(0.f, 2.f, 0.f));
-				player->transform.scale.x = 0.3f;
-				player->transform.scale.z = 0.3f;
-				cEntityManager::Instance().AddEntity(player);
+				cGameObject* player = cEntityManager::Instance().GetGameObjectByTag("agent");
+				player->transform.Position(obj->transform.Position() + vec3(0.f, 1.f, 0.f));
+				player->AddComponent<cPathFollowingBehaviour>()->current = node;
 				this->playerNode = node;
 			}
 			if (node->tag == 'r')
@@ -150,15 +229,6 @@ namespace AI {
 				home = node;
 			}
 			cEntityManager::Instance().AddEntity(obj);
-		}
-
-		//(new std::thread(DijkstraThreaded, playerNode, resources[1], graph))->detach();
-
-		auto path = Dijkstra(playerNode, resources[1], *graph);
-
-		for (int i = 0; i < path.size() - 1; ++i)
-		{
-			cDebugRenderer::Instance().addLine(path[i]->position, path[i+1]->position, vec3(1.f, 0.f, 0.f), 10000.f);
 		}
 		
 	}
@@ -174,18 +244,19 @@ namespace AI {
 		{
 			for (auto& edge : graph->edges)
 			{
-				if (!(edge->GetDistToA() > 100.f || edge->GetDistToB() > 100.f)) {
-					cDebugRenderer::Instance().addLine(edge->A->position + vec3(0.f, 1.f, 0.f), edge->B->position + vec3(0.f, 1.f, 0.f), vec3(1.f, 1.f, 0.f), dt);
-				}
+				cDebugRenderer::Instance().addLine(edge->A->position + vec3(0.f, 1.f, 0.f), edge->B->position + vec3(0.f, 1.f, 0.f), vec3(1.f, 1.f, 0.f), dt);
 			}
 		}
+	}
 
-		mtx.lock();
-		for (int i = 0; i < closedList.size(); ++i)
-		{
-			cDebugRenderer::Instance().addLine(playerNode->position, closedList[i]->position, vec3(1.f, 0.f, 0.f), 10.f);
-		}
-		mtx.unlock();
+	std::vector<GraphNode*> cPathFindingManager::GetPathToClosestResource(GraphNode* source)
+	{
+		return Dijkstra(source, *graph);
+	}
+
+	std::vector<GraphNode*> cPathFindingManager::GetPathToHome(GraphNode* source)
+	{
+		return AStar(source, home, *graph);
 	}
 
 }

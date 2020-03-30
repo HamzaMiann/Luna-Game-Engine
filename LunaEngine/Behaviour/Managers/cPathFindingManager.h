@@ -21,6 +21,9 @@ namespace AI
 		virtual void start() override;
 		virtual void update(float dt) override;
 
+		std::vector<GraphNode*> GetPathToClosestResource(GraphNode* source);
+		std::vector<GraphNode*> GetPathToHome(GraphNode* source);
+
 	private:
 		bool shouldShowGraph = false;
 

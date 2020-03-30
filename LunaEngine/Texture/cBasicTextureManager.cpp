@@ -247,6 +247,32 @@ bool cBasicTextureManager::LoadJPGFromFile(std::string textureFileName, sTexture
 	return true;
 }
 
+bool cBasicTextureManager::LoadBMPFromFile(std::string textureFileName, sTextureData& textureData)
+{
+	// TAKEN FROM https://learnopengl.com/Getting-started/Textures
+	// load the texture
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(textureFileName.c_str(), &width, &height, &nrChannels, 0);
+	if (!data)
+	{
+		stbi_image_free(data);
+		return false;
+	}
+
+	textureData.width = width;
+	textureData.height = height;
+	for (unsigned int i = 0; i < width * height; ++i)
+	{
+		textureData.data.push_back(data[i*3u]);
+		textureData.data.push_back(data[(i*3u)+1]);
+		textureData.data.push_back(data[(i*3u)+2]);
+	}
+
+	stbi_image_free(data);
+
+	return true;
+}
+
 bool cBasicTextureManager::LoadWorleyFromFile(std::string textureFileName, sTextureData& textureData)
 {
 	std::ifstream inFile(textureFileName, std::ios::binary);

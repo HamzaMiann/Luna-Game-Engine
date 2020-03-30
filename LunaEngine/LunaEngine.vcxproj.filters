@@ -336,6 +336,9 @@
     <ClCompile Include="Behaviour\Managers\Graph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Behaviour\AI\cPathFollowingBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cGameObject.h">
@@ -615,6 +618,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Behaviour\Managers\Graph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour\AI\cPathFollowingBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

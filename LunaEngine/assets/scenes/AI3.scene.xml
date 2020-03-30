@@ -74,26 +74,35 @@
         <Model file="cube.ply" friendlyName="cube" shader="basic"/>
         <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
         <Model file="Mutant.fbx" friendlyName="mutant" shader="basic"/>
-        <!--<Model file="hatka_local.fbx" friendlyName="house" shader="basic"/>-->
         <Model file="Terrain_XYZ_N_UV.ply" friendlyName="terrain" shader="basic"/>
         <Model file="statue.obj" friendlyName="statue" shader="basic"/>
-        <!--<Model file="Tree.fbx" friendlyName="tree" shader="basic"/>-->
         <Model file="Ottoman Mauser.obj" friendlyName="gun" shader="basic"/>
-    
+		<Model file="RPG-Character.fbx" friendlyName="character" shader="basic"/>
 	</Models>
 
   <Animations>
     <AnimationProfile profile="mutant" mesh="Mutant.fbx">
-      <Animation file="Mutant Breathing Idle.fbx" friendlyName="idle"/>
-      <Animation file="Mutant Walking.fbx" friendlyName="walk"/>
-      <Animation file="Mutant Run.fbx" friendlyName="run"/>
-      <Animation file="Mutant Walk Back.fbx" friendlyName="walk-backwards"/>
-      <Animation file="Mutant Right Strafe.fbx" friendlyName="walk-right"/>
-      <Animation file="Mutant Left Strafe.fbx" friendlyName="walk-left"/>
-      <Animation file="Mutant Jump.fbx" friendlyName="jump"/>
-      <Animation file="Mutant Swiping.fbx" friendlyName="attack"/>
-      <Animation file="Mutant Run Jump.fbx" friendlyName="run-jump"/>
+        <Animation file="Mutant Breathing Idle.fbx" friendlyName="idle"/>
+        <Animation file="Mutant Walking.fbx" friendlyName="walk"/>
+        <Animation file="Mutant Run.fbx" friendlyName="run"/>
+        <Animation file="Mutant Walk Back.fbx" friendlyName="walk-backwards"/>
+        <Animation file="Mutant Right Strafe.fbx" friendlyName="walk-right"/>
+        <Animation file="Mutant Left Strafe.fbx" friendlyName="walk-left"/>
+        <Animation file="Mutant Jump.fbx" friendlyName="jump"/>
+        <Animation file="Mutant Swiping.fbx" friendlyName="attack"/>
+        <Animation file="Mutant Run Jump.fbx" friendlyName="run-jump"/>
     </AnimationProfile>
+	  <AnimationProfile profile="character" mesh="RPG-Character.fbx">
+		  <Animation file="RPG-Idle.fbx" friendlyName="idle"/>
+		  <Animation file="RPG-Walk.fbx" friendlyName="walk"/>
+		  <Animation file="RPG-Run.fbx" friendlyName="run"/>
+		  <Animation file="RPG-Walk-Backwards.fbx" friendlyName="walk-backwards"/>
+		  <Animation file="RPG-Walk-Right.fbx" friendlyName="walk-right"/>
+		  <Animation file="RPG-Walk-Left.fbx" friendlyName="walk-left"/>
+		  <Animation file="RPG-Jump.fbx" friendlyName="jump"/>
+		  <Animation file="RPG-Attack.fbx" friendlyName="attack"/>
+		  <Animation file="RPG-Run-Jump.fbx" friendlyName="run-jump"/>
+	  </AnimationProfile>
   </Animations>
 
 	<Lights>
@@ -292,6 +301,16 @@
 					<Radius>2.0</Radius>
 				</SphereBody>
 
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="character" tag="agent" shader="basic">
+			<Position x="10.0" y="0.0" z="0.0"/>
+			<Rotation x="0" y="0" z="0.0"/>
+			<Scale>0.01</Scale>
+			<Texture ratio="1.000000">red.png</Texture>
+			<Components>
+				<AnimationController profile="character" default="idle"/>
 			</Components>
 		</GameObject>
 		

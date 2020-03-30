@@ -11,6 +11,8 @@ struct GraphNode
 	char tag = 0;
 	std::vector<GraphEdge*> children;
 	bool visited = false;
+	float gCostSoFar = FLT_MAX;
+	float hDist = FLT_MAX;
 	inline bool isTraversable() { return weight < 100.f; }
 };
 

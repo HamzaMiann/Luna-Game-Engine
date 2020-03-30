@@ -167,6 +167,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClCompile Include="Audio\AudioEngine.cpp" />
     <ClCompile Include="Behaviour\AI\cApproachBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cFormationBehaviour.cpp" />
+    <ClCompile Include="Behaviour\AI\cPathFollowingBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cPursueBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cSeekBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cWanderBehaviour.cpp" />
@@ -255,6 +256,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="Animation\sVertex_xyz_rgba_n_uv2_bt_4Bones.h" />
     <ClInclude Include="Behaviour\AI\cApproachBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cFormationBehaviour.h" />
+    <ClInclude Include="Behaviour\AI\cPathFollowingBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cPursueBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cSeekBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cWanderBehaviour.h" />
