@@ -99,9 +99,11 @@ void cFPSController::update(float dt)
 	{
 		vec3 ro = Camera::main_camera->Eye;
 		vec3 rd = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
+		rd = weapon->transform.Rotation() * vec3(0.f, 0.f, 1.f);
 		auto hits = g_PhysicsWorld->RayCastAll(ro, rd, 300.f);
 		for (auto& hit : hits)
 		{
+			if (hit.object->parent.tag != "ground") continue;
 			cGameObject* obj = new cGameObject;
 			obj->transform.Position(hit.hitPoint);
 			obj->meshName = "sphere";
@@ -150,7 +152,7 @@ void cFPSController::update(float dt)
 		targetOffset.y = sinY;
 	}
 
-	actualOffset = Mathf::lerp(actualOffset, targetOffset, dt * 10.f);
+	actualOffset = Mathf::lerp(actualOffset, targetOffset, dt * 5.f);
 
 	Camera::main_camera->Eye = transform.Position()
 		+ (actualOffset * rotX)

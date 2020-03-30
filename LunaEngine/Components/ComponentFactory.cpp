@@ -11,6 +11,7 @@
 #include <Behaviour/Controls/cFPSController.h>
 #include <Components/cAnimationController.h>
 #include <Behaviour/Managers/cFormationGameManager.h>
+#include <Behaviour/Managers/cPathFindingManager.h>
 
 #pragma warning(disable)
 
@@ -65,6 +66,11 @@ iComponent* ComponentFactory::GetComponent(std::string type, iObject* object)
 	if (type == "FormationManager")
 	{
 		return (iComponent*)object->AddComponent<cFormationGameManager>();
+	}
+
+	if (type == "PathFindingManager")
+	{
+		return (iComponent*)object->AddComponent<AI::cPathFindingManager>();
 	}
 	
 	

@@ -330,6 +330,12 @@
     <ClCompile Include="Steam\SteamModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Behaviour\Managers\cPathFindingManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Behaviour\Managers\Graph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cGameObject.h">
@@ -605,6 +611,12 @@
     <ClInclude Include="Steam\SteamModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Behaviour\Managers\cPathFindingManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour\Managers\Graph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">
@@ -670,5 +682,14 @@
     <Xml Include="assets\scenes\AI2.scene.xml" />
     <Xml Include="assets\scenes\sandbox2.scene.xml" />
     <Xml Include="assets\scenes\physics2.scene.xml" />
+    <Xml Include="assets\scenes\AI3.scene.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\resourceMap.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\resourceMap2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -7,6 +7,7 @@ enum class ComponentType
 	Physics,
 	Rendering,
 	Animation,
+	Behaviour,
 	Other
 };
 

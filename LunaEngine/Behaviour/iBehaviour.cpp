@@ -11,7 +11,7 @@ iBehaviour::iBehaviour(iObject* root, ComponentType type)
 }
 
 iBehaviour::iBehaviour(iObject* root)
-	: iComponent(ComponentType::Other)
+	: iComponent(ComponentType::Behaviour)
 	, parent(*root)
 	, transform(root->transform)
 	, _initialized(false)

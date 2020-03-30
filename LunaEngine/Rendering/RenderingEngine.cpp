@@ -154,7 +154,7 @@ void RenderingEngine::Reset()
 			cloudDensityCutoff = 0.f;
 	}
 
-	if (Input::GetKey(GLFW_KEY_UP))
+	/*if (Input::GetKey(GLFW_KEY_UP))
 	{
 		cloudLightScattering += 0.1f;
 	}
@@ -163,7 +163,7 @@ void RenderingEngine::Reset()
 		cloudLightScattering -= 0.1f;
 		if (cloudLightScattering < 0.f)
 			cloudLightScattering = 0.f;
-	}
+	}*/
 }
 
 void RenderingEngine::StencilInit()

@@ -71,7 +71,7 @@ void cApplication::Init()
 	InitPhysics();
 
 	// Load scene from file
-	scene = Scene::LoadFromXML("sandbox2.scene.xml");
+	scene = Scene::LoadFromXML("AI3.scene.xml");
 	scene->camera.Eye = vec3(0.f, 100.f, -200.f);
 	scene->camera.Eye = vec3(0, 0, -3);
 

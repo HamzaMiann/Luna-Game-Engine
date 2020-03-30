@@ -178,6 +178,8 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClCompile Include="Behaviour\iBehaviour.cpp" />
     <ClCompile Include="Behaviour\Managers\cAIGameManager.cpp" />
     <ClCompile Include="Behaviour\Managers\cFormationGameManager.cpp" />
+    <ClCompile Include="Behaviour\Managers\cPathFindingManager.cpp" />
+    <ClCompile Include="Behaviour\Managers\Graph.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cApplication.cpp" />
     <ClCompile Include="Components\cAnimationController.cpp" />
@@ -263,6 +265,8 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="Behaviour\Controls\cSphereBehaviour.h" />
     <ClInclude Include="Behaviour\Managers\cAIGameManager.h" />
     <ClInclude Include="Behaviour\Managers\cFormationGameManager.h" />
+    <ClInclude Include="Behaviour\Managers\cPathFindingManager.h" />
+    <ClInclude Include="Behaviour\Managers\Graph.h" />
     <ClInclude Include="cApplication.h" />
     <ClInclude Include="Components\cAnimationController.h" />
     <ClInclude Include="Components\ComponentFactory.h" />
@@ -365,6 +369,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
   <ItemGroup>
     <Xml Include="assets\scenes\AI.scene.xml" />
     <Xml Include="assets\scenes\AI2.scene.xml" />
+    <Xml Include="assets\scenes\AI3.scene.xml" />
     <Xml Include="assets\scenes\physics2.scene.xml" />
     <Xml Include="assets\scenes\sandbox.scene.xml" />
     <Xml Include="assets\scenes\physics.scene.xml">
@@ -391,6 +396,10 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <Scenes Include="assets/scenes/physics.scene.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\resourceMap.bmp" />
+    <Image Include="assets\resourceMap2.bmp" />
   </ItemGroup>
   <PropertyGroup>
     <OutputDirectory>c:\CND\midterm\Mian_Hamza_Midterm\</OutputDirectory>
