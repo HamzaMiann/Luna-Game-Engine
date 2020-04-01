@@ -56,6 +56,7 @@ struct sModelDrawInfo
 	sVAOVertex* pVertices;	//  = 0;
 	// The index buffer (CPU side)
 	unsigned int* pIndices;		
+	cMesh* mesh;
 };
 
 

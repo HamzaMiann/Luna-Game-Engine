@@ -154,7 +154,7 @@
     <ClInclude Include="interfaces\physics\iEmptyComponent.h" />
     <ClInclude Include="interfaces\physics\iSphereComponent.h" />
     <ClInclude Include="interfaces\physics\iCollisionListener.h" />
-    <ClInclude Include="interfaces\physics\iDebugRenderer.h" />
+    <ClInclude Include="interfaces\physics\iPhysicsDebugRenderer.h" />
     <ClInclude Include="interfaces\physics\iPhysicsComponent.h" />
     <ClInclude Include="interfaces\physics\iPhysicsFactory.h" />
     <ClInclude Include="interfaces\physics\iPhysicsWorld.h" />

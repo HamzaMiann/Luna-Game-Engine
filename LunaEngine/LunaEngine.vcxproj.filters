@@ -623,6 +623,9 @@
     <ClInclude Include="Behaviour\AI\cPathFollowingBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="assets\shaders\debug_frag.glsl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\holo_frag.glsl">
@@ -678,6 +681,7 @@
     <None Include="assets\shaders\blur_frag.glsl" />
     <None Include="assets\shaders\shadow_vert.glsl" />
     <None Include="assets\shaders\shadow_frag.glsl" />
+    <None Include="assets\shaders\debug_vert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\scenes\physics.scene.xml">

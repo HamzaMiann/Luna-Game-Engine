@@ -732,6 +732,9 @@
     <ClInclude Include="physics\wrappers\cCubeComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="physics\wrappers\cPhysicsDebugDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="physics\bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp">
@@ -1203,6 +1206,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="physics\wrappers\cCubeComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\wrappers\cPhysicsDebugDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

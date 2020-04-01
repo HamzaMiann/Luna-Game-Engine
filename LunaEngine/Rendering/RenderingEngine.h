@@ -7,11 +7,13 @@
 #include <Physics/octree.h>
 #include <FBO/cFBO.h>
 #include <cGameObject.h>
+#include <interfaces/physics/iPhysicsDebugRenderer.h>
+#include <functional>
 
 class cGameObject;
 class cAABB;
 
-class RenderingEngine
+class RenderingEngine : public nPhysics::iPhysicsDebugRenderer
 {
 private:
 
@@ -27,7 +29,11 @@ private:
 	std::map<std::string, bool> boolSettings;
 	std::map<std::string, float> floatSettings;
 
+	std::vector<std::function<void(Shader*)>> debugRenderQueue;
+
 public:
+
+	float mDt = 0.f;
 
 	mat4 projection;
 	mat4 view;
@@ -63,13 +69,25 @@ public:
 
 
 	// Old methods
-	void DrawObject(cGameObject& object, mat4 const& v, mat4 const& p, Shader* s = nullptr);
+	void DrawObject(cGameObject& object, Shader* s = nullptr);
 	void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, mat4 const& v, mat4 const& p);
-	void RenderGO(cGameObject& object, float width, float height, const mat4& p, const mat4& v, int& lastShader, bool shadow = false);
-	void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt, bool shadow = false);
+	void RenderGO(cGameObject& object, float width, float height, int& lastShader, bool shadow = false);
+	void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, float dt, bool shadow = false);
 	void RenderShadowmapToFBO(cSimpleFBO* fbo, float width, float height);
 	void RenderSkybox(float width, float height, mat4 p, mat4 v, float dt);
 	void RenderLightingToFBO(cFBO& fbo, cFBO& previousFBO, unsigned int shadowTextureID = 0);
 	void RenderPostProcessingToScreen(cFBO& previousFBO, unsigned int shadowTextureID = 0);
+
+
+	// Inherited via iPhysicsDebugRenderer
+	virtual void DrawSphere(const vec3& center, float radius) override;
+
+	virtual void DrawCube(const vec3& center, const vec3& scale) override;
+
+	virtual void DrawLine(const vec3& from, const vec3& to) override;
+
+	virtual void DrawTriangle(const vec3& a, const vec3& b, const vec3& c) override;
+
+	void DrawDebugObjects();
 
 };

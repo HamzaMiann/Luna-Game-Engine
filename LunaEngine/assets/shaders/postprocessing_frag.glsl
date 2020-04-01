@@ -487,7 +487,7 @@ void main()
 		}
 
 		float disp = smoothstep(0., 1., 1. - distance(vec2(0.5), fUVx2.st) * 10. * (1. - blendRatio));
-		pixelColour.rgb = mix(pixelColour.rgb, vec3(texture(textSamp05, uv).r), disp * blendRatio);
+		pixelColour.rgb = mix(pixelColour.rgb, vec3(texture(perlinTexture, uv).r), disp * blendRatio);
 
 
 		if (false) {

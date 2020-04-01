@@ -4,151 +4,171 @@
 #include "../bullet/BulletCollision/Gimpact/btGImpactShape.h"
 #include "../nConvert.h"
 
-nPhysics::cPhysicsWorld::cPhysicsWorld()
-{
-	mCollisionConfiguration = new btDefaultCollisionConfiguration();
+namespace nPhysics {
 
-	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-	mDispatcher = new btCollisionDispatcher(mCollisionConfiguration);
-
-	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
-	mOverlappingPairCache = new btDbvtBroadphase();
-
-	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-	mSolver = new btSequentialImpulseConstraintSolver;
-
-	mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mOverlappingPairCache, mSolver, mCollisionConfiguration);
-
-	mDynamicsWorld->setGravity(btVector3(0, -10, 0));
-
-	///-----initialization_end-----
-
-	//keep track of the shapes, we release memory at exit.
-	//make sure to re-use collision shapes among rigid bodies whenever possible!
-}
-
-nPhysics::cPhysicsWorld::~cPhysicsWorld()
-{
-	// remove all components first
-	auto it = components.begin();
-	while (components.size() > 0) components.erase(it);
-
-	delete mDynamicsWorld;
-	delete mDispatcher;
-	delete mCollisionConfiguration;
-	delete mOverlappingPairCache;
-	delete mSolver;
-}
-
-void nPhysics::cPhysicsWorld::Update(float dt)
-{
-	mDynamicsWorld->stepSimulation(dt, 10);
-	//if (mCollisionListener)
-	//{
-	//	// TODO: COLLISION LISTENING STUFF
-	//}
-	for (unsigned int i = 0; i < mDispatcher->getNumManifolds(); ++i)
+	cPhysicsWorld::cPhysicsWorld()
 	{
-		btPersistentManifold* manifold = mDispatcher->getManifoldByIndexInternal(i);
-		iPhysicsComponent* bodyA = (iPhysicsComponent*)manifold->getBody0()->getUserPointer();
-		iPhysicsComponent* bodyB = (iPhysicsComponent*)manifold->getBody1()->getUserPointer();
-		bodyA->CollidedWith(bodyB);
-		bodyB->CollidedWith(bodyA);
+		mCollisionConfiguration = new btDefaultCollisionConfiguration();
+
+		///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
+		mDispatcher = new btCollisionDispatcher(mCollisionConfiguration);
+
+		///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
+		mOverlappingPairCache = new btDbvtBroadphase();
+
+		///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
+		mSolver = new btSequentialImpulseConstraintSolver;
+
+		mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mOverlappingPairCache, mSolver, mCollisionConfiguration);
+
+		mDynamicsWorld->setGravity(btVector3(0, -10, 0));
+
+		debugDrawer = 0;
+
+		///-----initialization_end-----
+
+		//keep track of the shapes, we release memory at exit.
+		//make sure to re-use collision shapes among rigid bodies whenever possible!
 	}
 
-	for (iPhysicsComponent*& i : components)
+	cPhysicsWorld::~cPhysicsWorld()
 	{
-		auto wrapper = dynamic_cast<cBulletWrapperComponent*>(i);
-		i->UpdateTransform();
-	}
-}
+		// remove all components first
+		auto it = components.begin();
+		while (components.size() > 0) components.erase(it);
 
-bool nPhysics::cPhysicsWorld::AddComponent(iPhysicsComponent* component)
-{
-	if (component)
+		delete mDynamicsWorld;
+		delete mDispatcher;
+		delete mCollisionConfiguration;
+		delete mOverlappingPairCache;
+		delete mSolver;
+	}
+
+	void cPhysicsWorld::Update(float dt)
 	{
-		auto concrete = dynamic_cast<cBulletWrapperComponent*>(component);
-		if (concrete)
+		mDynamicsWorld->stepSimulation(dt, 10);
+		//if (mCollisionListener)
+		//{
+		//	// TODO: COLLISION LISTENING STUFF
+		//}
+		for (unsigned int i = 0; i < mDispatcher->getNumManifolds(); ++i)
 		{
-			mDynamicsWorld->addRigidBody(concrete->mBody);
-			components.push_back(component);
-			return true;
+			btPersistentManifold* manifold = mDispatcher->getManifoldByIndexInternal(i);
+			iPhysicsComponent* bodyA = (iPhysicsComponent*)manifold->getBody0()->getUserPointer();
+			iPhysicsComponent* bodyB = (iPhysicsComponent*)manifold->getBody1()->getUserPointer();
+			bodyA->CollidedWith(bodyB);
+			bodyB->CollidedWith(bodyA);
+		}
+
+		for (iPhysicsComponent*& i : components)
+		{
+			auto wrapper = dynamic_cast<cBulletWrapperComponent*>(i);
+			i->UpdateTransform();
+		}
+
+		if (debugDrawer)
+		{
+			mDynamicsWorld->debugDrawWorld();
 		}
 	}
-	return false;
-}
 
-bool nPhysics::cPhysicsWorld::RemoveComponent(iPhysicsComponent* component)
-{
-	if (component)
+	bool cPhysicsWorld::AddComponent(iPhysicsComponent* component)
 	{
-		auto concrete = dynamic_cast<cBulletWrapperComponent*>(component);
-		if (concrete)
+		if (component)
 		{
-			auto it = std::find(components.begin(), components.end(), component);
-			if (it != components.end())
+			auto concrete = dynamic_cast<cBulletWrapperComponent*>(component);
+			if (concrete)
 			{
-				components.erase(it);
-				mDynamicsWorld->removeRigidBody(concrete->mBody);
+				mDynamicsWorld->addRigidBody(concrete->mBody);
+				components.push_back(component);
 				return true;
 			}
 		}
+		return false;
 	}
-	return false;
-}
 
-std::vector<nPhysics::RayCastResult> nPhysics::cPhysicsWorld::RayCastAll(vec3 ro, vec3 rd, float t)
-{
-	std::vector<RayCastResult> hits;
-
-	btVector3 from = nConvert::ToBullet(ro);
-	btVector3 to = nConvert::ToBullet(ro + rd * t);
-
-	btCollisionWorld::AllHitsRayResultCallback allResults(from, to);
-	allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
-	//kF_UseGjkConvexRaytest flag is now enabled by default, use the faster but more approximate algorithm
-	//allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
-	allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
-
-
-	mDynamicsWorld->rayTest(from, to, allResults);
-
-	for (unsigned int i = 0; i < allResults.m_collisionObjects.size(); ++i)
+	bool cPhysicsWorld::RemoveComponent(iPhysicsComponent* component)
 	{
-		void* userpointer = allResults.m_collisionObjects[i]->getUserPointer();
-		if (userpointer != 0)
+		if (component)
 		{
-			nPhysics::RayCastResult result;
-			result.object = (iPhysicsComponent*)userpointer;
-			result.hitPoint = nConvert::ToGLM(allResults.m_hitPointWorld[i]);
-			result.hitNormal = nConvert::ToGLM(allResults.m_hitNormalWorld[i]);
-			hits.push_back(result);
+			auto concrete = dynamic_cast<cBulletWrapperComponent*>(component);
+			if (concrete)
+			{
+				auto it = std::find(components.begin(), components.end(), component);
+				if (it != components.end())
+				{
+					components.erase(it);
+					mDynamicsWorld->removeRigidBody(concrete->mBody);
+					return true;
+				}
+			}
 		}
+		return false;
 	}
 
-	return hits;
-}
-
-nPhysics::RayCastResult* nPhysics::cPhysicsWorld::RayCast(vec3 ro, vec3 rd, float t)
-{
-	btVector3 from = nConvert::ToBullet(ro);
-	btVector3 to = nConvert::ToBullet(ro + rd * t);
-
-	btCollisionWorld::ClosestRayResultCallback closestResults(from, to);
-	closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
-
-	mDynamicsWorld->rayTest(from, to, closestResults);
-
-	if (closestResults.hasHit())
+	std::vector<RayCastResult> cPhysicsWorld::RayCastAll(vec3 ro, vec3 rd, float t)
 	{
-		void* userpointer = closestResults.m_collisionObject->getUserPointer();
-		if (userpointer != 0)
+		std::vector<RayCastResult> hits;
+
+		btVector3 from = nConvert::ToBullet(ro);
+		btVector3 to = nConvert::ToBullet(ro + rd * t);
+
+		btCollisionWorld::AllHitsRayResultCallback allResults(from, to);
+		allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
+		//kF_UseGjkConvexRaytest flag is now enabled by default, use the faster but more approximate algorithm
+		//allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+		allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+
+
+		mDynamicsWorld->rayTest(from, to, allResults);
+
+		for (unsigned int i = 0; i < allResults.m_collisionObjects.size(); ++i)
 		{
-			nPhysics::RayCastResult& result = *new nPhysics::RayCastResult;
-			result.object = (iPhysicsComponent*)userpointer;
-			return &result;
+			void* userpointer = allResults.m_collisionObjects[i]->getUserPointer();
+			if (userpointer != 0)
+			{
+				RayCastResult result;
+				result.object = (iPhysicsComponent*)userpointer;
+				result.hitPoint = nConvert::ToGLM(allResults.m_hitPointWorld[i]);
+				result.hitNormal = nConvert::ToGLM(allResults.m_hitNormalWorld[i]);
+				hits.push_back(result);
+			}
 		}
+
+		return hits;
 	}
 
-	return nullptr;
+	RayCastResult* cPhysicsWorld::RayCast(vec3 ro, vec3 rd, float t)
+	{
+		btVector3 from = nConvert::ToBullet(ro);
+		btVector3 to = nConvert::ToBullet(ro + rd * t);
+
+		btCollisionWorld::ClosestRayResultCallback closestResults(from, to);
+		closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+
+		mDynamicsWorld->rayTest(from, to, closestResults);
+
+		if (closestResults.hasHit())
+		{
+			void* userpointer = closestResults.m_collisionObject->getUserPointer();
+			if (userpointer != 0)
+			{
+				RayCastResult& result = *new RayCastResult;
+				result.object = (iPhysicsComponent*)userpointer;
+				return &result;
+			}
+		}
+
+		return nullptr;
+	}
+
+	void cPhysicsWorld::SetDebugRenderer(iPhysicsDebugRenderer* renderer)
+	{
+		debugDrawer = new cPhysicsDebugDrawer(renderer);
+		mDynamicsWorld->setDebugDrawer(debugDrawer);
+		debugDrawer->DBG_DrawWireframe; // this breaks when I run the app
+		debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe); // so does this
+		debugDrawer->setDebugMode(1); // this doesn't
+	}
+
 }

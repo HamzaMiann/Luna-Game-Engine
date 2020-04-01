@@ -21,9 +21,6 @@
     <ClInclude Include="interfaces\physics\iCollisionListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="interfaces\physics\iDebugRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="interfaces\physics\iPhysicsComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -73,6 +70,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="interfaces\physics\iClothComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="interfaces\physics\iPhysicsDebugRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

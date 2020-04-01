@@ -20,6 +20,10 @@
           <Vertex file="postprocessing_vert.glsl"/>
           <Fragment file="postprocessing_frag.glsl"/>
         </Shader>
+		<Shader name="debug">
+			<Vertex file="debug_vert.glsl"/>
+			<Fragment file="debug_frag.glsl"/>
+		</Shader>
 	</Shaders>
   
 	<Textures>

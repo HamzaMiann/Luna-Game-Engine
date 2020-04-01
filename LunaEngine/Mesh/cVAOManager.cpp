@@ -46,6 +46,7 @@ bool cVAOManager::LoadModelIntoVAO(
 	// Write some code to copy the infomation from cMesh& theMesh
 	//  to the sModelDrawInfo& drawInfo...
 
+	drawInfo.mesh = &theMesh;
 	drawInfo.numberOfVertices = theMesh.vecVertices.size();
 	// Allocate an array big enough
 	drawInfo.pVertices = new sVAOVertex[drawInfo.numberOfVertices];

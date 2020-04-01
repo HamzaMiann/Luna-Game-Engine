@@ -21,6 +21,7 @@
 #include <Rendering/RenderingEngine.h>
 #include <Physics/Mathf.h>
 #include <Threading/threading.h>
+#include <Mesh\cVAOManager.h>
 
 iApplication* cApplication::app = cApplication::Instance();
 
@@ -155,6 +156,7 @@ void cApplication::Run()
 	sLight* light = cLightManager::Instance()->Lights[0];
 	vec3 origin = vec3(light->position);
 
+	g_PhysicsWorld->SetDebugRenderer(&renderer);
 
 	while (!glfwWindowShouldClose(global::window))
 	{
@@ -191,11 +193,17 @@ void cApplication::Run()
 
 		g_PhysicsWorld->Update(dt);
 
+		renderer.mDt = dt;
+
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
 
 		// Move skybox relative to the camera
 		renderer.skyBox.transform.pos = Camera::main_camera->Eye;
+
+
+		renderer.RenderObjectsToFBO(&albedoFBO, width, height, dt, true);
+
 
 		mat4 p, v;
 
@@ -211,20 +219,21 @@ void cApplication::Run()
 			Camera::main_camera->Up
 		);
 
+		renderer.projection = p;
+		renderer.view = v;
+
 		light->position = vec4(origin + Camera::main_camera->Eye, 1.0f);
 		vec4 homogenous = (p * v * mat4(1.0f)) * light->position;
 		vec3 cube = vec3(homogenous.x / homogenous.w, homogenous.y / homogenous.w, homogenous.z / homogenous.w);
 		renderer.screenPos = vec2(cube);
 
-		//renderer.RenderShadowmapToFBO(&albedoFBO, width, height);
-
-		renderer.RenderObjectsToFBO(&albedoFBO, width, height, p, v, dt, true);
-		renderer.RenderObjectsToFBO(&second_passFBO, width, height, p, v, dt, false);
+		renderer.RenderObjectsToFBO(&second_passFBO, width, height, dt, false);
 		renderer.RenderSkybox(width, height, p, v, dt);
 
 		renderer.RenderLightingToFBO(finalFBO, second_passFBO, albedoFBO.depthTexture_ID);
-		renderer.RenderPostProcessingToScreen(finalFBO, albedoFBO.depthTexture_ID);
+		renderer.RenderPostProcessingToScreen(finalFBO, second_passFBO.unlitTexture_ID);
 
+		renderer.DrawDebugObjects();
 		debug_renderer.RenderDebugObjects(v, p, dt);
 
 		Input::ClearBuffer();

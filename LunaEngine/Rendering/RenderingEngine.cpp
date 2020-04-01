@@ -279,7 +279,7 @@ void RenderingEngine::SetUpTextureBindingsForObject(cGameObject& object)
 }
 
 
-void RenderingEngine::DrawObject(cGameObject& object, mat4 const& v, mat4 const& p, Shader* s)
+void RenderingEngine::DrawObject(cGameObject& object, Shader* s)
 {
 	Shader& shader = *object.shader;
 	if (s) {
@@ -472,7 +472,7 @@ void RenderingEngine::DrawOctree(cGameObject* obj, octree::octree_node* node, cG
 		objPtr->transform.pos = (node->AABB->min + (node->AABB->min + node->AABB->length)) / 2.f;
 		objPtr->transform.scale = vec3(node->AABB->length / 2.f);
 
-		DrawObject(*objPtr, v, p);
+		DrawObject(*objPtr);
 	}
 
 	for (int i = 0; i < 8; ++i)
@@ -480,12 +480,12 @@ void RenderingEngine::DrawOctree(cGameObject* obj, octree::octree_node* node, cG
 
 }
 
-void RenderingEngine::RenderGO(cGameObject& object, float width, float height, const mat4& p, const mat4& v, int& lastShader, bool shadow)
+void RenderingEngine::RenderGO(cGameObject& object, float width, float height, int& lastShader, bool shadow)
 {
 	for (iObject* child : object.Children)
 	{
 		if (child)
-			this->RenderGO(*reinterpret_cast<cGameObject*>(child), width, height, p, v, lastShader);
+			this->RenderGO(*reinterpret_cast<cGameObject*>(child), width, height, lastShader);
 	}
 
 	if (!object.shader) return;
@@ -505,8 +505,8 @@ void RenderingEngine::RenderGO(cGameObject& object, float width, float height, c
 		shader.SetVec2("iResolution", vec2(width, height));
 		shader.SetBool("isWater", GL_FALSE);
 
-		shader.SetMat4("matProj", p);
-		shader.SetMat4("matView", v);
+		shader.SetMat4("matProj", projection);
+		shader.SetMat4("matView", view);
 
 		if (shadow)
 		{
@@ -527,7 +527,7 @@ void RenderingEngine::RenderGO(cGameObject& object, float width, float height, c
 			float radius;
 			cloth->GetNodeRadius(i, radius);
 			object.transform.Scale(vec3(radius));
-			DrawObject(object, v, p);
+			DrawObject(object);
 		}
 
 #ifdef _DEBUG
@@ -544,10 +544,10 @@ void RenderingEngine::RenderGO(cGameObject& object, float width, float height, c
 #endif
 	}
 	else
-		this->DrawObject(object, v, p);
+		this->DrawObject(object);
 }
 
-void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt, bool shadow)
+void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, float dt, bool shadow)
 {
 	// Draw to the frame buffer
 	fbo->use();
@@ -576,8 +576,8 @@ void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float hei
 			vec3(0.f),
 			vec3(0, 1, 0)
 			);
-		p = depthProjectionMatrix;
-		v = depthViewMatrix;
+		projection = depthProjectionMatrix;
+		view = depthViewMatrix;
 	}
 
 	// Loop to draw everything in the scene
@@ -602,7 +602,7 @@ void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float hei
 
 		cGameObject& object = *objects[index];
 
-		this->RenderGO(object, width, height, p, v, lastShader, shadow);
+		this->RenderGO(object, width, height, lastShader, shadow);
 
 
 	}//for (int index...
@@ -641,7 +641,7 @@ void RenderingEngine::RenderShadowmapToFBO(cSimpleFBO* fbo, float width, float h
 	// Loop to draw everything in the scene
 	for (int index = 0; index != objects.size(); index++)
 	{
-		DrawObject(*objects[index], depthViewMatrix, depthProjectionMatrix, &shader);
+		DrawObject(*objects[index], &shader);
 	}
 }
 
@@ -660,7 +660,7 @@ void RenderingEngine::RenderSkybox(float width, float height, mat4 p, mat4 v, fl
 	shader.SetMat4("matProj", p);
 	shader.SetMat4("matView", v);
 
-	this->DrawObject(*objPtr, v, p);
+	this->DrawObject(*objPtr);
 }
 
 void RenderingEngine::RenderLightingToFBO(cFBO& fbo, cFBO& previousFBO, unsigned int shadowTextureID)
@@ -731,7 +731,7 @@ void RenderingEngine::RenderLightingToFBO(cFBO& fbo, cFBO& previousFBO, unsigned
 
 	shader.SetMat4("matProj", p);
 
-	this->DrawObject(quad, mat4(1.f), p);
+	this->DrawObject(quad);
 }
 
 void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned int shadowTextureID)
@@ -754,7 +754,6 @@ void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned i
 	shader.SetFloat("iTime", (float)glfwGetTime());
 
 	shader.SetTexture(previousFBO.colourTexture_ID, "textSamp00", 0);	// LIT SCENE TEXTURE
-	//shader.SetTexture(noise, "textSamp00", 0);	// LIT SCENE TEXTURE
 	shader.SetTexture(previousFBO.positionTexture_ID, "textSamp01", 1);	// POSITION TEXTURE
 	shader.SetTexture(previousFBO.normalTexture_ID, "textSamp02", 2);	// LIGHTING DEPTH BUFFER TEXTURE
 	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM CUTOFF TEXTURE
@@ -762,12 +761,7 @@ void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned i
 	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp05", 5);	// REFLECTIVE SURFACES TEXTURE
 
 	shader.SetTexture(lens, "lensTexture", 8);							// LENS NOISE TEXTURE
-	shader.SetTexture(shadowTextureID, "shadowTexture", 9);				// SHADOWMAP TEXTURE
-
-	/*shader.SetFloat("cloudDensityFactor", cloudDensityFactor);
-	shader.SetFloat("cloudDensityCutoff", cloudDensityCutoff);
-	shader.SetFloat("cloudLightScattering", cloudLightScattering);
-	shader.SetFloat("bloomScale", bloomScale);*/
+	shader.SetTexture(shadowTextureID, "perlinTexture", 9);				// SHADOWMAP TEXTURE
 
 	shader.SetBool("isFinalPass", GL_TRUE);
 
@@ -784,27 +778,93 @@ void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned i
 		shader.SetFloat(prop.first, prop.second);
 	}
 
-	/*if (bloom_enabled)	shader.SetBool("bloomEnabled", GL_TRUE);
-	else				shader.SetBool("bloomEnabled", GL_FALSE);
-
-	if (DOF_enabled)	shader.SetBool("DOFEnabled", GL_TRUE);
-	else				shader.SetBool("DOFEnabled", GL_FALSE);
-
-	if (volumetric_enabled)	shader.SetBool("volumetricEnabled", GL_TRUE);
-	else					shader.SetBool("volumetricEnabled", GL_FALSE);
-
-	if (clouds_enabled)	shader.SetBool("cloudsEnabled", GL_TRUE);
-	else					shader.SetBool("cloudsEnabled", GL_FALSE);
-
-	if (clouds_shadows_enabled)	shader.SetBool("cloudShadowsEnabled", GL_TRUE);
-	else					shader.SetBool("cloudShadowsEnabled", GL_FALSE);
-
-	if (vignette_enabled)	shader.SetBool("vignetteEnabled", GL_TRUE);
-	else					shader.SetBool("vignetteEnabled", GL_FALSE);
-
-	if (lens_dirt_enabled)	shader.SetBool("lensDirtEnabled", GL_TRUE);
-	else					shader.SetBool("lensDirtEnabled", GL_FALSE);*/
 
 
-	this->DrawObject(quad, mat4(1.f), p);
+	this->DrawObject(quad);
+}
+
+void RenderingEngine::DrawSphere(const vec3& center, float radius)
+{
+	debugRenderQueue.push_back([this, center, radius](Shader* shader)
+		{
+			sTransform tform;
+			tform.Position(center);
+			tform.Scale(vec3(radius));
+			
+			shader->SetMat4("matModel", tform.ModelMatrix());
+			shader->SetVec3("fColour", vec3(0.f, 1.f, 0.f));
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+			sModelDrawInfo drawInfo;
+			if (cVAOManager::Instance().FindDrawInfoByModelName("sphere", drawInfo))
+			{
+				glBindVertexArray(drawInfo.VAO_ID);
+				glDrawElements(
+					GL_TRIANGLES,
+					drawInfo.numberOfIndices,
+					GL_UNSIGNED_INT,
+					0
+					);
+				glBindVertexArray(0);
+			}
+		}
+	);
+}
+
+void RenderingEngine::DrawCube(const vec3& center, const vec3& scale)
+{
+	debugRenderQueue.push_back([this, center, scale](Shader* shader)
+		{
+			sTransform tform;
+			tform.Position(center);
+			tform.Scale(scale);
+			
+			shader->SetMat4("matModel", tform.ModelMatrix());
+			shader->SetVec3("fColour", vec3(1.f, 0.f, 0.f));
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+			sModelDrawInfo drawInfo;
+			if (cVAOManager::Instance().FindDrawInfoByModelName("cube", drawInfo))
+			{
+				glBindVertexArray(drawInfo.VAO_ID);
+				glDrawElements(
+					GL_TRIANGLES,
+					drawInfo.numberOfIndices,
+					GL_UNSIGNED_INT,
+					0
+					);
+				glBindVertexArray(0);
+			}
+		}
+	);
+}
+
+void RenderingEngine::DrawLine(const vec3& from, const vec3& to)
+{
+	cDebugRenderer::Instance().addLine(from, to, vec3(1.f, 1.f, 0.f), mDt);
+}
+
+void RenderingEngine::DrawTriangle(const vec3& a, const vec3& b, const vec3& c)
+{
+	cDebugRenderer::Instance().addTriangle(a, b, c, vec3(0.f, 1.f, 1.f), mDt);
+}
+
+void RenderingEngine::DrawDebugObjects()
+{
+	glDisable(GL_DEPTH);
+	glDisable(GL_DEPTH_TEST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	Shader* shader = Shader::FromName("debug");
+	shader->Use();
+	shader->SetMat4("matProj", projection);
+	shader->SetMat4("matView", view);
+	for (auto func : debugRenderQueue)
+	{
+		func(shader);
+	}
+	debugRenderQueue.clear();
+	glEnable(GL_DEPTH);			// Write to the depth buffer
+	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
 }

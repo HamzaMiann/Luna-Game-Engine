@@ -381,6 +381,7 @@
     <ClInclude Include="physics\nConvert.h" />
     <ClInclude Include="physics\wrappers\cBulletWrapperComponent.h" />
     <ClInclude Include="physics\wrappers\cCubeComponent.h" />
+    <ClInclude Include="physics\wrappers\cPhysicsDebugDrawer.h" />
     <ClInclude Include="physics\wrappers\cSphereComponent.h" />
     <ClInclude Include="physics\wrappers\cDebugRenderer.h" />
     <ClInclude Include="physics\wrappers\cPhysicsFactory.h" />
@@ -540,6 +541,7 @@
     <ClCompile Include="physics\bullet\LinearMath\TaskScheduler\btThreadSupportPosix.cpp" />
     <ClCompile Include="physics\bullet\LinearMath\TaskScheduler\btThreadSupportWin32.cpp" />
     <ClCompile Include="physics\wrappers\cCubeComponent.cpp" />
+    <ClCompile Include="physics\wrappers\cPhysicsDebugDrawer.cpp" />
     <ClCompile Include="physics\wrappers\cPhysicsFactory.cpp" />
     <ClCompile Include="physics\wrappers\cSphereComponent.cpp" />
     <ClCompile Include="physics\wrappers\cDebugRenderer.cpp" />

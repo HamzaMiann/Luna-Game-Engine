@@ -3,6 +3,7 @@
 
 #include <interfaces/physics/iPhysicsWorld.h>
 #include "../bullet/btBulletDynamicsCommon.h"
+#include "cPhysicsDebugDrawer.h"
 
 namespace nPhysics
 {
@@ -20,6 +21,8 @@ namespace nPhysics
 		virtual std::vector<RayCastResult> RayCastAll(vec3 ro, vec3 rd, float t) override;
 		virtual RayCastResult* RayCast(vec3 ro, vec3 rd, float t) override;
 
+		virtual void SetDebugRenderer(iPhysicsDebugRenderer* renderer) override;
+
 	private:
 		btAlignedObjectArray<btCollisionShape*> collisionShapes;
 		btDefaultCollisionConfiguration* mCollisionConfiguration;
@@ -30,5 +33,7 @@ namespace nPhysics
 		//phys::cWorld* mWorld;
 
 		std::vector<iPhysicsComponent*> components;
+
+		cPhysicsDebugDrawer* debugDrawer;
 	};
 }

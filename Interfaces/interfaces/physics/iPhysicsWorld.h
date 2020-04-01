@@ -2,6 +2,7 @@
 #include <glm/glm_common.h>
 #include <vector>
 #include "iPhysicsComponent.h"
+#include "iPhysicsDebugRenderer.h"
 
 namespace nPhysics
 {
@@ -41,6 +42,14 @@ namespace nPhysics
 				- iPhysicsComponent of the first collider that was hit
 		*/
 		virtual RayCastResult* RayCast(vec3 ro, vec3 rd, float t) = 0;
+
+		/*
+			@params
+				- renderer: the debug rendering instance
+			@returns
+				nothing
+		*/
+		virtual void SetDebugRenderer(iPhysicsDebugRenderer* renderer) = 0;
 
 	};
 }
