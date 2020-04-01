@@ -25,6 +25,7 @@ out vec4 fNormal;
 out vec4 fUVx2;
 out float fiTime;
 out float fisWater;
+out float depth;
 
 float rand(float s, float r) { return mod(mod(s, r + iTime) * 112341, 1); }
 float random (in vec2 st);
@@ -69,6 +70,8 @@ void main()
 		
 		fUVx2 = vUVx2;
 
+		depth = gl_Position.z;
+
 		return;
 	}
 
@@ -89,6 +92,7 @@ void main()
 
 	fiTime = iTime;
 
+	depth = gl_Position.z;
 }
 
 

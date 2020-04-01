@@ -402,6 +402,9 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
   <ItemGroup>
     <Image Include="assets\resourceMap.bmp" />
     <Image Include="assets\resourceMap2.bmp" />
+    <Image Include="assets\resourceMap3.bmp" />
+    <Image Include="assets\resourceMap4.bmp" />
+    <Image Include="assets\resourceMap5.bmp" />
   </ItemGroup>
   <PropertyGroup>
     <OutputDirectory>c:\CND\midterm\Mian_Hamza_Midterm\</OutputDirectory>

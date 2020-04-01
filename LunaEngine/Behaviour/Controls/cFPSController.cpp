@@ -7,6 +7,7 @@
 #include <Physics/global_physics.h>
 #include <cGameObject.h>
 #include <Shader/Shader.h>
+#include <Rendering/RenderingEngine.h>
 using namespace rapidxml;
 
 bool cFPSController::deserialize(rapidxml::xml_node<>* root_node)
@@ -44,6 +45,7 @@ vec3 targetOffset;
 vec3 offset2;
 float time;
 float sinY;
+float blendRatio = 0.f;
 void cFPSController::start()
 {
 	rigidBody = parent.GetComponent<nPhysics::iPhysicsComponent>();
@@ -94,6 +96,16 @@ void cFPSController::update(float dt)
 
 	previousX = x;
 	previousY = y;
+
+	if (Input::GetKey(GLFW_KEY_E))
+	{
+		blendRatio = Mathf::lerp(blendRatio, 1., dt * 3.f);
+	}
+	else
+	{
+		blendRatio = Mathf::lerp(blendRatio, 0., dt * 3.f);
+	}
+	RenderingEngine::Instance().SetProperty("blendRatio", blendRatio);
 
 	if (Input::MouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 	{

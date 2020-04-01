@@ -71,7 +71,7 @@ void cApplication::Init()
 	InitPhysics();
 
 	// Load scene from file
-	scene = Scene::LoadFromXML("AI3.scene.xml");
+	scene = Scene::LoadFromXML("sandbox2.scene.xml");
 	scene->camera.Eye = vec3(0.f, 100.f, -200.f);
 	scene->camera.Eye = vec3(0, 0, -3);
 
@@ -122,16 +122,16 @@ void cApplication::Run()
 	// Initialize debug renderer
 	debug_renderer.initialize();
 
-	/*for (int i = 0; i < 10000; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		cGameObject* obj = new cGameObject;
-		obj->meshName = "screen";
+		obj->meshName = "grass";
 		obj->shader = Shader::FromName("basic");
 		obj->transform.Position(
 			vec3(
-				Mathf::randInRange(-50.f, 50.f),
-				0.5f,
-				Mathf::randInRange(-50.f, 50.f)
+				Mathf::randInRange(-200.f, 200.f),
+				0.0f,
+				Mathf::randInRange(-200.f, 200.f)
 				)
 			);
 		obj->transform.UpdateEulerRotation(
@@ -141,10 +141,10 @@ void cApplication::Run()
 				0.f
 				)
 			);
-		obj->texture[0].SetTexture("grass_tex.png", 0.7f);
-		obj->texture[1].SetTexture("Snow_004_COLOR.jpg", 0.3f);
+		obj->transform.Scale(vec3(0.1f));
+		obj->texture[0].SetTexture("Grass.png", 1.f);
 		entity_manager.AddEntity(obj);
-	}*/
+	}
 	
 
 	cLowpassFilter& filter = cLowpassFilter::Instance();
@@ -211,19 +211,19 @@ void cApplication::Run()
 			Camera::main_camera->Up
 		);
 
-		//renderer.RenderShadowmapToFBO(&albedoFBO, width, height);
-
-		renderer.RenderObjectsToFBO(&second_passFBO, width, height, p, v, dt);
-		renderer.RenderSkybox(width, height, p, v, dt);
-
 		light->position = vec4(origin + Camera::main_camera->Eye, 1.0f);
 		vec4 homogenous = (p * v * mat4(1.0f)) * light->position;
 		vec3 cube = vec3(homogenous.x / homogenous.w, homogenous.y / homogenous.w, homogenous.z / homogenous.w);
 		renderer.screenPos = vec2(cube);
 
+		//renderer.RenderShadowmapToFBO(&albedoFBO, width, height);
 
-		renderer.RenderQuadToFBO(finalFBO, second_passFBO);
-		renderer.RenderQuadToScreen(finalFBO);
+		renderer.RenderObjectsToFBO(&albedoFBO, width, height, p, v, dt, true);
+		renderer.RenderObjectsToFBO(&second_passFBO, width, height, p, v, dt, false);
+		renderer.RenderSkybox(width, height, p, v, dt);
+
+		renderer.RenderLightingToFBO(finalFBO, second_passFBO, albedoFBO.depthTexture_ID);
+		renderer.RenderPostProcessingToScreen(finalFBO, albedoFBO.depthTexture_ID);
 
 		debug_renderer.RenderDebugObjects(v, p, dt);
 

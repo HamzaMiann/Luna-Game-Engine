@@ -30,11 +30,13 @@ uniform sampler2D blendMap;
 uniform bool useBlendMap;
 uniform float blendTiling;
 
+uniform bool isShadowMap;
 uniform bool isUnique;
 
 // Globals
 in float fiTime;
 in float fisWater;
+in float depth;
 uniform vec2 iResolution;
 
 
@@ -63,7 +65,6 @@ float noise (in vec2 st);
 void main()  
 {
 	
-
 	unlitColour = vec4(0.0);
 	bloomColour = vec4(0.0);
 	depthColour = vec4(vec3(distance(fVertWorldLocation.xyz, eyeLocation.xyz) / 1000.0), 1.0);
@@ -128,6 +129,12 @@ void main()
 	pixelColour.rgb = mix(pixelColour.rgb, refractiveColour.rgb, refractivity);
 
 	pixelColour.a = 1.0;
+
+	if (isShadowMap)
+	{
+		pixelColour.rgb = vec3(depth);
+		pixelColour.a = 1.0;
+	}
 
 	return;
 

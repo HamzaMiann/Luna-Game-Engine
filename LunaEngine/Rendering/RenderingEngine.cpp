@@ -17,27 +17,29 @@
 #include <Misc/cLowpassFilter.h>
 
 cTexture worleyNoise;
-cTexture worleyNoise2;
 cTexture perlinNoise;
 cTexture lens;
 cTexture blendMap;
-cWorleyTexture* worleyTexture;
-float cloudDensityFactor = 1.f;
-float cloudDensityCutoff = 0.5f;
-float cloudLightScattering = 2.f;
-float bloomScale = 0.3f;
 
-safe_promise<cWorleyTexture*>* promise;
+
+#define DEBUG_SETTING true
 
 RenderingEngine::RenderingEngine()
 {
-	bloom_enabled = true;
-	DOF_enabled = true;
-	volumetric_enabled = true;
-	clouds_enabled = true;
-	clouds_shadows_enabled = true;
-	vignette_enabled = true;
-	lens_dirt_enabled = true;
+	SetProperty("bloomEnabled", DEBUG_SETTING);
+	SetProperty("DOFEnabled", DEBUG_SETTING);
+	SetProperty("volumetricEnabled", DEBUG_SETTING);
+	SetProperty("cloudsEnabled", DEBUG_SETTING);
+	SetProperty("cloudShadowsEnabled", DEBUG_SETTING);
+	SetProperty("vignetteEnabled", DEBUG_SETTING);
+	SetProperty("lensDirtEnabled", DEBUG_SETTING);
+
+	SetProperty("cloudDensityFactor", 1.f);
+	SetProperty("cloudDensityCutoff", 0.5f);
+	SetProperty("cloudLightScattering", 2.f);
+	SetProperty("bloomScale", 0.3f);
+
+	SetProperty("switchColour", true);
 }
 
 void RenderingEngine::Init()
@@ -74,13 +76,12 @@ void RenderingEngine::Init()
 	blendMap.SetTexture("WATER_BUMP.png", 1.f);
 
 
-	if (clouds_enabled)
+	if (GetBoolProperty("cloudsEnabled"))
 	{
 		sTextureData tex;
 		cBasicTextureManager::Instance()->LoadWorleyFromFile("assets/textures/clouds256.matrix", tex);
 		cBasicTextureManager::Instance()->Create3DTexture("worley", true, &tex.data[0], tex.width, tex.height, tex.width);
 		worleyNoise.SetTexture("worley");
-		worleyNoise2.SetTexture("worley");
 
 		/*worleyTexture = cWorleyTexture::Generate(32u, 3u, 20u, 45u);
 		size_t width, height;
@@ -114,6 +115,21 @@ void RenderingEngine::Init()
 
 RenderingEngine::~RenderingEngine() {}
 
+
+bool RenderingEngine::GetBoolProperty(std::string name)
+{
+	auto it = boolSettings.find(name);
+	if (it == boolSettings.end()) return false;
+	return it->second;
+}
+
+float RenderingEngine::GetFloatProperty(std::string name)
+{
+	auto it = floatSettings.find(name);
+	if (it == floatSettings.end()) return 0.f;
+	return it->second;
+}
+
 void RenderingEngine::Reset()
 {
 	//pass_id = 1;
@@ -134,24 +150,29 @@ void RenderingEngine::Reset()
 
 	if (Input::GetKey(GLFW_KEY_RIGHT_BRACKET))
 	{
-		cloudDensityFactor += 0.1f;
+		floatSettings["cloudDensityFactor"] += 0.1f;
 	}
 	if (Input::GetKey(GLFW_KEY_LEFT_BRACKET))
 	{
-		cloudDensityFactor -= 0.1f;
-		if (cloudDensityFactor < 0.f)
-			cloudDensityFactor = 0.f;
+		floatSettings["cloudDensityFactor"] -= 0.1f;
+		if (floatSettings["cloudDensityFactor"] < 0.f)
+			floatSettings["cloudDensityFactor"] = 0.f;
 	}
 
 	if (Input::GetKey(GLFW_KEY_EQUAL))
 	{
-		cloudDensityCutoff += 0.01f;
+		floatSettings["cloudDensityCutoff"] += 0.01f;
 	}
 	if (Input::GetKey(GLFW_KEY_MINUS))
 	{
-		cloudDensityCutoff -= 0.01f;
-		if (cloudDensityCutoff < 0.f)
-			cloudDensityCutoff = 0.f;
+		floatSettings["cloudDensityCutoff"] -= 0.01f;
+		if (floatSettings["cloudDensityCutoff"] < 0.f)
+			floatSettings["cloudDensityCutoff"] = 0.f;
+	}
+
+	if (Input::KeyDown(GLFW_KEY_0))
+	{
+		boolSettings["switchColour"] = !boolSettings["switchColour"];
 	}
 
 	/*if (Input::GetKey(GLFW_KEY_UP))
@@ -459,7 +480,7 @@ void RenderingEngine::DrawOctree(cGameObject* obj, octree::octree_node* node, cG
 
 }
 
-void RenderingEngine::RenderGO(cGameObject& object, float width, float height, mat4& p, mat4& v, int& lastShader)
+void RenderingEngine::RenderGO(cGameObject& object, float width, float height, const mat4& p, const mat4& v, int& lastShader, bool shadow)
 {
 	for (iObject* child : object.Children)
 	{
@@ -486,6 +507,15 @@ void RenderingEngine::RenderGO(cGameObject& object, float width, float height, m
 
 		shader.SetMat4("matProj", p);
 		shader.SetMat4("matView", v);
+
+		if (shadow)
+		{
+			shader.SetBool("isShadowMap", true);
+		}
+		else
+		{
+			shader.SetBool("isShadowMap", false);
+		}
 	}
 
 	nPhysics::iClothComponent* cloth = object.GetComponent<nPhysics::iClothComponent>();
@@ -517,16 +547,17 @@ void RenderingEngine::RenderGO(cGameObject& object, float width, float height, m
 		this->DrawObject(object, v, p);
 }
 
-void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt)
+void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, mat4 p, mat4 v, float dt, bool shadow)
 {
 	// Draw to the frame buffer
 	fbo->use();
+	fbo->clear_all();
 
 	// Clear both the colour buffer (what we see) and the 
 		//  depth (or z) buffer.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glDisable(GL_BLEND);      // Enable blend or "alpha" transparency
+	glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
 	//glDisable( GL_BLEND );
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -536,6 +567,18 @@ void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float hei
 	int lastShader = -1;
 
 	auto& objects = cEntityManager::Instance().GetEntities();
+
+	if (shadow)
+	{
+		mat4 depthViewMatrix = glm::lookAt(
+			shadowLightPosition,
+			//vec3(cLightManager::Instance()->Lights[0]->position),
+			vec3(0.f),
+			vec3(0, 1, 0)
+			);
+		p = depthProjectionMatrix;
+		v = depthViewMatrix;
+	}
 
 	// Loop to draw everything in the scene
 	for (int index = 0; index != objects.size(); index++)
@@ -559,7 +602,7 @@ void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float hei
 
 		cGameObject& object = *objects[index];
 
-		this->RenderGO(object, width, height, p, v, lastShader);
+		this->RenderGO(object, width, height, p, v, lastShader, shadow);
 
 
 	}//for (int index...
@@ -585,7 +628,8 @@ void RenderingEngine::RenderShadowmapToFBO(cSimpleFBO* fbo, float width, float h
 	mat4 depthProjectionMatrix = glm::ortho<float>(-100.f, 100.f, -100.f, 100.f, -1000.f, 1000.f);
 	mat4 depthViewMatrix = glm::lookAt(
 			vec3(cLightManager::Instance()->Lights[0]->position),
-			Camera::main_camera->Target,
+			vec3(0.f),
+			//Camera::main_camera->Target,
 			vec3(0, 1, 0)
 		);
 	//mat4 depthModelMatrix = mat4(1.0);
@@ -619,7 +663,7 @@ void RenderingEngine::RenderSkybox(float width, float height, mat4 p, mat4 v, fl
 	this->DrawObject(*objPtr, v, p);
 }
 
-void RenderingEngine::RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
+void RenderingEngine::RenderLightingToFBO(cFBO& fbo, cFBO& previousFBO, unsigned int shadowTextureID)
 {
 	float width = previousFBO.width;
 	float height = previousFBO.height;
@@ -645,24 +689,52 @@ void RenderingEngine::RenderQuadToFBO(cFBO& fbo, cFBO& previousFBO)
 
 	shader.SetTexture3D(worleyNoise, "worleyTexture", 6);				// WORLEY NOISE TEXTURE
 	shader.SetTexture(perlinNoise, "perlinTexture", 7);					// PERLIN NOISE TEXTURE
+	shader.SetTexture(shadowTextureID, "shadowTexture", 8);				// SHADOWMAP TEXTURE
 
-	shader.SetFloat("cloudDensityFactor", cloudDensityFactor);
-	shader.SetFloat("cloudDensityCutoff", cloudDensityCutoff);
-	shader.SetFloat("cloudLightScattering", cloudLightScattering);
+	for (auto prop : boolSettings)
+	{
+		shader.SetBool(prop.first, prop.second);
+	}
+
+	for (auto prop : floatSettings)
+	{
+		shader.SetFloat(prop.first, prop.second);
+	}
 
 	// 4. Draw a single object (a triangle or quad)
 	shader.SetBool("isFinalPass", GL_FALSE);
 	shader.SetVec2("iResolution", vec2(width, height));
 
+
 	mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
 	pass_id = 2;
+
+	{
+		mat4 depthViewMatrix = glm::lookAt(
+			shadowLightPosition,
+			//vec3(cLightManager::Instance()->Lights[0]->position),
+			vec3(0.f),
+			//Camera::main_camera->Target,
+			vec3(0, 1, 0)
+			);
+		mat4 mvp = depthProjectionMatrix * depthViewMatrix;
+		/*glm::mat4 biasMatrix(
+			0.5, 0.0, 0.0, 0.0,
+			0.0, 0.5, 0.0, 0.0,
+			0.0, 0.0, 0.5, 0.0,
+			0.5, 0.5, 0.5, 1.0
+			);*/
+		//glm::mat4 depthBiasMVP = mvp;
+		//glm::mat4 depthBiasMVP = biasMatrix * mvp;
+		shader.SetMat4("shadowMVP", mvp);
+	}
 
 	shader.SetMat4("matProj", p);
 
 	this->DrawObject(quad, mat4(1.f), p);
 }
 
-void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
+void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned int shadowTextureID)
 {
 	// LAST RENDER PASS
 
@@ -689,19 +761,30 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	shader.SetTexture(noise, "textSamp04", 4);							// NOISE TEXTURE
 	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp05", 5);	// REFLECTIVE SURFACES TEXTURE
 
-	shader.SetTexture(lens, "lensTexture", 8);					// LENS NOISE TEXTURE
+	shader.SetTexture(lens, "lensTexture", 8);							// LENS NOISE TEXTURE
+	shader.SetTexture(shadowTextureID, "shadowTexture", 9);				// SHADOWMAP TEXTURE
 
-	shader.SetFloat("cloudDensityFactor", cloudDensityFactor);
+	/*shader.SetFloat("cloudDensityFactor", cloudDensityFactor);
 	shader.SetFloat("cloudDensityCutoff", cloudDensityCutoff);
 	shader.SetFloat("cloudLightScattering", cloudLightScattering);
-	shader.SetFloat("bloomScale", bloomScale);
+	shader.SetFloat("bloomScale", bloomScale);*/
 
 	shader.SetBool("isFinalPass", GL_TRUE);
 
 	mat4 p = glm::ortho(-1.f, 1.f, -1.f, 1.f, -0.f, 1.f);
 	shader.SetMat4("matProj", p);
 
-	if (bloom_enabled)	shader.SetBool("bloomEnabled", GL_TRUE);
+	for (auto prop : boolSettings)
+	{
+		shader.SetBool(prop.first, prop.second);
+	}
+
+	for (auto prop : floatSettings)
+	{
+		shader.SetFloat(prop.first, prop.second);
+	}
+
+	/*if (bloom_enabled)	shader.SetBool("bloomEnabled", GL_TRUE);
 	else				shader.SetBool("bloomEnabled", GL_FALSE);
 
 	if (DOF_enabled)	shader.SetBool("DOFEnabled", GL_TRUE);
@@ -720,7 +803,7 @@ void RenderingEngine::RenderQuadToScreen(cFBO& previousFBO)
 	else					shader.SetBool("vignetteEnabled", GL_FALSE);
 
 	if (lens_dirt_enabled)	shader.SetBool("lensDirtEnabled", GL_TRUE);
-	else					shader.SetBool("lensDirtEnabled", GL_FALSE);
+	else					shader.SetBool("lensDirtEnabled", GL_FALSE);*/
 
 
 	this->DrawObject(quad, mat4(1.f), p);

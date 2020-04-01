@@ -697,5 +697,14 @@
     <Image Include="assets\resourceMap2.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="assets\resourceMap3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\resourceMap4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\resourceMap5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -35,7 +35,7 @@ uniform sampler2D textSamp05;	// REFLECTIVE
 uniform sampler3D worleyTexture;
 uniform sampler2D perlinTexture;
 uniform sampler2D lensTexture;
-uniform sampler2D shadowTexture;
+uniform sampler2DShadow shadowTexture;
 
 uniform samplerCube skyBox;
 
@@ -52,6 +52,7 @@ in float fisWater;
 uniform vec2 iResolution;
 
 uniform bool isFinalPass;
+uniform float blendRatio;
 
 
 
@@ -425,10 +426,13 @@ float RayTraceShadows(Ray ray)
 	return ratio;
 }
 
+uniform bool switchColour;
+
 void main()
 {
 	vec2 uv = fUVx2.st;
 	unlitColour = vec4(0.0);
+	pixelColour.a = 1.;
 
 	if (isFinalPass)
 	{
@@ -482,17 +486,43 @@ void main()
 			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 1.2);
 		}
 
+		float disp = smoothstep(0., 1., 1. - distance(vec2(0.5), fUVx2.st) * 10. * (1. - blendRatio));
+		pixelColour.rgb = mix(pixelColour.rgb, vec3(texture(textSamp05, uv).r), disp * blendRatio);
 
-		// cinematic black bars
-		if (abs(uv.y - 0.5) > 0.4)
-		{
-			pixelColour.rgb = vec3(0.);
+
+		if (false) {
+			// cinematic black bars
+			if (abs(uv.y - 0.5) > 0.4)
+			{
+				pixelColour.rgb = vec3(0.);
+			}
 		}
 
 		pixelColour.a = 1.0;
 
 		return;
 	}
+
+	vec3 vertexWorldPos = texture( textSamp02, uv ).rgb;
+	vec4 glposition = shadowMVP * vec4(vertexWorldPos, 1.0) * 0.5 + 0.5;
+	vec3 cube = vec3(glposition.x / glposition.w, glposition.y / glposition.w, glposition.z / glposition.w);
+	if (glposition.z > 1.)
+	{
+		glposition.z = 1.;
+	}
+//	glposition.xy = clamp(glposition.xy, 0., 1.);
+//	if (switchColour) {
+//		pixelColour.rgb = vec3(glposition.z);
+//	}
+//	else
+//	{
+//		pixelColour.rgb = texture(shadowTexture, glposition.xy).rgb;
+//	}
+	//pixelColour.rgb = vec3(glposition.z + 0.45 > texture(shadowTexture, glposition.xy).r);
+//	pixelColour.rgb = texture(shadowTexture, uv).rgb;
+	//pixelColour.rgb = texture(shadowTexture, uv).rgb;
+	//return;
+	
 
 	vec3 col = NoEffect().rgb;
 	vec3 normal = texture( textSamp01, uv ).rgb - 1.;
@@ -601,7 +631,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 		if ( intLightType == DIRECTIONAL_POSITIONED_LIGHT )
 		{
 			vec3 lightContrib = theLights[index].diffuse.rgb;
-			vec3 dir = eyeLocation.xyz - theLights[index].position.xyz;
+			vec3 dir = normalize(eyeLocation.xyz - theLights[index].position.xyz);
 			// Get the dot product of the light and normalize
 			float dotProduct = dot( -dir,  
 									   normalize(norm.xyz) );	// -1 to 1
@@ -621,8 +651,21 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 					lightContrib *= RayTraceShadows(ray);
 				}
 			}
+
+			float shadowFactor = 1.;
+			if (true) {
+				vec4 glposition = (shadowMVP * vec4(vertexWorldPos, 1.0)) * 0.5 + 0.5;
+				if (glposition.z > 1.)
+				{
+					glposition.z = 1.;
+				}
+				glposition.xy = clamp(glposition.xy, 0., 1.);
+				//vec3 cube = vec3(glposition.x / glposition.w, glposition.y / glposition.w, glposition.z / glposition.w);
+				float bias = 0.0005;
+				shadowFactor = shadowFactor * min(texture( shadowTexture, vec3(glposition.xy, glposition.z - 0.005)) + 0.5, 1.0);
+			}
 			
-			finalObjectColour.rgb += (vertexMaterialColour.rgb * theLights[index].diffuse.rgb * lightContrib)  * theLights[index].atten.r; 
+			finalObjectColour.rgb += (vertexMaterialColour.rgb * theLights[index].diffuse.rgb * lightContrib)  * theLights[index].atten.r * shadowFactor; 
 			continue;
 		}
 		

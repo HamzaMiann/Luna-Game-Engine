@@ -94,7 +94,9 @@
         <Model file="Terrain_XYZ_N_UV.ply" friendlyName="terrain" shader="basic"/>
         <Model file="statue.obj" friendlyName="statue" shader="basic"/>
         <Model file="Tree.fbx" friendlyName="tree" shader="basic"/>
+        <!--<Model file="untitled.fbx" friendlyName="gun" shader="basic"/>-->
         <Model file="Ottoman Mauser.obj" friendlyName="gun" shader="basic"/>
+        <Model file="Low Grass.fbx" friendlyName="grass" shader="basic"/>
     
 	</Models>
 
@@ -110,6 +112,10 @@
       <Animation file="Mutant Swiping.fbx" friendlyName="attack"/>
       <Animation file="Mutant Run Jump.fbx" friendlyName="run-jump"/>
     </AnimationProfile>
+
+	  <AnimationProfile profile="gun" mesh="untitled.fbx">
+		  <Animation file="untitled.fbx" friendlyName="idle"/>
+	  </AnimationProfile>
   </Animations>
 
 	<Lights>
@@ -118,7 +124,7 @@
           <Position x="0.000000" y="30" z="100.000000" w="1.000000"/>
           <Diffuse x="0.700000" y="0.700000" z="0.800000" w="1.000000"/>
           <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
-          <Atten x="0.0300000" y="0.0000000100" z="0.000000020000" w="1000.000000"/>
+          <Atten x="3.000000" y="0.0000000100" z="0.000000020000" w="1000.000000"/>
           <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
           <Param1 x="3.000000" y="1.000000" z="1.000000" w="1.000000"/>
           <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
@@ -283,8 +289,8 @@
 
 		    <FPSBehaviour>
                 <Forward x="0" y="0" z="-1"/>
-                <Offset x="0.3" y="5.0" z="0"/>
-                <CameraDistance>0</CameraDistance>
+                <Offset x="0.7" y="5.0" z="0"/>
+                <CameraDistance>2</CameraDistance>
                 <Speed>5.0</Speed>
                 <MouseSpeed>0.15</MouseSpeed>
             </FPSBehaviour>
@@ -306,6 +312,10 @@
 			<Rotation x="0" y="0" z="0.0"/>
 			<Scale>5.0</Scale>
 			<Texture ratio="1.0">bark_0021.jpg</Texture>
+			<Components>
+				<!--<AnimationController profile="gun" default="idle"/>-->
+
+			</Components>
 		</GameObject>
 		
 
