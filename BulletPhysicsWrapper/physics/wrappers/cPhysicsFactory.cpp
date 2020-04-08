@@ -3,6 +3,7 @@
 #include "cSphereComponent.h"
 #include "cPlaneComponent.h"
 #include "cCubeComponent.h"
+#include "cCapsuleComponent.h"
 
 namespace nPhysics
 {
@@ -32,9 +33,14 @@ namespace nPhysics
 		return nullptr;
 	}
 
-	iCapsuleComponent* cPhysicsFactory::CreateCapsule(iObject* parent, const sCapsuleDef& def)
+	iPhysMeshComponent* cPhysicsFactory::CreateMesh(iObject* parent, const sCapsuleDef& def)
 	{
 		return nullptr;
+	}
+
+	iCapsuleComponent* cPhysicsFactory::CreateCapsule(iObject* parent, const sCapsuleDef& def)
+	{
+		return new cCapsuleComponent(parent, def);
 	}
 
 	iEmptyComponent* cPhysicsFactory::CreateEmpty(iObject* parent)

@@ -711,9 +711,6 @@
     <ClInclude Include="physics\wrappers\cBulletWrapperComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="physics\wrappers\cDebugRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="physics\wrappers\cPhysicsFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -733,6 +730,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="physics\wrappers\cPhysicsDebugDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\wrappers\cCapsuleComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1190,9 +1190,6 @@
     <ClCompile Include="physics\bullet\LinearMath\btVector3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="physics\wrappers\cDebugRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="physics\wrappers\cPhysicsFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1209,6 +1206,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="physics\wrappers\cPhysicsDebugDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\wrappers\cCapsuleComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

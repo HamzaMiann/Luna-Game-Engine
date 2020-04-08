@@ -80,13 +80,15 @@ public:
 
 
 	// Inherited via iPhysicsDebugRenderer
-	virtual void DrawSphere(const vec3& center, float radius) override;
+	virtual void DrawSphere(const vec3& center, float radius, const vec3& colour) override;
 
-	virtual void DrawCube(const vec3& center, const vec3& scale) override;
+	virtual void DrawSphere(const mat4& transform, float radius, const vec3& colour) override;
 
-	virtual void DrawLine(const vec3& from, const vec3& to) override;
+	virtual void DrawCube(const vec3& center, const vec3& scale, const vec3& colour) override;
 
-	virtual void DrawTriangle(const vec3& a, const vec3& b, const vec3& c) override;
+	virtual void DrawLine(const vec3& from, const vec3& to, const vec3& colour) override;
+
+	virtual void DrawTriangle(const vec3& a, const vec3& b, const vec3& c, const vec3& colour) override;
 
 	void DrawDebugObjects();
 

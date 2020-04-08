@@ -7,7 +7,6 @@ namespace nPhysics
 	struct sSphereDef : public sComponentDef
 	{
 		float Radius;
-		glm::vec3 Offset;
 	};
 	class iSphereComponent : public iPhysicsComponent
 	{

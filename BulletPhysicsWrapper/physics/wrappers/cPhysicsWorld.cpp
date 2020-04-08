@@ -66,7 +66,7 @@ namespace nPhysics {
 			i->UpdateTransform();
 		}
 
-		if (debugDrawer)
+		if (mDebugMode)
 		{
 			mDynamicsWorld->debugDrawWorld();
 		}

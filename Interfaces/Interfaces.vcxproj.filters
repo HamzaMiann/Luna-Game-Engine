@@ -75,5 +75,8 @@
     <ClInclude Include="interfaces\physics\iPhysicsDebugRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="interfaces\physics\iPhysMeshComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

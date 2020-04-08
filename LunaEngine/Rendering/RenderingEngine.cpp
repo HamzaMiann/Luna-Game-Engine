@@ -759,6 +759,7 @@ void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned i
 	shader.SetTexture(previousFBO.bloomTexture_ID, "textSamp03", 3);	// BLOOM CUTOFF TEXTURE
 	shader.SetTexture(noise, "textSamp04", 4);							// NOISE TEXTURE
 	shader.SetTexture(previousFBO.unlitTexture_ID, "textSamp05", 5);	// REFLECTIVE SURFACES TEXTURE
+	shader.SetTexture3D(worleyNoise, "worleyTexture", 6);				// WORLEY NOISE TEXTURE
 
 	shader.SetTexture(lens, "lensTexture", 8);							// LENS NOISE TEXTURE
 	shader.SetTexture(shadowTextureID, "perlinTexture", 9);				// SHADOWMAP TEXTURE
@@ -783,16 +784,16 @@ void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned i
 	this->DrawObject(quad);
 }
 
-void RenderingEngine::DrawSphere(const vec3& center, float radius)
+void RenderingEngine::DrawSphere(const vec3& center, float radius, const vec3& colour)
 {
-	debugRenderQueue.push_back([this, center, radius](Shader* shader)
+	debugRenderQueue.push_back([this, center, radius, colour](Shader* shader)
 		{
 			sTransform tform;
 			tform.Position(center);
 			tform.Scale(vec3(radius));
 			
 			shader->SetMat4("matModel", tform.ModelMatrix());
-			shader->SetVec3("fColour", vec3(0.f, 1.f, 0.f));
+			shader->SetVec3("fColour", colour);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 			sModelDrawInfo drawInfo;
@@ -811,16 +812,42 @@ void RenderingEngine::DrawSphere(const vec3& center, float radius)
 	);
 }
 
-void RenderingEngine::DrawCube(const vec3& center, const vec3& scale)
+void RenderingEngine::DrawSphere(const mat4& transform, float radius, const vec3& colour)
 {
-	debugRenderQueue.push_back([this, center, scale](Shader* shader)
+	debugRenderQueue.push_back([this, transform, radius, colour](Shader* shader)
+		{
+			mat4 model = transform * glm::scale(mat4(1.0f), vec3(radius));
+
+			shader->SetMat4("matModel", model);
+			shader->SetVec3("fColour", colour);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+			sModelDrawInfo drawInfo;
+			if (cVAOManager::Instance().FindDrawInfoByModelName("sphere", drawInfo))
+			{
+				glBindVertexArray(drawInfo.VAO_ID);
+				glDrawElements(
+					GL_TRIANGLES,
+					drawInfo.numberOfIndices,
+					GL_UNSIGNED_INT,
+					0
+					);
+				glBindVertexArray(0);
+			}
+		}
+	);
+}
+
+void RenderingEngine::DrawCube(const vec3& center, const vec3& scale, const vec3& colour)
+{
+	debugRenderQueue.push_back([this, center, scale, colour](Shader* shader)
 		{
 			sTransform tform;
 			tform.Position(center);
 			tform.Scale(scale);
 			
 			shader->SetMat4("matModel", tform.ModelMatrix());
-			shader->SetVec3("fColour", vec3(1.f, 0.f, 0.f));
+			shader->SetVec3("fColour", colour);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 			sModelDrawInfo drawInfo;
@@ -839,14 +866,14 @@ void RenderingEngine::DrawCube(const vec3& center, const vec3& scale)
 	);
 }
 
-void RenderingEngine::DrawLine(const vec3& from, const vec3& to)
+void RenderingEngine::DrawLine(const vec3& from, const vec3& to, const vec3& colour)
 {
-	cDebugRenderer::Instance().addLine(from, to, vec3(1.f, 1.f, 0.f), mDt);
+	cDebugRenderer::Instance().addLine(from, to, colour, mDt);
 }
 
-void RenderingEngine::DrawTriangle(const vec3& a, const vec3& b, const vec3& c)
+void RenderingEngine::DrawTriangle(const vec3& a, const vec3& b, const vec3& c, const vec3& colour)
 {
-	cDebugRenderer::Instance().addTriangle(a, b, c, vec3(0.f, 1.f, 1.f), mDt);
+	cDebugRenderer::Instance().addTriangle(a, b, c, colour, mDt);
 }
 
 void RenderingEngine::DrawDebugObjects()

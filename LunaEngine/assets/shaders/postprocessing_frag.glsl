@@ -488,6 +488,7 @@ void main()
 
 		float disp = smoothstep(0., 1., 1. - distance(vec2(0.5), fUVx2.st) * 10. * (1. - blendRatio));
 		pixelColour.rgb = mix(pixelColour.rgb, vec3(texture(perlinTexture, uv).r), disp * blendRatio);
+		//pixelColour.rgb = mix(pixelColour.rgb, vec3(texture(worleyTexture, (eyeLocation.xyz / 10.) + vec3(uv, 1.0)).rgb), disp * blendRatio);
 
 
 		if (false) {
@@ -497,6 +498,7 @@ void main()
 				pixelColour.rgb = vec3(0.);
 			}
 		}
+
 
 		pixelColour.a = 1.0;
 
@@ -554,6 +556,8 @@ void main()
 		pixelColour.rgb = col;
 	}
 
+	
+
 	// clouds effect
 	if (cloudsEnabled) {
 		Ray ray;
@@ -572,9 +576,12 @@ void main()
 	positionColour.rgb = pos;				// POSITION TEXTURE, just copy it to the next buffer
 	positionColour.a = 1.;
 
+	
+
 	// volumetric lighting buffer calculation
 	//normalColour = vec4(distance(pos, eyeLocation.xyz)) / 1000.0;	// CUSTOM COLOURED DEPTH BUFFER FOR VOLUMETRIC LIGHTING
 	//normalColour.rgb = clamp(normalColour.rgb, vec3(0.), vec3(1.));
+	//normalColour.rgb = vec3(distance(pos, eyeLocation.xyz)) / 1000.0;
 	normalColour.r *= theLights[0].diffuse.r;
 	normalColour.g *= theLights[0].diffuse.g;
 	normalColour.b *= theLights[0].diffuse.b;

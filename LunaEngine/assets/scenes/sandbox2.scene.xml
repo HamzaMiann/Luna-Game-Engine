@@ -330,6 +330,22 @@
 			<Texture ratio="1.0">bark_0021.jpg</Texture>
 			<Texture ratio="0.7" tiling="100.0">Snow_004_COLOR.jpg</Texture>
 			<BlendMap tiling="0.03">perlin.png</BlendMap>
+			<Components>
+				<!--<CubeBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="10.000000" z="0.000000"/>
+					<Scale x="1" y="10" z="1"/>
+				</CubeBody>-->
+				<CapsuleBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="10.000000" z="0.000000"/>
+					<Scale x="1" y="10"/>
+				</CapsuleBody>
+			</Components>
 		</GameObject>
 
 		<GameObject mesh="tree" tag="tree" shader="basic">
@@ -339,6 +355,15 @@
 			<Texture ratio="1.0">bark_0021.jpg</Texture>
 			<Texture ratio="0.7" tiling="100.0">Snow_004_COLOR.jpg</Texture>
 			<BlendMap tiling="0.03">perlin.png</BlendMap>
+			<Components>
+				<CubeBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="10.000000" z="0.000000"/>
+					<Scale x="1" y="10" z="1"/>
+				</CubeBody>
+			</Components>
 		</GameObject>
 
 		<GameObject mesh="tree" tag="tree" shader="basic">
@@ -348,6 +373,15 @@
 			<Texture ratio="1.0">bark_0021.jpg</Texture>
 			<Texture ratio="0.7" tiling="100.0">Snow_004_COLOR.jpg</Texture>
 			<BlendMap tiling="0.03">perlin.png</BlendMap>
+			<Components>
+				<CubeBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="10.000000" z="0.000000"/>
+					<Scale x="1" y="10" z="1"/>
+				</CubeBody>
+			</Components>
 		</GameObject>
 
 		<GameObject mesh="tree" tag="tree" shader="basic">
@@ -357,6 +391,15 @@
 			<Texture ratio="1.0">bark_0021.jpg</Texture>
 			<Texture ratio="0.7" tiling="100.0">Snow_004_COLOR.jpg</Texture>
 			<BlendMap tiling="0.03">perlin.png</BlendMap>
+			<Components>
+				<CubeBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="10.000000" z="0.000000"/>
+					<Scale x="1" y="10" z="1"/>
+				</CubeBody>
+			</Components>
 		</GameObject>
 
         <GameObject mesh="statue" tag="statue" shader="basic">
@@ -366,6 +409,16 @@
             <Texture ratio="1.0">fx3_Panels_Color.png</Texture>
 			<Texture ratio="0.6">Snow_004_COLOR.jpg</Texture>
 			<BlendMap tiling="1.0">perlin.png</BlendMap>
+
+			<Components>
+				<CubeBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="-1.000000" y="0.000000" z="0.000000"/>
+					<Scale x="10" y="30" z="7"/>
+				</CubeBody>
+			</Components>
         </GameObject>
 		
 	    <GameObject mesh="house" tag="house" shader="basic">
@@ -375,6 +428,16 @@
 			<Texture ratio="1.0">home_hatka_Base_Color.png</Texture>
 			<Texture ratio="0.7">Snow_004_COLOR.jpg</Texture>
 			<BlendMap tiling="1.0">perlin.png</BlendMap>
+
+			<Components>
+				<CubeBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="0.000000" z="0.000000"/>
+					<Scale x="10" y="12" z="12"/>
+				</CubeBody>
+			</Components>
         </GameObject>
 		
 	    <GameObject mesh="terrain" tag="terrain" shader="basic">

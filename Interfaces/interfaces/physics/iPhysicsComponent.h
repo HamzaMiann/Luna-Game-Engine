@@ -11,6 +11,7 @@ namespace nPhysics
 		glm::vec3 velocity;
 		float gravity_factor;
 		float mass;
+		glm::vec3 Offset;
 	};
 	class iPhysicsComponent : public iComponent
 	{

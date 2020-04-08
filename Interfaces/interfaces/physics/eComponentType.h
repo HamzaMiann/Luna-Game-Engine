@@ -9,6 +9,7 @@ namespace nPhysics
 		plane,
 		cube,
 		cloth,
-		capsule
+		capsule,
+		mesh
 	};
 }

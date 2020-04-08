@@ -158,6 +158,8 @@ void cApplication::Run()
 
 	g_PhysicsWorld->SetDebugRenderer(&renderer);
 
+	float maxTime = 1.f;
+
 	while (!glfwWindowShouldClose(global::window))
 	{
 		renderer.pass_id = 1;
@@ -170,7 +172,6 @@ void cApplication::Run()
 
 		int newWidth, newHeight;
 		glfwGetFramebufferSize(global::window, &newWidth, &newHeight);
-		float ratio = width / (float)height;
 
 		if (newWidth != width || newHeight != height)
 		{
@@ -181,7 +182,7 @@ void cApplication::Run()
 
 		width = newWidth;
 		height = newHeight;
-		glViewport(0, 0, width, height);
+		//glViewport(0, 0, width, height);
 
 		renderer.Reset();
 
@@ -195,18 +196,26 @@ void cApplication::Run()
 
 		renderer.mDt = dt;
 
+		if (Input::KeyDown(GLFW_KEY_TAB))
+		{
+			g_PhysicsWorld->ToggleDebugMode();
+		}
+
+		if (maxTime > 0.f)
+		{
+			maxTime -= dt;
+			renderer.RenderObjectsToFBO(&albedoFBO, width, height, dt, true);
+		}
+
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
 
 		// Move skybox relative to the camera
 		renderer.skyBox.transform.pos = Camera::main_camera->Eye;
 
-
-		renderer.RenderObjectsToFBO(&albedoFBO, width, height, dt, true);
-
-
 		mat4 p, v;
 
+		float ratio = width / (float)height;
 		// Projection matrix
 		p = glm::perspective(	0.6f,			// FOV
 								ratio,			// Aspect ratio

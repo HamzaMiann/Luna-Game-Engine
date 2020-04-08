@@ -21,7 +21,6 @@ std::string trim(std::string& str)
 
 void MakeGO(xml_node<>* object_node, cGameObject* ptr);
 
-
 void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 {
 	printf("Building Game Objects...\n");
@@ -40,7 +39,111 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 
 			continue;
 		}
+	}
+}
 
+void AddPhysicsComponent(const std::string& componentName, xml_node<>* componentNode, cGameObject* ptr)
+{
+	printf("Name: %s\n", componentName.c_str());
+	if (componentName == "SphereBody")
+	{
+		nPhysics::sSphereDef def;
+		def.velocity = XML_Helper::AsVec3(componentNode->first_node("Velocity"));
+		def.mass = XML_Helper::AsFloat(componentNode->first_node("Mass"));
+		def.gravity_factor = XML_Helper::AsFloat(componentNode->first_node("GFactor"));
+		def.Offset = XML_Helper::AsVec3(componentNode->first_node("Offset"));
+		def.Radius = XML_Helper::AsFloat(componentNode->first_node("Radius"));
+
+		nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateSphere(ptr, def);
+		component->setIsRotateable(false);
+		if (componentNode->first_node("Rotateable"))
+		{
+			component->setIsRotateable(true);
+		}
+
+		ptr->AddComponent(component);
+	}
+	else if (componentName == "PlaneBody")
+	{
+		nPhysics::sPlaneDef def;
+		def.velocity = XML_Helper::AsVec3(componentNode->first_node("Velocity"));
+		def.mass = XML_Helper::AsFloat(componentNode->first_node("Mass"));
+		def.gravity_factor = XML_Helper::AsFloat(componentNode->first_node("GFactor"));
+		def.Normal = XML_Helper::AsVec3(componentNode->first_node("Normal"));
+		def.Normal = glm::normalize(def.Normal);
+		def.Constant = XML_Helper::AsFloat(componentNode->first_node("Constant"));
+		ptr->AddComponent(g_PhysicsFactory->CreatePlane(ptr, def));
+	}
+	else if (componentName == "CapsuleBody")
+	{
+		printf("stuff\n");
+		nPhysics::sCapsuleDef def;
+		def.velocity = XML_Helper::AsVec3(componentNode->first_node("Velocity"));
+		def.mass = XML_Helper::AsFloat(componentNode->first_node("Mass"));
+		def.gravity_factor = XML_Helper::AsFloat(componentNode->first_node("GFactor"));
+		def.Scale = XML_Helper::AsVec2(componentNode->first_node("Scale"));
+		def.Offset = XML_Helper::AsVec3(componentNode->first_node("Origin"));
+
+		nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateCapsule(ptr, def);
+		component->setIsRotateable(false);
+		if (componentNode->first_node("Rotateable"))
+		{
+			component->setIsRotateable(true);
+		}
+
+		ptr->AddComponent(component);
+	}
+	else if (componentName == "CubeBody")
+	{
+		nPhysics::sCubeDef def;
+		def.velocity = XML_Helper::AsVec3(componentNode->first_node("Velocity"));
+		def.mass = XML_Helper::AsFloat(componentNode->first_node("Mass"));
+		def.gravity_factor = XML_Helper::AsFloat(componentNode->first_node("GFactor"));
+		def.Scale = XML_Helper::AsVec3(componentNode->first_node("Scale"));
+		def.Offset = XML_Helper::AsVec3(componentNode->first_node("Origin"));
+
+		nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateCube(ptr, def);
+		component->setIsRotateable(false);
+		if (componentNode->first_node("Rotateable"))
+		{
+			component->setIsRotateable(true);
+		}
+
+		ptr->AddComponent(component);
+	}
+	
+}
+
+void LoadComponents(xml_node<>* property_node, cGameObject* ptr)
+{
+	for (xml_node<>* component_node = property_node->first_node(); component_node; component_node = component_node->next_sibling())
+	{
+		std::string n = component_node->name();
+		if (n == "SphereBody")
+		{
+			AddPhysicsComponent(n, component_node, ptr);
+		}
+		else if (n == "PlaneBody")
+		{
+			AddPhysicsComponent(n, component_node, ptr);
+		}
+		else if (n == "CubeBody")
+		{
+			AddPhysicsComponent(n, component_node, ptr);
+		}
+		else if (n == "ClothBody")
+		{
+			AddPhysicsComponent(n, component_node, ptr);
+		}
+		else if (n == "CapsuleBody")
+		{
+			AddPhysicsComponent(n, component_node, ptr);
+		}
+		else
+		{
+			iComponent* comp = ComponentFactory::GetComponent(n, ptr);
+			if (comp) comp->deserialize(component_node);
+		}
 	}
 }
 
@@ -74,80 +177,7 @@ void MakeGO(xml_node<>* object_node, cGameObject* ptr)
 		}
 		else if (propName == "Components")
 		{
-			for (xml_node<>* component_node = property_node->first_node(); component_node; component_node = component_node->next_sibling())
-			{
-				std::string n = component_node->name();
-				if (n == "SphereBody")
-				{
-					nPhysics::sSphereDef def;
-					def.velocity = XML_Helper::AsVec3(component_node->first_node("Velocity"));
-					def.mass = XML_Helper::AsFloat(component_node->first_node("Mass"));
-					def.gravity_factor = XML_Helper::AsFloat(component_node->first_node("GFactor"));
-					def.Offset = XML_Helper::AsVec3(component_node->first_node("Offset"));
-					def.Radius = XML_Helper::AsFloat(component_node->first_node("Radius"));
-					
-					nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateSphere(ptr, def);
-					component->setIsRotateable(false);
-					if (component_node->first_node("Rotateable"))
-					{
-						component->setIsRotateable(true);
-					}
-
-					ptr->AddComponent(component);
-				}
-				else if (n == "PlaneBody")
-				{
-					nPhysics::sPlaneDef def;
-					def.velocity = XML_Helper::AsVec3(component_node->first_node("Velocity"));
-					def.mass = XML_Helper::AsFloat(component_node->first_node("Mass"));
-					def.gravity_factor = XML_Helper::AsFloat(component_node->first_node("GFactor"));
-					def.Normal = XML_Helper::AsVec3(component_node->first_node("Normal"));
-					def.Normal = glm::normalize(def.Normal);
-					def.Constant = XML_Helper::AsFloat(component_node->first_node("Constant"));
-					ptr->AddComponent(g_PhysicsFactory->CreatePlane(ptr, def));
-				}
-				else if (n == "CubeBody")
-				{
-					nPhysics::sCubeDef def;
-					def.velocity = XML_Helper::AsVec3(component_node->first_node("Velocity"));
-					def.mass = XML_Helper::AsFloat(component_node->first_node("Mass"));
-					def.gravity_factor = XML_Helper::AsFloat(component_node->first_node("GFactor"));
-					def.Scale = XML_Helper::AsVec3(component_node->first_node("Scale"));
-					def.Origin = XML_Helper::AsVec3(component_node->first_node("Origin"));
-
-					nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateCube(ptr, def);
-					component->setIsRotateable(false);
-					if (component_node->first_node("Rotateable"))
-					{
-						component->setIsRotateable(true);
-					}
-
-					ptr->AddComponent(component);
-				}
-				else if (n == "ClothBody")
-				{
-					nPhysics::sClothDef def;
-					def.CornerA = XML_Helper::AsVec3(component_node->first_node("CornerA"));
-					def.CornerB = XML_Helper::AsVec3(component_node->first_node("CornerB"));
-					def.DownDirection = XML_Helper::AsVec3(component_node->first_node("Down"));
-					def.NodeMass = XML_Helper::AsFloat(component_node->first_node("NodeMass"));
-					def.NodeRadius = XML_Helper::AsFloat(component_node->first_node("NodeRadius"));
-					def.NumNodesAcross = (size_t)XML_Helper::AsFloat(component_node->first_node("NodesAcross"));
-					def.NumNodesDown = (size_t)XML_Helper::AsFloat(component_node->first_node("NodesDown"));
-					def.springConstant = XML_Helper::AsFloat(component_node->first_node("Constant"));
-					def.PercentOfGravityApplied = XML_Helper::AsFloat(component_node->first_node("PercentOfGravityApplied"));
-					def.windForce = XML_Helper::AsVec3(component_node->first_node("WindForce"));
-
-					nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateCloth(ptr, def);
-
-					ptr->AddComponent(component);
-				}
-				else
-				{
-					iComponent* comp = ComponentFactory::GetComponent(n, ptr);
-					if (comp) comp->deserialize(component_node);
-				}
-			}
+			LoadComponents(property_node, ptr);
 		}
 		else if (propName == "Scale")
 		{

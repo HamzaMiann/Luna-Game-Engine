@@ -9,7 +9,6 @@ namespace nPhysics
 	struct sCubeDef : public sComponentDef
 	{
 		glm::vec3 Scale;
-		glm::vec3 Origin;
 	};
 	class iCubeComponent : public iPhysicsComponent
 	{

@@ -115,7 +115,7 @@ void cFPSController::update(float dt)
 		auto hits = g_PhysicsWorld->RayCastAll(ro, rd, 300.f);
 		for (auto& hit : hits)
 		{
-			if (hit.object->parent.tag != "ground") continue;
+			if (hit.object->parent.tag == "player") continue;
 			cGameObject* obj = new cGameObject;
 			obj->transform.Position(hit.hitPoint);
 			obj->meshName = "sphere";
@@ -182,8 +182,11 @@ void cFPSController::update(float dt)
 	vec3 movement(0.f);
 
 	if (weapon) {
-		weapon->transform.Position(transform.Position());
-		weapon->transform.pos.y += 4.f;
+		vec3 pos(0.f, 4.f, 0.f);
+		pos = transform.rotation * pos + transform.Position();
+		vec3 lerp = Mathf::lerp(weapon->transform.pos, pos, dt * 10.f);
+		weapon->transform.Position(lerp);
+		//weapon->transform.pos.y += 4.f;
 		quat slerp = glm::slerp(weapon->transform.Rotation(),
 			Mathf::RotationFromTo(
 				settings.forward,

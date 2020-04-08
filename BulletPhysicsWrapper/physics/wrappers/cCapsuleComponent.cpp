@@ -1,13 +1,15 @@
-#include "cCubeComponent.h"
+#include "cCapsuleComponent.h"
 #include "cPhysicsFactory.h"
+#include "../nConvert.h"
 #include <interfaces/Behaviour/iBehaviour.h>
 
-namespace nPhysics
+namespace nPhysics 
 {
-	cCubeComponent::cCubeComponent(iObject* parent, const sCubeDef& def)
-		: iCubeComponent(parent)
+
+	cCapsuleComponent::cCapsuleComponent(iObject* parent, const sCapsuleDef& def)
+		: iCapsuleComponent(parent)
 	{
-		btCollisionShape* colShape = new btBoxShape(nConvert::ToBullet(def.Scale));
+		btCollisionShape* colShape = new btCapsuleShape(def.Scale.x, def.Scale.y);
 
 		btTransform transform;
 		transform.setIdentity();
@@ -45,7 +47,7 @@ namespace nPhysics
 		factory.GetWorld()->AddComponent(this);
 	}
 
-	cCubeComponent::~cCubeComponent()
+	cCapsuleComponent::~cCapsuleComponent()
 	{
 		cPhysicsFactory factory;
 		factory.GetWorld()->RemoveComponent(this);
@@ -57,58 +59,39 @@ namespace nPhysics
 		mBody = 0;
 	}
 
-	bool cCubeComponent::serialize(rapidxml::xml_node<>* root_node)
+	bool cCapsuleComponent::serialize(rapidxml::xml_node<>* root_node)
 	{
 		return false;
 	}
 
-	bool cCubeComponent::deserialize(rapidxml::xml_node<>* root_node)
+	bool cCapsuleComponent::deserialize(rapidxml::xml_node<>* root_node)
 	{
 		return false;
 	}
 
-	void cCubeComponent::GetTransform(glm::mat4& transformOut)
-	{
-		btTransform transform;
-		mBody->getMotionState()->getWorldTransform(transform);
-		nConvert::ToSimple(transform, transformOut);
-	}
-
-	void cCubeComponent::CollidedWith(iPhysicsComponent* other)
-	{
-		for (iComponent* component : parent.Components())
-		{
-			iBehaviour* behaviour = dynamic_cast<iBehaviour*>(component);
-			if (behaviour)
-			{
-				behaviour->OnCollide(&other->parent);
-			}
-		}
-	}
-
-	void cCubeComponent::AddForce(const glm::vec3& force)
+	void cCapsuleComponent::AddForce(const vec3& force)
 	{
 		mBody->activate(true);
 		mBody->applyCentralForce(nConvert::ToBullet(force));
 	}
 
-	void cCubeComponent::SetVelocity(const glm::vec3& velocity)
+	void cCapsuleComponent::AddVelocity(const vec3& velocity)
+	{
+		mBody->applyCentralImpulse(nConvert::ToBullet(velocity));
+	}
+
+	void cCapsuleComponent::SetVelocity(const vec3& velocity)
 	{
 		mBody->activate(true);
 		mBody->setLinearVelocity(nConvert::ToBullet(velocity));
 	}
 
-	glm::vec3 cCubeComponent::GetVelocity()
+	vec3 cCapsuleComponent::GetVelocity()
 	{
 		return nConvert::ToGLM(mBody->getLinearVelocity());
 	}
 
-	void cCubeComponent::AddVelocity(const glm::vec3& velocity)
-	{
-		mBody->applyCentralImpulse(nConvert::ToBullet(velocity));
-	}
-
-	void cCubeComponent::SetPosition(const glm::vec3& position)
+	void cCapsuleComponent::SetPosition(const glm::vec3& position)
 	{
 		btTransform tform;
 		btMotionState* state;
@@ -120,23 +103,14 @@ namespace nPhysics
 		offset = vec3(0.f);
 	}
 
-	glm::vec3 cCubeComponent::GetPosition()
+	vec3 cCapsuleComponent::GetPosition()
 	{
 		btTransform tform;
 		mBody->getMotionState()->getWorldTransform(tform);
 		return nConvert::ToGLM(tform.getOrigin()) - offset;
 	}
 
-	void cCubeComponent::UpdateTransform()
-	{
-		btTransform tf;
-		mBody->getMotionState()->getWorldTransform(tf);
-		transform.Position(nConvert::ToGLM(tf.getOrigin()) - offset);
-		if (_rotateable)
-			transform.Rotation(nConvert::ToGLM(tf.getRotation()));
-	}
-
-	void cCubeComponent::SetRotation(const quat& rotation)
+	void cCapsuleComponent::SetRotation(const quat& rotation)
 	{
 		btTransform tform;
 		btMotionState* state;
@@ -147,11 +121,39 @@ namespace nPhysics
 		mBody->setMotionState(state);
 	}
 
-	quat cCubeComponent::GetRotation()
+	quat cCapsuleComponent::GetRotation()
 	{
 		btTransform tform;
 		mBody->getMotionState()->getWorldTransform(tform);
 		return nConvert::ToGLM(tform.getRotation());
+	}
+
+	void cCapsuleComponent::UpdateTransform()
+	{
+		btTransform tf;
+		mBody->getMotionState()->getWorldTransform(tf);
+		transform.Position(nConvert::ToGLM(tf.getOrigin()) - offset);
+		if (_rotateable)
+			transform.Rotation(nConvert::ToGLM(tf.getRotation()));
+	}
+
+	void cCapsuleComponent::GetTransform(mat4& transformOut)
+	{
+		btTransform transform;
+		mBody->getMotionState()->getWorldTransform(transform);
+		nConvert::ToSimple(transform, transformOut);
+	}
+
+	void cCapsuleComponent::CollidedWith(iPhysicsComponent* other)
+	{
+		for (iComponent* component : parent.Components())
+		{
+			iBehaviour* behaviour = dynamic_cast<iBehaviour*>(component);
+			if (behaviour)
+			{
+				behaviour->OnCollide(&other->parent);
+			}
+		}
 	}
 
 }

@@ -9,7 +9,6 @@ namespace nPhysics
 	struct sCapsuleDef : public sComponentDef
 	{
 		glm::vec2 Scale; // width and height
-		glm::vec3 Origin;
 	};
 	class iCapsuleComponent : public iPhysicsComponent
 	{

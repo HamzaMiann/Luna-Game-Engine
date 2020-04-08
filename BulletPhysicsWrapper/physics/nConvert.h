@@ -25,6 +25,13 @@ namespace nConvert
 		return glm::quat(quaternion.w(), quaternion.x(), quaternion.y(), quaternion.z());
 	}
 
+	inline glm::mat4 ToGLM(const btTransform& transform)
+	{
+		glm::mat4 mat(1.f);
+		transform.getOpenGLMatrix(&mat[0][0]);
+		return mat;
+	}
+
 	inline void ToSimple(const btTransform& transformIn, glm::mat4& transformOut)
 	{
 		transformIn.getOpenGLMatrix(&transformOut[0][0]);
