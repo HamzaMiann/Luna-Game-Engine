@@ -3,6 +3,8 @@
 // Vertex Shader Input
 in vec4 fVertWorldLocation;
 in vec4 fNormal;
+in vec4 fTangent;
+in vec4 fBiTangent;
 in vec4 fUVx2;
 
 // Object
@@ -13,6 +15,7 @@ uniform vec4 eyeLocation;
 // Used to draw debug (or unlit) objects
 uniform bool isUniform;
 uniform bool isSkybox;
+uniform bool isPBR;
 
 uniform float reflectivity;	// 0 - 1
 uniform float refractivity; // 0 - 1
@@ -68,7 +71,6 @@ void main()
 	unlitColour = vec4(0.0);
 	bloomColour = vec4(0.0);
 	depthColour = vec4(vec3(distance(fVertWorldLocation.xyz, eyeLocation.xyz) / 1000.0), 1.0);
-	normalColour = vec4(normalize(fNormal.xyz) + 1.0, 1.0);
 	positionColour = vec4(fVertWorldLocation.xyz, 1.0);
 
 	if (isUniform)
@@ -103,12 +105,19 @@ void main()
 		bloomColour = vec4(1.0);
 	}
 
+	if (isShadowMap)
+	{
+		pixelColour.rgb = vec3(depth);
+		pixelColour.a = 1.0;
+		return;
+	}
+
 	vec3 tex0_RGB = texture( textSamp00, fUVx2.st * tex_tiling.x ).rgb;
 	vec3 tex1_RGB = texture( textSamp01, fUVx2.st * tex_tiling.y ).rgb;
 	vec3 tex2_RGB = texture( textSamp02, fUVx2.st * tex_tiling.z ).rgb;
 	vec3 tex3_RGB = texture( textSamp03, fUVx2.st * tex_tiling.w ).rgb;
 		
-	vec3 texRGB =   ( tex_0_3_ratio.x * tex0_RGB ) 
+	vec3 texRGB =   ( tex_0_3_ratio.x * tex0_RGB )
 				  + ( tex_0_3_ratio.y * tex1_RGB )
 				  + ( tex_0_3_ratio.z * tex2_RGB )
 				  + ( tex_0_3_ratio.w * tex3_RGB );
@@ -123,16 +132,29 @@ void main()
 		texRGB = (tex_0_3_ratio.x * ratio * tex0_RGB) + (tex_0_3_ratio.y * (1. - ratio) * tex1_RGB).rgb;
 	}
 
-	pixelColour = vec4(texRGB, diffuseColour.a);
-
-	pixelColour.rgb = mix(pixelColour.rgb, reflectiveColour.rgb, reflectivity);
-	pixelColour.rgb = mix(pixelColour.rgb, refractiveColour.rgb, refractivity);
-
-	pixelColour.a = 1.0;
-
-	if (isShadowMap)
+	if (isPBR)
 	{
-		pixelColour.rgb = vec3(depth);
+		mat3 TBN = mat3(
+			normalize(fTangent.xyz),
+			normalize(fBiTangent.xyz),
+			normalize(fNormal.xyz)
+		);
+		vec3 worldSpaceNormal = (tex1_RGB * 2.) - 1.;
+		worldSpaceNormal = fNormal.xyz;
+		worldSpaceNormal = TBN * worldSpaceNormal;
+		normalColour = vec4(normalize(worldSpaceNormal) + 1.0, 1.0);
+
+		pixelColour = vec4(tex0_RGB.rgb, diffuseColour.a);
+	}
+	else
+	{
+		normalColour = vec4(normalize(fNormal.xyz) + 1.0, 1.0);
+
+		pixelColour = vec4(texRGB, diffuseColour.a);
+
+		pixelColour.rgb = mix(pixelColour.rgb, reflectiveColour.rgb, reflectivity);
+		pixelColour.rgb = mix(pixelColour.rgb, refractiveColour.rgb, refractivity);
+
 		pixelColour.a = 1.0;
 	}
 

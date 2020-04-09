@@ -7,7 +7,7 @@
 			<Fragment file="basic_frag.glsl"/>
 		</Shader>
         <Shader name="pbr">
-          <Vertex file="basic_vert.glsl"/>
+          <Vertex file="pbr_vert.glsl"/>
           <Fragment file="pbr_frag.glsl"/>
         </Shader>
 		<Shader name="shadow">
@@ -34,6 +34,7 @@
 	    <Texture name="Ground_Dirt_007_normal.png"/>
 	    <Texture name="Snow_004_COLOR.jpg"/>
 	    <Texture name="home_hatka_Base_Color.png"/>
+	    <Texture name="home_hatka_Normal_OpenGL.png"/>
 	    <Texture name="Mutant_diffuse.jpg"/>
 	    <Texture name="Mutant_normal.jpg"/>
 	    <Texture name="fx3_Panels_Color.png"/>
@@ -47,6 +48,9 @@
 	    <Texture name="fx3_Panels_Color.png"/>
 	    <Texture name="bark_0021.jpg"/>
 	    <Texture name="grass_tex.png"/>
+	    <Texture name="Ground_Wet_002_basecolor.jpg"/>
+	    <Texture name="Ground_Wet_002_normal.jpg"/>
+	    <Texture name="Ground_Wet_002_roughness.jpg"/>
     
         <Skybox name="city_">
           <Right texture="city_left.jpg"/>
@@ -427,13 +431,14 @@
 			</Components>
         </GameObject>
 		
-	    <GameObject mesh="house" tag="house" shader="basic">
+	    <GameObject mesh="house" tag="house" shader="pbr">
             <Position x="0.0" y="13.0" z="0.0"/>
             <Rotation x="-90" y="0" z="0.0"/>
             <Scale>0.03</Scale>
 			<Texture ratio="1.0">home_hatka_Base_Color.png</Texture>
-			<Texture ratio="0.7">Snow_004_COLOR.jpg</Texture>
-			<BlendMap tiling="1.0">perlin.png</BlendMap>
+			<Texture ratio="1.0">home_hatka_Normal_OpenGL.png</Texture>
+			<!--<Texture ratio="0.7">Snow_004_COLOR.jpg</Texture>
+			<BlendMap tiling="1.0">perlin.png</BlendMap>-->
 
 			<Components>
 				<!--<CubeBody>
@@ -448,6 +453,7 @@
 					<Mass>0.0</Mass>
 					<GFactor>1.0</GFactor>
 					<Model>hatka_local.fbx</Model>
+					<Rotation x="180" y="0" z="0.0"/>
 				</MeshBody>
 			</Components>
         </GameObject>
@@ -481,16 +487,17 @@
 
 		
 		
-        <GameObject mesh="plane" tag="ground" shader="basic">
+        <GameObject mesh="plane" tag="ground" shader="pbr">
             <Position x="0.0" y="0.0" z="0.0"/>
             <Rotation x="0" y="0" z="0.0"/>
             <Scale>10.0</Scale>
             <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
             <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
             <SpecIntensity>10.000000</SpecIntensity>
-            <Texture ratio="1.0" tiling="100.0">Ground_Dirt_007_basecolor.png</Texture>
-            <Texture ratio="1.0" tiling="100.0">Snow_004_COLOR.jpg</Texture>
-		    <BlendMap tiling="20.0">WATER_BUMP.png</BlendMap>
+            <Texture ratio="1.0" tiling="100.0">Ground_Wet_002_basecolor.jpg</Texture>
+            <Texture ratio="1.0" tiling="100.0">Ground_Wet_002_normal.jpg</Texture>
+            <!--<Texture ratio="1.0" tiling="100.0">Snow_004_COLOR.jpg</Texture>
+		    <BlendMap tiling="20.0">WATER_BUMP.png</BlendMap>-->
       
             <Components>
         

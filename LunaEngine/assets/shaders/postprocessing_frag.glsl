@@ -504,41 +504,23 @@ void main()
 
 		return;
 	}
-
-	vec3 vertexWorldPos = texture( textSamp02, uv ).rgb;
-	vec4 glposition = shadowMVP * vec4(vertexWorldPos, 1.0) * 0.5 + 0.5;
-	vec3 cube = vec3(glposition.x / glposition.w, glposition.y / glposition.w, glposition.z / glposition.w);
-	if (glposition.z > 1.)
-	{
-		glposition.z = 1.;
-	}
-//	glposition.xy = clamp(glposition.xy, 0., 1.);
-//	if (switchColour) {
-//		pixelColour.rgb = vec3(glposition.z);
-//	}
-//	else
-//	{
-//		pixelColour.rgb = texture(shadowTexture, glposition.xy).rgb;
-//	}
-	//pixelColour.rgb = vec3(glposition.z + 0.45 > texture(shadowTexture, glposition.xy).r);
-//	pixelColour.rgb = texture(shadowTexture, uv).rgb;
-	//pixelColour.rgb = texture(shadowTexture, uv).rgb;
-	//return;
 	
 
 	vec3 col = NoEffect().rgb;
 	vec3 normal = texture( textSamp01, uv ).rgb - 1.;
 	vec3 pos = texture( textSamp02, uv ).rgb;
 
+	//pixelColour.rgb = normal;
+	//return;
+
+	vec4 spec = vec4(vec3(0.7), 1000.0);
+
 	float d = distance(eyeLocation.xyz, pos);
 
 	vec2 lpos = (lightPositionOnScreen.xy + 1.) / 2.;
-	//vec2 lpos = lightPositionOnScreen.xy;
-	//lpos.x /= iResolution.x;
-	//lpos.y /= iResolution.y;
 
 	// calculate lighting
-	pixelColour = calcualteLightContrib(col, normal, pos, vec4(0.));
+	pixelColour = calcualteLightContrib(col, normal, pos, spec);
 	
 	// calculate reflections
 	if (texture(textSamp05, uv).r > 0.0)
@@ -557,7 +539,6 @@ void main()
 	}
 
 	
-
 	// clouds effect
 	if (cloudsEnabled) {
 		Ray ray;
@@ -648,6 +629,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 			lightContrib *= dotProduct;
 
 			// cloud shadows
+			float cloudShadowFactor = 1.;
 			if (cloudsEnabled && cloudShadowsEnabled) {
 				Ray ray;
 				ray.ro = texture(textSamp02, fUVx2.st).xyz;
@@ -655,7 +637,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 				{
 					vec3 lDir = normalize(eyeLocation.xyz - theLights[index].position.xyz);
 					ray.rd = -lDir;
-					lightContrib *= RayTraceShadows(ray);
+					cloudShadowFactor = RayTraceShadows(ray);
 				}
 			}
 
@@ -671,8 +653,27 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 				float bias = 0.0005;
 				shadowFactor = shadowFactor * min(texture( shadowTexture, vec3(glposition.xy, glposition.z - 0.005)) + 0.5, 1.0);
 			}
+
+			shadowFactor *= cloudShadowFactor;
+
+			// Specular 
+			vec3 lvector = normalize(theLights[index].position.xyz - vertexWorldPos.xyz);
+			vec3 specContrib = vec3(0.0f);
 			
-			finalObjectColour.rgb += (vertexMaterialColour.rgb * theLights[index].diffuse.rgb * lightContrib)  * theLights[index].atten.r * shadowFactor; 
+			vec3 reflectVector = reflect( -lvector, normalize(norm.xyz) );
+
+			// Get eye or view vector
+			// The location of the vertex in the world to your eye
+			vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
+
+			// To simplify, we are NOT using the light specular value, just the object’s.
+			float objectSpecularPower = vertexSpecular.w; 
+		
+			specContrib = pow( max(0.0f, dot( eyeVector, reflectVector) ), objectSpecularPower )
+								   * theLights[index].specular.rgb;
+			
+			finalObjectColour.rgb += (vertexMaterialColour.rgb * theLights[index].diffuse.rgb * lightContrib) 
+			* theLights[index].atten.r * shadowFactor + specContrib * shadowFactor; 
 			continue;
 		}
 		

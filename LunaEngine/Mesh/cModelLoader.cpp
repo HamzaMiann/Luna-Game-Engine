@@ -152,8 +152,9 @@ void cModelLoader::LoadMeshes(const aiScene* scene, cMesh& theMesh)
 			theMesh.vecMeshTriangles.push_back(tempMeshTriangle);
 		}
 
-		if (m == 0)
+		if (m == 0) {
 			LoadBones(scene, mesh, theMesh);
+		}
 	}
 }
 

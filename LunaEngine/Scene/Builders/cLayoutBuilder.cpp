@@ -122,7 +122,12 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 		cModelLoader::Instance().LoadModel("assets/models/" + modelName, modelName, mesh);
 
 		def.vertices.resize(mesh.vecMeshTriangles.size() * 3u);
-		mat4 modelMatrix = ptr->transform.ModelMatrix();
+		sTransform tform = ptr->transform;
+		if (componentNode->first_node("Rotation"))
+		{
+			tform.UpdateEulerRotation(XML_Helper::AsVec3(componentNode->first_node("Rotation")));
+		}
+		mat4 modelMatrix = tform.ModelMatrix();
 
 		for (size_t i = 0; i < mesh.vecMeshTriangles.size(); ++i)
 		{

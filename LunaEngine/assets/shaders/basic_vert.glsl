@@ -22,6 +22,8 @@ uniform bool isSkinnedMesh;
 
 out vec4 fVertWorldLocation;
 out vec4 fNormal;
+out vec4 fTangent;
+out vec4 fBiTangent;
 out vec4 fUVx2;
 out float fiTime;
 out float fisWater;
@@ -64,9 +66,13 @@ void main()
 //		fNormal = (matModelInverTrans) * vNormal;
 //		fNormal.xyz = normalize(fNormal.xyz);
 
+		mat4 inversetranspose = inverse(transpose(matModelAndBone));
 		vec3 theNormal = normalize(vNormal.xyz);
-		fNormal = inverse(transpose(matModelAndBone)) * vec4(theNormal, 1.0);
+		fNormal = inversetranspose * vec4(theNormal, 1.0);
 		fNormal.xyz = normalize(fNormal.xyz); 
+
+		fTangent = inversetranspose * vTangent;
+		fBiTangent = inversetranspose * vBiNormal;
 		
 		fUVx2 = vUVx2;
 
@@ -87,6 +93,8 @@ void main()
 	//mat4 matInv = inverse(transpose(matModel));
 
 	fNormal = matModelInverTrans * vNormal;
+	fTangent = matModelInverTrans * vTangent;
+	fBiTangent = matModelInverTrans * vBiNormal;
 
 	fUVx2 = vUVx2;
 

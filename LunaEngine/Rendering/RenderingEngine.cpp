@@ -275,6 +275,8 @@ void RenderingEngine::SetUpTextureBindingsForObject(cGameObject& object)
 		)
 	);
 
+	shader.SetBool("isPBR", false);
+
 	return;
 }
 
@@ -557,8 +559,8 @@ void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float hei
 		//  depth (or z) buffer.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
-	//glDisable( GL_BLEND );
+	//glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
+	glDisable( GL_BLEND );
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//float ratio = width / height;

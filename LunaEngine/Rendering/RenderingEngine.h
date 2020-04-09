@@ -24,7 +24,7 @@ private:
 
 	cGameObject quad;
 	mat4 depthProjectionMatrix = glm::ortho<float>(-200.f, 200.f, -100.f, 100.f, -1000.f, 1000.f);
-	vec3 shadowLightPosition = vec3(0.f, 600.f, 500.f);
+	vec3 shadowLightPosition = vec3(0.f, 200.f, 500.f);
 
 	std::map<std::string, bool> boolSettings;
 	std::map<std::string, float> floatSettings;
