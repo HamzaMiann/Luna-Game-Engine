@@ -1,17 +1,39 @@
-#include "cCapsuleComponent.h"
+#include "cPhysMeshComponent.h"
 #include "cPhysicsFactory.h"
 #include "../nConvert.h"
-#include <interfaces/Behaviour/iBehaviour.h>
-#include "cPhysMeshComponent.h"
 
-namespace nPhysics 
+namespace nPhysics
 {
 
-	cCapsuleComponent::cCapsuleComponent(iObject* parent, const sCapsuleDef& def)
-		: iCapsuleComponent(parent)
+	cPhysMeshComponent::cPhysMeshComponent(iObject* parent, const sMeshDef& def)
+		: iPhysMeshComponent(parent)
 	{
-		btCollisionShape* colShape = new btCapsuleShape(def.Scale.x, def.Scale.y);
+		btCollisionShape* colShape = 0;// new btBvhTriangleMeshShape();
+		auto trimesh = new btTriangleMesh();
 
+		for (size_t i = 0; i < def.vertices.size() / 3u; ++i)
+		{
+			size_t index = i * 3u;
+			trimesh->addTriangle(
+				nConvert::ToBullet(def.vertices[index]),
+				nConvert::ToBullet(def.vertices[index + 1u]),
+				nConvert::ToBullet(def.vertices[index + 2u]),
+				true
+				);
+		}
+
+		//colShape = new btConvexTriangleMeshShape(trimesh, true);
+		colShape = new btBvhTriangleMeshShape(trimesh, true);
+
+		/*auto shape = new btConvexHullShape();
+		for (size_t i = 0; i < def.vertices.size() - 1; ++i)
+		{
+			shape->addPoint(nConvert::ToBullet(def.vertices[i]), true);
+		}
+
+		shape->addPoint(nConvert::ToBullet(def.vertices[def.vertices.size() - 1]), true);
+		colShape = shape;*/
+		
 		btTransform transform;
 		transform.setIdentity();
 		transform.setOrigin(nConvert::ToBullet(this->transform.pos + def.Offset));
@@ -48,7 +70,7 @@ namespace nPhysics
 		factory.GetWorld()->AddComponent(this);
 	}
 
-	cCapsuleComponent::~cCapsuleComponent()
+	cPhysMeshComponent::~cPhysMeshComponent()
 	{
 		cPhysicsFactory factory;
 		factory.GetWorld()->RemoveComponent(this);
@@ -60,40 +82,40 @@ namespace nPhysics
 		mBody = 0;
 	}
 
-	bool cCapsuleComponent::serialize(rapidxml::xml_node<>* root_node)
+	bool cPhysMeshComponent::serialize(rapidxml::xml_node<>* root_node)
 	{
 		return false;
 	}
 
-	bool cCapsuleComponent::deserialize(rapidxml::xml_node<>* root_node)
+	bool cPhysMeshComponent::deserialize(rapidxml::xml_node<>* root_node)
 	{
 		return false;
 	}
 
-	void cCapsuleComponent::AddForce(const vec3& force)
+	void cPhysMeshComponent::AddForce(const vec3& force)
 	{
 		mBody->activate(true);
 		mBody->applyCentralForce(nConvert::ToBullet(force));
 	}
 
-	void cCapsuleComponent::AddVelocity(const vec3& velocity)
+	void cPhysMeshComponent::AddVelocity(const vec3& velocity)
 	{
 		mBody->activate(true);
 		mBody->applyCentralImpulse(nConvert::ToBullet(velocity));
 	}
 
-	void cCapsuleComponent::SetVelocity(const vec3& velocity)
+	void cPhysMeshComponent::SetVelocity(const vec3& velocity)
 	{
 		mBody->activate(true);
 		mBody->setLinearVelocity(nConvert::ToBullet(velocity));
 	}
 
-	vec3 cCapsuleComponent::GetVelocity()
+	vec3 cPhysMeshComponent::GetVelocity()
 	{
 		return nConvert::ToGLM(mBody->getLinearVelocity());
 	}
 
-	void cCapsuleComponent::SetPosition(const glm::vec3& position)
+	void cPhysMeshComponent::SetPosition(const glm::vec3& position)
 	{
 		btTransform tform;
 		btMotionState* state;
@@ -105,14 +127,14 @@ namespace nPhysics
 		offset = vec3(0.f);
 	}
 
-	vec3 cCapsuleComponent::GetPosition()
+	vec3 cPhysMeshComponent::GetPosition()
 	{
 		btTransform tform;
 		mBody->getMotionState()->getWorldTransform(tform);
 		return nConvert::ToGLM(tform.getOrigin()) - offset;
 	}
 
-	void cCapsuleComponent::SetRotation(const quat& rotation)
+	void cPhysMeshComponent::SetRotation(const quat& rotation)
 	{
 		btTransform tform;
 		btMotionState* state;
@@ -123,14 +145,14 @@ namespace nPhysics
 		mBody->setMotionState(state);
 	}
 
-	quat cCapsuleComponent::GetRotation()
+	quat cPhysMeshComponent::GetRotation()
 	{
 		btTransform tform;
 		mBody->getMotionState()->getWorldTransform(tform);
 		return nConvert::ToGLM(tform.getRotation());
 	}
 
-	void cCapsuleComponent::UpdateTransform()
+	void cPhysMeshComponent::UpdateTransform()
 	{
 		btTransform tf;
 		mBody->getMotionState()->getWorldTransform(tf);
@@ -139,23 +161,24 @@ namespace nPhysics
 			transform.Rotation(nConvert::ToGLM(tf.getRotation()));
 	}
 
-	void cCapsuleComponent::GetTransform(mat4& transformOut)
+	void cPhysMeshComponent::GetTransform(mat4& transformOut)
 	{
 		btTransform transform;
 		mBody->getMotionState()->getWorldTransform(transform);
 		nConvert::ToSimple(transform, transformOut);
 	}
 
-	void cCapsuleComponent::CollidedWith(iPhysicsComponent* other)
+	void cPhysMeshComponent::CollidedWith(iPhysicsComponent* other)
 	{
-		for (iComponent* component : parent.Components())
+		/*for (iComponent* component : parent.Components())
 		{
 			iBehaviour* behaviour = dynamic_cast<iBehaviour*>(component);
 			if (behaviour)
 			{
 				behaviour->OnCollide(&other->parent);
 			}
-		}
+		}*/
 	}
+
 
 }

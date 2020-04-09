@@ -20,7 +20,7 @@ namespace nPhysics
 		virtual iCubeComponent* CreateCube(iObject* parent, const sCubeDef& def) override;
 		virtual iCapsuleComponent* CreateCapsule(iObject* parent, const sCapsuleDef& def) override;
 		virtual iClothComponent* CreateCloth(iObject* parent, const sClothDef& def) override;
-		virtual iPhysMeshComponent* CreateMesh(iObject* parent, const sCapsuleDef& def) override;
+		virtual iPhysMeshComponent* CreateMesh(iObject* parent, const sMeshDef& def) override;
 		virtual iEmptyComponent* CreateEmpty(iObject* parent) override;
 	};
 }

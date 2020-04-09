@@ -383,6 +383,7 @@
     <ClInclude Include="physics\wrappers\cCapsuleComponent.h" />
     <ClInclude Include="physics\wrappers\cCubeComponent.h" />
     <ClInclude Include="physics\wrappers\cPhysicsDebugDrawer.h" />
+    <ClInclude Include="physics\wrappers\cPhysMeshComponent.h" />
     <ClInclude Include="physics\wrappers\cSphereComponent.h" />
     <ClInclude Include="physics\wrappers\cPhysicsFactory.h" />
     <ClInclude Include="physics\wrappers\cPhysicsWorld.h" />
@@ -544,6 +545,7 @@
     <ClCompile Include="physics\wrappers\cCubeComponent.cpp" />
     <ClCompile Include="physics\wrappers\cPhysicsDebugDrawer.cpp" />
     <ClCompile Include="physics\wrappers\cPhysicsFactory.cpp" />
+    <ClCompile Include="physics\wrappers\cPhysMeshComponent.cpp" />
     <ClCompile Include="physics\wrappers\cSphereComponent.cpp" />
     <ClCompile Include="physics\wrappers\cPhysicsWorld.cpp" />
     <ClCompile Include="physics\wrappers\cPlaneComponent.cpp" />

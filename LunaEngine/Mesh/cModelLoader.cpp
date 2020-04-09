@@ -79,9 +79,20 @@ void cModelLoader::LoadMeshes(const aiScene* scene, cMesh& theMesh)
 			sMeshVertex tempVertex;
 
 			aiVector3D vec = mesh.mVertices[i];
+			aiVector3D bitan = mesh.mBitangents[i];
+			aiVector3D tan = mesh.mTangents[i];
+
 			tempVertex.x = vec.x;
 			tempVertex.y = vec.y;
 			tempVertex.z = vec.z;
+
+			tempVertex.bx = bitan.x;
+			tempVertex.by = bitan.y;
+			tempVertex.bz = bitan.z;
+
+			tempVertex.tx = tan.x;
+			tempVertex.ty = tan.y;
+			tempVertex.tz = tan.z;
 
 			if (tempVertex.x < theMesh.min.x) theMesh.min.x = tempVertex.x;
 			if (tempVertex.y < theMesh.min.y) theMesh.min.y = tempVertex.y;

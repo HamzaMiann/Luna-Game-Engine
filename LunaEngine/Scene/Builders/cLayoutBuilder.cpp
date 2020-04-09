@@ -9,6 +9,7 @@
 #include <xml_helper.h>
 #include <EntityManager/cEntityManager.h>
 #include <Animation/cSimpleAssimpSkinnedMeshLoader_OneMesh.h>
+#include <Mesh/cModelLoader.h>
 #include <Shader/Shader.h>
 using namespace rapidxml;
 
@@ -44,7 +45,7 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 
 void AddPhysicsComponent(const std::string& componentName, xml_node<>* componentNode, cGameObject* ptr)
 {
-	printf("Name: %s\n", componentName.c_str());
+	//printf("Name: %s\n", componentName.c_str());
 	if (componentName == "SphereBody")
 	{
 		nPhysics::sSphereDef def;
@@ -76,7 +77,6 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 	}
 	else if (componentName == "CapsuleBody")
 	{
-		printf("stuff\n");
 		nPhysics::sCapsuleDef def;
 		def.velocity = XML_Helper::AsVec3(componentNode->first_node("Velocity"));
 		def.mass = XML_Helper::AsFloat(componentNode->first_node("Mass"));
@@ -111,6 +111,38 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 
 		ptr->AddComponent(component);
 	}
+	else if (componentName == "MeshBody")
+	{
+		nPhysics::sMeshDef def;
+		def.velocity = XML_Helper::AsVec3(componentNode->first_node("Velocity"));
+		def.mass = XML_Helper::AsFloat(componentNode->first_node("Mass"));
+		def.gravity_factor = XML_Helper::AsFloat(componentNode->first_node("GFactor"));
+		std::string modelName = componentNode->first_node("Model")->value();
+		cMesh mesh;
+		cModelLoader::Instance().LoadModel("assets/models/" + modelName, modelName, mesh);
+
+		def.vertices.resize(mesh.vecMeshTriangles.size() * 3u);
+		mat4 modelMatrix = ptr->transform.ModelMatrix();
+
+		for (size_t i = 0; i < mesh.vecMeshTriangles.size(); ++i)
+		{
+			size_t index = i * 3u;
+			auto& triangle = mesh.vecMeshTriangles[i];
+			def.vertices[index] = vec3(vec4(triangle.first, 1.f) * modelMatrix);
+			def.vertices[index+1u] = vec3(vec4(triangle.second, 1.f) * modelMatrix);
+			def.vertices[index+2u] = vec3(vec4(triangle.third, 1.f) * modelMatrix);
+		}
+
+
+		nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateMesh(ptr, def);
+		component->setIsRotateable(false);
+		if (componentNode->first_node("Rotateable"))
+		{
+			component->setIsRotateable(true);
+		}
+
+		ptr->AddComponent(component);
+	}
 	
 }
 
@@ -136,6 +168,10 @@ void LoadComponents(xml_node<>* property_node, cGameObject* ptr)
 			AddPhysicsComponent(n, component_node, ptr);
 		}
 		else if (n == "CapsuleBody")
+		{
+			AddPhysicsComponent(n, component_node, ptr);
+		}
+		else if (n == "MeshBody")
 		{
 			AddPhysicsComponent(n, component_node, ptr);
 		}

@@ -8,11 +8,7 @@ namespace nPhysics
 {
 	struct sMeshDef : public sComponentDef
 	{
-		struct Triangle
-		{
-			glm::vec3 first, second, third;
-		};
-		std::vector<Triangle> Triangles;
+		std::vector<glm::vec3> vertices;
 	};
 
 	class iPhysMeshComponent : public iPhysicsComponent
