@@ -2,23 +2,29 @@
 
 #include "../nConvert.h"
 #include "cBulletWrapperComponent.h"
-#include <interfaces/physics/iCubeComponent.h>
+#include <interfaces/physics/iCharacterComponent.h>
+#include "../bullet/BulletDynamics/Character/btKinematicCharacterController.h"
+#include "../bullet/BulletCollision/CollisionDispatch/btGhostObject.h"
 
 namespace nPhysics
 {
-	class cCubeComponent : public iCubeComponent, public cBulletWrapperComponent
+	class cCharacterComponent : public iCharacterComponent
 	{
 	public:
-		cCubeComponent(iObject* parent, const sCubeDef& def);
-		virtual ~cCubeComponent();
+
+		btPairCachingGhostObject* mGhostObject = 0;
+		btKinematicCharacterController* mCharacterController = 0;
+
+		cCharacterComponent(iObject* parent, const sCharacterDef& def);
+		virtual ~cCharacterComponent();
 
 		/*
-		
+
 		SERIALIZATION
 
 		*/
-		virtual bool serialize(rapidxml::xml_node<>* root_node) override;
-		virtual bool deserialize(rapidxml::xml_node<>* root_node) override;
+		virtual bool serialize(rapidxml::xml_node<>* root_node) override { return false; }
+		virtual bool deserialize(rapidxml::xml_node<>* root_node) override { return false; }
 
 		/*
 
@@ -69,13 +75,6 @@ namespace nPhysics
 		*/
 		void CollidedWith(iPhysicsComponent* other) override;
 
-		/*
-		
-		CONSTRAINTS
-		
-		*/
-		virtual void AddHingeConstraint(const vec3& pivot, const vec3& axis) override;
-		virtual void AddSliderConstraint(const vec2& linLimit, const vec2& angleLimit) override;
-		
+
 	};
 }

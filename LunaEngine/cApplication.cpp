@@ -158,7 +158,13 @@ void cApplication::Run()
 
 	g_PhysicsWorld->SetDebugRenderer(&renderer);
 
+	entity_manager.GetObjectByTag("cube")->GetComponent<nPhysics::iPhysicsComponent>()->AddHingeConstraint(vec3(0.f, 2.f, 0.f), vec3(0.f, 1.f, 0.f));
+	//entity_manager.GetObjectByTag("cube")->GetComponent<nPhysics::iPhysicsComponent>()->AddSliderConstraint(vec2(-15.f, -5.f), vec2(-PI / 3.0f, PI / 3.0f));
+	//entity_manager.GetObjectByTag("cube")->GetComponent<nPhysics::iPhysicsComponent>()->AddSliderConstraint(vec2(0.f, 0.f), vec2(-PI / 3.0f, PI / 3.0f));
+
 	float maxTime = 1.f;
+
+	
 
 	while (!glfwWindowShouldClose(global::window))
 	{
@@ -204,8 +210,10 @@ void cApplication::Run()
 		if (maxTime > 0.f)
 		{
 			maxTime -= dt;
-			renderer.RenderObjectsToFBO(&albedoFBO, width, height, dt, true);
 		}
+
+		if (renderer.GetBoolProperty("shadowsEnabled"))
+			renderer.RenderObjectsToFBO(&albedoFBO, width, height, dt, true);
 
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);

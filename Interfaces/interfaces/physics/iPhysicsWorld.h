@@ -51,6 +51,7 @@ namespace nPhysics
 		*/
 		virtual void SetDebugRenderer(iPhysicsDebugRenderer* renderer) = 0;
 
+
 		inline void ToggleDebugMode() { mDebugMode = !mDebugMode; }
 		inline bool IsDebugMode() { return mDebugMode; }
 

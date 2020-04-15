@@ -7,6 +7,7 @@
 #include "iClothComponent.h"
 #include "iPhysicsWorld.h"
 #include "iPhysMeshComponent.h"
+#include "iCharacterComponent.h"
 
 namespace nPhysics
 {
@@ -22,6 +23,7 @@ namespace nPhysics
 		virtual iCapsuleComponent* CreateCapsule(iObject* parent, const sCapsuleDef& def) = 0;
 		virtual iPhysMeshComponent* CreateMesh(iObject* parent, const sMeshDef& def) = 0;
 		virtual iClothComponent* CreateCloth(iObject* parent, const sClothDef& def) = 0;
+		virtual iCharacterComponent* CreateCharacter(iObject* parent, const sCharacterDef& def) = 0;
 		virtual iEmptyComponent* CreateEmpty(iObject* parent) = 0;
 	};
 }

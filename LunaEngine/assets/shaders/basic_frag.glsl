@@ -34,11 +34,9 @@ uniform bool useBlendMap;
 uniform float blendTiling;
 
 uniform bool isShadowMap;
-uniform bool isUnique;
 
 // Globals
 in float fiTime;
-in float fisWater;
 in float depth;
 uniform vec2 iResolution;
 
@@ -100,11 +98,6 @@ void main()
 		discard;
 	}
 
-	if (isUnique)
-	{
-		bloomColour = vec4(1.0);
-	}
-
 	if (isShadowMap)
 	{
 		pixelColour.rgb = vec3(depth);
@@ -131,6 +124,10 @@ void main()
 		float ratio = smoothstep(0., 1., texture(blendMap, fUVx2.st * blendTiling).r);
 		texRGB = (tex_0_3_ratio.x * ratio * tex0_RGB) + (tex_0_3_ratio.y * (1. - ratio) * tex1_RGB).rgb;
 	}
+
+	bloomColour.x = specularColour.r;
+	bloomColour.y = min(specularColour.w, 1000.0) / 1000.;
+	bloomColour.a = 1.0;
 
 	if (isPBR)
 	{

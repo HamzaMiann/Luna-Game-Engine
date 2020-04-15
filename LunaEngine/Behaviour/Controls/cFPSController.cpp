@@ -8,6 +8,7 @@
 #include <cGameObject.h>
 #include <Shader/Shader.h>
 #include <Rendering/RenderingEngine.h>
+#include <Audio\AudioEngine.hpp>
 using namespace rapidxml;
 
 bool cFPSController::deserialize(rapidxml::xml_node<>* root_node)
@@ -46,6 +47,7 @@ vec3 offset2;
 float time;
 float sinY;
 float blendRatio = 0.f;
+float mixValue = 0.f;
 void cFPSController::start()
 {
 	rigidBody = parent.GetComponent<nPhysics::iPhysicsComponent>();
@@ -61,6 +63,8 @@ void cFPSController::start()
 	sinY = settings.camera_offset.y;
 	weapon = cEntityManager::Instance().GetObjectByTag("gun");
 	Input::LockCursor();
+
+	AudioEngine::Instance()->PlaySound("intro");
 }
 
 void cFPSController::update(float dt)
@@ -105,10 +109,18 @@ void cFPSController::update(float dt)
 	{
 		blendRatio = Mathf::lerp(blendRatio, 0., dt * 3.f);
 	}
+	
+	if (mixValue > 0.22f) mixValue += dt * 0.7f;
+	else mixValue += dt * 0.05f;
+	if (mixValue > 1.f) mixValue = 1.f;
+
 	RenderingEngine::Instance().SetProperty("blendRatio", blendRatio);
+	RenderingEngine::Instance().SetProperty("mixValue", mixValue);
 
 	if (Input::MouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 	{
+		AudioEngine::Instance()->PlaySound("gunshot");
+
 		vec3 ro = Camera::main_camera->Eye;
 		vec3 rd = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
 		rd = weapon->transform.Rotation() * vec3(0.f, 0.f, 1.f);
@@ -116,8 +128,10 @@ void cFPSController::update(float dt)
 		for (auto& hit : hits)
 		{
 			if (hit.object->parent.tag == "player") continue;
+			hit.object->AddForceToPoint(rd * 100.f, hit.hitPoint);
 			cGameObject* obj = new cGameObject;
 			obj->transform.Position(hit.hitPoint);
+			obj->transform.Scale(vec3(0.1f));
 			obj->meshName = "sphere";
 			obj->shader = Shader::FromName("basic");
 			obj->texture[0].SetTexture("blue.png", 1.f);
@@ -174,7 +188,9 @@ void cFPSController::update(float dt)
 		+ (actualOffset * rotX)
 		+ direction;
 
-	
+	vec3 forwards = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
+	vec3 right = forwards * quat(vec3(0.f, -0.5f, 0.f));
+	Camera::main_camera->Up = glm::cross(forwards, right);
 
 	direction.y = 0.f;
 	direction = normalize(direction);
@@ -204,31 +220,7 @@ void cFPSController::update(float dt)
 
 		if (Input::KeyDown(GLFW_KEY_SPACE))
 		{
-			if (Input::GetKey(GLFW_KEY_W))
-			{
-				if (Input::GetKey(GLFW_KEY_A))
-				{
-					direction = direction * quat(vec3(0.f, glm::radians(-45.f), 0.f));
-				}
-				else if (Input::GetKey(GLFW_KEY_D))
-				{
-					direction = direction * quat(vec3(0.f, glm::radians(45.f), 0.f));
-				}
-				if (Input::GetKey(GLFW_KEY_LEFT_SHIFT))
-				{
-					direction *= 3.f;
-				}
-				jumpVelocity = direction;
-			}
-			else
-				jumpVelocity = vec3(0.f);
-
-			vec3 velocity = rigidBody->GetVelocity();
-			jumpVelocity *= settings.speed;
-
-
-			rigidBody->SetVelocity(jumpVelocity);
-			return;
+			movement.y += 100.f;
 		}
 		else if (Input::GetKey(GLFW_KEY_W))
 		{
@@ -249,7 +241,7 @@ void cFPSController::update(float dt)
 			}
 
 			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
-			movement = direction;
+			movement += direction;
 		}
 		else if (Input::GetKey(GLFW_KEY_S))
 		{
@@ -263,21 +255,18 @@ void cFPSController::update(float dt)
 				direction = direction * quat(vec3(0.f, glm::radians(-45.f), 0.f));
 				rotation = Mathf::RotationFromTo(settings.forward, -direction);
 			}
-			movement = -direction;
+			movement += -direction;
 			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
 		}
 		else if (Input::GetKey(GLFW_KEY_A))
 		{
-			movement = direction * quat(vec3(0.f, glm::radians(-90.f), 0.f));
+			movement += direction * quat(vec3(0.f, glm::radians(-90.f), 0.f));
 			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
 		}
 		else if (Input::GetKey(GLFW_KEY_D))
 		{
-			movement = direction * quat(vec3(0.f, glm::radians(90.f), 0.f));;
+			movement += direction * quat(vec3(0.f, glm::radians(90.f), 0.f));;
 			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
-		}
-		else
-		{
 		}
 
 		vec3 velocity = rigidBody->GetVelocity();

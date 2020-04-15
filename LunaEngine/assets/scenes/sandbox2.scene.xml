@@ -51,6 +51,10 @@
 	    <Texture name="Ground_Wet_002_basecolor.jpg"/>
 	    <Texture name="Ground_Wet_002_normal.jpg"/>
 	    <Texture name="Ground_Wet_002_roughness.jpg"/>
+	    <Texture name="Ground_Wet_002_height.png"/>
+	    <Texture name="soap-008.png"/>
+	    <Texture name="dirt.jpg"/>
+	    <Texture name="dust_particles_on_lens_by_kerast_d7mj0cr-fullview.jpg"/>
     
         <Skybox name="city_">
           <Right texture="city_left.jpg"/>
@@ -298,18 +302,20 @@
 		    <FPSBehaviour>
                 <Forward x="0" y="0" z="-1"/>
                 <Offset x="0.7" y="5.0" z="0"/>
-                <CameraDistance>2</CameraDistance>
+                <CameraDistance>4</CameraDistance>
                 <Speed>5.0</Speed>
                 <MouseSpeed>0.15</MouseSpeed>
             </FPSBehaviour>
 
-            <SphereBody>
+			  <CharacterBody/>
+
+            <!--<SphereBody>
                 <Velocity x="0.000000" y="0.000000" z="0.000000"/>
                 <Mass>10.0</Mass>
                 <GFactor>1.0</GFactor>
                 <Offset x="0.000000" y="2.000000" z="0.000000"/>
                 <Radius>2.0</Radius>
-            </SphereBody>
+            </SphereBody>-->
         
           </Components>
 
@@ -406,6 +412,29 @@
 			</Components>
 		</GameObject>
 
+		<GameObject mesh="cube" tag="cube" shader="pbr">
+			<Position x="25.0" y="5.0" z="-17.0"/>
+			<Rotation x="0" y="0" z="0.0"/>
+			<Scale>1.0</Scale>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">Ground_Wet_002_basecolor.jpg</Texture>
+			<Texture ratio="1.0">Ground_Wet_002_normal.jpg</Texture>
+			<Texture ratio="1.0">Ground_Wet_002_roughness.jpg</Texture>
+			<Texture ratio="1.0">Ground_Wet_002_height.png</Texture>
+			
+			<Components>
+				<CubeBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>1.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="0.000000" z="0.000000"/>
+					<Scale x="1" y="1" z="1"/>
+					<Rotateable/>
+				</CubeBody>
+			</Components>
+		</GameObject>
+
         <GameObject mesh="statue" tag="statue" shader="basic">
             <Position x="40.0" y="30.0" z="70.0"/>
             <Rotation x="0" y="180" z="0.0"/>
@@ -415,13 +444,6 @@
 			<BlendMap tiling="1.0">perlin.png</BlendMap>
 
 			<Components>
-				<!--<CubeBody>
-					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-					<Mass>0.0</Mass>
-					<GFactor>1.0</GFactor>
-					<Origin x="-1.000000" y="0.000000" z="0.000000"/>
-					<Scale x="10" y="30" z="7"/>
-				</CubeBody>-->
 				<MeshBody>
 					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 					<Mass>0.0</Mass>
@@ -493,9 +515,11 @@
             <Scale>10.0</Scale>
             <Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
             <SpecColour x="0.900000" y="0.900000" z="1.000000"/>
-            <SpecIntensity>10.000000</SpecIntensity>
-            <Texture ratio="1.0" tiling="100.0">Ground_Wet_002_basecolor.jpg</Texture>
-            <Texture ratio="1.0" tiling="100.0">Ground_Wet_002_normal.jpg</Texture>
+            <SpecIntensity>300.000000</SpecIntensity>
+            <Texture ratio="1.0" tiling="150.0">Ground_Wet_002_basecolor.jpg</Texture>
+            <Texture ratio="1.0" tiling="150.0">Ground_Wet_002_normal.jpg</Texture>
+            <Texture ratio="1.0" tiling="150.0">Ground_Wet_002_roughness.jpg</Texture>
+            <Texture ratio="1.0" tiling="150.0">Ground_Wet_002_height.png</Texture>
             <!--<Texture ratio="1.0" tiling="100.0">Snow_004_COLOR.jpg</Texture>
 		    <BlendMap tiling="20.0">WATER_BUMP.png</BlendMap>-->
       
@@ -513,7 +537,10 @@
         </GameObject>
 
 	</Layout>
-  
-	<Audio API="FMOD"/>
+
+	<Audio API="FMOD">
+		<Sound file="gamestart.mp3" volume="1.0" pitch="1.0" pan="0" streamed="false" friendlyName="intro"/>
+		<Sound file="gunshot.mp3" volume="1.0" pitch="1.0" pan="0" streamed="false" friendlyName="gunshot"/>
+	</Audio>
 </Scene>
 

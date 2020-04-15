@@ -13,6 +13,9 @@ cGameObject::cGameObject()
 	parent = 0;
 	cmd_group = new cCommandGroup;
 	shouldBlend = false;
+	specColour = glm::vec3(.0f, .0f, .0f);
+	specIntensity = 100.f;
+	meshName = "";
 }
 
 cGameObject::~cGameObject()

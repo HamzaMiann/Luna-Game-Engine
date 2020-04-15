@@ -23,6 +23,7 @@ uniform bool cloudsEnabled;
 uniform bool cloudShadowsEnabled;
 uniform bool vignetteEnabled;
 uniform bool lensDirtEnabled;
+uniform bool shadowsEnabled;
 
 // Texture
 uniform sampler2D textSamp00;	// albedo
@@ -44,6 +45,7 @@ uniform float cloudDensityFactor;
 uniform float cloudDensityCutoff;
 uniform float cloudLightScattering;
 
+uniform float mixValue;
 uniform float bloomScale;
 
 // Globals
@@ -324,7 +326,7 @@ float GetDensityPerlinAt(vec3 position)
 	return density;
 }
 
-
+const float timeFactor = 2.0;
 vec4 RayTracePlane(Ray ray, vec4 previousColour)
 {
 	vec4 col = previousColour.rgba;
@@ -363,15 +365,15 @@ vec4 RayTracePlane(Ray ray, vec4 previousColour)
 				{
 					vec3 uv4 = (ray.ro + mStep * n).xzy;
 					uv4.xy /= 400.;
-					uv4.xy += fiTime / 40.;
-					uv4.z += fiTime / 100.;
+					uv4.xy += fiTime / (40. * timeFactor);
+					uv4.z += fiTime / (100.  * timeFactor);
 					lightDensity += GetDensityAt(uv4);
 				}
 			}
 
 			uv3.xy /= 400.;
-			uv3.xy += fiTime / 40.;
-			uv3.z += fiTime / 100.;
+			uv3.xy += fiTime / (40. * timeFactor);
+			uv3.z += fiTime / (100.  * timeFactor);
 			density += GetDensityAt(uv3);
 			//density += fbm3D(uv3).r / float(NUM_DENSITY_SAMPLES);
 		}
@@ -412,8 +414,8 @@ float RayTraceShadows(Ray ray)
 		{
 			vec3 uv3 = (origin + marchStep * i).xzy;
 			uv3.xy /= 400.;
-			uv3.xy += fiTime / 40.;
-			uv3.z += fiTime / 100.;
+			uv3.xy += fiTime / (40. * timeFactor);
+			uv3.z += fiTime / (100. * timeFactor);
 			density += GetDensityAt(uv3);
 		}
 
@@ -436,13 +438,22 @@ void main()
 
 	if (isFinalPass)
 	{
-		pixelColour.rgb = texture(textSamp00, uv).rgb;
+		//pixelColour.rgb = texture(textSamp00, uv).rgb;
 		
-		
+		float smoothmix = smoothstep(0., 1., mixValue);
+
+
+		if (mixValue > 0.) {
+			pixelColour.rgb = circular_blur(textSamp00, 50.0 * (1.0 - smoothmix)).rgb * (smoothmix + 0.2);
+		}
+		else {
+			pixelColour.rgb = texture(textSamp00, uv).rgb;
+		}
+
 		// DOF effect
 		if (DOFEnabled)
 		{
-			pixelColour.rgb = DOF(textSamp00, textSamp01).rgb;
+			pixelColour.rgb = mix(pixelColour.rgb, DOF(textSamp00, textSamp01).rgb, smoothmix);
 		}
 		
 		// bloom effect
@@ -473,8 +484,8 @@ void main()
 			// lens dirt
 			if (lensDirtEnabled) {
 				vec3 dirt = vec3(texture(lensTexture, uv).r);
-				float dist = exp(-distance((lightPositionOnScreen + 1.) / 2., uv) * 10.);
-				pixelColour.rgb += dirt * dist * length(scatter * 4.);
+				float dist = exp(-distance((lightPositionOnScreen + 1.) / 2., uv) * 7.);
+				pixelColour.rgb += dirt * dist * length(scatter * 10.);
 			}
 		}
 
@@ -509,11 +520,12 @@ void main()
 	vec3 col = NoEffect().rgb;
 	vec3 normal = texture( textSamp01, uv ).rgb - 1.;
 	vec3 pos = texture( textSamp02, uv ).rgb;
+	vec2 specularBuffer = texture(textSamp03, uv).xy;
 
-	//pixelColour.rgb = normal;
+	vec4 spec = vec4(specularBuffer.x);
+	spec.w = specularBuffer.y * 1000.;
+	//pixelColour.rgb = vec3(specularBuffer.xy, 1.0);
 	//return;
-
-	vec4 spec = vec4(vec3(0.7), 1000.0);
 
 	float d = distance(eyeLocation.xyz, pos);
 
@@ -583,16 +595,6 @@ void main()
 		ray.rd = normalize(texture(textSamp02, uv).xyz - ray.ro);
 		normalColour = RayTracePlane(ray, normalColour);
 	}
-
-	//pixelColour *= 0.0001;
-	//pixelColour.rgb = textureLod(worleyTexture, vec3(uv + fiTime, fiTime), 0.0).rgb;
-//	vec3 norm = texture(textSamp00, uv).rgb;
-//	vec3 offset = texture(textSamp00, uv - 0.002).rgb;
-//
-//	if (distance(norm, offset) > 0.07)
-//	{
-//		pixelColour.rgb = vec3(0.);
-//	}
 	
 } // end main
 
@@ -642,7 +644,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 			}
 
 			float shadowFactor = 1.;
-			if (true) {
+			if (shadowsEnabled) {
 				vec4 glposition = (shadowMVP * vec4(vertexWorldPos, 1.0)) * 0.5 + 0.5;
 				if (glposition.z > 1.)
 				{
@@ -673,7 +675,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 								   * theLights[index].specular.rgb;
 			
 			finalObjectColour.rgb += (vertexMaterialColour.rgb * theLights[index].diffuse.rgb * lightContrib) 
-			* theLights[index].atten.r * shadowFactor + specContrib * shadowFactor; 
+			* theLights[index].atten.r * shadowFactor + vertexSpecular.rgb * specContrib * shadowFactor; 
 			continue;
 		}
 		

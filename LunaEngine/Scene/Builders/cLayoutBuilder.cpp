@@ -148,6 +148,16 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 
 		ptr->AddComponent(component);
 	}
+	else if (componentName == "CharacterBody")
+	{
+		nPhysics::sCharacterDef def;
+		def.Offset = vec3(0.f, 1.f, 0.f);
+		def.size = vec2(1.f);
+
+		nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateCharacter(ptr, def);
+
+		ptr->AddComponent(component);
+	}
 	
 }
 
@@ -177,6 +187,10 @@ void LoadComponents(xml_node<>* property_node, cGameObject* ptr)
 			AddPhysicsComponent(n, component_node, ptr);
 		}
 		else if (n == "MeshBody")
+		{
+			AddPhysicsComponent(n, component_node, ptr);
+		}
+		else if (n == "CharacterBody")
 		{
 			AddPhysicsComponent(n, component_node, ptr);
 		}

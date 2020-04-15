@@ -35,15 +35,15 @@ public:
 	cLuaBrain* brain;
 	std::string lua_script;
 
-	std::string meshName = "";
+	std::string meshName;
 
 	glm::vec4  colour = glm::vec4(1.f, 1.f, 1.f, 1.f);
 
 	float reflectivity = 0.f;
 	float refractivity = 0.f;
 
-	glm::vec3 specColour = glm::vec3(.5f, .5f, .5f);
-	float specIntensity = 1.f;
+	glm::vec3 specColour;
+	float specIntensity;
 	bool uniformColour = false;
 	bool isWireframe = false;
 

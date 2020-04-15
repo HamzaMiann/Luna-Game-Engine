@@ -31,15 +31,19 @@ RenderingEngine::RenderingEngine()
 	SetProperty("volumetricEnabled", DEBUG_SETTING);
 	SetProperty("cloudsEnabled", DEBUG_SETTING);
 	SetProperty("cloudShadowsEnabled", DEBUG_SETTING);
-	SetProperty("vignetteEnabled", DEBUG_SETTING);
+	SetProperty("vignetteEnabled", false);
 	SetProperty("lensDirtEnabled", DEBUG_SETTING);
+	SetProperty("shadowsEnabled", DEBUG_SETTING);
 
 	SetProperty("cloudDensityFactor", 1.f);
 	SetProperty("cloudDensityCutoff", 0.5f);
 	SetProperty("cloudLightScattering", 2.f);
-	SetProperty("bloomScale", 0.3f);
+	SetProperty("bloomScale", 0.5f);
 
 	SetProperty("switchColour", true);
+
+	depthProjectionMatrix = glm::ortho<float>(-200.f, 200.f, -100.f, 100.f, -1000.f, 1000.f);
+	shadowLightPosition = vec3(0.f, 200.f, 500.f);
 }
 
 void RenderingEngine::Init()
@@ -71,7 +75,10 @@ void RenderingEngine::Init()
 	screenPos = vec2(0.f, 0.f);
 	noise.SetTexture("noise.jpg");
 
-	lens.SetTexture("lens_dust.jpg");
+	//lens.SetTexture("lens_dust.jpg");
+	//lens.SetTexture("soap-008.png");
+	//lens.SetTexture("dirt.jpg");
+	lens.SetTexture("dust_particles_on_lens_by_kerast_d7mj0cr-fullview.jpg");
 
 	blendMap.SetTexture("WATER_BUMP.png", 1.f);
 
@@ -82,29 +89,6 @@ void RenderingEngine::Init()
 		cBasicTextureManager::Instance()->LoadWorleyFromFile("assets/textures/clouds256.matrix", tex);
 		cBasicTextureManager::Instance()->Create3DTexture("worley", true, &tex.data[0], tex.width, tex.height, tex.width);
 		worleyNoise.SetTexture("worley");
-
-		/*worleyTexture = cWorleyTexture::Generate(32u, 3u, 20u, 45u);
-		size_t width, height;
-		unsigned char* data;
-		data = worleyTexture->GetDataRGB(width, height);
-		cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
-		worleyNoise.SetTexture("worley");
-		worleyNoise2.SetTexture("worley");
-		delete worleyTexture; worleyTexture = 0;*/
-
-		/*promise = new safe_promise<cWorleyTexture*>([]()
-			{
-				worleyTexture = promise->get();
-				size_t width, height;
-				unsigned char* data;
-				data = worleyTexture->GetDataRGB(width, height);
-				cBasicTextureManager::Instance()->Create3DTexture("worley", true, data, width, height, width);
-				worleyNoise.SetTexture("worley");
-				worleyNoise2.SetTexture("worley");
-			}
-		);
-		Thread::PushJob(promise);
-		(new std::thread(cWorleyTexture::GenerateAsync, promise, 64u, 4u, 15u, 30u))->detach();*/
 	}
 
 	perlinNoise.SetTexture("perlin.png");
@@ -288,14 +272,6 @@ void RenderingEngine::DrawObject(cGameObject& object, Shader* s)
 		shader = *s;
 	}
 	Camera& camera = *Camera::main_camera;
-
-	/*
-
-	MISC EFFECTS
-
-	*/
-	bool isUnique = object.tag == "ground";
-	shader.SetBool("isUnique", (float)isUnique);
 
 
 	/*

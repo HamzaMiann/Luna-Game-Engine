@@ -10,6 +10,7 @@ namespace nPhysics
 		cube,
 		cloth,
 		capsule,
-		mesh
+		mesh,
+		character
 	};
 }

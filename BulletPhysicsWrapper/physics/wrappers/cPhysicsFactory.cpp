@@ -5,6 +5,7 @@
 #include "cCubeComponent.h"
 #include "cCapsuleComponent.h"
 #include "cPhysMeshComponent.h"
+#include "cCharacterComponent.h"
 
 namespace nPhysics
 {
@@ -37,6 +38,11 @@ namespace nPhysics
 	iPhysMeshComponent* cPhysicsFactory::CreateMesh(iObject* parent, const sMeshDef& def)
 	{
 		return new cPhysMeshComponent(parent, def);
+	}
+
+	iCharacterComponent* cPhysicsFactory::CreateCharacter(iObject* parent, const sCharacterDef& def)
+	{
+		return new cCharacterComponent(parent, def);
 	}
 
 	iCapsuleComponent* cPhysicsFactory::CreateCapsule(iObject* parent, const sCapsuleDef& def)

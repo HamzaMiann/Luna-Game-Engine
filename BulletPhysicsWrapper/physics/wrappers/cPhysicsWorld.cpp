@@ -1,8 +1,7 @@
 #include "cPhysicsWorld.h"
 #include "cBulletWrapperComponent.h"
-#include "../bullet/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
-#include "../bullet/BulletCollision/Gimpact/btGImpactShape.h"
 #include "../nConvert.h"
+#include "cCharacterComponent.h"
 
 namespace nPhysics {
 
@@ -15,6 +14,8 @@ namespace nPhysics {
 
 		///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
 		mOverlappingPairCache = new btDbvtBroadphase();
+		mGhostPairCallback = new btGhostPairCallback();
+		mOverlappingPairCache->getOverlappingPairCache()->setInternalGhostPairCallback(mGhostPairCallback);
 
 		///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
 		mSolver = new btSequentialImpulseConstraintSolver;
@@ -39,6 +40,7 @@ namespace nPhysics {
 
 		delete mDynamicsWorld;
 		delete mDispatcher;
+		delete mGhostPairCallback;
 		delete mCollisionConfiguration;
 		delete mOverlappingPairCache;
 		delete mSolver;
@@ -87,6 +89,21 @@ namespace nPhysics {
 		return false;
 	}
 
+	bool cPhysicsWorld::AddCharacter(iPhysicsComponent* component)
+	{
+		if (component)
+		{
+			auto concrete = dynamic_cast<cCharacterComponent*>(component);
+			if (concrete)
+			{
+				mDynamicsWorld->addCharacter(concrete->mCharacterController);
+				components.push_back(component);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	bool cPhysicsWorld::RemoveComponent(iPhysicsComponent* component)
 	{
 		if (component)
@@ -99,6 +116,25 @@ namespace nPhysics {
 				{
 					components.erase(it);
 					mDynamicsWorld->removeRigidBody(concrete->mBody);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	bool cPhysicsWorld::RemoveCharacter(iPhysicsComponent* component)
+	{
+		if (component)
+		{
+			auto concrete = dynamic_cast<cCharacterComponent*>(component);
+			if (concrete)
+			{
+				auto it = std::find(components.begin(), components.end(), component);
+				if (it != components.end())
+				{
+					components.erase(it);
+					mDynamicsWorld->removeCharacter(concrete->mCharacterController);
 					return true;
 				}
 			}
@@ -169,6 +205,11 @@ namespace nPhysics {
 		debugDrawer->DBG_DrawWireframe; // this breaks when I run the app
 		debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe); // so does this
 		debugDrawer->setDebugMode(1); // this doesn't
+	}
+
+	void cPhysicsWorld::AddConstraint(btTypedConstraint* constraint)
+	{
+		this->mDynamicsWorld->addConstraint(constraint);
 	}
 
 }

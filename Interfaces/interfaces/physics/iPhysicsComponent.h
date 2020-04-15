@@ -22,6 +22,7 @@ namespace nPhysics
 		virtual void GetTransform(mat4& transformOut) = 0;
 
 		virtual void AddForce(const vec3& force) = 0;
+		virtual void AddForceToPoint(const vec3& force, const vec3& point) { AddForce(force); }
 
 		virtual void AddVelocity(const vec3& velocity) = 0;
 		virtual void SetVelocity(const vec3& velocity) = 0;
@@ -39,6 +40,9 @@ namespace nPhysics
 		virtual void UpdateTransform() = 0;
 
 		virtual void CollidedWith(iPhysicsComponent* other) {}
+
+		virtual void AddHingeConstraint(const vec3& pivot, const vec3& axis) {}
+		virtual void AddSliderConstraint(const vec2& linLimit, const vec2& angleLimit) {}
 
 		inline void setIsRotateable(bool value) { _rotateable = value; }
 

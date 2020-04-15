@@ -1,5 +1,6 @@
 #include "cCubeComponent.h"
 #include "cPhysicsFactory.h"
+#include "cPhysicsWorld.h"
 #include <interfaces/Behaviour/iBehaviour.h>
 
 namespace nPhysics
@@ -86,6 +87,24 @@ namespace nPhysics
 		}
 	}
 
+	void cCubeComponent::AddHingeConstraint(const vec3& pivot, const vec3& axis)
+	{
+		btTypedConstraint* constraint = new btHingeConstraint(*this->mBody, nConvert::ToBullet(pivot), nConvert::ToBullet(axis));
+		reinterpret_cast<cPhysicsWorld*>(cPhysicsFactory().GetWorld())->AddConstraint(constraint);
+	}
+
+	void cCubeComponent::AddSliderConstraint(const vec2& linLimit, const vec2& angleLimit)
+	{
+		btTransform tform;
+		tform.setIdentity();
+		btSliderConstraint* constraint = new btSliderConstraint(*this->mBody, tform, true);
+		constraint->setLowerLinLimit(linLimit.x);
+		constraint->setUpperLinLimit(linLimit.y);
+		constraint->setLowerAngLimit(angleLimit.x);
+		constraint->setUpperAngLimit(angleLimit.y);
+		reinterpret_cast<cPhysicsWorld*>(cPhysicsFactory().GetWorld())->AddConstraint(constraint);
+	}
+
 	void cCubeComponent::AddForce(const glm::vec3& force)
 	{
 		mBody->activate(true);
@@ -106,6 +125,12 @@ namespace nPhysics
 	void cCubeComponent::AddVelocity(const glm::vec3& velocity)
 	{
 		mBody->applyCentralImpulse(nConvert::ToBullet(velocity));
+	}
+
+	void cCubeComponent::AddForceToPoint(const vec3& force, const vec3& point)
+	{
+		mBody->activate(true);
+		mBody->applyForce(nConvert::ToBullet(force), nConvert::ToBullet(point - transform.Position()));
 	}
 
 	void cCubeComponent::SetPosition(const glm::vec3& position)

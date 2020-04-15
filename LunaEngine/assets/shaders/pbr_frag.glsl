@@ -32,7 +32,6 @@ uniform samplerCube skyBox;
 
 // Globals
 in float fiTime;
-in float fisWater;
 uniform vec2 iResolution;
 
 
@@ -43,33 +42,69 @@ layout (location = 2) out vec4 positionColour;		// Depth (0 to 1)
 layout (location = 3) out vec4 bloomColour;			// Depth (0 to 1)
 layout (location = 4) out vec4 unlitColour;			// Depth (0 to 1)
 
+const float height_scale = 0.1;
+
+vec2 GetTextureCoords(vec2 texCoords, vec3 viewDir)
+{
+	return texCoords;
+
+	// number of depth layers
+    const float numLayers = 10;
+    // calculate the size of each layer
+    float layerDepth = 1.0 / numLayers;
+    // depth of current layer
+    float currentLayerDepth = 0.0;
+    // the amount to shift the texture coordinates per layer (from vector P)
+    vec2 P = viewDir.xz * height_scale; 
+    vec2 deltaTexCoords = P / numLayers;
+
+	// get initial values
+	vec2  currentTexCoords     = texCoords;
+	float currentDepthMapValue = texture(textSamp03, currentTexCoords).r;
+  
+	while(currentLayerDepth < currentDepthMapValue)
+	{
+		// shift texture coordinates along direction of P
+		currentTexCoords -= deltaTexCoords;
+		// get depthmap value at current texture coordinates
+		currentDepthMapValue = texture(textSamp03, currentTexCoords).r;  
+		// get depth of next layer
+		currentLayerDepth += layerDepth;  
+	}
+
+	// get texture coordinates before collision (reverse operations)
+	vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
+
+	// get depth after and before collision for linear interpolation
+	float afterDepth  = currentDepthMapValue - currentLayerDepth;
+	float beforeDepth = texture(textSamp03, prevTexCoords).r - currentLayerDepth + layerDepth;
+ 
+	// interpolation of texture coordinates
+	float weight = afterDepth / (afterDepth - beforeDepth);
+	vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
+
+	return finalTexCoords;
+
+}
 
 void main()  
 {
 	unlitColour = vec4(0.0);
-	bloomColour = vec4(0.0);
 	positionColour = vec4(fVertWorldLocation.xyz, 1.0);
 
-	vec3 albedo = texture( textSamp00, fUVx2.st * tex_tiling.x ).rgb;
-	vec3 normalMap = texture( textSamp01, fUVx2.st * tex_tiling.y ).rgb;
-	vec3 specularMap = 1. - texture( textSamp02, fUVx2.st * tex_tiling.z ).rgb;
-	vec3 ambientOcclusionMap = texture( textSamp03, fUVx2.st * tex_tiling.w ).rgb;
+	vec2 uv = GetTextureCoords(fUVx2.st * tex_tiling.w, normalize(eyeLocation.xyz - fVertWorldLocation.xyz));
+
+	vec3 albedo = texture( textSamp00, uv).rgb;
+	vec3 normalMap = texture( textSamp01, uv).rgb;
+	vec3 specularMap = 1. - texture( textSamp02, uv).rgb;
 		
 	mat3 TBN = mat3(
 		normalize(fTangent.xyz),
 		normalize(fBiTangent.xyz),
 		normalize(fNormal.xyz)
 	);
-	
-	//vec3 tangent_normal = (tex1_RGB * 2.0) - 1.0;				// normal texture value
-	//vec3 bitangent_normal = cross(tangent_normal, fNormal.xyz);
-	float specular = specularMap.r / 10.0;
-
-	//vec3 worldSpaceNormal = vec3(tangent_normal.r * tangent_normal.xyz + tangent_normal.b * fNormal.xyz + tangent_normal.g * bitangent_normal.xyz);
-	//worldSpaceNormal = fNormal.xyz;
 
 	vec3 worldSpaceNormal = (normalMap * 2.) - 1.;
-	//worldSpaceNormal = fNormal.xyz;
 	worldSpaceNormal = TBN * worldSpaceNormal;
 	normalColour = vec4(normalize(worldSpaceNormal) + 1.0, 1.0);
 
@@ -77,8 +112,10 @@ void main()
 	vec3 reflectiveColour = texture(skyBox, reflect(direction, fNormal.xyz)).rgb;
 
 	pixelColour = vec4(albedo, 1.0);
-	//pixelColour.rgb = mix(pixelColour.rgb, reflectiveColour.rgb, specular);
 
-	return;
+	bloomColour.x = specularColour.r * specularMap.r;
+	bloomColour.y = min(specularColour.w, 1000.) / 1000.;
+	bloomColour.a = 1.0;
+
 	
 } // end main

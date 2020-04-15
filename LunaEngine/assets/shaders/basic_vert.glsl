@@ -26,7 +26,6 @@ out vec4 fTangent;
 out vec4 fBiTangent;
 out vec4 fUVx2;
 out float fiTime;
-out float fisWater;
 out float depth;
 
 float rand(float s, float r) { return mod(mod(s, r + iTime) * 112341, 1); }
