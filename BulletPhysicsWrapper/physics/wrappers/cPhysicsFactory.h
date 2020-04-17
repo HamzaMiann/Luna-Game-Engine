@@ -22,6 +22,7 @@ namespace nPhysics
 		virtual iClothComponent* CreateCloth(iObject* parent, const sClothDef& def) override;
 		virtual iPhysMeshComponent* CreateMesh(iObject* parent, const sMeshDef& def) override;
 		virtual iCharacterComponent* CreateCharacter(iObject* parent, const sCharacterDef& def) override;
+		virtual iTriggerRegionComponent* CreateTriggerRegion(iObject* parent, const sTriggerDef& def) override;
 		virtual iEmptyComponent* CreateEmpty(iObject* parent) override;
 	};
 }

@@ -45,14 +45,13 @@ void cLayoutBuilder::Build(Scene& scene, rapidxml::xml_node<>* node)
 
 void AddPhysicsComponent(const std::string& componentName, xml_node<>* componentNode, cGameObject* ptr)
 {
-	//printf("Name: %s\n", componentName.c_str());
 	if (componentName == "SphereBody")
 	{
 		nPhysics::sSphereDef def;
 		def.velocity = XML_Helper::AsVec3(componentNode->first_node("Velocity"));
 		def.mass = XML_Helper::AsFloat(componentNode->first_node("Mass"));
 		def.gravity_factor = XML_Helper::AsFloat(componentNode->first_node("GFactor"));
-		def.Offset = XML_Helper::AsVec3(componentNode->first_node("Offset"));
+		def.Offset = XML_Helper::AsVec3(componentNode->first_node("Origin"));
 		def.Radius = XML_Helper::AsFloat(componentNode->first_node("Radius"));
 
 		nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateSphere(ptr, def);
@@ -63,6 +62,7 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 		}
 
 		ptr->AddComponent(component);
+		return;
 	}
 	else if (componentName == "PlaneBody")
 	{
@@ -74,6 +74,7 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 		def.Normal = glm::normalize(def.Normal);
 		def.Constant = XML_Helper::AsFloat(componentNode->first_node("Constant"));
 		ptr->AddComponent(g_PhysicsFactory->CreatePlane(ptr, def));
+		return;
 	}
 	else if (componentName == "CapsuleBody")
 	{
@@ -92,6 +93,7 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 		}
 
 		ptr->AddComponent(component);
+		return;
 	}
 	else if (componentName == "CubeBody")
 	{
@@ -110,6 +112,7 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 		}
 
 		ptr->AddComponent(component);
+		return;
 	}
 	else if (componentName == "MeshBody")
 	{
@@ -147,17 +150,29 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 		}
 
 		ptr->AddComponent(component);
+		return;
 	}
 	else if (componentName == "CharacterBody")
 	{
 		nPhysics::sCharacterDef def;
-		def.Offset = vec3(0.f, 1.f, 0.f);
-		def.size = vec2(1.f);
+		def.Offset = XML_Helper::AsVec3(componentNode->first_node("Origin"));
+		def.size = XML_Helper::AsVec2(componentNode->first_node("Scale"));
 
 		nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateCharacter(ptr, def);
 
 		ptr->AddComponent(component);
+		return;
 	}
+	/*else if (componentName == "TriggerRegion")
+	{
+		nPhysics::sTriggerDef def;
+		def.Offset = XML_Helper::AsVec3(componentNode->first_node("Origin"));
+		def.Extents = XML_Helper::AsVec3(componentNode->first_node("Size"));
+
+		nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateTriggerRegion(ptr, def);
+
+		ptr->AddComponent(component);
+	}*/
 	
 }
 

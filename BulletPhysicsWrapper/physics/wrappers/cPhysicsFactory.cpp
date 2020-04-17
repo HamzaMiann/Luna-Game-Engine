@@ -6,6 +6,7 @@
 #include "cCapsuleComponent.h"
 #include "cPhysMeshComponent.h"
 #include "cCharacterComponent.h"
+#include "cTriggerRegionComponent.h"
 
 namespace nPhysics
 {
@@ -43,6 +44,11 @@ namespace nPhysics
 	iCharacterComponent* cPhysicsFactory::CreateCharacter(iObject* parent, const sCharacterDef& def)
 	{
 		return new cCharacterComponent(parent, def);
+	}
+
+	iTriggerRegionComponent* cPhysicsFactory::CreateTriggerRegion(iObject* parent, const sTriggerDef& def)
+	{
+		return new cTriggerRegionComponent(parent, def);
 	}
 
 	iCapsuleComponent* cPhysicsFactory::CreateCapsule(iObject* parent, const sCapsuleDef& def)

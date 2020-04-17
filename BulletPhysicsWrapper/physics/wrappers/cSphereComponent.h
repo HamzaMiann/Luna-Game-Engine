@@ -33,6 +33,7 @@ namespace nPhysics
 
 		*/
 		virtual void AddVelocity(const vec3& velocity) override;
+		virtual void AddForceToPoint(const vec3& force, const vec3& point) override;
 		virtual void SetVelocity(const vec3& velocity) override;
 		virtual vec3 GetVelocity() override;
 

@@ -40,9 +40,9 @@ RenderingEngine::RenderingEngine()
 	SetProperty("cloudLightScattering", 2.f);
 	SetProperty("bloomScale", 0.5f);
 
-	SetProperty("switchColour", true);
+	SetProperty("switchColour", false);
 
-	depthProjectionMatrix = glm::ortho<float>(-200.f, 200.f, -100.f, 100.f, -1000.f, 1000.f);
+	depthProjectionMatrix = glm::ortho<float>(-200.f, 200.f, -100.f, 100.f, -1.f, 1000.f);
 	shadowLightPosition = vec3(0.f, 200.f, 500.f);
 }
 

@@ -389,6 +389,7 @@
     <ClInclude Include="physics\wrappers\cPhysicsFactory.h" />
     <ClInclude Include="physics\wrappers\cPhysicsWorld.h" />
     <ClInclude Include="physics\wrappers\cPlaneComponent.h" />
+    <ClInclude Include="physics\wrappers\cTriggerRegionComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="physics\bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp" />
@@ -551,6 +552,7 @@
     <ClCompile Include="physics\wrappers\cSphereComponent.cpp" />
     <ClCompile Include="physics\wrappers\cPhysicsWorld.cpp" />
     <ClCompile Include="physics\wrappers\cPlaneComponent.cpp" />
+    <ClCompile Include="physics\wrappers\cTriggerRegionComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

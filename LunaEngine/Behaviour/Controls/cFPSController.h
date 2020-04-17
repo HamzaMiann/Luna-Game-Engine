@@ -3,12 +3,10 @@
 #include <interfaces/Behaviour/iBehaviour.h>
 #include <iObject.h>
 #include <Components\cAnimationController.h>
-#include <interfaces\physics\iPhysicsComponent.h>
+#include <interfaces\physics\iCharacterComponent.h>
 
 class cFPSController : public iBehaviour
 {
-	typedef glm::vec3 vec3;
-	typedef glm::quat quat;
 public:
 
 	cFPSController(iObject* root) : iBehaviour(root) {}
@@ -23,12 +21,14 @@ public:
 
 	virtual void update(float dt) override;
 
+	virtual void OnCollide(iObject* other) override;
+
 	virtual void OnDestroy() override;
 
 
 private:
 
-	nPhysics::iPhysicsComponent* rigidBody;
+	nPhysics::iCharacterComponent* rigidBody;
 	iObject* weapon;
 
 	vec3 direction;

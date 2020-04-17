@@ -100,6 +100,11 @@ namespace nPhysics
 		mBody->activate(true);
 		mBody->applyCentralImpulse(nConvert::ToBullet(velocity));
 	}
+	void cSphereComponent::AddForceToPoint(const vec3& force, const vec3& point)
+	{
+		mBody->activate(true);
+		mBody->applyForce(nConvert::ToBullet(force), nConvert::ToBullet(point - transform.Position()));
+	}
 	void cSphereComponent::SetPosition(const glm::vec3& position)
 	{
 		btTransform tform;

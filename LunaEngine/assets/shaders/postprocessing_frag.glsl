@@ -37,6 +37,7 @@ uniform sampler3D worleyTexture;
 uniform sampler2D perlinTexture;
 uniform sampler2D lensTexture;
 uniform sampler2DShadow shadowTexture;
+//uniform sampler2D shadowTexture;
 
 uniform samplerCube skyBox;
 
@@ -443,7 +444,7 @@ void main()
 		float smoothmix = smoothstep(0., 1., mixValue);
 
 
-		if (mixValue > 0.) {
+		if (switchColour && mixValue > 0.) {
 			pixelColour.rgb = circular_blur(textSamp00, 50.0 * (1.0 - smoothmix)).rgb * (smoothmix + 0.2);
 		}
 		else {
@@ -498,7 +499,7 @@ void main()
 		}
 
 		float disp = smoothstep(0., 1., 1. - distance(vec2(0.5), fUVx2.st) * 10. * (1. - blendRatio));
-		pixelColour.rgb = mix(pixelColour.rgb, vec3(texture(perlinTexture, uv).r), disp * blendRatio);
+		pixelColour.rgb = mix(pixelColour.rgb, texture(textSamp02, uv).rgb, disp * blendRatio);
 		//pixelColour.rgb = mix(pixelColour.rgb, vec3(texture(worleyTexture, (eyeLocation.xyz / 10.) + vec3(uv, 1.0)).rgb), disp * blendRatio);
 
 
@@ -651,9 +652,8 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 					glposition.z = 1.;
 				}
 				glposition.xy = clamp(glposition.xy, 0., 1.);
-				//vec3 cube = vec3(glposition.x / glposition.w, glposition.y / glposition.w, glposition.z / glposition.w);
 				float bias = 0.0005;
-				shadowFactor = shadowFactor * min(texture( shadowTexture, vec3(glposition.xy, glposition.z - 0.005)) + 0.5, 1.0);
+				shadowFactor = shadowFactor * min(texture( shadowTexture, vec3(glposition.xy, glposition.z - bias)) + 0.5, 1.0);
 			}
 
 			shadowFactor *= cloudShadowFactor;

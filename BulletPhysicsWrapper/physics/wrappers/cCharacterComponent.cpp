@@ -9,58 +9,30 @@ namespace nPhysics {
 	cCharacterComponent::cCharacterComponent(iObject* parent, const sCharacterDef& def)
 		: iCharacterComponent(parent)
 	{
-		btCapsuleShape* colShape = new btCapsuleShape(def.size.x, def.size.y);
+		btConvexShape* colShape = new btCapsuleShape(def.size.x, def.size.y);
 		mGhostObject = new btPairCachingGhostObject;
 
 		btTransform transform;
 		transform.setIdentity();
 		transform.setOrigin(nConvert::ToBullet(this->transform.pos + def.Offset));
+		transform.setRotation(nConvert::ToBullet(quat(vec3(glm::radians(90.f), 0, 0))));
 		offset = def.Offset;
 
 		mGhostObject->setWorldTransform(transform);
 		mGhostObject->setCollisionShape(colShape);
 		mGhostObject->setUserPointer(this);
 		//mGhostObject->setCollisionFlags(mGhostObject->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+		mGhostObject->setCollisionFlags(mGhostObject->getCollisionFlags() | btCollisionObject::CF_CHARACTER_OBJECT);
 
 		btVector3 up = btVector3(0., 1.f, 0.);
 		mCharacterController = new btKinematicCharacterController(mGhostObject, colShape, btScalar(1.f), up);
 
-		/// Create Dynamic Objects
-
-		//btScalar mass(def.mass);
-
-		////rigidbody is dynamic if and only if mass is non zero, otherwise static
-		//bool isDynamic = (mass != 0.f);
-
-		//btVector3 localInertia(0, 0, 0);
-		//if (isDynamic)
-		//	colShape->calculateLocalInertia(mass, localInertia);
-
-		////using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-		//btDefaultMotionState* myMotionState = new btDefaultMotionState(transform);
-		//btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-		//mBody = new btRigidBody(rbInfo);
-		////mBody = new btKinematicCharacterController
-
-		//rbInfo.m_restitution = 0.7f;
-
-		//mBody->applyCentralImpulse(nConvert::ToBullet(def.velocity));
-
-		//mBody->setUserPointer((iPhysicsComponent*)this);
-		//if (!this->_rotateable)
-		//{
-		//	mBody->setAngularFactor(btVector3(0., 0., 0.));
-		//	mBody->setLinearFactor(btVector3(1., 0., 1.));
-		//}
-
-		cPhysicsFactory factory;
-		dynamic_cast<cPhysicsWorld*>(factory.GetWorld())->AddCharacter(this);
+		dynamic_cast<cPhysicsWorld*>(cPhysicsFactory().GetWorld())->AddCharacter(this);
 	}
 
 	cCharacterComponent::~cCharacterComponent()
 	{
-		cPhysicsFactory factory;
-		dynamic_cast<cPhysicsWorld*>(factory.GetWorld())->RemoveCharacter(this);
+		dynamic_cast<cPhysicsWorld*>(cPhysicsFactory().GetWorld())->RemoveCharacter(this);
 
 		mGhostObject->setUserPointer(0);
 		delete mGhostObject->getCollisionShape();
@@ -76,6 +48,9 @@ namespace nPhysics {
 
 	void cCharacterComponent::AddVelocity(const vec3& velocity)
 	{
+		mGhostObject->activate();
+		mCharacterController->setWalkDirection(nConvert::ToBullet(velocity));
+		//mCharacterController->applyImpulse(nConvert::ToBullet(velocity));
 	}
 
 	void cCharacterComponent::AddForceToPoint(const vec3& force, const vec3& point)
@@ -84,15 +59,21 @@ namespace nPhysics {
 
 	void cCharacterComponent::SetVelocity(const vec3& velocity)
 	{
+		mGhostObject->activate();
+		mCharacterController->setWalkDirection(nConvert::ToBullet(velocity));
+		//mCharacterController->setLinearVelocity(nConvert::ToBullet(velocity));
 	}
 
 	vec3 cCharacterComponent::GetVelocity()
 	{
-		return vec3();
+		return nConvert::ToGLM(mCharacterController->getLinearVelocity());
 	}
 
 	void cCharacterComponent::SetPosition(const glm::vec3& position)
 	{
+		btTransform tform(mGhostObject->getWorldTransform());
+		tform.setOrigin(nConvert::ToBullet(position));
+		mGhostObject->setWorldTransform(tform);
 	}
 
 	vec3 cCharacterComponent::GetPosition()
@@ -103,6 +84,9 @@ namespace nPhysics {
 
 	void cCharacterComponent::SetRotation(const quat& rotation)
 	{
+		btTransform tform(mGhostObject->getWorldTransform());
+		tform.setRotation(nConvert::ToBullet(rotation));
+		mGhostObject->setWorldTransform(tform);
 	}
 
 	quat cCharacterComponent::GetRotation()
@@ -129,12 +113,26 @@ namespace nPhysics {
 	{
 		for (iComponent* component : parent.Components())
 		{
-			iBehaviour* behaviour = dynamic_cast<iBehaviour*>(component);
-			if (behaviour)
+			if (component->GetComponentType() == ComponentType::Behaviour)
 			{
-				behaviour->OnCollide(&other->parent);
+				reinterpret_cast<iBehaviour*>(component)->OnCollide(&other->parent);
 			}
 		}
+	}
+
+	void cCharacterComponent::Walk(float speed)
+	{
+		mCharacterController->setWalkDirection(nConvert::ToBullet(walkDirection * speed));
+	}
+
+	void cCharacterComponent::Jump(const vec3& direction)
+	{
+		mCharacterController->jump(nConvert::ToBullet(direction));
+	}
+
+	bool cCharacterComponent::CanJump()
+	{
+		return mCharacterController->canJump();
 	}
 
 }

@@ -161,6 +161,7 @@
     <ClInclude Include="interfaces\physics\iPhysicsFactory.h" />
     <ClInclude Include="interfaces\physics\iPhysicsWorld.h" />
     <ClInclude Include="interfaces\physics\iPlaneComponent.h" />
+    <ClInclude Include="interfaces\physics\iTriggerRegionComponent.h" />
     <ClInclude Include="iObject.h" />
     <ClInclude Include="sTransform.h" />
     <ClInclude Include="xml_helper.h" />

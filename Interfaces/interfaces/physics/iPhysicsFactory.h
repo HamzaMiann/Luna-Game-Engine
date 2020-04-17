@@ -8,6 +8,7 @@
 #include "iPhysicsWorld.h"
 #include "iPhysMeshComponent.h"
 #include "iCharacterComponent.h"
+#include "iTriggerRegionComponent.h"
 
 namespace nPhysics
 {
@@ -24,6 +25,7 @@ namespace nPhysics
 		virtual iPhysMeshComponent* CreateMesh(iObject* parent, const sMeshDef& def) = 0;
 		virtual iClothComponent* CreateCloth(iObject* parent, const sClothDef& def) = 0;
 		virtual iCharacterComponent* CreateCharacter(iObject* parent, const sCharacterDef& def) = 0;
+		virtual iTriggerRegionComponent* CreateTriggerRegion(iObject* parent, const sTriggerDef& def) = 0;
 		virtual iEmptyComponent* CreateEmpty(iObject* parent) = 0;
 	};
 }

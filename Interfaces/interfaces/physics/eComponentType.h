@@ -11,6 +11,7 @@ namespace nPhysics
 		cloth,
 		capsule,
 		mesh,
-		character
+		character,
+		trigger
 	};
 }

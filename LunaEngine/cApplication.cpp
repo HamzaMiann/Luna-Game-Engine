@@ -207,11 +207,6 @@ void cApplication::Run()
 			g_PhysicsWorld->ToggleDebugMode();
 		}
 
-		if (maxTime > 0.f)
-		{
-			maxTime -= dt;
-		}
-
 		if (renderer.GetBoolProperty("shadowsEnabled"))
 			renderer.RenderObjectsToFBO(&albedoFBO, width, height, dt, true);
 

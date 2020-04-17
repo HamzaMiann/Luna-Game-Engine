@@ -55,6 +55,7 @@
 	    <Texture name="soap-008.png"/>
 	    <Texture name="dirt.jpg"/>
 	    <Texture name="dust_particles_on_lens_by_kerast_d7mj0cr-fullview.jpg"/>
+	    <Texture name="eye_fail.jpg"/>
     
         <Skybox name="city_">
           <Right texture="city_left.jpg"/>
@@ -106,9 +107,11 @@
         <Model file="Terrain_XYZ_N_UV.ply" friendlyName="terrain" shader="basic"/>
         <Model file="statue.obj" friendlyName="statue" shader="basic"/>
         <Model file="Tree.fbx" friendlyName="tree" shader="basic"/>
-        <!--<Model file="untitled.fbx" friendlyName="gun" shader="basic"/>-->
         <Model file="Ottoman Mauser.obj" friendlyName="gun" shader="basic"/>
         <Model file="Low Grass.fbx" friendlyName="grass" shader="basic"/>
+        <Model file="head.obj" friendlyName="drone" shader="basic"/>
+        <Model file="fence01.FBX" friendlyName="fence" shader="basic"/>
+        <Model file="FbxTomb.fbx" friendlyName="tomb" shader="basic"/>
     
 	</Models>
 
@@ -307,15 +310,10 @@
                 <MouseSpeed>0.15</MouseSpeed>
             </FPSBehaviour>
 
-			  <CharacterBody/>
-
-            <!--<SphereBody>
-                <Velocity x="0.000000" y="0.000000" z="0.000000"/>
-                <Mass>10.0</Mass>
-                <GFactor>1.0</GFactor>
-                <Offset x="0.000000" y="2.000000" z="0.000000"/>
-                <Radius>2.0</Radius>
-            </SphereBody>-->
+			  <CharacterBody>
+				  <Origin x="0.000000" y="5.000000" z="0.000000"/>
+				  <Scale x="1" y="5"/>
+			  </CharacterBody>
         
           </Components>
 
@@ -325,12 +323,94 @@
 			<Position x="20.0" y="0.0" z="-30.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
 			<Scale>5.0</Scale>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
 			<Texture ratio="1.0">bark_0021.jpg</Texture>
-			<Components>
-				<!--<AnimationController profile="gun" default="idle"/>-->
+		</GameObject>
 
+		<GameObject mesh="drone" tag="drone" shader="basic">
+			<Position x="20.0" y="10.0" z="-25.0"/>
+			<Rotation x="0" y="0" z="0.0"/>
+			<Scale>0.03</Scale>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">eye_fail.jpg</Texture>
+			<Components>
+				<SphereBody>
+                    <Velocity x="0.000000" y="0.000000" z="0.000000"/>
+                    <Mass>1.0</Mass>
+                    <GFactor>1.0</GFactor>
+                    <Origin x="0.000000" y="0.000000" z="0.000000"/>
+                    <Radius>1.1</Radius>
+					<Rotateable/>
+                </SphereBody>
 			</Components>
 		</GameObject>
+
+		<GameObject mesh="tomb" tag="tomb" shader="basic">
+			<Position x="25.0" y="7.2" z="-50.0"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale3D x="1" y="7" z="1"/>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="52.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="90" z="90.0"/>
+			<Scale>0.03</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="39.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="90" z="90.0"/>
+			<Scale>0.03</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="26.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="90" z="90.0"/>
+			<Scale>0.03</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="13.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="90" z="90.0"/>
+			<Scale>0.03</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="0.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="90" z="90.0"/>
+			<Scale>0.03</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="-13.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="90" z="90.0"/>
+			<Scale>0.03</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="-26.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="90" z="90.0"/>
+			<Scale>0.03</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="-39.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="90" z="90.0"/>
+			<Scale>0.03</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="-39.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="-90" z="-90.0"/>
+			<Scale>0.03</Scale>
+			<!--<Texture ratio="1.0">fx3_Panels_Color.png</Texture>-->
+		</GameObject>
+
 		
 
 		<GameObject mesh="tree" tag="tree" shader="basic">
@@ -341,18 +421,11 @@
 			<Texture ratio="0.7" tiling="100.0">Snow_004_COLOR.jpg</Texture>
 			<BlendMap tiling="0.03">perlin.png</BlendMap>
 			<Components>
-				<!--<CubeBody>
-					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-					<Mass>0.0</Mass>
-					<GFactor>1.0</GFactor>
-					<Origin x="0.000000" y="10.000000" z="0.000000"/>
-					<Scale x="1" y="10" z="1"/>
-				</CubeBody>-->
 				<CapsuleBody>
 					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 					<Mass>0.0</Mass>
 					<GFactor>1.0</GFactor>
-					<Origin x="0.000000" y="9.000000" z="0.000000"/>
+					<Origin x="0.000000" y="8.500000" z="0.000000"/>
 					<Scale x="1" y="15"/>
 				</CapsuleBody>
 			</Components>
@@ -463,13 +536,6 @@
 			<BlendMap tiling="1.0">perlin.png</BlendMap>-->
 
 			<Components>
-				<!--<CubeBody>
-					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-					<Mass>0.0</Mass>
-					<GFactor>1.0</GFactor>
-					<Origin x="0.000000" y="0.000000" z="0.000000"/>
-					<Scale x="10" y="12" z="12"/>
-				</CubeBody>-->
 				<MeshBody>
 					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
 					<Mass>0.0</Mass>

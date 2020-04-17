@@ -1,9 +1,11 @@
-#include "cPhysicsWorld.h"
-#include "cBulletWrapperComponent.h"
 #include "../nConvert.h"
+#include "cBulletWrapperComponent.h"
 #include "cCharacterComponent.h"
+#include "cPhysicsWorld.h"
+#include "cTriggerRegionComponent.h"
 
 namespace nPhysics {
+
 
 	cPhysicsWorld::cPhysicsWorld()
 	{
@@ -14,6 +16,7 @@ namespace nPhysics {
 
 		///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
 		mOverlappingPairCache = new btDbvtBroadphase();
+		//mOverlappingPairCache = new btDbvtBroadphase();
 		mGhostPairCallback = new btGhostPairCallback();
 		mOverlappingPairCache->getOverlappingPairCache()->setInternalGhostPairCallback(mGhostPairCallback);
 
@@ -96,7 +99,30 @@ namespace nPhysics {
 			auto concrete = dynamic_cast<cCharacterComponent*>(component);
 			if (concrete)
 			{
-				mDynamicsWorld->addCharacter(concrete->mCharacterController);
+				mDynamicsWorld->addCollisionObject(
+					concrete->mGhostObject,
+					btBroadphaseProxy::CharacterFilter,
+					btBroadphaseProxy::StaticFilter | btBroadphaseProxy::DefaultFilter
+					);
+				mDynamicsWorld->addAction(concrete->mCharacterController);
+				components.push_back(component);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool cPhysicsWorld::AddObject(iPhysicsComponent* component)
+	{
+		if (component)
+		{
+			auto concrete = dynamic_cast<cTriggerRegionComponent*>(component);
+			if (concrete)
+			{
+				mDynamicsWorld->addCollisionObject(
+					concrete->mGhostObject,
+					btBroadphaseProxy::SensorTrigger,
+					btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger);
 				components.push_back(component);
 				return true;
 			}
@@ -134,7 +160,27 @@ namespace nPhysics {
 				if (it != components.end())
 				{
 					components.erase(it);
+					mDynamicsWorld->removeCollisionObject(concrete->mGhostObject);
 					mDynamicsWorld->removeCharacter(concrete->mCharacterController);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	bool cPhysicsWorld::RemoveObject(iPhysicsComponent* component)
+	{
+		if (component)
+		{
+			auto concrete = dynamic_cast<cTriggerRegionComponent*>(component);
+			if (concrete)
+			{
+				auto it = std::find(components.begin(), components.end(), component);
+				if (it != components.end())
+				{
+					components.erase(it);
+					mDynamicsWorld->removeCollisionObject(concrete->mGhostObject);
 					return true;
 				}
 			}

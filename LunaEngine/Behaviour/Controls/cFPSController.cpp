@@ -50,7 +50,7 @@ float blendRatio = 0.f;
 float mixValue = 0.f;
 void cFPSController::start()
 {
-	rigidBody = parent.GetComponent<nPhysics::iPhysicsComponent>();
+	rigidBody = parent.GetComponent<nPhysics::iCharacterComponent>();
 	rotX = quat(vec3(0.f));
 	rotY = quat(vec3(0.f));
 	rotYi = quat(vec3(0.f));
@@ -65,6 +65,22 @@ void cFPSController::start()
 	Input::LockCursor();
 
 	AudioEngine::Instance()->PlaySound("intro");
+}
+
+float GetVerticalAxis()
+{
+	float input = 0.f;
+	input += (float)Input::GetKey(GLFW_KEY_W);
+	input -= (float)Input::GetKey(GLFW_KEY_S);
+	return input;
+}
+
+float GetHorizontalAxis()
+{
+	float input = 0.f;
+	input += (float)Input::GetKey(GLFW_KEY_A);
+	input -= (float)Input::GetKey(GLFW_KEY_D);
+	return input;
 }
 
 void cFPSController::update(float dt)
@@ -169,7 +185,7 @@ void cFPSController::update(float dt)
 		timeSpeed += 4.f;
 	}
 
-	sinY = settings.camera_offset.y + sin(time * timeSpeed) / 15.f;
+	sinY = settings.camera_offset.y + sin(time * timeSpeed) / 5.f;
 
 	
 
@@ -189,20 +205,19 @@ void cFPSController::update(float dt)
 		+ direction;
 
 	vec3 forwards = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
-	vec3 right = forwards * quat(vec3(0.f, -0.5f, 0.f));
-	Camera::main_camera->Up = glm::cross(forwards, right);
+	vec3 right = quat(vec3(0.f, glm::radians(90.f), 0.f)) * forwards;
+	//Camera::main_camera->Up = glm::cross(forwards, right);
 
 	direction.y = 0.f;
 	direction = normalize(direction);
-	quat rotation = Mathf::RotationFromTo(settings.forward, direction);
-	vec3 movement(0.f);
+	//quat rotation = Mathf::RotationFromTo(settings.forward, direction);
 
 	if (weapon) {
-		vec3 pos(0.f, 4.f, 0.f);
+		vec3 pos = vec3(0.f, 4.f, 0.f);
 		pos = transform.rotation * pos + transform.Position();
 		vec3 lerp = Mathf::lerp(weapon->transform.pos, pos, dt * 10.f);
 		weapon->transform.Position(lerp);
-		//weapon->transform.pos.y += 4.f;
+
 		quat slerp = glm::slerp(weapon->transform.Rotation(),
 			Mathf::RotationFromTo(
 				settings.forward,
@@ -214,67 +229,35 @@ void cFPSController::update(float dt)
 	}
 
 	direction *= -1.f;
+	right = quat(vec3(0.f, glm::radians(90.f), 0.f)) * direction;
 
 	if (rigidBody)
 	{
+		vec3 walkDirection(0.f);
+		float vertical = GetVerticalAxis();
+		float horizontal = GetHorizontalAxis();
 
-		if (Input::KeyDown(GLFW_KEY_SPACE))
+		if (Input::GetKey(GLFW_KEY_LEFT_SHIFT) && vertical > 0.f)
 		{
-			movement.y += 100.f;
-		}
-		else if (Input::GetKey(GLFW_KEY_W))
-		{
-			if (Input::GetKey(GLFW_KEY_A))
-			{
-				direction = direction * quat(vec3(0.f, glm::radians(-45.f), 0.f));
-				rotation = Mathf::RotationFromTo(settings.forward, -direction);
-			}
-			else if (Input::GetKey(GLFW_KEY_D))
-			{
-				direction = direction * quat(vec3(0.f, glm::radians(45.f), 0.f));
-				rotation = Mathf::RotationFromTo(settings.forward, -direction);
-			}
-
-			if (Input::GetKey(GLFW_KEY_LEFT_SHIFT))
-			{
-				direction *= 3.f;
-			}
-
-			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
-			movement += direction;
-		}
-		else if (Input::GetKey(GLFW_KEY_S))
-		{
-			if (Input::GetKey(GLFW_KEY_A))
-			{
-				direction = direction * quat(vec3(0.f, glm::radians(45.f), 0.f));
-				rotation = Mathf::RotationFromTo(settings.forward, -direction);
-			}
-			else if (Input::GetKey(GLFW_KEY_D))
-			{
-				direction = direction * quat(vec3(0.f, glm::radians(-45.f), 0.f));
-				rotation = Mathf::RotationFromTo(settings.forward, -direction);
-			}
-			movement += -direction;
-			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
-		}
-		else if (Input::GetKey(GLFW_KEY_A))
-		{
-			movement += direction * quat(vec3(0.f, glm::radians(-90.f), 0.f));
-			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
-		}
-		else if (Input::GetKey(GLFW_KEY_D))
-		{
-			movement += direction * quat(vec3(0.f, glm::radians(90.f), 0.f));;
-			transform.Rotation(glm::slerp(transform.Rotation(), rotation, dt * 10.f));
+			vertical *= 2.f;
 		}
 
-		vec3 velocity = rigidBody->GetVelocity();
-		movement *= settings.speed;
-		movement.y = velocity.y;
-		rigidBody->SetVelocity(movement);
-		
+		walkDirection += direction * vertical + (right * horizontal);
+		rigidBody->SetWalkDirection(walkDirection);
+
+		rigidBody->Walk(settings.speed* dt);
+
+		if (Input::KeyDown(GLFW_KEY_SPACE) && rigidBody->CanJump())
+		{
+			rigidBody->Jump(vec3(0.f, 10.f, 0.f));
+		}
 	}
+}
+
+void cFPSController::OnCollide(iObject* other)
+{
+	/*if (other->tag == "tomb")
+		printf("%s\n", other->tag.c_str());*/
 }
 
 void cFPSController::OnDestroy()

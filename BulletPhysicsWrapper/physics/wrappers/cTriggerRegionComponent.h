@@ -2,21 +2,19 @@
 
 #include "../nConvert.h"
 #include "cBulletWrapperComponent.h"
-#include <interfaces/physics/iCharacterComponent.h>
-#include "../bullet/BulletDynamics/Character/btKinematicCharacterController.h"
+#include <interfaces/physics/iTriggerRegionComponent.h>
 #include "../bullet/BulletCollision/CollisionDispatch/btGhostObject.h"
 
 namespace nPhysics
 {
-	class cCharacterComponent : public iCharacterComponent
+	class cTriggerRegionComponent : public iTriggerRegionComponent
 	{
 	public:
 
 		btPairCachingGhostObject* mGhostObject = 0;
-		btKinematicCharacterController* mCharacterController = 0;
 
-		cCharacterComponent(iObject* parent, const sCharacterDef& def);
-		virtual ~cCharacterComponent();
+		cTriggerRegionComponent(iObject* parent, const sTriggerDef& def);
+		virtual ~cTriggerRegionComponent();
 
 		/*
 
@@ -31,17 +29,16 @@ namespace nPhysics
 		FORCE
 
 		*/
-		virtual void AddForce(const vec3& force) override;
+		virtual void AddForce(const vec3& force) override {}
 
 		/*
 
 		VELOCITY
 
 		*/
-		virtual void AddVelocity(const vec3& velocity) override;
-		virtual void AddForceToPoint(const vec3& force, const vec3& point) override;
-		virtual void SetVelocity(const vec3& velocity) override;
-		virtual vec3 GetVelocity() override;
+		virtual void AddVelocity(const vec3& velocity) override {}
+		virtual void SetVelocity(const vec3& velocity) override {}
+		virtual vec3 GetVelocity() override { return vec3(0.f); }
 
 		/*
 
@@ -74,15 +71,6 @@ namespace nPhysics
 
 		*/
 		void CollidedWith(iPhysicsComponent* other) override;
-
-		/*
-		
-		CHARACTER CONTROLLER FUNCTIONS
-
-		*/
-		virtual void Walk(float speed) override;
-		virtual void Jump(const vec3& direction) override;
-		virtual bool CanJump() override;
 
 	};
 }

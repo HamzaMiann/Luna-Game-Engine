@@ -1,7 +1,6 @@
 #pragma once
 
 
-#include <glm/vec3.hpp>
 #include "iPhysicsComponent.h"
 
 namespace nPhysics
@@ -15,11 +14,23 @@ namespace nPhysics
 	public:
 		virtual ~iCharacterComponent() {}
 
+		inline void SetWalkDirection(const vec3& direction) { walkDirection = direction; }
+
+		virtual void Walk(float speed) = 0;
+		virtual void Jump(const vec3& direction) = 0;
+		virtual bool CanJump() = 0;
+
+
 	protected:
+
+		vec3 walkDirection;
+
 		iCharacterComponent(iObject* parent)
 			: iPhysicsComponent(parent, eComponentType::character)
+			, walkDirection(vec3(0,0, -1))
 		{
 		}
+
 
 	private:
 		iCharacterComponent() = delete;
