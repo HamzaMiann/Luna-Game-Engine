@@ -354,6 +354,13 @@
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<SpecIntensity>100.000000</SpecIntensity>
 			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+			<Components>
+				<TriggerRegion>
+					<Shape>cube</Shape>
+					<Origin x="0" y="0" z="0"/>
+					<Size x="4" y="4" z="4"/>
+				</TriggerRegion>
+			</Components>
 		</GameObject>
 
 		<GameObject mesh="fence" tag="fence" shader="basic">
@@ -408,7 +415,6 @@
 			<Position x="-39.0" y="0.0" z="-70.0"/>
 			<Rotation x="0" y="-90" z="-90.0"/>
 			<Scale>0.03</Scale>
-			<!--<Texture ratio="1.0">fx3_Panels_Color.png</Texture>-->
 		</GameObject>
 
 		

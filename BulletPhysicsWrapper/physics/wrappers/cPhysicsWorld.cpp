@@ -16,7 +16,6 @@ namespace nPhysics {
 
 		///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
 		mOverlappingPairCache = new btDbvtBroadphase();
-		//mOverlappingPairCache = new btDbvtBroadphase();
 		mGhostPairCallback = new btGhostPairCallback();
 		mOverlappingPairCache->getOverlappingPairCache()->setInternalGhostPairCallback(mGhostPairCallback);
 
@@ -29,10 +28,6 @@ namespace nPhysics {
 
 		debugDrawer = 0;
 
-		///-----initialization_end-----
-
-		//keep track of the shapes, we release memory at exit.
-		//make sure to re-use collision shapes among rigid bodies whenever possible!
 	}
 
 	cPhysicsWorld::~cPhysicsWorld()
@@ -51,11 +46,14 @@ namespace nPhysics {
 
 	void cPhysicsWorld::Update(float dt)
 	{
+		// Run the physics simulation
 		mDynamicsWorld->stepSimulation(dt, 10);
 		//if (mCollisionListener)
 		//{
 		//	// TODO: COLLISION LISTENING STUFF
 		//}
+
+		// Dispatch collision events
 		for (unsigned int i = 0; i < mDispatcher->getNumManifolds(); ++i)
 		{
 			btPersistentManifold* manifold = mDispatcher->getManifoldByIndexInternal(i);
@@ -65,12 +63,14 @@ namespace nPhysics {
 			bodyB->CollidedWith(bodyA);
 		}
 
+		// Transform update for all parents
 		for (iPhysicsComponent*& i : components)
 		{
 			auto wrapper = dynamic_cast<cBulletWrapperComponent*>(i);
 			i->UpdateTransform();
 		}
 
+		// Debug rendering
 		if (mDebugMode)
 		{
 			mDynamicsWorld->debugDrawWorld();
@@ -119,10 +119,7 @@ namespace nPhysics {
 			auto concrete = dynamic_cast<cTriggerRegionComponent*>(component);
 			if (concrete)
 			{
-				mDynamicsWorld->addCollisionObject(
-					concrete->mGhostObject,
-					btBroadphaseProxy::SensorTrigger,
-					btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger);
+				mDynamicsWorld->addCollisionObject(concrete->mGhostObject);
 				components.push_back(component);
 				return true;
 			}

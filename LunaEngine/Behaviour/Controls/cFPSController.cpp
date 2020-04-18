@@ -256,8 +256,8 @@ void cFPSController::update(float dt)
 
 void cFPSController::OnCollide(iObject* other)
 {
-	/*if (other->tag == "tomb")
-		printf("%s\n", other->tag.c_str());*/
+	if (other->tag == "tomb")
+		printf("%s\n", other->tag.c_str());
 }
 
 void cFPSController::OnDestroy()

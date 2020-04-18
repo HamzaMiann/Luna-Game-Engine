@@ -130,9 +130,9 @@ void cApplication::Run()
 		obj->shader = Shader::FromName("basic");
 		obj->transform.Position(
 			vec3(
-				Mathf::randInRange(-200.f, 200.f),
+				Mathf::randInRange(-150.f, 150.f),
 				0.0f,
-				Mathf::randInRange(-200.f, 200.f)
+				Mathf::randInRange(-150.f, 150.f)
 				)
 			);
 		obj->transform.UpdateEulerRotation(

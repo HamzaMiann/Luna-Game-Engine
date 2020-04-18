@@ -71,10 +71,10 @@ namespace nPhysics
 
 	void cTriggerRegionComponent::UpdateTransform()
 	{
-		btTransform tf(mGhostObject->getWorldTransform());
+		/*btTransform tf(mGhostObject->getWorldTransform());
 		transform.Position(nConvert::ToGLM(tf.getOrigin()) - offset);
 		if (_rotateable)
-			transform.Rotation(nConvert::ToGLM(tf.getRotation()));
+			transform.Rotation(nConvert::ToGLM(tf.getRotation()));*/
 	}
 
 	void cTriggerRegionComponent::GetTransform(mat4& transformOut)
@@ -85,11 +85,11 @@ namespace nPhysics
 
 	void cTriggerRegionComponent::CollidedWith(iPhysicsComponent* other)
 	{
-		for (iComponent* component : parent.Components())
+		for (iComponent* c : parent.Components())
 		{
-			if (component->GetComponentType() == ComponentType::Behaviour)
+			if (c->GetComponentType() == ComponentType::Behaviour)
 			{
-				reinterpret_cast<iBehaviour*>(component)->OnCollide(&other->parent);
+				reinterpret_cast<iBehaviour*>(c)->OnCollide(&other->parent);
 			}
 		}
 	}

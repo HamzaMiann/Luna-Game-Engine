@@ -163,16 +163,7 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 		ptr->AddComponent(component);
 		return;
 	}
-	/*else if (componentName == "TriggerRegion")
-	{
-		nPhysics::sTriggerDef def;
-		def.Offset = XML_Helper::AsVec3(componentNode->first_node("Origin"));
-		def.Extents = XML_Helper::AsVec3(componentNode->first_node("Size"));
-
-		nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateTriggerRegion(ptr, def);
-
-		ptr->AddComponent(component);
-	}*/
+	
 	
 }
 
@@ -208,6 +199,22 @@ void LoadComponents(xml_node<>* property_node, cGameObject* ptr)
 		else if (n == "CharacterBody")
 		{
 			AddPhysicsComponent(n, component_node, ptr);
+		}
+		else if (n == "TriggerRegion")
+		{
+			nPhysics::sTriggerDef def;
+			def.ShapeType = component_node->first_node("Shape")->value();
+			def.Offset = XML_Helper::AsVec3(component_node->first_node("Origin"));
+			def.Extents = XML_Helper::AsVec3(component_node->first_node("Size"));
+
+			nPhysics::iPhysicsComponent* component = g_PhysicsFactory->CreateTriggerRegion(ptr, def);
+			component->setIsRotateable(false);
+			if (component_node->first_node("Rotateable"))
+			{
+				component->setIsRotateable(true);
+			}
+
+			ptr->AddComponent(component);
 		}
 		else
 		{
