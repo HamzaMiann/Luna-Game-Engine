@@ -9,6 +9,7 @@
 #include <Shader/Shader.h>
 #include <Rendering/RenderingEngine.h>
 #include <Audio\AudioEngine.hpp>
+#include <Lighting/cLightManager.h>
 using namespace rapidxml;
 
 bool cFPSController::deserialize(rapidxml::xml_node<>* root_node)
@@ -83,6 +84,17 @@ float GetHorizontalAxis()
 	return input;
 }
 
+cGameObject* MakeHitPoint(const vec3& position)
+{
+	auto obj = new cGameObject;
+	obj->transform.Position(position);
+	obj->transform.Scale(vec3(0.1f));
+	obj->meshName = "sphere";
+	obj->shader = Shader::FromName("basic");
+	obj->texture[0].SetTexture("blue.png", 1.f);
+	return obj;
+}
+
 void cFPSController::update(float dt)
 {
 	time += dt;
@@ -140,17 +152,11 @@ void cFPSController::update(float dt)
 		vec3 ro = Camera::main_camera->Eye;
 		vec3 rd = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
 		rd = weapon->transform.Rotation() * vec3(0.f, 0.f, 1.f);
-		auto hits = g_PhysicsWorld->RayCastAll(ro, rd, 300.f);
-		for (auto& hit : hits)
+		auto* hit = g_PhysicsWorld->RayCast(ro, rd, 300.f, rigidBody);
+		if (hit)
 		{
-			if (hit.object->parent.tag == "player") continue;
-			hit.object->AddForceToPoint(rd * 100.f, hit.hitPoint);
-			cGameObject* obj = new cGameObject;
-			obj->transform.Position(hit.hitPoint);
-			obj->transform.Scale(vec3(0.1f));
-			obj->meshName = "sphere";
-			obj->shader = Shader::FromName("basic");
-			obj->texture[0].SetTexture("blue.png", 1.f);
+			hit->object->AddForceToPoint(rd * 100.f, hit->hitPoint);
+			cGameObject* obj = MakeHitPoint(hit->hitPoint);
 			cEntityManager::Instance().AddEntity(obj);
 		}
 		rotY *= quat(vec3(0.1f, 0.f, 0.f));
@@ -205,12 +211,11 @@ void cFPSController::update(float dt)
 		+ direction;
 
 	vec3 forwards = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
-	vec3 right = quat(vec3(0.f, glm::radians(90.f), 0.f)) * forwards;
+	//vec3 right = quat(vec3(0.f, glm::radians(90.f), 0.f)) * forwards;
 	//Camera::main_camera->Up = glm::cross(forwards, right);
 
 	direction.y = 0.f;
 	direction = normalize(direction);
-	//quat rotation = Mathf::RotationFromTo(settings.forward, direction);
 
 	if (weapon) {
 		vec3 pos = vec3(0.f, 4.f, 0.f);
@@ -229,7 +234,7 @@ void cFPSController::update(float dt)
 	}
 
 	direction *= -1.f;
-	right = quat(vec3(0.f, glm::radians(90.f), 0.f)) * direction;
+	vec3 right = quat(vec3(0.f, glm::radians(90.f), 0.f)) * direction;
 
 	if (rigidBody)
 	{
@@ -237,12 +242,15 @@ void cFPSController::update(float dt)
 		float vertical = GetVerticalAxis();
 		float horizontal = GetHorizontalAxis();
 
+		walkDirection += direction * vertical + (right * horizontal);
+		if (walkDirection != vec3(0.f))
+			walkDirection = normalize(walkDirection);
+
 		if (Input::GetKey(GLFW_KEY_LEFT_SHIFT) && vertical > 0.f)
 		{
-			vertical *= 2.f;
+			walkDirection *= 2.f;
 		}
 
-		walkDirection += direction * vertical + (right * horizontal);
 		rigidBody->SetWalkDirection(walkDirection);
 
 		rigidBody->Walk(settings.speed* dt);
@@ -252,12 +260,19 @@ void cFPSController::update(float dt)
 			rigidBody->Jump(vec3(0.f, 10.f, 0.f));
 		}
 	}
+
+
 }
 
+bool activated = false;
 void cFPSController::OnCollide(iObject* other)
 {
-	if (other->tag == "tomb")
-		printf("%s\n", other->tag.c_str());
+	if (!activated && other->tag == "tomb") {
+		activated = true;
+		AudioEngine::Instance()->PlaySound("checkpoint");
+		reinterpret_cast<cGameObject*>(other)->texture[0].SetTexture("fx3_Panels_Color.png");
+		cLightManager::Instance()->Lights[1]->param2.x = 1;
+	}
 }
 
 void cFPSController::OnDestroy()

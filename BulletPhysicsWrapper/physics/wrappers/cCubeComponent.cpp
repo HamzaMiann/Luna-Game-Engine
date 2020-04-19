@@ -8,6 +8,8 @@ namespace nPhysics
 	cCubeComponent::cCubeComponent(iObject* parent, const sCubeDef& def)
 		: iCubeComponent(parent)
 	{
+		baseRotation = this->parent.transform.rotation;
+
 		btCollisionShape* colShape = new btBoxShape(nConvert::ToBullet(def.Scale));
 
 		btTransform transform;
@@ -77,6 +79,9 @@ namespace nPhysics
 
 	void cCubeComponent::CollidedWith(iPhysicsComponent* other)
 	{
+		if (other->GetComponentType() == eComponentType::character)
+			mBody->activate();
+
 		for (iComponent* component : parent.Components())
 		{
 			iBehaviour* behaviour = dynamic_cast<iBehaviour*>(component);
@@ -158,7 +163,7 @@ namespace nPhysics
 		mBody->getMotionState()->getWorldTransform(tf);
 		transform.Position(nConvert::ToGLM(tf.getOrigin()) - offset);
 		if (_rotateable)
-			transform.Rotation(nConvert::ToGLM(tf.getRotation()));
+			transform.Rotation(baseRotation * nConvert::ToGLM(tf.getRotation()));
 	}
 
 	void cCubeComponent::SetRotation(const quat& rotation)

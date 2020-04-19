@@ -210,6 +210,7 @@ namespace nPhysics {
 				result.object = (iPhysicsComponent*)userpointer;
 				result.hitPoint = nConvert::ToGLM(allResults.m_hitPointWorld[i]);
 				result.hitNormal = nConvert::ToGLM(allResults.m_hitNormalWorld[i]);
+				result.distance = allResults.m_hitFractions[i];
 				hits.push_back(result);
 			}
 		}
@@ -217,28 +218,48 @@ namespace nPhysics {
 		return hits;
 	}
 
-	RayCastResult* cPhysicsWorld::RayCast(vec3 ro, vec3 rd, float t)
+	RayCastResult* cPhysicsWorld::RayCast(vec3 ro, vec3 rd, float t, iPhysicsComponent* ignoreLayer)
 	{
+
 		btVector3 from = nConvert::ToBullet(ro);
 		btVector3 to = nConvert::ToBullet(ro + rd * t);
 
-		btCollisionWorld::ClosestRayResultCallback closestResults(from, to);
-		closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+		btCollisionWorld::AllHitsRayResultCallback allResults(from, to);
+		allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
+		//kF_UseGjkConvexRaytest flag is now enabled by default, use the faster but more approximate algorithm
+		//allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+		allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
 
-		mDynamicsWorld->rayTest(from, to, closestResults);
 
-		if (closestResults.hasHit())
+		mDynamicsWorld->rayTest(from, to, allResults);
+
+		if (!allResults.hasHit()) return nullptr;
+
+		float min = FLT_MAX;
+		int index = -1;
+
+		for (unsigned int i = 0; i < allResults.m_collisionObjects.size(); ++i)
 		{
-			void* userpointer = closestResults.m_collisionObject->getUserPointer();
-			if (userpointer != 0)
+			void* userpointer = allResults.m_collisionObjects[i]->getUserPointer();
+			if (userpointer == ignoreLayer) continue;
+			if (userpointer != 0 && allResults.m_hitFractions[i] < min)
 			{
-				RayCastResult& result = *new RayCastResult;
-				result.object = (iPhysicsComponent*)userpointer;
-				return &result;
+				index = i;
+				min = allResults.m_hitFractions[i];
 			}
 		}
 
-		return nullptr;
+		RayCastResult* result = 0;
+		if (index != -1)
+		{
+			result = new RayCastResult;
+			result->object = (iPhysicsComponent*)allResults.m_collisionObjects[index]->getUserPointer();
+			result->hitPoint = nConvert::ToGLM(allResults.m_hitPointWorld[index]);
+			result->hitNormal = nConvert::ToGLM(allResults.m_hitNormalWorld[index]);
+			result->distance = min;
+		}
+
+		return result;
 	}
 
 	void cPhysicsWorld::SetDebugRenderer(iPhysicsDebugRenderer* renderer)

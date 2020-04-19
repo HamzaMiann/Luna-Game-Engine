@@ -10,6 +10,7 @@ namespace nPhysics
 	{
 		vec3 hitPoint;
 		vec3 hitNormal;
+		float distance;
 		iPhysicsComponent* object;
 	};
 
@@ -41,7 +42,7 @@ namespace nPhysics
 			@returns
 				- iPhysicsComponent of the first collider that was hit
 		*/
-		virtual RayCastResult* RayCast(vec3 ro, vec3 rd, float t) = 0;
+		virtual RayCastResult* RayCast(vec3 ro, vec3 rd, float t, iPhysicsComponent* ignoreLayer = nullptr) = 0;
 
 		/*
 			@params

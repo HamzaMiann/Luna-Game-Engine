@@ -8,6 +8,7 @@ namespace nPhysics
 {
 	class cCubeComponent : public iCubeComponent, public cBulletWrapperComponent
 	{
+		quat baseRotation;
 	public:
 		cCubeComponent(iObject* parent, const sCubeDef& def);
 		virtual ~cCubeComponent();

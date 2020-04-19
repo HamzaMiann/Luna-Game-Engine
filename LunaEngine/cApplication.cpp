@@ -158,7 +158,7 @@ void cApplication::Run()
 
 	g_PhysicsWorld->SetDebugRenderer(&renderer);
 
-	entity_manager.GetObjectByTag("cube")->GetComponent<nPhysics::iPhysicsComponent>()->AddHingeConstraint(vec3(0.f, 2.f, 0.f), vec3(0.f, 1.f, 0.f));
+	entity_manager.GetObjectByTag("fenceDoor")->GetComponent<nPhysics::iPhysicsComponent>()->AddHingeConstraint(vec3(0.f, 2.f, 0.f), vec3(0.f, 1.f, 0.f));
 	//entity_manager.GetObjectByTag("cube")->GetComponent<nPhysics::iPhysicsComponent>()->AddSliderConstraint(vec2(-15.f, -5.f), vec2(-PI / 3.0f, PI / 3.0f));
 	//entity_manager.GetObjectByTag("cube")->GetComponent<nPhysics::iPhysicsComponent>()->AddSliderConstraint(vec2(0.f, 0.f), vec2(-PI / 3.0f, PI / 3.0f));
 

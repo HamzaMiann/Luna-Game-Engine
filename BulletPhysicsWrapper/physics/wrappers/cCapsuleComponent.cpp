@@ -148,6 +148,9 @@ namespace nPhysics
 
 	void cCapsuleComponent::CollidedWith(iPhysicsComponent* other)
 	{
+		if (other->GetComponentType() == eComponentType::character)
+			mBody->activate();
+
 		for (iComponent* component : parent.Components())
 		{
 			iBehaviour* behaviour = dynamic_cast<iBehaviour*>(component);
