@@ -21,7 +21,6 @@ namespace nPhysics {
 		mGhostObject->setWorldTransform(transform);
 		mGhostObject->setCollisionShape(colShape);
 		mGhostObject->setUserPointer(this);
-		//mGhostObject->setCollisionFlags(mGhostObject->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 		mGhostObject->setCollisionFlags(mGhostObject->getCollisionFlags() | btCollisionObject::CF_CHARACTER_OBJECT);
 
 		btVector3 up = btVector3(0., 1.f, 0.);
@@ -50,7 +49,6 @@ namespace nPhysics {
 	{
 		mGhostObject->activate();
 		mCharacterController->setWalkDirection(nConvert::ToBullet(velocity));
-		//mCharacterController->applyImpulse(nConvert::ToBullet(velocity));
 	}
 
 	void cCharacterComponent::AddForceToPoint(const vec3& force, const vec3& point)
@@ -61,7 +59,6 @@ namespace nPhysics {
 	{
 		mGhostObject->activate();
 		mCharacterController->setWalkDirection(nConvert::ToBullet(velocity));
-		//mCharacterController->setLinearVelocity(nConvert::ToBullet(velocity));
 	}
 
 	vec3 cCharacterComponent::GetVelocity()
@@ -133,6 +130,16 @@ namespace nPhysics {
 	bool cCharacterComponent::CanJump()
 	{
 		return mCharacterController->canJump();
+	}
+
+	void cCharacterComponent::SetMaxSlope(float radiansAngle)
+	{
+		mCharacterController->setMaxSlope(radiansAngle);
+	}
+
+	void cCharacterComponent::SetStepHeight(float height)
+	{
+		mCharacterController->setStepHeight(height);
 	}
 
 }

@@ -83,6 +83,8 @@ namespace nPhysics
 		virtual void Walk(float speed) override;
 		virtual void Jump(const vec3& direction) override;
 		virtual bool CanJump() override;
+		virtual void SetMaxSlope(float radiansAngle) override;
+		virtual void SetStepHeight(float height) override;
 
 	};
 }

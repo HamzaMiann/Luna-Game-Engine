@@ -242,6 +242,7 @@ namespace nPhysics {
 		{
 			void* userpointer = allResults.m_collisionObjects[i]->getUserPointer();
 			if (userpointer == ignoreLayer) continue;
+			if (((iPhysicsComponent*)userpointer)->GetComponentType() == eComponentType::trigger) continue;
 			if (userpointer != 0 && allResults.m_hitFractions[i] < min)
 			{
 				index = i;

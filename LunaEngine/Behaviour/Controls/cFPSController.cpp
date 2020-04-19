@@ -97,6 +97,7 @@ cGameObject* MakeHitPoint(const vec3& position)
 
 void cFPSController::update(float dt)
 {
+	mDt = dt;
 	time += dt;
 
 	double x, y;
@@ -147,21 +148,7 @@ void cFPSController::update(float dt)
 
 	if (Input::MouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 	{
-		AudioEngine::Instance()->PlaySound("gunshot");
-
-		vec3 ro = Camera::main_camera->Eye;
-		vec3 rd = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
-		rd = weapon->transform.Rotation() * vec3(0.f, 0.f, 1.f);
-		auto* hit = g_PhysicsWorld->RayCast(ro, rd, 300.f, rigidBody);
-		if (hit)
-		{
-			hit->object->AddForceToPoint(rd * 100.f, hit->hitPoint);
-			cGameObject* obj = MakeHitPoint(hit->hitPoint);
-			cEntityManager::Instance().AddEntity(obj);
-		}
-		rotY *= quat(vec3(0.1f, 0.f, 0.f));
-		rotYi *= quat(vec3(-0.1f, 0.f, 0.f));
-		rotX *= quat(vec3(0.f, 0.05f, 0.f));
+		Shoot();
 	}
 
 	
@@ -234,6 +221,45 @@ void cFPSController::update(float dt)
 	}
 
 	direction *= -1.f;
+	HandleMovement(direction);
+
+}
+
+bool tombActivated = false;
+int ballsSpawned = 0;
+void cFPSController::OnCollide(iObject* other)
+{
+	if (!tombActivated && other->tag == "tomb") {
+		tombActivated = true;
+		AudioEngine::Instance()->PlaySound("checkpoint");
+		reinterpret_cast<cGameObject*>(other)->texture[0].SetTexture("fx3_Panels_Color.png");
+		cLightManager::Instance()->Lights[1]->param2.x = 1;
+	}
+	else if (ballsSpawned < 10 && other->tag == "spawnBall")
+	{
+		ballsSpawned++;
+		cGameObject* obj = MakeHitPoint(other->transform.Position() + vec3(0.f, 10.f, 0.f));
+		obj->meshName = "drone";
+		obj->transform.Scale(vec3(0.03f));
+		obj->texture[0].SetTexture("eye_fail.jpg");
+		nPhysics::sSphereDef def;
+		def.mass = 1.f;
+		def.gravity_factor = 1.f;
+		def.Offset = vec3(0.f);
+		def.Radius = 1.f;
+		def.velocity = vec3(2.f);
+		obj->AddComponent(g_PhysicsFactory->CreateSphere(obj, def));
+		cEntityManager::Instance().AddEntity(obj);
+	}
+}
+
+void cFPSController::OnDestroy()
+{
+	Input::UnlockCursor();
+}
+
+void cFPSController::HandleMovement(vec3 direction)
+{
 	vec3 right = quat(vec3(0.f, glm::radians(90.f), 0.f)) * direction;
 
 	if (rigidBody)
@@ -253,29 +279,30 @@ void cFPSController::update(float dt)
 
 		rigidBody->SetWalkDirection(walkDirection);
 
-		rigidBody->Walk(settings.speed* dt);
+		rigidBody->Walk(settings.speed * mDt);
 
 		if (Input::KeyDown(GLFW_KEY_SPACE) && rigidBody->CanJump())
 		{
 			rigidBody->Jump(vec3(0.f, 10.f, 0.f));
 		}
 	}
-
-
 }
 
-bool activated = false;
-void cFPSController::OnCollide(iObject* other)
+void cFPSController::Shoot()
 {
-	if (!activated && other->tag == "tomb") {
-		activated = true;
-		AudioEngine::Instance()->PlaySound("checkpoint");
-		reinterpret_cast<cGameObject*>(other)->texture[0].SetTexture("fx3_Panels_Color.png");
-		cLightManager::Instance()->Lights[1]->param2.x = 1;
+	AudioEngine::Instance()->PlaySound("gunshot");
+
+	vec3 ro = Camera::main_camera->Eye;
+	vec3 rd = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
+	rd = weapon->transform.Rotation() * vec3(0.f, 0.f, 1.f);
+	auto* hit = g_PhysicsWorld->RayCast(ro, rd, 300.f, rigidBody);
+	if (hit)
+	{
+		hit->object->AddForceToPoint(rd * 100.f, hit->hitPoint);
+		cGameObject* obj = MakeHitPoint(hit->hitPoint);
+		cEntityManager::Instance().AddEntity(obj);
 	}
-}
-
-void cFPSController::OnDestroy()
-{
-	Input::UnlockCursor();
+	rotY *= quat(vec3(0.1f, 0.f, 0.f));
+	rotYi *= quat(vec3(-0.1f, 0.f, 0.f));
+	rotX *= quat(vec3(0.f, 0.05f, 0.f));
 }

@@ -19,6 +19,8 @@ namespace nPhysics
 		virtual void Walk(float speed) = 0;
 		virtual void Jump(const vec3& direction) = 0;
 		virtual bool CanJump() = 0;
+		virtual void SetMaxSlope(float radiansAngle) = 0;
+		virtual void SetStepHeight(float height) = 0;
 
 
 	protected:

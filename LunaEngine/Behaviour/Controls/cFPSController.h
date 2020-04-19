@@ -25,11 +25,15 @@ public:
 
 	virtual void OnDestroy() override;
 
+	void HandleMovement(vec3 direction);
+	void Shoot();
 
 private:
 
 	nPhysics::iCharacterComponent* rigidBody;
 	iObject* weapon;
+
+	float mDt;
 
 	vec3 direction;
 	vec3 jumpVelocity;

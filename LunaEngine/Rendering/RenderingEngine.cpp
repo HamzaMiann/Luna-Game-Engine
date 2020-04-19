@@ -31,7 +31,7 @@ RenderingEngine::RenderingEngine()
 	SetProperty("volumetricEnabled", DEBUG_SETTING);
 	SetProperty("cloudsEnabled", DEBUG_SETTING);
 	SetProperty("cloudShadowsEnabled", DEBUG_SETTING);
-	SetProperty("vignetteEnabled", false);
+	SetProperty("vignetteEnabled", DEBUG_SETTING);
 	SetProperty("lensDirtEnabled", DEBUG_SETTING);
 	SetProperty("shadowsEnabled", DEBUG_SETTING);
 
@@ -40,7 +40,7 @@ RenderingEngine::RenderingEngine()
 	SetProperty("cloudLightScattering", 2.f);
 	SetProperty("bloomScale", 0.5f);
 
-	SetProperty("switchColour", false);
+	SetProperty("switchColour", DEBUG_SETTING);
 
 	depthProjectionMatrix = glm::ortho<float>(-200.f, 200.f, -100.f, 100.f, -1.f, 1000.f);
 	shadowLightPosition = vec3(0.f, 200.f, 500.f);
