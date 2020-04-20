@@ -52,10 +52,14 @@ float mixValue = 0.f;
 void cFPSController::start()
 {
 	rigidBody = parent.GetComponent<nPhysics::iCharacterComponent>();
+	rigidBody->SetMaxSlope(glm::radians(40.f));
+	rigidBody->SetStepHeight(1.f);
+
 	rotX = quat(vec3(0.f));
 	rotY = quat(vec3(0.f));
 	rotYi = quat(vec3(0.f));
 	jumpVelocity = vec3(0.f);
+
 	actualOffset = settings.camera_offset;
 	targetOffset = settings.camera_offset;
 	offset2 = settings.camera_offset;
@@ -63,6 +67,7 @@ void cFPSController::start()
 	offset2.z = 0.f;
 	sinY = settings.camera_offset.y;
 	weapon = cEntityManager::Instance().GetObjectByTag("gun");
+
 	Input::LockCursor();
 
 	AudioEngine::Instance()->PlaySound("intro");

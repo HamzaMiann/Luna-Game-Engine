@@ -167,6 +167,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClCompile Include="Audio\AudioEngine.cpp" />
     <ClCompile Include="Behaviour\AI\cApproachBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cFormationBehaviour.cpp" />
+    <ClCompile Include="Behaviour\AI\cFuzzyLogicBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cPathFollowingBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cPursueBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cSeekBehaviour.cpp" />
@@ -179,6 +180,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClCompile Include="Behaviour\iBehaviour.cpp" />
     <ClCompile Include="Behaviour\Managers\cAIGameManager.cpp" />
     <ClCompile Include="Behaviour\Managers\cFormationGameManager.cpp" />
+    <ClCompile Include="Behaviour\Managers\cFuzzyManager.cpp" />
     <ClCompile Include="Behaviour\Managers\cPathFindingManager.cpp" />
     <ClCompile Include="Behaviour\Managers\Graph.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -257,6 +259,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="assets\shaders\debug_frag.glsl" />
     <ClInclude Include="Behaviour\AI\cApproachBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cFormationBehaviour.h" />
+    <ClInclude Include="Behaviour\AI\cFuzzyLogicBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cPathFollowingBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cPursueBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cSeekBehaviour.h" />
@@ -268,6 +271,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="Behaviour\Controls\cSphereBehaviour.h" />
     <ClInclude Include="Behaviour\Managers\cAIGameManager.h" />
     <ClInclude Include="Behaviour\Managers\cFormationGameManager.h" />
+    <ClInclude Include="Behaviour\Managers\cFuzzyManager.h" />
     <ClInclude Include="Behaviour\Managers\cPathFindingManager.h" />
     <ClInclude Include="Behaviour\Managers\Graph.h" />
     <ClInclude Include="cApplication.h" />
@@ -374,6 +378,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <Xml Include="assets\scenes\AI.scene.xml" />
     <Xml Include="assets\scenes\AI2.scene.xml" />
     <Xml Include="assets\scenes\AI3.scene.xml" />
+    <Xml Include="assets\scenes\AI4.scene.xml" />
     <Xml Include="assets\scenes\physics2.scene.xml" />
     <Xml Include="assets\scenes\sandbox.scene.xml" />
     <Xml Include="assets\scenes\physics.scene.xml">
@@ -403,6 +408,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\resourceMap.bmp" />
+    <Image Include="assets\resourceMap03.bmp" />
     <Image Include="assets\resourceMap2.bmp" />
     <Image Include="assets\resourceMap3.bmp" />
     <Image Include="assets\resourceMap4.bmp" />

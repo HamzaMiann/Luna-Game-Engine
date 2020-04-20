@@ -39,8 +39,9 @@ RenderingEngine::RenderingEngine()
 	SetProperty("cloudDensityCutoff", 0.5f);
 	SetProperty("cloudLightScattering", 2.f);
 	SetProperty("bloomScale", 0.5f);
+	SetProperty("mixValue", 1.f);
 
-	SetProperty("switchColour", DEBUG_SETTING);
+	SetProperty("switchColour", false);
 
 	depthProjectionMatrix = glm::ortho<float>(-200.f, 200.f, -100.f, 100.f, -1.f, 1000.f);
 	shadowLightPosition = vec3(0.f, 200.f, 500.f);

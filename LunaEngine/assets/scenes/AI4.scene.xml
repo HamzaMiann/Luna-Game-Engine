@@ -1,0 +1,354 @@
+<?xml version="1.0"?>
+<Scene name="Experimental">
+  
+	<Shaders>
+		<Shader name="basic">
+			<Vertex file="basic_vert.glsl"/>
+			<Fragment file="basic_frag.glsl"/>
+		</Shader>
+        <Shader name="pbr">
+          <Vertex file="basic_vert.glsl"/>
+          <Fragment file="pbr_frag.glsl"/>
+        </Shader>
+		<Shader name="shadow">
+			<Vertex file="shadow_vert.glsl"/>
+			<Fragment file="shadow_frag.glsl"/>
+		</Shader>
+    
+        <!-- MUST ALWAYS BE HERE -->
+        <Shader name="post">
+          <Vertex file="postprocessing_vert.glsl"/>
+          <Fragment file="postprocessing_frag.glsl"/>
+        </Shader>
+		<Shader name="debug">
+			<Vertex file="debug_vert.glsl"/>
+			<Fragment file="debug_frag.glsl"/>
+		</Shader>
+	</Shaders>
+  
+	<Textures>
+	    <Texture name="Grass.png"/>
+	    <Texture name="blue.png"/>
+	    <Texture name="red.png"/>
+	    <Texture name="Ground_Dirt_007_basecolor.png"/>
+	    <Texture name="Ground_Dirt_007_normal.png"/>
+	    <Texture name="Snow_004_COLOR.jpg"/>
+	    <Texture name="home_hatka_Base_Color.png"/>
+	    <Texture name="Mutant_diffuse.jpg"/>
+	    <Texture name="Mutant_normal.jpg"/>
+	    <Texture name="fx3_Panels_Color.png"/>
+	    <Texture name="noise.jpg"/>
+	    <Texture name="worley.jpg"/>
+	    <Texture name="worley.png"/>
+	    <Texture name="WATER_BUMP.png"/>
+	    <Texture name="grass_quad.png"/>
+	    <Texture name="perlin.png"/>
+	    <Texture name="lens_dust.jpg"/>
+	    <Texture name="fx3_Panels_Color.png"/>
+	    <Texture name="bark_0021.jpg"/>
+	    <Texture name="grass_tex.png"/>
+		<Texture name="Ground_Wet_002_basecolor.jpg"/>
+		<Texture name="Ground_Wet_002_normal.jpg"/>
+		<Texture name="Ground_Wet_002_roughness.jpg"/>
+		<Texture name="Ground_Wet_002_height.png"/>
+		<Texture name="Fighter_Ship_body_diffuse.png"/>
+    
+        <Skybox name="city_">
+          <Right texture="city_left.jpg"/>
+          <Left texture="city_right.jpg"/>
+          <Top texture="city_up.jpg"/>
+          <Bottom texture="city_down.jpg"/>
+          <Front texture="city_front.jpg"/>
+          <Back texture="city_back.jpg"/>
+        </Skybox>
+        <Skybox name="default">
+          <Right texture="night_left.png"/>
+          <Left texture="night_right.png"/>
+          <Top texture="night_up.png"/>
+          <Bottom texture="night_down.png"/>
+          <Front texture="night_front.png"/>
+          <Back texture="night_back.png"/>
+        </Skybox>
+	</Textures>
+  
+	<Models>
+
+		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen" shader="basic"/>
+
+		<!-- MUST ALWAYS BE HERE -->
+		<Model file="1x1_2Tri_Quad_2_Sided_xyz_n_uv.ply" friendlyName="screen_quad" shader="post"/>
+		
+		
+        <Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
+        <Model file="cube.ply" friendlyName="cube" shader="basic"/>
+        <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
+        <Model file="Mutant.fbx" friendlyName="mutant" shader="basic"/>
+        <Model file="Terrain_XYZ_N_UV.ply" friendlyName="terrain" shader="basic"/>
+        <Model file="statue.obj" friendlyName="statue" shader="basic"/>
+        <Model file="Ottoman Mauser.obj" friendlyName="gun" shader="basic"/>
+		<Model file="RPG-Character.fbx" friendlyName="character" shader="basic"/>
+		<Model file="13897_Sci-Fi_Fighter_Ship_v1_l1.ply" friendlyName="ship" shader="basic"/>
+	</Models>
+
+  <Animations>
+    <AnimationProfile profile="mutant" mesh="Mutant.fbx">
+        <Animation file="Mutant Breathing Idle.fbx" friendlyName="idle"/>
+        <Animation file="Mutant Walking.fbx" friendlyName="walk"/>
+        <Animation file="Mutant Run.fbx" friendlyName="run"/>
+        <Animation file="Mutant Walk Back.fbx" friendlyName="walk-backwards"/>
+        <Animation file="Mutant Right Strafe.fbx" friendlyName="walk-right"/>
+        <Animation file="Mutant Left Strafe.fbx" friendlyName="walk-left"/>
+        <Animation file="Mutant Jump.fbx" friendlyName="jump"/>
+        <Animation file="Mutant Swiping.fbx" friendlyName="attack"/>
+        <Animation file="Mutant Run Jump.fbx" friendlyName="run-jump"/>
+    </AnimationProfile>
+	  <AnimationProfile profile="character" mesh="RPG-Character.fbx">
+		  <Animation file="RPG-Idle.fbx" friendlyName="idle"/>
+		  <Animation file="RPG-Walk.fbx" friendlyName="walk"/>
+		  <Animation file="RPG-Run.fbx" friendlyName="run"/>
+		  <Animation file="RPG-Walk-Backwards.fbx" friendlyName="walk-backwards"/>
+		  <Animation file="RPG-Walk-Right.fbx" friendlyName="walk-right"/>
+		  <Animation file="RPG-Walk-Left.fbx" friendlyName="walk-left"/>
+		  <Animation file="RPG-Jump.fbx" friendlyName="jump"/>
+		  <Animation file="RPG-Attack.fbx" friendlyName="attack"/>
+		  <Animation file="RPG-Run-Jump.fbx" friendlyName="run-jump"/>
+	  </AnimationProfile>
+  </Animations>
+
+	<Lights>
+
+		<Light>
+			<Position x="0.000000" y="30" z="100.000000" w="1.000000"/>
+			<Diffuse x="0.700000" y="0.700000" z="0.800000" w="1.000000"/>
+			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Atten x="3.000000" y="0.0000000100" z="0.000000020000" w="1000.000000"/>
+			<Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+			<Param1 x="3.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+		</Light>
+
+		<Light>
+			<Position x="40.0" y="10.0" z="70.0" w="1.000000"/>
+			<Diffuse x="1.0000" y="0.300000" z="0.300000" w="1.000000"/>
+			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Atten x="0.800000" y="0.000100" z="0.0020000" w="1000.000000"/>
+			<Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+			<Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+		</Light>
+		
+        <Light>
+          <Position x="0.000000" y="1.900057" z="-2.000000" w="1.000000"/>
+          <Diffuse x="1.00000" y="0.300000" z="0.300000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+        <Light>
+          <Position x="3.000000" y="1.900057" z="0.000000" w="1.000000"/>
+          <Diffuse x="0.30000" y="1.00000" z="0.300000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+        <Light>
+          <Position x="5.0" y="1" z="5.000000" w="1.000000"/>
+          <Diffuse x="0.300000" y="0.300000" z="1.000000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+        <Light>
+          <Position x="5.000000" y="1.900057" z="-5.000000" w="1.000000"/>
+          <Diffuse x="1.00000" y="0.300000" z="0.300000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+        <Light>
+          <Position x="-5.000000" y="1.900057" z="5.000000" w="1.000000"/>
+          <Diffuse x="0.30000" y="1.00000" z="0.300000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+
+        <Light>
+          <Position x="10.0" y="1" z="-10.000000" w="1.000000"/>
+          <Diffuse x="0.300000" y="0.300000" z="1.000000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+        <Light>
+          <Position x="-10.000000" y="1.900057" z="10.000000" w="1.000000"/>
+          <Diffuse x="1.00000" y="0.300000" z="0.300000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+        <Light>
+          <Position x="-10.000000" y="1.900057" z="-10.000000" w="1.000000"/>
+          <Diffuse x="0.30000" y="1.00000" z="0.300000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+
+        <Light>
+          <Position x="-15.0" y="1" z="-15.000000" w="1.000000"/>
+          <Diffuse x="0.300000" y="0.300000" z="1.000000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+        <Light>
+          <Position x="-15.000000" y="1.900057" z="15.000000" w="1.000000"/>
+          <Diffuse x="1.00000" y="0.300000" z="0.300000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+        <Light>
+          <Position x="15.000000" y="1.900057" z="-15.000000" w="1.000000"/>
+          <Diffuse x="0.30000" y="1.00000" z="0.300000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+        <Light>
+          <Position x="15.0" y="1" z="15.000000" w="1.000000"/>
+          <Diffuse x="0.300000" y="0.300000" z="1.000000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+
+        <Light>
+          <Position x="0" y="1" z="20.000000" w="1.000000"/>
+          <Diffuse x="0.700000" y="1.000000" z="0.2000000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+
+        <Light>
+          <Position x="0" y="1" z="-20.000000" w="1.000000"/>
+          <Diffuse x="1.00000" y="0.300000" z="1.000000" w="1.000000"/>
+          <Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Atten x="0.800000" y="0.000100" z="0.020000" w="1000.000000"/>
+          <Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+          <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+          <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+        </Light>
+    
+	</Lights>
+  
+	<Layout>
+
+		<GameObject mesh="none" tag="manager" shader="basic">
+			<Position x="0.0" y="0.0" z="0.0"/>
+			<Rotation x="0" y="0" z="0.0"/>
+			<Scale>1.0</Scale>
+
+			<Components>
+				<FuzzyManager/>
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="mutant" tag="player" shader="basic">
+			<Position x="25.0" y="0.0" z="0.0"/>
+			<Rotation x="0" y="0" z="0.0"/>
+			<Scale>0.04</Scale>
+			<Texture ratio="1.0">Mutant_diffuse.jpg</Texture>
+			<Texture ratio="0.0">Mutant_normal.jpg</Texture>
+
+			<Components>
+				<AnimationController profile="mutant" default="idle"/>
+
+				<CharacterController>
+					<Forward x="0" y="0" z="-1"/>
+					<Offset x="-2.5" y="5.0" z="0"/>
+					<CameraDistance>6.0</CameraDistance>
+					<Speed>5.0</Speed>
+					<MouseSpeed>0.15</MouseSpeed>
+				</CharacterController>
+
+				<SphereBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>10.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="2.000000" z="0.000000"/>
+					<Radius>2.0</Radius>
+				</SphereBody>
+
+			</Components>
+		</GameObject>
+		
+
+        <GameObject mesh="statue" tag="statue" shader="basic">
+            <Position x="40.0" y="30.0" z="70.0"/>
+            <Rotation x="0" y="180" z="0.0"/>
+            <Scale>0.3</Scale>
+            <Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+			<Texture ratio="0.6">Snow_004_COLOR.jpg</Texture>
+			<BlendMap tiling="1.0">perlin.png</BlendMap>
+        </GameObject>
+
+
+		<GameObject mesh="plane" tag="ground" shader="pbr">
+			<Position x="0.0" y="0.0" z="0.0"/>
+			<Rotation x="0" y="0" z="0.0"/>
+			<Scale>10.0</Scale>
+			<Colour x="1.000000" y="0.900000" z="0.300000" w="1.000000"/>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>300.000000</SpecIntensity>
+			<Texture ratio="1.0" tiling="150.0">Ground_Wet_002_basecolor.jpg</Texture>
+			<Texture ratio="1.0" tiling="150.0">Ground_Wet_002_normal.jpg</Texture>
+			<Texture ratio="1.0" tiling="150.0">Ground_Wet_002_roughness.jpg</Texture>
+			<Texture ratio="1.0" tiling="150.0">Ground_Wet_002_height.png</Texture>
+
+			<Components>
+
+				<PlaneBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>0.0</GFactor>
+					<Normal x="0.000000" y="1.000000" z="0.000000"/>
+					<Constant>0.0</Constant>
+				</PlaneBody>
+
+			</Components>
+		</GameObject>
+
+	</Layout>
+  
+	<Audio API="FMOD"/>
+</Scene>
+

@@ -12,6 +12,7 @@
 #include <Components/cAnimationController.h>
 #include <Behaviour/Managers/cFormationGameManager.h>
 #include <Behaviour/Managers/cPathFindingManager.h>
+#include <Behaviour/Managers/cFuzzyManager.h>
 
 #pragma warning(disable)
 
@@ -71,6 +72,11 @@ iComponent* ComponentFactory::GetComponent(std::string type, iObject* object)
 	if (type == "PathFindingManager")
 	{
 		return (iComponent*)object->AddComponent<AI::cPathFindingManager>();
+	}
+
+	if (type == "FuzzyManager")
+	{
+		return (iComponent*)object->AddComponent<AI::cFuzzyManager>();
 	}
 	
 	
