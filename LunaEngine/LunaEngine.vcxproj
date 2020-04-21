@@ -182,6 +182,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClCompile Include="Behaviour\Managers\cFormationGameManager.cpp" />
     <ClCompile Include="Behaviour\Managers\cFuzzyManager.cpp" />
     <ClCompile Include="Behaviour\Managers\cPathFindingManager.cpp" />
+    <ClCompile Include="Behaviour\Managers\cZombieGameManager.cpp" />
     <ClCompile Include="Behaviour\Managers\Graph.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cApplication.cpp" />
@@ -273,6 +274,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="Behaviour\Managers\cFormationGameManager.h" />
     <ClInclude Include="Behaviour\Managers\cFuzzyManager.h" />
     <ClInclude Include="Behaviour\Managers\cPathFindingManager.h" />
+    <ClInclude Include="Behaviour\Managers\cZombieGameManager.h" />
     <ClInclude Include="Behaviour\Managers\Graph.h" />
     <ClInclude Include="cApplication.h" />
     <ClInclude Include="Components\cAnimationController.h" />

@@ -48,7 +48,6 @@ vec3 offset2;
 float time;
 float sinY;
 float blendRatio = 0.f;
-float mixValue = 0.f;
 void cFPSController::start()
 {
 	rigidBody = parent.GetComponent<nPhysics::iCharacterComponent>();
@@ -144,12 +143,9 @@ void cFPSController::update(float dt)
 		blendRatio = Mathf::lerp(blendRatio, 0., dt * 3.f);
 	}
 	
-	if (mixValue > 0.22f) mixValue += dt * 0.7f;
-	else mixValue += dt * 0.05f;
-	if (mixValue > 1.f) mixValue = 1.f;
+	
 
 	RenderingEngine::Instance().SetProperty("blendRatio", blendRatio);
-	RenderingEngine::Instance().SetProperty("mixValue", mixValue);
 
 	if (Input::MouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 	{

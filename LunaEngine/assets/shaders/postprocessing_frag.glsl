@@ -36,6 +36,7 @@ uniform sampler2D textSamp05;	// REFLECTIVE
 uniform sampler3D worleyTexture;
 uniform sampler2D perlinTexture;
 uniform sampler2D lensTexture;
+uniform sampler2D UITexture;
 uniform sampler2DShadow shadowTexture;
 //uniform sampler2D shadowTexture;
 
@@ -511,6 +512,7 @@ void main()
 			}
 		}
 
+		pixelColour.rgb += texture(UITexture, uv).rgb;
 
 		pixelColour.a = 1.0;
 

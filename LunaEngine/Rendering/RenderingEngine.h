@@ -44,6 +44,8 @@ public:
 	std::string skyboxName;
 	int pass_id;
 
+	cTexture UITexture;
+
 	void Init();
 	~RenderingEngine();
 

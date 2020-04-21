@@ -27,9 +27,11 @@
 	</Shaders>
   
 	<Textures>
+		<!-- COLOURS -->
 	    <Texture name="Grass.png"/>
 	    <Texture name="blue.png"/>
 	    <Texture name="red.png"/>
+		
 	    <Texture name="Ground_Dirt_007_basecolor.png"/>
 	    <Texture name="Ground_Dirt_007_normal.png"/>
 	    <Texture name="Snow_004_COLOR.jpg"/>
@@ -42,7 +44,6 @@
 	    <Texture name="worley.jpg"/>
 	    <Texture name="worley.png"/>
 	    <Texture name="WATER_BUMP.png"/>
-	    <Texture name="grass_quad.png"/>
 	    <Texture name="perlin.png"/>
 	    <Texture name="lens_dust.jpg"/>
 	    <Texture name="fx3_Panels_Color.png"/>
@@ -56,31 +57,15 @@
 	    <Texture name="dirt.jpg"/>
 	    <Texture name="dust_particles_on_lens_by_kerast_d7mj0cr-fullview.jpg"/>
 	    <Texture name="eye_fail.jpg"/>
-    
-        <Skybox name="city_">
-          <Right texture="city_left.jpg"/>
-          <Left texture="city_right.jpg"/>
-          <Top texture="city_up.jpg"/>
-          <Bottom texture="city_down.jpg"/>
-          <Front texture="city_front.jpg"/>
-          <Back texture="city_back.jpg"/>
-        </Skybox>
-        <!--<Skybox name="sky">
-          <Right texture="mountains_right.jpg"/>
-          <Left texture="mountains_left.jpg"/>
-          <Top texture="mountains_top.jpg"/>
-          <Bottom texture="mountains_bottom.jpg"/>
-          <Front texture="mountains_front.jpg"/>
-          <Back texture="mountains_back.jpg"/>
-        </Skybox>-->
-        <!--<Skybox name="city">
-          <Right texture="black.png"/>
-          <Left texture="black.png"/>
-          <Top texture="black.png"/>
-          <Bottom texture="black.png"/>
-          <Front texture="black.png"/>
-          <Back texture="black.png"/>
-        </Skybox>-->
+	    <Texture name="world_war_zombie_diffuse.png"/>
+	    <Texture name="world_war_zombie_normal.png"/>
+	    <Texture name="world_war_zombie_specular.png"/>
+		
+		
+		<!-- UI -->
+	    <Texture name="Intro.png"/>
+		
+		<!-- SKYBOX -->
         <Skybox name="default">
           <Right texture="night_left.png"/>
           <Left texture="night_right.png"/>
@@ -110,7 +95,10 @@
         <Model file="Ottoman Mauser.obj" friendlyName="gun" shader="basic"/>
         <Model file="Low Grass.fbx" friendlyName="grass" shader="basic"/>
         <Model file="head.obj" friendlyName="drone" shader="basic"/>
-        <!--<Model file="fence01.FBX" friendlyName="fence" shader="basic"/>-->
+        <Model file="warzombie_f_pedroso.fbx" friendlyName="zombie" shader="basic"/>
+		
+		
+		
         <Model file="fence.obj" friendlyName="fence" shader="basic"/>
         <Model file="FbxTomb.fbx" friendlyName="tomb" shader="basic"/>
     
@@ -128,6 +116,12 @@
       <Animation file="Mutant Swiping.fbx" friendlyName="attack"/>
       <Animation file="Mutant Run Jump.fbx" friendlyName="run-jump"/>
     </AnimationProfile>-->
+	  <AnimationProfile profile="zombie" mesh="warzombie_f_pedroso.fbx">
+		  <Animation file="Zombie Idle.fbx" friendlyName="idle"/>
+		  <Animation file="Zombie Walk.fbx" friendlyName="walk"/>
+		  <Animation file="Zombie Punch.fbx" friendlyName="attack"/>
+		  <Animation file="Zombie Death.fbx" friendlyName="die"/>
+	  </AnimationProfile>
   </Animations>
 
 	<Lights>
@@ -292,10 +286,26 @@
           <Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
           <Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
         </Light>
+
+		<Light>
+			<Position x="23.0" y="10.0" z="-128.0" w="1.000000"/>
+			<Diffuse x="1.0000" y="0.9" z="0.9" w="1.000000"/>
+			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Atten x="0.800000" y="0.0100" z="0.020000" w="1000.000000"/>
+			<Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+			<Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Param2 x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+		</Light>
     
 	</Lights>
   
 	<Layout>
+
+		<GameObject mesh="none" tag="gameManager" shader="basic">
+			<Components>
+				<ZombieManager/>
+			</Components>
+		</GameObject>
 
         <GameObject mesh="none" tag="player" shader="basic">
           <Position x="20.0" y="0.0" z="-30.0"/>
@@ -309,13 +319,13 @@
 
           <Components>
 
-		    <FPSBehaviour>
+		    <!--<FPSBehaviour>
                 <Forward x="0" y="0" z="-1"/>
                 <Offset x="0.7" y="5.0" z="0"/>
                 <CameraDistance>4</CameraDistance>
                 <Speed>5.0</Speed>
                 <MouseSpeed>0.15</MouseSpeed>
-            </FPSBehaviour>
+            </FPSBehaviour>-->
 
 			  <CharacterBody>
 				  <Origin x="0.000000" y="5.000000" z="0.000000"/>
@@ -333,6 +343,20 @@
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<SpecIntensity>100.000000</SpecIntensity>
 			<Texture ratio="1.0">bark_0021.jpg</Texture>
+		</GameObject>
+
+		<GameObject mesh="zombie" tag="introZombie" shader="pbr">
+			<Position x="23.0" y="0.0" z="-125.0"/>
+			<Rotation x="0" y="120" z="0.0"/>
+			<Scale>0.022</Scale>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">world_war_zombie_diffuse.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_normal.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_specular.png</Texture>
+			<Components>
+				<AnimationController profile="zombie" default="idle"/>
+			</Components>
 		</GameObject>
 
 		<GameObject mesh="drone" tag="drone" shader="basic">
@@ -392,29 +416,54 @@
 			<Components>
 				<CubeBody>
 					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-					<Mass>1.0</Mass>
+					<Mass>0.0</Mass>
 					<GFactor>1.0</GFactor>
 					<Origin x="0.000000" y="3.000000" z="0.000000"/>
-					<Scale x="6.5" y="3" z="0.2"/>
+					<Scale x="46" y="3" z="0.2"/>
 					<Rotateable/>
 				</CubeBody>
 			</Components>
 		</GameObject>
+
+		<!-- LEFT -->
+		
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="-13.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="0" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="-26.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="0" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fenceDoor" shader="basic">
+			<Position x="-39.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="0" z="0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fenceDoor" shader="basic">
+			<Position x="-52.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="0" z="0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fenceDoor" shader="basic">
+			<Position x="-65.0" y="0.0" z="-70.0"/>
+			<Rotation x="0" y="0" z="0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+
+		<!-- RIGHT -->
 		<GameObject mesh="fence" tag="fence" shader="basic">
 			<Position x="13.0" y="0.0" z="-70.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
 			<Scale>30</Scale>
 			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
-			<Components>
-				<CubeBody>
-					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-					<Mass>0.0</Mass>
-					<GFactor>1.0</GFactor>
-					<Origin x="13.000000" y="3.000000" z="0.000000"/>
-					<Scale x="19.5" y="3" z="0.2"/>
-					<Rotateable/>
-				</CubeBody>
-			</Components>
 		</GameObject>
 		<GameObject mesh="fence" tag="fence" shader="basic">
 			<Position x="26.0" y="0.0" z="-70.0"/>
@@ -429,33 +478,87 @@
 			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
 		</GameObject>
 		<GameObject mesh="fence" tag="fence" shader="basic">
-			<Position x="-26.0" y="0.0" z="-70.0"/>
+			<Position x="52.0" y="0.0" z="-70.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
 			<Scale>30</Scale>
 			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
 		</GameObject>
 		<GameObject mesh="fence" tag="fence" shader="basic">
-			<Position x="-13.0" y="0.0" z="-70.0"/>
+			<Position x="65.0" y="0.0" z="-70.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
 			<Scale>30</Scale>
 			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
-			<Components>
-				<CubeBody>
-					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
-					<Mass>0.0</Mass>
-					<GFactor>1.0</GFactor>
-					<Origin x="-13.000000" y="3.000000" z="0.000000"/>
-					<Scale x="19.5" y="3" z="0.2"/>
-					<Rotateable/>
-				</CubeBody>
-			</Components>
 		</GameObject>
-		<GameObject mesh="fence" tag="fenceDoor" shader="basic">
-			<Position x="-39.0" y="0.0" z="-70.0"/>
-			<Rotation x="0" y="0" z="0"/>
+
+		<!-- RIGHT SIDE -->
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="-63"/>
+			<Rotation x="0" y="90" z="0.0"/>
 			<Scale>30</Scale>
 			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
 		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="-50"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="-37"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="-24"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="-11"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="2"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="15"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="28"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="41"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="54"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		<GameObject mesh="fence" tag="fence" shader="basic">
+			<Position x="71.5" y="0.0" z="67"/>
+			<Rotation x="0" y="90" z="0.0"/>
+			<Scale>30</Scale>
+			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
+		</GameObject>
+		
+		
 
 		
 

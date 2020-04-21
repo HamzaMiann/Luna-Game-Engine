@@ -72,7 +72,7 @@ void cApplication::Init()
 	InitPhysics();
 
 	// Load scene from file
-	scene = Scene::LoadFromXML("AI4.scene.xml");
+	scene = Scene::LoadFromXML("sandbox2.scene.xml");
 	scene->camera.Eye = vec3(0.f, 100.f, -200.f);
 	scene->camera.Eye = vec3(0, 0, -3);
 
@@ -84,13 +84,6 @@ void cApplication::Init()
 	RunScripts();
 
 }
-
-struct plane
-{
-	vec3 normal;
-	vec3 pos;
-	float constant;
-};
 
 void cApplication::Run()
 {
@@ -123,16 +116,16 @@ void cApplication::Run()
 	// Initialize debug renderer
 	debug_renderer.initialize();
 
-	for (int i = 0; i < 1000; ++i)
+	for (int i = 0; i < 100; ++i)
 	{
 		cGameObject* obj = new cGameObject;
 		obj->meshName = "grass";
 		obj->shader = Shader::FromName("basic");
 		obj->transform.Position(
 			vec3(
-				Mathf::randInRange(-150.f, 150.f),
+				Mathf::randInRange(-75.f, 75.f),
 				0.0f,
-				Mathf::randInRange(-150.f, 150.f)
+				Mathf::randInRange(-75.f, 75.f)
 				)
 			);
 		obj->transform.UpdateEulerRotation(
@@ -158,13 +151,15 @@ void cApplication::Run()
 
 	g_PhysicsWorld->SetDebugRenderer(&renderer);
 
-	//entity_manager.GetObjectByTag("fenceDoor")->GetComponent<nPhysics::iPhysicsComponent>()->AddHingeConstraint(vec3(0.f, 2.f, 0.f), vec3(0.f, 1.f, 0.f));
-	//entity_manager.GetObjectByTag("cube")->GetComponent<nPhysics::iPhysicsComponent>()->AddSliderConstraint(vec2(-15.f, -5.f), vec2(-PI / 3.0f, PI / 3.0f));
-	//entity_manager.GetObjectByTag("cube")->GetComponent<nPhysics::iPhysicsComponent>()->AddSliderConstraint(vec2(0.f, 0.f), vec2(-PI / 3.0f, PI / 3.0f));
+
+
+	Camera::main_camera->Eye = vec3(27.1113186f, 0.150644f, -136.474823f);
+	Camera::main_camera->Target = vec3(25.9632452f, 3.42755f, -35.5345f);
+	Camera::main_camera->Up = glm::normalize(vec3(0.f, 1.f, 0.f) + vec3(0.1f, 0.f, 0.f));
+
+
 
 	float maxTime = 1.f;
-
-	
 
 	while (!glfwWindowShouldClose(global::window))
 	{

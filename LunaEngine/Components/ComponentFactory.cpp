@@ -13,6 +13,7 @@
 #include <Behaviour/Managers/cFormationGameManager.h>
 #include <Behaviour/Managers/cPathFindingManager.h>
 #include <Behaviour/Managers/cFuzzyManager.h>
+#include <Behaviour/Managers/cZombieGameManager.h>
 
 #pragma warning(disable)
 
@@ -77,6 +78,11 @@ iComponent* ComponentFactory::GetComponent(std::string type, iObject* object)
 	if (type == "FuzzyManager")
 	{
 		return (iComponent*)object->AddComponent<AI::cFuzzyManager>();
+	}
+
+	if (type == "ZombieManager")
+	{
+		return (iComponent*)object->AddComponent<AI::cZombieGameManager>();
 	}
 	
 	

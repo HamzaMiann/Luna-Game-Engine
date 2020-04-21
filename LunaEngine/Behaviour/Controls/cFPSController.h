@@ -9,6 +9,16 @@ class cFPSController : public iBehaviour
 {
 public:
 
+	struct Settings
+	{
+		vec3 forward = glm::vec3(0.f, 0.f, 1.f);
+		vec3 camera_offset = vec3(0.f);
+
+		float mouse_speed = 0.1f;
+		float distance_from_object = 2.f;
+		float speed = 1.f;
+	};
+
 	cFPSController(iObject* root) : iBehaviour(root) {}
 	virtual ~cFPSController() {}
 
@@ -28,6 +38,8 @@ public:
 	void HandleMovement(vec3 direction);
 	void Shoot();
 
+	inline void SetSettings(const Settings& s) { settings = s; }
+
 private:
 
 	nPhysics::iCharacterComponent* rigidBody;
@@ -44,14 +56,6 @@ private:
 
 	float animationDuration = 0.f;
 
-	struct Settings
-	{
-		vec3 forward = glm::vec3(0.f, 0.f, 1.f);
-		vec3 camera_offset = vec3(0.f);
-
-		float mouse_speed = 0.1f;
-		float distance_from_object = 2.f;
-		float speed = 1.f;
-	} settings;
+	Settings settings;
 
 };

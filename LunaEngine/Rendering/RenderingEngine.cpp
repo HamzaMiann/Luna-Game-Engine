@@ -41,7 +41,7 @@ RenderingEngine::RenderingEngine()
 	SetProperty("bloomScale", 0.5f);
 	SetProperty("mixValue", 1.f);
 
-	SetProperty("switchColour", false);
+	SetProperty("switchColour", true);
 
 	depthProjectionMatrix = glm::ortho<float>(-200.f, 200.f, -100.f, 100.f, -1.f, 1000.f);
 	shadowLightPosition = vec3(0.f, 200.f, 500.f);
@@ -118,6 +118,8 @@ float RenderingEngine::GetFloatProperty(std::string name)
 void RenderingEngine::Reset()
 {
 	//pass_id = 1;
+
+	UITexture.SetTexture(0);
 
 	view = glm::lookAt(
 		Camera::main_camera->Eye,
@@ -742,6 +744,7 @@ void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned i
 
 	shader.SetTexture(lens, "lensTexture", 8);							// LENS NOISE TEXTURE
 	shader.SetTexture(shadowTextureID, "perlinTexture", 9);				// SHADOWMAP TEXTURE
+	shader.SetTexture(UITexture, "UITexture", 10);						// UI TEXTURE
 
 	shader.SetBool("isFinalPass", GL_TRUE);
 
