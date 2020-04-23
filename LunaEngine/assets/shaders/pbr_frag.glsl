@@ -16,6 +16,7 @@ uniform vec4 eyeLocation;
 // Used to draw debug (or unlit) objects
 uniform bool isUniform;
 uniform bool isSkybox;
+uniform bool isTomb;
 
 uniform float reflectivity;	// 0 - 1
 uniform float refractivity; // 0 - 1
@@ -47,48 +48,12 @@ const float height_scale = 0.1;
 vec2 GetTextureCoords(vec2 texCoords, vec3 viewDir)
 {
 	return texCoords;
-
-	// number of depth layers
-    const float numLayers = 10;
-    // calculate the size of each layer
-    float layerDepth = 1.0 / numLayers;
-    // depth of current layer
-    float currentLayerDepth = 0.0;
-    // the amount to shift the texture coordinates per layer (from vector P)
-    vec2 P = viewDir.xz * height_scale; 
-    vec2 deltaTexCoords = P / numLayers;
-
-	// get initial values
-	vec2  currentTexCoords     = texCoords;
-	float currentDepthMapValue = texture(textSamp03, currentTexCoords).r;
-  
-	while(currentLayerDepth < currentDepthMapValue)
-	{
-		// shift texture coordinates along direction of P
-		currentTexCoords -= deltaTexCoords;
-		// get depthmap value at current texture coordinates
-		currentDepthMapValue = texture(textSamp03, currentTexCoords).r;  
-		// get depth of next layer
-		currentLayerDepth += layerDepth;  
-	}
-
-	// get texture coordinates before collision (reverse operations)
-	vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
-
-	// get depth after and before collision for linear interpolation
-	float afterDepth  = currentDepthMapValue - currentLayerDepth;
-	float beforeDepth = texture(textSamp03, prevTexCoords).r - currentLayerDepth + layerDepth;
- 
-	// interpolation of texture coordinates
-	float weight = afterDepth / (afterDepth - beforeDepth);
-	vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
-
-	return finalTexCoords;
-
 }
 
 void main()  
 {
+	
+
 	unlitColour = vec4(0.0);
 	positionColour = vec4(fVertWorldLocation.xyz, 1.0);
 
@@ -117,5 +82,10 @@ void main()
 	bloomColour.y = min(specularColour.w, 1000.) / 1000.;
 	bloomColour.a = 1.0;
 
+	if (isTomb)
+	{
+		pixelColour.rgb = vec3(1.0, 0.0, 0.0);
+		return;
+	}
 	
 } // end main

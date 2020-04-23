@@ -31,6 +31,17 @@ namespace AI
 		RenderingEngine::Instance().SetProperty("mixValue", mDarknessValue);
 	}
 
+	void cZombieGameManager::ActivateTomb()
+	{
+		tombsActivated++;
+		if (tombsActivated == 3)
+		{
+			AudioEngine::Instance()->GetSound("wind")->toggle_pause();
+			AudioEngine::Instance()->PlaySound("glitch");
+			mState = ENDING;
+		}
+	}
+
 	void cZombieGameManager::update(float dt)
 	{
 		mDt = dt;
@@ -62,9 +73,30 @@ namespace AI
 				}
 			}
 		}
-		else
+		else if (mState == STARTED)
 		{
-			//RenderingEngine::Instance().UITexture.SetTexture("End.png");
+
+		}
+		else if (mState == ENDING)
+		{
+			endTime -= dt;
+			if (endTime <= 0.f)
+			{
+				for (auto* object : cEntityManager::Instance().GetEntities())
+				{
+					if (object->tag != this->parent.tag)
+						cEntityManager::Instance().RemoveEntity(object);
+				}
+				mState = END;
+			}
+			else
+			{
+				RenderingEngine::Instance().UITexture.SetTexture("glitch.png");
+			}
+		}
+		else if (mState == END)
+		{
+			RenderingEngine::Instance().UITexture.SetTexture("End.png");
 		}
 
 	}

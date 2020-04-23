@@ -223,15 +223,8 @@ void cFPSController::update(float dt)
 
 }
 
-bool tombActivated = false;
 void cFPSController::OnCollide(iObject* other)
 {
-	if (!tombActivated && other->tag == "tombTrigger") {
-		tombActivated = true;
-		AudioEngine::Instance()->PlaySound("checkpoint");
-		reinterpret_cast<cGameObject*>(other)->texture[0].SetTexture("fx3_Panels_Color.png");
-		cLightManager::Instance()->Lights[1]->param2.x = 1;
-	}
 }
 
 void cFPSController::OnDestroy()

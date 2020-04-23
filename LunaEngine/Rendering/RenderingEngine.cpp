@@ -136,6 +136,8 @@ void RenderingEngine::Reset()
 {
 	//pass_id = 1;
 
+	tombs.clear();
+
 	UITexture.SetTexture(0);
 
 	view = glm::lookAt(
@@ -569,6 +571,9 @@ void RenderingEngine::RenderGO(cGameObject& object, float width, float height, i
 		{
 			shader.SetBool("isShadowMap", false);
 		}
+
+		shader.SetBool("isTomb", GL_FALSE);
+
 	}
 
 	nPhysics::iClothComponent* cloth = object.GetComponent<nPhysics::iClothComponent>();
@@ -655,12 +660,78 @@ void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, bool shadow)
 
 		cGameObject& object = *objects[index];
 
+		if (!shadow && object.meshName == "tomb") tombs.push_back(&object);
+
 		this->RenderGO(object, width, height, lastShader, shadow);
 
 
 	}//for (int index...
 	// **************************************************
 
+}
+
+void RenderingEngine::RenderTombsToFBO(cSimpleFBO* fbo)
+{
+	// Draw to the frame buffer
+	fbo->use();
+	fbo->clear_all();
+
+	// Clear both the colour buffer (what we see) and the 
+		//  depth (or z) buffer.
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//glEnable(GL_BLEND);      // Enable blend or "alpha" transparency
+	glDisable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//float ratio = width / height;
+
+
+	int lastShader = -1;
+
+	auto& objects = tombs;
+
+	// Loop to draw everything in the scene
+	for (int index = 0; index != objects.size(); index++)
+	{
+
+		cGameObject& object = *objects[index];
+		Shader& shader = *object.shader;
+
+		// Only switch shaders if needed
+		if (lastShader != shader.GetID())
+		{
+			shader.Use();
+			lastShader = shader.GetID();
+
+			// set time
+			float time = glfwGetTime();
+
+			shader.SetFloat("iTime", (float)glfwGetTime());
+			shader.SetVec2("iResolution", vec2(width, height));
+			shader.SetBool("isWater", GL_FALSE);
+
+			shader.SetMat4("matProj", projection);
+			shader.SetMat4("matView", view);
+
+			shader.SetBool("isShadowMap", false);
+		}
+
+		shader.SetBool("isTomb", GL_TRUE);
+
+		this->DrawObject(object);
+
+
+	}//for (int index...
+}
+
+void RenderingEngine::RenderObjectArray(std::vector<cGameObject*> objects)
+{
+	int lastShader = -1;
+	for (auto* object : objects)
+	{
+		RenderGO(*object, 0, 0, lastShader, false);
+	}
 }
 
 void RenderingEngine::RenderShadowmapToFBO(cSimpleFBO* fbo, float width, float height)
@@ -787,7 +858,7 @@ void RenderingEngine::RenderLightingToFBO(cFBO& fbo, cFBO& previousFBO, unsigned
 	this->DrawObject(quad);
 }
 
-void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned int shadowTextureID)
+void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned int shadowTextureID, unsigned int graveTexture)
 {
 	// LAST RENDER PASS
 
@@ -817,6 +888,7 @@ void RenderingEngine::RenderPostProcessingToScreen(cFBO& previousFBO, unsigned i
 	shader.SetTexture(lens, "lensTexture", 8);							// LENS NOISE TEXTURE
 	shader.SetTexture(shadowTextureID, "perlinTexture", 9);				// SHADOWMAP TEXTURE
 	shader.SetTexture(UITexture, "UITexture", 10);						// UI TEXTURE
+	shader.SetTexture(graveTexture, "GraveTexture", 11);						// UI TEXTURE
 
 	shader.SetBool("isFinalPass", GL_TRUE);
 

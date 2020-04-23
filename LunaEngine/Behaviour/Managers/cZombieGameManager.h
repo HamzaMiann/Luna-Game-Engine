@@ -12,7 +12,8 @@ namespace AI
 		{
 			INTRO,
 			STARTED,
-			WAVES
+			ENDING,
+			END
 		};
 
 		virtual ~cZombieGameManager() {}
@@ -26,10 +27,14 @@ namespace AI
 		virtual void update(float dt) override;
 
 		void CalculateDarkness();
+		void ActivateTomb();
 
 	private:
 		float mDt;
 		float mDarknessValue;
 		STATE mState;
+
+		int tombsActivated = 0;
+		float endTime = 5.f;
 	};
 }

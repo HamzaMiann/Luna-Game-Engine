@@ -16,6 +16,7 @@ uniform vec4 eyeLocation;
 uniform bool isUniform;
 uniform bool isSkybox;
 uniform bool isPBR;
+uniform bool isTomb;
 
 uniform float reflectivity;	// 0 - 1
 uniform float refractivity; // 0 - 1
@@ -155,7 +156,11 @@ void main()
 		pixelColour.a = 1.0;
 	}
 
-	return;
+	if (isTomb)
+	{
+		pixelColour.rgb = vec3(1.0, 0.0, 0.0);
+		return;
+	}
 
 	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetFogValue());
 	//pixelColour = mix(pixelColour, vec4(0.0,0.0,0.0,0.0), GetRandValue());

@@ -19,6 +19,16 @@ bool cAnimationController::deserialize(xml_node<>* root_node)
 	return true;
 }
 
+void cAnimationController::SetProfile(std::string profile, std::string defaultAnimation)
+{
+	animation = cAnimationManager::Instance().profiles[profile];
+	currentAnimation = defaultAnimation;
+	if (animation)
+	{
+		numAnimations = animation->mapAnimationFriendlyNameTo_pScene.size();
+	}
+}
+
 void cAnimationController::start()
 {
 }

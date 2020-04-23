@@ -32,6 +32,8 @@ private:
 
 	std::vector<std::function<void(Shader*)>> debugRenderQueue;
 
+	std::vector<cGameObject*> tombs;
+
 public:
 
 	float mDt = 0.f;
@@ -80,10 +82,12 @@ public:
 	void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, mat4 const& v, mat4 const& p);
 	void RenderGO(cGameObject& object, float width, float height, int& lastShader, bool shadow = false);
 	void RenderObjectsToFBO(cSimpleFBO* fbo, bool shadow = false);
+	void RenderTombsToFBO(cSimpleFBO* fbo);
+	void RenderObjectArray(std::vector<cGameObject*> objects);
 	void RenderShadowmapToFBO(cSimpleFBO* fbo, float width, float height);
 	void RenderSkybox(mat4 p, mat4 v);
 	void RenderLightingToFBO(cFBO& fbo, cFBO& previousFBO, unsigned int shadowTextureID = 0);
-	void RenderPostProcessingToScreen(cFBO& previousFBO, unsigned int shadowTextureID = 0);
+	void RenderPostProcessingToScreen(cFBO& previousFBO, unsigned int shadowTextureID, unsigned int graveTexture);
 
 
 	// Inherited via iPhysicsDebugRenderer

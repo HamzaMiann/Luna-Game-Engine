@@ -37,6 +37,7 @@ uniform sampler3D worleyTexture;
 uniform sampler2D perlinTexture;
 uniform sampler2D lensTexture;
 uniform sampler2D UITexture;
+uniform sampler2D GraveTexture;
 uniform sampler2DShadow shadowTexture;
 //uniform sampler2D shadowTexture;
 
@@ -500,7 +501,7 @@ void main()
 		}
 
 		float disp = smoothstep(0., 1., 1. - distance(vec2(0.5), fUVx2.st) * 10. * (1. - blendRatio));
-		pixelColour.rgb = mix(pixelColour.rgb, texture(textSamp02, uv).rgb, disp * blendRatio);
+		pixelColour.rgb = mix(pixelColour.rgb, texture(textSamp02, uv).rgb + texture(GraveTexture, uv).rgb, disp * blendRatio);
 		//pixelColour.rgb = mix(pixelColour.rgb, vec3(texture(worleyTexture, (eyeLocation.xyz / 10.) + vec3(uv, 1.0)).rgb), disp * blendRatio);
 
 

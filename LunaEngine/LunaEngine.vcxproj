@@ -171,6 +171,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClCompile Include="Behaviour\AI\cPathFollowingBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cPursueBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cSeekBehaviour.cpp" />
+    <ClCompile Include="Behaviour\AI\cTriggerHandler.cpp" />
     <ClCompile Include="Behaviour\AI\cWanderBehaviour.cpp" />
     <ClCompile Include="Behaviour\cBehaviourManager.cpp" />
     <ClCompile Include="Behaviour\Controls\cCharacterController.cpp" />
@@ -264,6 +265,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="Behaviour\AI\cPathFollowingBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cPursueBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cSeekBehaviour.h" />
+    <ClInclude Include="Behaviour\AI\cTriggerHandler.h" />
     <ClInclude Include="Behaviour\AI\cWanderBehaviour.h" />
     <ClInclude Include="Behaviour\cBehaviourManager.h" />
     <ClInclude Include="Behaviour\Controls\cCharacterController.h" />

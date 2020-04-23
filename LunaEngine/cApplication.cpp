@@ -34,7 +34,8 @@ bool is_paused = false;
 Scene* scene;
 iInputHandler* pInputHandler;
 
-cFBO albedoFBO;
+cFBO shadowFBO;
+cFBO graveFBO;
 cFBO second_passFBO;
 cFBO finalFBO;
 
@@ -97,11 +98,13 @@ void cApplication::Run()
 
 	// Set up frame buffers
 	std::string fbo_error;
-	if (albedoFBO.init(width, height, fbo_error)
+	if (shadowFBO.init(width, height, fbo_error)
 		&&
 		second_passFBO.init(width, height, fbo_error)
 		&&
-		finalFBO.init(width, height, fbo_error)) printf("Frame buffers are OK\n");
+		finalFBO.init(width, height, fbo_error)
+		&&
+		graveFBO.init(width, height, fbo_error)) printf("Frame buffers are OK\n");
 	else
 	{
 		printf("Frame buffers broke :(\n%s\n", fbo_error.c_str());
@@ -115,39 +118,8 @@ void cApplication::Run()
 	// Initialize debug renderer
 	debug_renderer.initialize();
 
-	/*cGameObject grass;
-	grass.meshName = "grassInstanced";
-	grass.shader = Shader::FromName("instanced");
-	grass.texture[0].SetTexture("Grass.png", 1.f);
-
-	std::vector<mat4> transforms;
-	transforms.resize(100);
-	for (size_t i = 0; i < transforms.size(); ++i)
-	{
-		sTransform tform;
-		tform.Position(vec3(
-				Mathf::randInRange(-75.f, 75.f),
-				0.0f,
-				Mathf::randInRange(-75.f, 75.f)
-				)
-			);
-		tform.UpdateEulerRotation(
-			vec3(
-				0.f,
-				Mathf::randInRange(0.f, 360.f),
-				0.f
-				)
-			);
-		tform.Scale(vec3(0.1f));
-		transforms[i] = tform.ModelMatrix();
-	}
-
-	cMesh mesh;
-	sModelDrawInfo drawInfo;
-	cModelLoader::Instance().LoadModel("assets/models/Low Grass.fbx", "grassInstanced", mesh);
-	cVAOManager::Instance().LoadInstanceIntoVAO("grassInstanced", mesh, drawInfo, transforms, grass.shader->GetID());*/
-
-	for (int i = 0; i < 100; ++i)
+	std::vector<cGameObject*> grass;
+	for (int i = 0; i < 200; ++i)
 	{
 		cGameObject* obj = new cGameObject;
 		obj->meshName = "grass";
@@ -168,7 +140,7 @@ void cApplication::Run()
 			);
 		obj->transform.Scale(vec3(0.1f));
 		obj->texture[0].SetTexture("Grass.png", 1.f);
-		entity_manager.AddEntity(obj);
+		grass.push_back(obj);
 	}
 	
 
@@ -199,9 +171,10 @@ void cApplication::Run()
 
 		if (newWidth != width || newHeight != height)
 		{
-			albedoFBO.reset(newWidth, newHeight, fbo_error);
+			shadowFBO.reset(newWidth, newHeight, fbo_error);
 			second_passFBO.reset(newWidth, newHeight, fbo_error);
 			finalFBO.reset(newWidth, newHeight, fbo_error);
+			graveFBO.reset(newWidth, newHeight, fbo_error);
 		}
 
 		width = newWidth;
@@ -228,7 +201,7 @@ void cApplication::Run()
 		}
 
 		if (renderer.GetBoolProperty("shadowsEnabled"))
-			renderer.RenderObjectsToFBO(&albedoFBO, true);
+			renderer.RenderObjectsToFBO(&shadowFBO, true);
 
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
@@ -260,10 +233,13 @@ void cApplication::Run()
 		renderer.screenPos = vec2(cube);
 
 		renderer.RenderObjectsToFBO(&second_passFBO, false);
+		renderer.RenderObjectArray(grass);
 		renderer.RenderSkybox(p, v);
 
-		renderer.RenderLightingToFBO(finalFBO, second_passFBO, albedoFBO.depthTexture_ID);
-		renderer.RenderPostProcessingToScreen(finalFBO, second_passFBO.unlitTexture_ID);
+		renderer.RenderTombsToFBO(&graveFBO);
+
+		renderer.RenderLightingToFBO(finalFBO, second_passFBO, shadowFBO.depthTexture_ID);
+		renderer.RenderPostProcessingToScreen(finalFBO, second_passFBO.unlitTexture_ID, graveFBO.colourTexture_ID);
 
 		renderer.DrawDebugObjects();
 		debug_renderer.RenderDebugObjects(v, p, dt);
@@ -273,6 +249,11 @@ void cApplication::Run()
 		glfwSwapBuffers(global::window);
 		glfwPollEvents();
 	}
+
+	for (auto* grassObject : grass)
+	{
+		delete grassObject;
+	}
 }
 
 
@@ -281,7 +262,8 @@ void cApplication::End()
 	glfwDestroyWindow(global::window);
 
 	// Delete everything
-	albedoFBO.shutdown();
+	shadowFBO.shutdown();
+	graveFBO.shutdown();
 	second_passFBO.shutdown();
 	finalFBO.shutdown();
 

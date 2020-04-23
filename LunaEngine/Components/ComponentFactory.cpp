@@ -14,6 +14,7 @@
 #include <Behaviour/Managers/cPathFindingManager.h>
 #include <Behaviour/Managers/cFuzzyManager.h>
 #include <Behaviour/Managers/cZombieGameManager.h>
+#include <Behaviour/AI/cTriggerHandler.h>
 
 #pragma warning(disable)
 
@@ -83,6 +84,11 @@ iComponent* ComponentFactory::GetComponent(std::string type, iObject* object)
 	if (type == "ZombieManager")
 	{
 		return (iComponent*)object->AddComponent<AI::cZombieGameManager>();
+	}
+
+	if (type == "TriggerHandler")
+	{
+		return (iComponent*)object->AddComponent<AI::cTriggerHandler>();
 	}
 	
 	

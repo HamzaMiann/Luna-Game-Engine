@@ -16,6 +16,7 @@ public:
 	virtual ~cAnimationController();
 
 	bool deserialize(rapidxml::xml_node<>* root_node) override;
+	void SetProfile(std::string profile, std::string defaultAnimation = "idle");
 
 	// Inherited via iBehaviour
 	virtual void start() override;
@@ -34,6 +35,7 @@ public:
 	std::vector<std::string> GetAnimationNames();
 
 	const std::vector< mat4 >& GetTransformations();
+
 
 private:
 	cSimpleAssimpSkinnedMesh* animation = 0;
