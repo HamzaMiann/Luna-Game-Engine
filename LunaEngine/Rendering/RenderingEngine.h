@@ -18,6 +18,7 @@ class RenderingEngine : public nPhysics::iPhysicsDebugRenderer
 private:
 
 	RenderingEngine();
+	void LoadSettingsFromFile();
 
 	int height;
 	int width;
@@ -61,6 +62,9 @@ public:
 	bool GetBoolProperty(std::string name);
 	float GetFloatProperty(std::string name);
 
+	inline void SetWidth(float width) { this->width = width; }
+	inline void SetHeight(float height) { this->height = height; }
+
 	void Reset();
 	void StencilInit();
 	void StencilBegin();
@@ -72,11 +76,12 @@ public:
 
 	// Old methods
 	void DrawObject(cGameObject& object, Shader* s = nullptr);
+	void DrawInstancedObject(cGameObject& object, const std::vector<mat4>& matModels);
 	void DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, mat4 const& v, mat4 const& p);
 	void RenderGO(cGameObject& object, float width, float height, int& lastShader, bool shadow = false);
-	void RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, float dt, bool shadow = false);
+	void RenderObjectsToFBO(cSimpleFBO* fbo, bool shadow = false);
 	void RenderShadowmapToFBO(cSimpleFBO* fbo, float width, float height);
-	void RenderSkybox(float width, float height, mat4 p, mat4 v, float dt);
+	void RenderSkybox(mat4 p, mat4 v);
 	void RenderLightingToFBO(cFBO& fbo, cFBO& previousFBO, unsigned int shadowTextureID = 0);
 	void RenderPostProcessingToScreen(cFBO& previousFBO, unsigned int shadowTextureID = 0);
 

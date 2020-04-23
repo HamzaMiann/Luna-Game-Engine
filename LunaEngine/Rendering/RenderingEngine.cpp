@@ -10,11 +10,10 @@
 #include <EntityManager/cEntityManager.h>
 #include <Texture/cWorleyTexture.h>
 #include <InputManager.h>
-#include <Threading/safe_promise.h>
 #include <iostream>
 #include <interfaces/physics/iClothComponent.h>
 #include <DebugRenderer/cDebugRenderer.h>
-#include <Misc/cLowpassFilter.h>
+#include <fstream>
 
 cTexture worleyNoise;
 cTexture perlinNoise;
@@ -35,6 +34,8 @@ RenderingEngine::RenderingEngine()
 	SetProperty("lensDirtEnabled", DEBUG_SETTING);
 	SetProperty("shadowsEnabled", DEBUG_SETTING);
 
+	LoadSettingsFromFile();
+
 	SetProperty("cloudDensityFactor", 1.f);
 	SetProperty("cloudDensityCutoff", 0.5f);
 	SetProperty("cloudLightScattering", 2.f);
@@ -45,6 +46,22 @@ RenderingEngine::RenderingEngine()
 
 	depthProjectionMatrix = glm::ortho<float>(-200.f, 200.f, -100.f, 100.f, -1.f, 1000.f);
 	shadowLightPosition = vec3(0.f, 200.f, 500.f);
+}
+
+void RenderingEngine::LoadSettingsFromFile()
+{
+	std::ifstream settingsFile("assets/settings.txt");
+	if (settingsFile.is_open())
+	{
+		std::string property;
+		while (settingsFile >> property)
+		{
+			std::string value;
+			settingsFile >> value;
+			SetProperty(property, (value == "true") ? true : false);
+		}
+		settingsFile.close();
+	}
 }
 
 void RenderingEngine::Init()
@@ -270,6 +287,13 @@ void RenderingEngine::SetUpTextureBindingsForObject(cGameObject& object)
 
 void RenderingEngine::DrawObject(cGameObject& object, Shader* s)
 {
+	// if the model does not exist, don't do anything
+	sModelDrawInfo drawInfo;
+	if (!cVAOManager::Instance().FindDrawInfoByModelName(object.meshName, drawInfo)) return;
+	
+
+
+
 	Shader& shader = *object.shader;
 	if (s) {
 		shader = *s;
@@ -369,15 +393,6 @@ void RenderingEngine::DrawObject(cGameObject& object, Shader* s)
 		)
 	);
 
-	shader.SetVec4("diffuseColour",
-		vec4(
-			object.colour.x,
-			object.colour.y,
-			object.colour.z,
-			object.colour.w
-		)
-	);
-
 	shader.SetVec4("specularColour",
 		vec4(
 			object.specColour.x,
@@ -394,25 +409,6 @@ void RenderingEngine::DrawObject(cGameObject& object, Shader* s)
 	{
 		cLightManager::Instance()->Set_Light_Data(shader);
 		shader.SetVec2("lightPositionOnScreen", screenPos);
-
-		/*mat4 depthProjectionMatrix = glm::ortho<float>(-100.f, 100.f, -100.f, 100.f, -1000.f, 1000.f);
-		mat4 depthViewMatrix = glm::lookAt(
-			vec3(cLightManager::Instance()->Lights[0]->position),
-			Camera::main_camera->Target,
-			vec3(0, 1, 0)
-			);
-		mat4 depthModelMatrix = mat4(1.0);
-		mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-
-		glm::mat4 biasMatrix(
-			0.5, 0.0, 0.0, 0.0,
-			0.0, 0.5, 0.0, 0.0,
-			0.0, 0.0, 0.5, 0.0,
-			0.5, 0.5, 0.5, 1.0
-			);
-		glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
-
-		shader.SetMat4("shadowMVP", depthBiasMVP);*/
 	}
 
 
@@ -425,19 +421,95 @@ void RenderingEngine::DrawObject(cGameObject& object, Shader* s)
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	sModelDrawInfo drawInfo;
-	if (cVAOManager::Instance().FindDrawInfoByModelName(object.meshName, drawInfo))
-	{
-		glBindVertexArray(drawInfo.VAO_ID);
-		glDrawElements(
-			GL_TRIANGLES,
-			drawInfo.numberOfIndices,
-			GL_UNSIGNED_INT,
-			0
-		);
-		glBindVertexArray(0);
-	}
+	
+	glBindVertexArray(drawInfo.VAO_ID);
+	glDrawElements(
+		GL_TRIANGLES,
+		drawInfo.numberOfIndices,
+		GL_UNSIGNED_INT,
+		0
+	);
+	glBindVertexArray(0);
 }
+
+
+void RenderingEngine::DrawInstancedObject(cGameObject& object, const std::vector<mat4>& matModels)
+{
+	// if the model does not exist, don't do anything
+	sModelDrawInfo drawInfo;
+	if (!cVAOManager::Instance().FindDrawInfoByModelName(object.meshName, drawInfo)) return;
+
+	Shader& shader = *object.shader;
+	Camera& camera = *Camera::main_camera;
+
+	shader.Use();
+
+	// set time
+	float time = glfwGetTime();
+
+	shader.SetFloat("iTime", (float)glfwGetTime());
+	shader.SetVec2("iResolution", vec2(width, height));
+
+	shader.SetMat4("matProj", projection);
+	shader.SetMat4("matView", view);
+
+	shader.SetBool("isShadowMap", false);
+
+
+	/*
+
+	REFLECTION AND REFRACTION
+
+	*/
+	shader.SetBool("reflectivity", object.reflectivity);
+	shader.SetBool("refractivity", object.refractivity);
+
+
+	// TEXTURES
+	// Don't draw back facing triangles (default)
+	glCullFace(GL_BACK);
+	shader.SetBool("isSkybox", GL_FALSE);
+	SetUpTextureBindingsForObject(object);
+
+	shader.SetVec4("eyeLocation",
+		vec4(
+			camera.Eye.x,
+			camera.Eye.y,
+			camera.Eye.z,
+			1.0f
+			)
+		);
+
+	shader.SetVec4("eyeTarget",
+		vec4(
+			camera.Target.x,
+			camera.Target.y,
+			camera.Target.z,
+			1.0f
+			)
+		);
+
+	shader.SetVec4("specularColour",
+		vec4(
+			object.specColour.x,
+			object.specColour.y,
+			object.specColour.z,
+			object.specIntensity
+			)
+		);
+
+	shader.SetBool("isUniform", object.uniformColour);
+
+
+	if (object.isWireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+	glBindVertexArray(drawInfo.VAO_ID);
+	glDrawElementsInstanced(GL_TRIANGLES, drawInfo.numberOfIndices, GL_UNSIGNED_INT, 0, matModels.size());
+	glBindVertexArray(0);
+}
+
 
 void RenderingEngine::DrawOctree(cGameObject* obj, octree::octree_node* node, cGameObject* objPtr, mat4 const& v, mat4 const& p)
 {
@@ -528,7 +600,7 @@ void RenderingEngine::RenderGO(cGameObject& object, float width, float height, i
 		this->DrawObject(object);
 }
 
-void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, float width, float height, float dt, bool shadow)
+void RenderingEngine::RenderObjectsToFBO(cSimpleFBO* fbo, bool shadow)
 {
 	// Draw to the frame buffer
 	fbo->use();
@@ -626,7 +698,7 @@ void RenderingEngine::RenderShadowmapToFBO(cSimpleFBO* fbo, float width, float h
 	}
 }
 
-void RenderingEngine::RenderSkybox(float width, float height, mat4 p, mat4 v, float dt)
+void RenderingEngine::RenderSkybox(mat4 p, mat4 v)
 {
 	// RENDER SKYBOX
 	cGameObject* objPtr = &skyBox;

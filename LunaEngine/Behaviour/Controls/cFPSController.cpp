@@ -48,6 +48,8 @@ vec3 offset2;
 float time;
 float sinY;
 float blendRatio = 0.f;
+float totalY = 0.f;
+float totalX = 0.f;
 void cFPSController::start()
 {
 	rigidBody = parent.GetComponent<nPhysics::iCharacterComponent>();
@@ -68,8 +70,35 @@ void cFPSController::start()
 	weapon = cEntityManager::Instance().GetObjectByTag("gun");
 
 	Input::LockCursor();
+}
 
-	AudioEngine::Instance()->PlaySound("intro");
+bool cFPSController::CalculateRotation()
+{
+	double x, y;
+	Input::CursorPosition(x, y);
+	if (previousX == 0. && previousY == 0.)
+	{
+		previousX = x;
+		previousY = y;
+		return false;
+	}
+
+	float deltaX = glm::radians(x - previousX);
+	float deltaY = glm::radians(y - previousY);
+
+	totalX += deltaX * mDt * settings.mouse_speed;
+	totalY += deltaY * mDt * settings.mouse_speed;
+
+	totalY = glm::clamp(totalY, glm::radians(-55.f), glm::radians(55.f));
+
+	rotX = quat(vec3(0.f, totalX, 0.f));
+	rotY = quat(vec3(-totalY, 0.f, 0.f));
+	rotYi = quat(vec3(totalY, 0.f, 0.f));
+
+	previousX = x;
+	previousY = y;
+
+	return true;
 }
 
 float GetVerticalAxis()
@@ -104,35 +133,8 @@ void cFPSController::update(float dt)
 	mDt = dt;
 	time += dt;
 
-	double x, y;
-	Input::CursorPosition(x, y);
-	if (previousX == 0. && previousY == 0.)
-	{
-		previousX = x;
-		previousY = y;
-		return;
-	}
-
-	rotX *= quat(vec3(
-		0.f,
-		(x - previousX) * dt * settings.mouse_speed,
-		0.f
-		));
-
-	rotY *= quat(vec3(
-	(y - previousY) * -dt * settings.mouse_speed,
-		0.f,
-		0.f
-		));
-
-	rotYi *= quat(vec3(
-	(y - previousY) * dt * settings.mouse_speed,
-		0.f,
-		0.f
-		));
-
-	previousX = x;
-	previousY = y;
+	if (!CalculateRotation()) return;
+	
 
 	if (Input::GetKey(GLFW_KEY_E))
 	{
@@ -143,10 +145,9 @@ void cFPSController::update(float dt)
 		blendRatio = Mathf::lerp(blendRatio, 0., dt * 3.f);
 	}
 	
-	
-
 	RenderingEngine::Instance().SetProperty("blendRatio", blendRatio);
 
+	cLightManager::Instance()->Lights[2]->param2.x = 0.f;
 	if (Input::MouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 	{
 		Shoot();
@@ -188,7 +189,7 @@ void cFPSController::update(float dt)
 		targetOffset.y = sinY;
 	}
 
-	actualOffset = Mathf::lerp(actualOffset, targetOffset, dt * 5.f);
+	actualOffset = Mathf::lerp(actualOffset, targetOffset, dt * 10.f);
 
 	Camera::main_camera->Eye = transform.Position()
 		+ (actualOffset * rotX)
@@ -198,15 +199,11 @@ void cFPSController::update(float dt)
 		+ (actualOffset * rotX)
 		+ direction;
 
-	vec3 forwards = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
-	//vec3 right = quat(vec3(0.f, glm::radians(90.f), 0.f)) * forwards;
-	//Camera::main_camera->Up = glm::cross(forwards, right);
-
 	direction.y = 0.f;
 	direction = normalize(direction);
 
 	if (weapon) {
-		vec3 pos = vec3(0.f, 4.f, 0.f);
+		vec3 pos = vec3(0.f, 4.45f, 0.f);
 		pos = transform.rotation * pos + transform.Position();
 		vec3 lerp = Mathf::lerp(weapon->transform.pos, pos, dt * 10.f);
 		weapon->transform.Position(lerp);
@@ -227,30 +224,13 @@ void cFPSController::update(float dt)
 }
 
 bool tombActivated = false;
-int ballsSpawned = 0;
 void cFPSController::OnCollide(iObject* other)
 {
-	if (!tombActivated && other->tag == "tomb") {
+	if (!tombActivated && other->tag == "tombTrigger") {
 		tombActivated = true;
 		AudioEngine::Instance()->PlaySound("checkpoint");
 		reinterpret_cast<cGameObject*>(other)->texture[0].SetTexture("fx3_Panels_Color.png");
 		cLightManager::Instance()->Lights[1]->param2.x = 1;
-	}
-	else if (ballsSpawned < 10 && other->tag == "spawnBall")
-	{
-		ballsSpawned++;
-		cGameObject* obj = MakeHitPoint(other->transform.Position() + vec3(0.f, 10.f, 0.f));
-		obj->meshName = "drone";
-		obj->transform.Scale(vec3(0.03f));
-		obj->texture[0].SetTexture("eye_fail.jpg");
-		nPhysics::sSphereDef def;
-		def.mass = 1.f;
-		def.gravity_factor = 1.f;
-		def.Offset = vec3(0.f);
-		def.Radius = 1.f;
-		def.velocity = vec3(2.f);
-		obj->AddComponent(g_PhysicsFactory->CreateSphere(obj, def));
-		cEntityManager::Instance().AddEntity(obj);
 	}
 }
 
@@ -287,11 +267,15 @@ void cFPSController::HandleMovement(vec3 direction)
 			rigidBody->Jump(vec3(0.f, 10.f, 0.f));
 		}
 	}
+
+	cLightManager::Instance()->Lights[2]->position = vec4(transform.Position(), 1.f);
+
 }
 
 void cFPSController::Shoot()
 {
 	AudioEngine::Instance()->PlaySound("gunshot");
+	cLightManager::Instance()->Lights[2]->param2.x = 1.f;
 
 	vec3 ro = Camera::main_camera->Eye;
 	vec3 rd = glm::normalize(Camera::main_camera->Target - Camera::main_camera->Eye);
@@ -303,7 +287,7 @@ void cFPSController::Shoot()
 		cGameObject* obj = MakeHitPoint(hit->hitPoint);
 		cEntityManager::Instance().AddEntity(obj);
 	}
-	rotY *= quat(vec3(0.1f, 0.f, 0.f));
-	rotYi *= quat(vec3(-0.1f, 0.f, 0.f));
-	rotX *= quat(vec3(0.f, 0.05f, 0.f));
+
+	totalX += glm::radians(Mathf::randInRange(-5.f, 5.f));
+	totalY += glm::radians(Mathf::randInRange(-10.f, -7.f));
 }

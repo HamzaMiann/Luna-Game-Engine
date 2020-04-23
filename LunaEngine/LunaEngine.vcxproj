@@ -360,6 +360,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <None Include="assets\shaders\bump_vert.glsl" />
     <None Include="assets\shaders\debug_vert.glsl" />
     <None Include="assets\shaders\holo_frag.glsl" />
+    <None Include="assets\shaders\instanced_vert.glsl" />
     <None Include="assets\shaders\particle_frag.glsl" />
     <None Include="assets\shaders\particle_vert.glsl" />
     <None Include="assets\shaders\pbr_frag.glsl" />

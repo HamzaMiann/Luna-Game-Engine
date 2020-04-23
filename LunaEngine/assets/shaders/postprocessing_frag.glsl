@@ -495,7 +495,7 @@ void main()
 		// vignette effect
 		if (vignetteEnabled)
 		{
-			float d = smoothstep(0., 1., distance(vec2(0.5), fUVx2.st));
+			float d = smoothstep(0., 1., distance(vec2(0.5) * 0.8, fUVx2.st * 0.8));
 			pixelColour.rgb = mix(pixelColour.rgb, vec3(0.), d * 1.2);
 		}
 
@@ -504,7 +504,7 @@ void main()
 		//pixelColour.rgb = mix(pixelColour.rgb, vec3(texture(worleyTexture, (eyeLocation.xyz / 10.) + vec3(uv, 1.0)).rgb), disp * blendRatio);
 
 
-		if (false) {
+		if (true) {
 			// cinematic black bars
 			if (abs(uv.y - 0.5) > 0.4)
 			{
@@ -512,7 +512,11 @@ void main()
 			}
 		}
 
-		pixelColour.rgb += texture(UITexture, uv).rgb;
+		vec3 ui = texture(UITexture, uv).rgb;
+		if (length(ui) > 0.1)
+		{
+			pixelColour.rgb = ui;
+		}
 
 		pixelColour.a = 1.0;
 
@@ -524,13 +528,10 @@ void main()
 	vec3 normal = texture( textSamp01, uv ).rgb - 1.;
 	vec3 pos = texture( textSamp02, uv ).rgb;
 	vec2 specularBuffer = texture(textSamp03, uv).xy;
-
 	vec4 spec = vec4(specularBuffer.x);
 	spec.w = specularBuffer.y * 1000.;
-	//pixelColour.rgb = vec3(specularBuffer.xy, 1.0);
-	//return;
 
-	float d = distance(eyeLocation.xyz, pos);
+	//float d = distance(eyeLocation.xyz, pos);
 
 	vec2 lpos = (lightPositionOnScreen.xy + 1.) / 2.;
 

@@ -103,7 +103,7 @@ AUDIO_ID AudioEngine::Create_Sound(std::string filename, std::string friendlyNam
 	std::string fullPath = "assets\\audio\\" + filename;
 	FMOD::Sound* sound = 0;
 	FMOD::Channel* channel = 0;
-	status = system->createSound(fullPath.c_str(), streamed? FMOD_CREATESTREAM : FMOD_DEFAULT, 0, &sound);
+	status = system->createSound(fullPath.c_str(), streamed? FMOD_CREATESTREAM | FMOD_LOOP_NORMAL : FMOD_DEFAULT, 0, &sound);
 	exit_on_failure(status);
 
 	AudioEngine::Sound* newSound = new AudioEngine::Sound(channel, sound);

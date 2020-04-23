@@ -700,6 +700,7 @@
     <None Include="assets\shaders\shadow_vert.glsl" />
     <None Include="assets\shaders\shadow_frag.glsl" />
     <None Include="assets\shaders\debug_vert.glsl" />
+    <None Include="assets\shaders\instanced_vert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\scenes\physics.scene.xml">

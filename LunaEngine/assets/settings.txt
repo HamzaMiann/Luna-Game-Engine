@@ -1,0 +1,8 @@
+bloomEnabled true
+DOFEnabled true
+volumetricEnabled true
+cloudsEnabled true
+cloudShadowsEnabled true
+vignetteEnabled true
+lensDirtEnabled true
+shadowsEnabled true

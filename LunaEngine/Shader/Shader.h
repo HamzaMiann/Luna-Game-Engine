@@ -125,6 +125,14 @@ public:
 	}
 
 	/*
+	Sets 4fv mat4 array for the given uniform
+	*/
+	inline void SetMat4Array(GLint id, const std::vector<mat4>& matrices)
+	{
+		glUniformMatrix4fv(id, (GLint)matrices.size(), GL_FALSE, glm::value_ptr(matrices[0]));
+	}
+
+	/*
 	Binds the texture to the given texture unit and uniform
 	(Texture unit must be unique for each texture that is set)
 	*/

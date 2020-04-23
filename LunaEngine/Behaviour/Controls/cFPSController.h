@@ -29,6 +29,8 @@ public:
 
 	virtual void start() override;
 
+	bool CalculateRotation();
+
 	virtual void update(float dt) override;
 
 	virtual void OnCollide(iObject* other) override;
@@ -36,7 +38,9 @@ public:
 	virtual void OnDestroy() override;
 
 	void HandleMovement(vec3 direction);
+
 	void Shoot();
+
 
 	inline void SetSettings(const Settings& s) { settings = s; }
 

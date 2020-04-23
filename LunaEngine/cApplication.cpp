@@ -21,7 +21,8 @@
 #include <Rendering/RenderingEngine.h>
 #include <Physics/Mathf.h>
 #include <Threading/threading.h>
-#include <Mesh\cVAOManager.h>
+#include <Mesh/cVAOManager.h>
+#include <Mesh/cModelLoader.h>
 
 iApplication* cApplication::app = cApplication::Instance();
 
@@ -77,8 +78,6 @@ void cApplication::Init()
 	scene->camera.Eye = vec3(0, 0, -3);
 
 	pInputHandler = 0;
-	//pInputHandler = new cPhysicsInputHandler(*scene, window);
-	//pInputHandler = new cLayoutController(*scene);
 
 	// Run lua scripts on objects
 	RunScripts();
@@ -116,6 +115,38 @@ void cApplication::Run()
 	// Initialize debug renderer
 	debug_renderer.initialize();
 
+	/*cGameObject grass;
+	grass.meshName = "grassInstanced";
+	grass.shader = Shader::FromName("instanced");
+	grass.texture[0].SetTexture("Grass.png", 1.f);
+
+	std::vector<mat4> transforms;
+	transforms.resize(100);
+	for (size_t i = 0; i < transforms.size(); ++i)
+	{
+		sTransform tform;
+		tform.Position(vec3(
+				Mathf::randInRange(-75.f, 75.f),
+				0.0f,
+				Mathf::randInRange(-75.f, 75.f)
+				)
+			);
+		tform.UpdateEulerRotation(
+			vec3(
+				0.f,
+				Mathf::randInRange(0.f, 360.f),
+				0.f
+				)
+			);
+		tform.Scale(vec3(0.1f));
+		transforms[i] = tform.ModelMatrix();
+	}
+
+	cMesh mesh;
+	sModelDrawInfo drawInfo;
+	cModelLoader::Instance().LoadModel("assets/models/Low Grass.fbx", "grassInstanced", mesh);
+	cVAOManager::Instance().LoadInstanceIntoVAO("grassInstanced", mesh, drawInfo, transforms, grass.shader->GetID());*/
+
 	for (int i = 0; i < 100; ++i)
 	{
 		cGameObject* obj = new cGameObject;
@@ -151,14 +182,6 @@ void cApplication::Run()
 
 	g_PhysicsWorld->SetDebugRenderer(&renderer);
 
-
-
-	Camera::main_camera->Eye = vec3(27.1113186f, 0.150644f, -136.474823f);
-	Camera::main_camera->Target = vec3(25.9632452f, 3.42755f, -35.5345f);
-	Camera::main_camera->Up = glm::normalize(vec3(0.f, 1.f, 0.f) + vec3(0.1f, 0.f, 0.f));
-
-
-
 	float maxTime = 1.f;
 
 	while (!glfwWindowShouldClose(global::window))
@@ -186,6 +209,8 @@ void cApplication::Run()
 		//glViewport(0, 0, width, height);
 
 		renderer.Reset();
+		renderer.SetWidth(width);
+		renderer.SetHeight(height);
 
 		Thread::Update(dt);
 
@@ -203,7 +228,7 @@ void cApplication::Run()
 		}
 
 		if (renderer.GetBoolProperty("shadowsEnabled"))
-			renderer.RenderObjectsToFBO(&albedoFBO, width, height, dt, true);
+			renderer.RenderObjectsToFBO(&albedoFBO, true);
 
 		// Update 3D audio engine
 		//scene->pAudioEngine->Update3d(scene->cameraEye, scene->cameraTarget, delta_time);
@@ -234,8 +259,8 @@ void cApplication::Run()
 		vec3 cube = vec3(homogenous.x / homogenous.w, homogenous.y / homogenous.w, homogenous.z / homogenous.w);
 		renderer.screenPos = vec2(cube);
 
-		renderer.RenderObjectsToFBO(&second_passFBO, width, height, dt, false);
-		renderer.RenderSkybox(width, height, p, v, dt);
+		renderer.RenderObjectsToFBO(&second_passFBO, false);
+		renderer.RenderSkybox(p, v);
 
 		renderer.RenderLightingToFBO(finalFBO, second_passFBO, albedoFBO.depthTexture_ID);
 		renderer.RenderPostProcessingToScreen(finalFBO, second_passFBO.unlitTexture_ID);

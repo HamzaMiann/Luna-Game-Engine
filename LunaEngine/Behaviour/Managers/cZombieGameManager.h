@@ -8,6 +8,13 @@ namespace AI
 	{
 	public:
 
+		enum STATE
+		{
+			INTRO,
+			STARTED,
+			WAVES
+		};
+
 		virtual ~cZombieGameManager() {}
 
 		cZombieGameManager(iObject* root) :
@@ -18,8 +25,11 @@ namespace AI
 		virtual void start() override;
 		virtual void update(float dt) override;
 
-	private:
-		float mDarknessValue;
+		void CalculateDarkness();
 
+	private:
+		float mDt;
+		float mDarknessValue;
+		STATE mState;
 	};
 }

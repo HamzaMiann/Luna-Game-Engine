@@ -77,9 +77,15 @@ public:
 
 	// Takes a cMesh object and copies it into the GPU (as a VOA)
 	bool LoadModelIntoVAO(std::string fileName, 
-						  cMesh &theMesh,				// NEW
+						  cMesh &theMesh,
 						  sModelDrawInfo &drawInfo, 
 						  unsigned int shaderProgramID);
+
+	bool LoadInstanceIntoVAO(	std::string fileName, 
+								cMesh &theMesh,
+								sModelDrawInfo &drawInfo,
+								const std::vector<glm::mat4>& offsets,
+								unsigned int shaderProgramID);
 
 	// We don't want to return an int, likely
 	bool FindDrawInfoByModelName(std::string filename,
