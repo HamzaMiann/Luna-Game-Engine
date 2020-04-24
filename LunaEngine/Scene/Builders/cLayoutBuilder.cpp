@@ -10,6 +10,7 @@
 #include <EntityManager/cEntityManager.h>
 #include <Animation/cSimpleAssimpSkinnedMeshLoader_OneMesh.h>
 #include <Mesh/cModelLoader.h>
+#include <Mesh/cVAOManager.h>
 #include <Shader/Shader.h>
 using namespace rapidxml;
 
@@ -122,7 +123,7 @@ void AddPhysicsComponent(const std::string& componentName, xml_node<>* component
 		def.gravity_factor = XML_Helper::AsFloat(componentNode->first_node("GFactor"));
 		std::string modelName = componentNode->first_node("Model")->value();
 		cMesh mesh;
-		cModelLoader::Instance().LoadModel("assets/models/" + modelName, modelName, mesh);
+		cModelLoader::Instance().LoadModel("assets/models/" + modelName, modelName, mesh, 3);
 
 		def.vertices.resize(mesh.vecMeshTriangles.size() * 3u);
 		sTransform tform = ptr->transform;

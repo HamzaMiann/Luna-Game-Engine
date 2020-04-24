@@ -57,6 +57,7 @@ private:
 
 	quat rotX;
 	quat rotY;
+	quat rotYi;
 
 	float animationDuration = 0.f;
 

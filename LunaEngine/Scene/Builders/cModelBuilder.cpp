@@ -8,14 +8,14 @@
 #include <Threading/threading.h>
 using namespace rapidxml;
 
-#define THREADED
+//#define THREADED
 
 void LoadModel(ModelLoadInfo* info)
 {
 	cModelLoader& ModelLoader = cModelLoader::Instance();
 
 	cMesh* pMesh = new cMesh();
-	if (ModelLoader.LoadModel("assets/models/" + info->fileName, info->friendlyName, *pMesh).success)
+	if (ModelLoader.LoadModel("assets/models/" + info->fileName, info->friendlyName, *pMesh, info->MAX_MESHES).success)
 	{
 #ifdef THREADED
 		Thread::Dispatch([info, pMesh]()
@@ -62,6 +62,7 @@ void cModelBuilder::Build(Scene& scene, xml_node<>* node)
 		xml_attribute<>* file = model_node->first_attribute("file");
 		xml_attribute<>* friendly = model_node->first_attribute("friendlyName");
 		xml_attribute<>* shader = model_node->first_attribute("shader");
+		xml_attribute<>* meshes = model_node->first_attribute("meshes");
 		if (file)
 		{
 			std::string fileName = file->value();
@@ -70,6 +71,11 @@ void cModelBuilder::Build(Scene& scene, xml_node<>* node)
 			ModelLoadInfo* info = new ModelLoadInfo;
 			info->friendlyName = friendlyName;
 			info->fileName = fileName;
+			info->MAX_MESHES = INT_MAX;
+			if (meshes)
+			{
+				info->MAX_MESHES = std::atoi(meshes->value());
+			}
 			if (previous)
 			{
 				previous->next = info;

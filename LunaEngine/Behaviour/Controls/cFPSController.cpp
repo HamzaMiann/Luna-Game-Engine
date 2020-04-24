@@ -10,6 +10,8 @@
 #include <Rendering/RenderingEngine.h>
 #include <Audio\AudioEngine.hpp>
 #include <Lighting/cLightManager.h>
+#include <Behaviour/AI/cZombie.h>
+#include "cLifeTimer.h"
 using namespace rapidxml;
 
 bool cFPSController::deserialize(rapidxml::xml_node<>* root_node)
@@ -41,7 +43,6 @@ bool cFPSController::deserialize(rapidxml::xml_node<>* root_node)
 	return true;
 }
 
-quat rotYi;
 vec3 actualOffset;
 vec3 targetOffset;
 vec3 offset2;
@@ -124,7 +125,7 @@ cGameObject* MakeHitPoint(const vec3& position)
 	obj->transform.Scale(vec3(0.1f));
 	obj->meshName = "sphere";
 	obj->shader = Shader::FromName("basic");
-	obj->texture[0].SetTexture("blue.png", 1.f);
+	obj->texture[0].SetTexture("bark_0021.jpg", 1.f);
 	return obj;
 }
 
@@ -278,7 +279,14 @@ void cFPSController::Shoot()
 	{
 		hit->object->AddForceToPoint(rd * 100.f, hit->hitPoint);
 		cGameObject* obj = MakeHitPoint(hit->hitPoint);
+		obj->AddComponent<cLifeTimer>()->mTime = 3.f;
 		cEntityManager::Instance().AddEntity(obj);
+
+		AI::cZombie* component = hit->object->parent.GetComponent<AI::cZombie>();
+		if (component)
+		{
+			component->TakeDamage(10.f);
+		}
 	}
 
 	totalX += glm::radians(Mathf::randInRange(-5.f, 5.f));

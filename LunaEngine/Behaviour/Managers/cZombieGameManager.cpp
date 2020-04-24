@@ -22,11 +22,11 @@ namespace AI
 
 	void cZombieGameManager::CalculateDarkness()
 	{
-		if (mDarknessValue > 0.22f)
+		if (mDarknessValue > 0.15f)
 		{
 			mDarknessValue += mDt * 0.7f;
 		}
-		else mDarknessValue += mDt * 0.05f;
+		else mDarknessValue += mDt * 0.03f;
 		if (mDarknessValue > 1.f) mDarknessValue = 1.f;
 		RenderingEngine::Instance().SetProperty("mixValue", mDarknessValue);
 	}
@@ -34,7 +34,7 @@ namespace AI
 	void cZombieGameManager::ActivateTomb()
 	{
 		tombsActivated++;
-		if (tombsActivated == 3)
+		if (tombsActivated == 4)
 		{
 			AudioEngine::Instance()->GetSound("wind")->toggle_pause();
 			AudioEngine::Instance()->PlaySound("glitch");
@@ -58,6 +58,7 @@ namespace AI
 					mState = STARTED;
 
 					auto* component = cEntityManager::Instance().GetObjectByTag("player")->AddComponent<cFPSController>();
+					cEntityManager::Instance().RemoveEntity(cEntityManager::Instance().GetObjectByTag("introZombie"));
 					cFPSController::Settings settings;
 					settings.forward = vec3(0.f, 0.f, -1.f);
 					settings.camera_offset = vec3(0.7f, 5.f, 0.f);
@@ -67,9 +68,6 @@ namespace AI
 					component->SetSettings(settings);
 
 					Camera::main_camera->Up = vec3(0.f, 1.f, 0.f);
-
-					//AudioEngine::Instance()->GetSound("wind")->toggle_pause();
-					//AudioEngine::Instance()->PlaySound("glitch");
 				}
 			}
 		}

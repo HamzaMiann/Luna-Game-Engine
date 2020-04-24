@@ -96,8 +96,8 @@ namespace nPhysics {
 	{
 		btTransform tf(mGhostObject->getWorldTransform());
 		transform.Position(nConvert::ToGLM(tf.getOrigin()) - offset);
-		if (_rotateable)
-			transform.Rotation(nConvert::ToGLM(tf.getRotation()));
+		/*if (_rotateable)
+			transform.Rotation(nConvert::ToGLM(tf.getRotation()));*/
 	}
 
 	void cCharacterComponent::GetTransform(mat4& transformOut)

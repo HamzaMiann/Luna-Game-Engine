@@ -66,10 +66,10 @@ cModelLoader::cModelLoader()
 	return;
 }
 
-void cModelLoader::LoadMeshes(const aiScene* scene, cMesh& theMesh)
+void cModelLoader::LoadMeshes(const aiScene* scene, cMesh& theMesh, int MAX_MESHES)
 {
 	int start = 0;
-	for (unsigned int m = 0; m < scene->mNumMeshes; ++m) {
+	for (unsigned int m = 0; m < scene->mNumMeshes && m < MAX_MESHES; ++m) {
 		aiMesh& mesh = *scene->mMeshes[m];
 
 		start = theMesh.vecVertices.size();
@@ -267,7 +267,7 @@ cModelLoader::~cModelLoader()
 
 LoadResult cModelLoader::LoadModel(	std::string filename,
 									std::string friendlyName,
-									cMesh &theMesh)				// Note the "&"
+									cMesh &theMesh, int MAX_MESHES)				// Note the "&"
 {
 	LoadResult result;
 	Assimp::Importer importer;
@@ -296,7 +296,7 @@ LoadResult cModelLoader::LoadModel(	std::string filename,
 	{
 		theMesh.name = friendlyName;
 
-		LoadMeshes(scene, theMesh);
+		LoadMeshes(scene, theMesh, MAX_MESHES);
 
 		//LoadTextures(scene, theMesh, result);
 

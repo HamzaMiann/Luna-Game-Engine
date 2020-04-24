@@ -44,8 +44,6 @@
 		<Texture name="bark_0021.jpg"/>
 		<Texture name="grass_tex.png"/>
 
-		<Texture name="soap-008.png"/>
-		<Texture name="dirt.jpg"/>
 		<Texture name="dust_particles_on_lens_by_kerast_d7mj0cr-fullview.jpg"/>
 		<Texture name="eye_fail.jpg"/>
 
@@ -58,9 +56,6 @@
 		<Texture name="Bark_Pine_baseColor.jpg"/>
 		<Texture name="Bark_Pine_normal.jpg"/>
 		<Texture name="Bark_Pine_roughness.jpg"/>
-		
-		<Texture name="Mutant_diffuse.jpg"/>
-		<Texture name="Mutant_normal.jpg"/>
 		
 		<Texture name="home_hatka_Base_Color.png"/>
 		<Texture name="home_hatka_Normal_OpenGL.png"/>
@@ -108,8 +103,7 @@
         <Model file="sphere_XYZ_N_UV.ply" friendlyName="sphere" shader="basic"/>
         <Model file="cube.ply" friendlyName="cube" shader="basic"/>
         <Model file="Plane_Large_XYZ_N_UV.ply" friendlyName="plane" shader="basic"/>
-        <Model file="Mutant.fbx" friendlyName="mutant" shader="basic"/>
-        <Model file="hatka_local.fbx" friendlyName="house" shader="basic"/>
+        <Model file="hatka_local.fbx" friendlyName="house" shader="basic" meshes="4"/>
         <Model file="Terrain_XYZ_N_UV.ply" friendlyName="terrain" shader="basic"/>
         <Model file="statue.obj" friendlyName="statue" shader="basic"/>
         <Model file="Tree.fbx" friendlyName="tree" shader="basic"/>
@@ -117,6 +111,7 @@
         <Model file="head.obj" friendlyName="drone" shader="basic"/>
         <Model file="warzombie_f_pedroso.fbx" friendlyName="zombie" shader="basic"/>
         <Model file="cerberus3.obj" friendlyName="cerberus" shader="basic"/>
+        <Model file="tree01.fbx" friendlyName="tree2" shader="basic"/>
 		
         <Model file="fence.obj" friendlyName="fence" shader="basic"/>
         <Model file="FbxTomb.fbx" friendlyName="tomb" shader="basic"/>
@@ -124,17 +119,6 @@
 	</Models>
 
   <Animations>
-    <!--<AnimationProfile profile="mutant" mesh="Mutant.fbx">
-      <Animation file="Mutant Breathing Idle.fbx" friendlyName="idle"/>
-      <Animation file="Mutant Walking.fbx" friendlyName="walk"/>
-      <Animation file="Mutant Run.fbx" friendlyName="run"/>
-      <Animation file="Mutant Walk Back.fbx" friendlyName="walk-backwards"/>
-      <Animation file="Mutant Right Strafe.fbx" friendlyName="walk-right"/>
-      <Animation file="Mutant Left Strafe.fbx" friendlyName="walk-left"/>
-      <Animation file="Mutant Jump.fbx" friendlyName="jump"/>
-      <Animation file="Mutant Swiping.fbx" friendlyName="attack"/>
-      <Animation file="Mutant Run Jump.fbx" friendlyName="run-jump"/>
-    </AnimationProfile>-->
 	  <AnimationProfile profile="zombie" mesh="warzombie_f_pedroso.fbx">
 		  <Animation file="Zombie Idle.fbx" friendlyName="idle"/>
 		  <Animation file="Zombie Walk.fbx" friendlyName="walk"/>
@@ -171,6 +155,17 @@
 		<Light>
 			<Position x="25.0" y="8" z="-50.0" w="1.000000"/>
 			<Diffuse x="1.0000" y="1.000000" z="0.300000" w="1.000000"/>
+			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Atten x="0.800000" y="0.000100" z="0.0020000" w="1000.000000"/>
+			<Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
+			<Param1 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+			<Param2 x="0.000000" y="1.000000" z="1.000000" w="1.000000"/>
+		</Light>
+
+		<!-- TOMB LIGHT-->
+		<Light>
+			<Position x="25.0" y="8" z="-50.0" w="1.000000"/>
+			<Diffuse x="1.0000" y="0.300000" z="0.300000" w="1.000000"/>
 			<Specular x="1.000000" y="1.000000" z="1.000000" w="1.000000"/>
 			<Atten x="0.800000" y="0.000100" z="0.0020000" w="1000.000000"/>
 			<Direction x="0.000000" y="0.000000" z="0.000000" w="0.000000"/>
@@ -388,8 +383,122 @@
 			</Components>
 		</GameObject>
 
+		<GameObject mesh="zombie" tag="zombie" shader="pbr">
+			<Position x="45.0" y="0.0" z="-30.0"/>
+			<Rotation x="0" y="120" z="0.0"/>
+			<Scale>0.022</Scale>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">world_war_zombie_diffuse.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_normal.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_specular.png</Texture>
+			<Components>
+				<ZombieComponent/>
+				<CharacterBody>
+					<Origin x="0.000000" y="2.000000" z="0.000000"/>
+					<Scale x="0.5" y="3.2"/>
+				</CharacterBody>
+				<AnimationController profile="zombie" default="idle"/>
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="zombie" tag="zombie" shader="pbr">
+			<Position x="-45.0" y="0.0" z="0.0"/>
+			<Rotation x="0" y="120" z="0.0"/>
+			<Scale>0.022</Scale>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">world_war_zombie_diffuse.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_normal.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_specular.png</Texture>
+			<Components>
+				<ZombieComponent/>
+				<CharacterBody>
+					<Origin x="0.000000" y="2.000000" z="0.000000"/>
+					<Scale x="0.5" y="3.2"/>
+				</CharacterBody>
+				<AnimationController profile="zombie" default="idle"/>
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="zombie" tag="zombie" shader="pbr">
+			<Position x="-10.0" y="0.0" z="-30.0"/>
+			<Rotation x="0" y="120" z="0.0"/>
+			<Scale>0.022</Scale>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">world_war_zombie_diffuse.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_normal.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_specular.png</Texture>
+			<Components>
+				<ZombieComponent/>
+				<CharacterBody>
+					<Origin x="0.000000" y="2.000000" z="0.000000"/>
+					<Scale x="0.5" y="3.2"/>
+				</CharacterBody>
+				<AnimationController profile="zombie" default="idle"/>
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="zombie" tag="zombie" shader="pbr">
+			<Position x="-50.0" y="0.0" z="20.0"/>
+			<Rotation x="0" y="120" z="0.0"/>
+			<Scale>0.022</Scale>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">world_war_zombie_diffuse.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_normal.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_specular.png</Texture>
+			<Components>
+				<ZombieComponent/>
+				<CharacterBody>
+					<Origin x="0.000000" y="2.000000" z="0.000000"/>
+					<Scale x="0.5" y="3.2"/>
+				</CharacterBody>
+				<AnimationController profile="zombie" default="idle"/>
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="zombie" tag="zombie" shader="pbr">
+			<Position x="50.0" y="0.0" z="20.0"/>
+			<Rotation x="0" y="120" z="0.0"/>
+			<Scale>0.022</Scale>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">world_war_zombie_diffuse.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_normal.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_specular.png</Texture>
+			<Components>
+				<ZombieComponent/>
+				<CharacterBody>
+					<Origin x="0.000000" y="2.000000" z="0.000000"/>
+					<Scale x="0.5" y="3.2"/>
+				</CharacterBody>
+				<AnimationController profile="zombie" default="idle"/>
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="zombie" tag="zombie" shader="pbr">
+			<Position x="0.0" y="0.0" z="50.0"/>
+			<Rotation x="0" y="120" z="0.0"/>
+			<Scale>0.022</Scale>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">world_war_zombie_diffuse.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_normal.png</Texture>
+			<Texture ratio="1.0">world_war_zombie_specular.png</Texture>
+			<Components>
+				<ZombieComponent/>
+				<CharacterBody>
+					<Origin x="0.000000" y="2.000000" z="0.000000"/>
+					<Scale x="0.5" y="3.2"/>
+				</CharacterBody>
+				<AnimationController profile="zombie" default="idle"/>
+			</Components>
+		</GameObject>
+
 		<GameObject mesh="drone" tag="drone" shader="basic">
-			<Position x="20.0" y="10.0" z="-25.0"/>
+			<Position x="20.0" y="15.0" z="-10.0"/>
 			<Rotation x="0" y="0" z="0.0"/>
 			<Scale>0.03</Scale>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
@@ -440,7 +549,7 @@
 
 		<GameObject mesh="tomb" tag="tomb2" shader="basic">
 			<Position x="-60.0" y="7.2" z="-50.0"/>
-			<Rotation x="0" y="0" z="0.0"/>
+			<Rotation x="0" y="180" z="0.0"/>
 			<Scale3D x="1" y="7" z="1"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<SpecIntensity>100.000000</SpecIntensity>
@@ -451,7 +560,7 @@
 					<Mass>0.0</Mass>
 					<GFactor>1.0</GFactor>
 					<Model>FbxTomb.fbx</Model>
-					<Rotation x="0" y="180" z="0.0"/>
+					<Rotation x="0" y="0" z="0.0"/>
 				</MeshBody>
 			</Components>
 		</GameObject>
@@ -469,7 +578,36 @@
 
 		<GameObject mesh="tomb" tag="tomb3" shader="basic">
 			<Position x="-60.0" y="7.2" z="50.0"/>
-			<Rotation x="0" y="0" z="0.0"/>
+			<Rotation x="0" y="180" z="0.0"/>
+			<Scale3D x="1" y="7" z="1"/>
+			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
+			<SpecIntensity>100.000000</SpecIntensity>
+			<Texture ratio="1.0">lens_dust.jpg</Texture>
+			<Components>
+				<MeshBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Model>FbxTomb.fbx</Model>
+					<Rotation x="0" y="0" z="0.0"/>
+				</MeshBody>
+			</Components>
+		</GameObject>
+		<GameObject mesh="none" tag="tombTrigger" shader="basic">
+			<Position x="-60.0" y="7.2" z="50.0"/>
+			<Components>
+				<TriggerRegion>
+					<Shape>cube</Shape>
+					<Origin x="0" y="0" z="0"/>
+					<Size x="8" y="8" z="10"/>
+				</TriggerRegion>
+				<TriggerHandler id="tomb3" lightID="4"/>
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="tomb" tag="tomb4" shader="basic">
+			<Position x="60.0" y="7.2" z="50.0"/>
+			<Rotation x="0" y="-90" z="0.0"/>
 			<Scale3D x="1" y="7" z="1"/>
 			<SpecColour x="0.900000" y="0.900000" z="1.000000"/>
 			<SpecIntensity>100.000000</SpecIntensity>
@@ -485,14 +623,14 @@
 			</Components>
 		</GameObject>
 		<GameObject mesh="none" tag="tombTrigger" shader="basic">
-			<Position x="-60.0" y="7.2" z="50.0"/>
+			<Position x="60.0" y="7.2" z="50.0"/>
 			<Components>
 				<TriggerRegion>
 					<Shape>cube</Shape>
 					<Origin x="0" y="0" z="0"/>
 					<Size x="8" y="8" z="10"/>
 				</TriggerRegion>
-				<TriggerHandler id="tomb3" lightID="4"/>
+				<TriggerHandler id="tomb4" lightID="5"/>
 			</Components>
 		</GameObject>
 		<!-- __________________________________________ -->
@@ -814,10 +952,78 @@
 			<Scale>30</Scale>
 			<Texture ratio="1.0">fx3_Panels_Color.png</Texture>
 		</GameObject>
-		
 
-		
 
+
+
+		<GameObject mesh="tree2" tag="bush" shader="basic">
+			<Position x="60.0" y="0.0" z="5.0"/>
+			<Rotation x="-90" y="15" z="0.0"/>
+			<Scale>1.0</Scale>
+			<Texture ratio="0.7">Bark_Pine_baseColor.jpg</Texture>
+			<Texture ratio="0.3">Grass.png</Texture>
+			<Components>
+				<CapsuleBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="3.0" z="0.000000"/>
+					<Scale x="1" y="5"/>
+				</CapsuleBody>
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="tree2" tag="bush" shader="basic">
+			<Position x="0.0" y="0.0" z="30.0"/>
+			<Rotation x="-90" y="15" z="0.0"/>
+			<Scale>1.0</Scale>
+			<Texture ratio="0.7">Bark_Pine_baseColor.jpg</Texture>
+			<Texture ratio="0.3">Grass.png</Texture>
+			<Components>
+				<CapsuleBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="3.0" z="0.000000"/>
+					<Scale x="1" y="5"/>
+				</CapsuleBody>
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="tree2" tag="bush" shader="basic">
+			<Position x="-60.0" y="0.0" z="5.0"/>
+			<Rotation x="-90" y="15" z="0.0"/>
+			<Scale>1.0</Scale>
+			<Texture ratio="0.7">Bark_Pine_baseColor.jpg</Texture>
+			<Texture ratio="0.3">Grass.png</Texture>
+			<Components>
+				<CapsuleBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="3.0" z="0.000000"/>
+					<Scale x="1" y="5"/>
+				</CapsuleBody>
+			</Components>
+		</GameObject>
+
+		<GameObject mesh="tree2" tag="bush" shader="basic">
+			<Position x="-40.0" y="0.0" z="-10.0"/>
+			<Rotation x="-90" y="15" z="0.0"/>
+			<Scale>1.0</Scale>
+			<Texture ratio="0.7">Bark_Pine_baseColor.jpg</Texture>
+			<Texture ratio="0.3">Grass.png</Texture>
+			<Components>
+				<CapsuleBody>
+					<Velocity x="0.000000" y="0.000000" z="0.000000"/>
+					<Mass>0.0</Mass>
+					<GFactor>1.0</GFactor>
+					<Origin x="0.000000" y="3.0" z="0.000000"/>
+					<Scale x="1" y="5"/>
+				</CapsuleBody>
+			</Components>
+		</GameObject>
+		
 		<GameObject mesh="tree" tag="tree" shader="pbr">
 			<Position x="60.0" y="0.0" z="0.0"/>
 			<Rotation x="0" y="15" z="0.0"/>
@@ -1030,6 +1236,7 @@
 		<Sound file="wind.mp3" volume="0.5" pitch="0.5" pan="0" streamed="true" friendlyName="wind"/>
 		<Sound file="robot_spawn.mp3" volume="0.5" pitch="1.0" pan="0" streamed="false" friendlyName="robotSpawn"/>
 		<Sound file="glitch.wav" volume="0.4" pitch="0.7" pan="0" streamed="true" friendlyName="glitch"/>
+		<Sound file="zombie.mp3" volume="0.4" pitch="0.7" pan="0" streamed="false" friendlyName="zombie"/>
 	</Audio>
 </Scene>
 

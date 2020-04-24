@@ -351,6 +351,9 @@
     <ClCompile Include="Behaviour\AI\cTriggerHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Behaviour\AI\cZombie.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cGameObject.h">
@@ -648,6 +651,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Behaviour\AI\cTriggerHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour\AI\cZombie.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour\Controls\cLifeTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

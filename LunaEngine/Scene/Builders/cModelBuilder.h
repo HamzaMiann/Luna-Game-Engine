@@ -22,6 +22,7 @@ struct ModelLoadInfo
 
 	std::string fileName;
 	std::string friendlyName;
+	int MAX_MESHES;
 	ModelLoadInfo* next;
 };
 

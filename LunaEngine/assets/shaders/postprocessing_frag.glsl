@@ -94,6 +94,12 @@ uniform sLight theLights[LIGHT_BUFFER];
 
 const int num_samples = 13;
 
+float rand(vec2 st) { 
+	return fract(sin(dot(st.xy,
+                 vec2(12.9898,78.233)))
+                 * 43758.5453123);
+}
+
 vec4 gaussian_blur(sampler2D tex)
 {
 
@@ -192,7 +198,7 @@ vec4 circular_blur(sampler2D tex, float offset)
 ///
 vec4 DOF(sampler2D mainTexture, sampler2D positionTexture)
 {
-	const float near_focus = 3.0;
+	const float near_focus = 5.0;
 	const float focus_length = 70.0;
 	const float far_blur_scale = 2.0;
 	const float near_blur_scale = 10.0;
@@ -501,7 +507,9 @@ void main()
 		}
 
 		float disp = smoothstep(0., 1., 1. - distance(vec2(0.5), fUVx2.st) * 10. * (1. - blendRatio));
-		pixelColour.rgb = mix(pixelColour.rgb, texture(textSamp02, uv).rgb + texture(GraveTexture, uv).rgb, disp * blendRatio);
+		vec2 UVX = uv + rand(uv + mod(fiTime,1.0)) / 80.;
+		vec3 graves =  texture(GraveTexture, UVX).rgb;
+		pixelColour.rgb = mix(pixelColour.rgb, texture(textSamp02, uv).rgb + graves, disp * blendRatio);
 		//pixelColour.rgb = mix(pixelColour.rgb, vec3(texture(worleyTexture, (eyeLocation.xyz / 10.) + vec3(uv, 1.0)).rgb), disp * blendRatio);
 
 

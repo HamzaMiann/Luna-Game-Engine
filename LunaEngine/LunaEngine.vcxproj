@@ -173,6 +173,7 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClCompile Include="Behaviour\AI\cSeekBehaviour.cpp" />
     <ClCompile Include="Behaviour\AI\cTriggerHandler.cpp" />
     <ClCompile Include="Behaviour\AI\cWanderBehaviour.cpp" />
+    <ClCompile Include="Behaviour\AI\cZombie.cpp" />
     <ClCompile Include="Behaviour\cBehaviourManager.cpp" />
     <ClCompile Include="Behaviour\Controls\cCharacterController.cpp" />
     <ClCompile Include="Behaviour\Controls\cFPSController.cpp" />
@@ -267,9 +268,11 @@ xcopy /y "$(SolutionDir)steam_appid.txt" "$(OutDir)"</Command>
     <ClInclude Include="Behaviour\AI\cSeekBehaviour.h" />
     <ClInclude Include="Behaviour\AI\cTriggerHandler.h" />
     <ClInclude Include="Behaviour\AI\cWanderBehaviour.h" />
+    <ClInclude Include="Behaviour\AI\cZombie.h" />
     <ClInclude Include="Behaviour\cBehaviourManager.h" />
     <ClInclude Include="Behaviour\Controls\cCharacterController.h" />
     <ClInclude Include="Behaviour\Controls\cFPSController.h" />
+    <ClInclude Include="Behaviour\Controls\cLifeTimer.h" />
     <ClInclude Include="Behaviour\Controls\cPlayerBehaviour.h" />
     <ClInclude Include="Behaviour\Controls\cSphereBehaviour.h" />
     <ClInclude Include="Behaviour\Managers\cAIGameManager.h" />

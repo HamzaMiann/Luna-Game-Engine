@@ -44,7 +44,7 @@ bool InitSteam()
 		printf("Steam has been initialized...\n");
 		steam_api::isInitialized = true;
 
-		ShowFriends();
+		//ShowFriends();
 	}
 #endif
 	return steam_api::isInitialized;

@@ -19,7 +19,7 @@ class cModelLoader
 private:
 	cModelLoader();			// constructor
 
-	void LoadMeshes(const aiScene* scene, cMesh& theMesh);
+	void LoadMeshes(const aiScene* scene, cMesh& theMesh, int MAX_MESHES);
 	void LoadTextures(const aiScene* scene, cMesh& theMesh, LoadResult& result);
 	void LoadBones(const aiScene* scene, aiMesh& mesh, cMesh& theMesh);
 	void LoadAnimations(const aiScene* scene, cMesh& theMesh);
@@ -41,7 +41,7 @@ public:
 	// Returns by ref the mesh
 	LoadResult LoadModel(	std::string filename,
 							std::string friendlyName,
-							cMesh &theMesh);		// Note the & (by reference)
+							cMesh &theMesh, int MAX_MESHES = INT_MAX);		// Note the & (by reference)
 
 
 };
